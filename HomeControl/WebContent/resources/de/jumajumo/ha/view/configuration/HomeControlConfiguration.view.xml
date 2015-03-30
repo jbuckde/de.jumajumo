@@ -1,0 +1,29 @@
+<mvc:View controllerName="de.jumajumo.ha.view.configuration.HomeControlConfiguration"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<Page title="configurations" showNavButton="true" navButtonPress="goBack">
+		<content>
+			<List mode="{device>/listMode}">
+				<items>
+					<ObjectListItem title="Devices" type="{device>/listItemType}"
+						icon="sap-icon://iphone-2" iconDensityAware="true" press="goToDevicesOverview">
+					</ObjectListItem>
+					<ObjectListItem title="Triggers" type="{device>/listItemType}"
+						icon="sap-icon://time-entry-request" iconDensityAware="true" press="goToTriggersOverview">
+					</ObjectListItem>
+					<ObjectListItem title="Actions" type="{device>/listItemType}"
+						icon="sap-icon://action" iconDensityAware="true" press="goToActionsOverview">
+					</ObjectListItem>
+					<ObjectListItem title="Conditions" type="{device>/listItemType}"
+						icon="sap-icon://to-be-reviewed" iconDensityAware="true" press="goToConditionsOverview">
+					</ObjectListItem>
+					<ObjectListItem title="ActionChains" type="{device>/listItemType}"
+						icon="sap-icon://overflow" iconDensityAware="true" press="goToActionChainsOverview">
+					</ObjectListItem>
+				</items>
+			</List>
+		</content>
+	</Page>
+
+</mvc:View>

@@ -1,0 +1,55 @@
+<mvc:View controllerName="de.jumajumo.ha.view.configuration.HomeControlDeviceDetail"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<Page title="{configuration>name}" showNavButton="true"
+		navButtonPress="goBack">
+		<ObjectHeader title="{configuration>name}">
+			<attributes>
+				<ObjectAttribute text="{configuration>uuid}" />
+				<ObjectAttribute text="{configuration>hostName}" />
+				<ObjectAttribute text="{configuration>protocol}" />
+			</attributes>
+		</ObjectHeader>
+
+		<IconTabBar class="iconTabBarPaddingTop" expanded="{device>/isNoPhone}">
+			<items>
+				<IconTabFilter text="actors" icon="sap-icon://projector">
+					<Table id="actorsOverview" inset="false" items="{configuration>actors}">
+						<columns>
+							<Column>
+								<Text text="Name" />
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<ObjectIdentifier title="{configuration>name}"
+										text="{configuration>requestInfo/path}" class="sapMTableContentMargin" />
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</IconTabFilter>
+				<IconTabFilter text="sensors" icon="sap-icon://video">
+					<Table id="sensorsOverview" inset="false" items="{configuration>sensors}">
+						<columns>
+							<Column>
+								<Text text="Name" />
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<ObjectIdentifier title="{configuration>name}"
+										text="{configuration>requestInfo/uuid}" class="sapMTableContentMargin" />
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+	</Page>
+
+</mvc:View>

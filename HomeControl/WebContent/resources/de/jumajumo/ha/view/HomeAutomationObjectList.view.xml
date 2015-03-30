@@ -1,0 +1,26 @@
+<mvc:View controllerName="de.jumajumo.ha.view.HomeAutomationObjectList"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<Page title="object selection">
+		<content>
+			<List mode="{device>/listMode}">
+				<items>
+					<ObjectListItem title="Garage" type="{device>/listItemType}"
+						icon="sap-icon://car-rental" iconDensityAware="true" press="navToGarage">
+					</ObjectListItem>
+					<ObjectListItem title="Camera" type="{device>/listItemType}"
+						icon="sap-icon://video" iconDensityAware="true">
+					</ObjectListItem>
+					<ObjectListItem title="Lightning" type="{device>/listItemType}"
+						icon="sap-icon://lightbulb" iconDensityAware="true">
+					</ObjectListItem>
+					<ObjectListItem title="Configuration" type="{device>/listItemType}"
+						icon="sap-icon://settings" iconDensityAware="true" press="navToConfiguration">
+					</ObjectListItem>
+				</items>
+			</List>
+		</content>
+	</Page>
+
+</mvc:View>

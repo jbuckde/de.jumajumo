@@ -1,0 +1,26 @@
+<mvc:View controllerName="de.jumajumo.ha.view.configuration.HomeControlActionChainsOverview"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<Page title="action chains" showNavButton="{device>/isPhone}" navButtonPress="goBack">
+		<content>
+			<Table id="actionChainsOverview" inset="false"
+				items="{configuration>/actionChains}">
+				<columns>
+					<Column>
+						<Text text="action" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem press="selectActionChain" type="Navigation">
+						<cells>
+							<ObjectIdentifier title="{configuration>name}" text="{configuration>uuid}"
+								class="sapMTableContentMargin" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</Page>
+
+</mvc:View>

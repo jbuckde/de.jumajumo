@@ -1,0 +1,62 @@
+<mvc:View
+	controllerName="de.jumajumo.ha.view.configuration.HomeControlActionChainDetail"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<Page title="{configuration>name}" showNavButton="true"
+		navButtonPress="goBack">
+		<ObjectHeader title="{configuration>name}">
+			<attributes>
+				<ObjectAttribute text="{configuration>uuid}" />
+			</attributes>
+		</ObjectHeader>
+
+		<IconTabBar class="iconTabBarPaddingTop" expanded="{device>/isNoPhone}">
+			<items>
+				<IconTabFilter text="triggers" icon="sap-icon://projector">
+					<Table id="triggersOverview" inset="false"
+						items="{configuration>triggerRefs}">
+						<columns>
+							<Column>
+								<Text text="UUID" />
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<ObjectIdentifier title="{configuration>name}" text="{configuration>triggerUuid}"
+										class="sapMTableContentMargin" />
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</IconTabFilter>
+				<IconTabFilter text="actions" icon="sap-icon://video">
+					<Table id="actionsOverview" inset="false"
+						items="{configuration>actionRefs}">
+						<columns>
+							<Column>
+								<Text text="action ref" />
+							</Column>
+							<Column>
+								<Text text="conditions" />
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<ObjectIdentifier title="{configuration>name}"
+										text="{configuration>actionUuid}" class="sapMTableContentMargin" />
+									<List items="{configuration>conditionRefs}">
+										<StandardListItem title="{configuration>name}" description="{configuration>conditionUuid}" />
+									</List>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+	</Page>
+
+</mvc:View>

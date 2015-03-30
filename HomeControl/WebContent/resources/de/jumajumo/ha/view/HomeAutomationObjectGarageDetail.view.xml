@@ -1,0 +1,46 @@
+<mvc:View xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    controllerName="de.jumajumo.ha.view.HomeAutomationObjectGarageDetail"
+    xmlns="sap.m" >
+
+    <Page
+        showNavButton="{device>/isPhone}"
+        title="Garage" 
+        navButtonPress="goBack">
+
+        <content>
+
+            <ObjectHeader title="Door" >
+                <attributes>
+                    <ObjectAttribute text="{healthCheck>/garageDoorSwitchActive}" />
+                </attributes>
+
+                <firstStatus>
+                    <ObjectStatus text="show door state here" />
+                </firstStatus>
+            </ObjectHeader>
+
+            <VBox alignItems="Center" >
+
+                <Button
+                    press="switchDoor"
+                    text="switch door"/>
+
+                <html:br />
+                
+<!--                 <html:video -->
+<!--                     controls="" -->
+<!--                     height="240" -->
+<!--                     width="320" > -->
+
+<!--                     <html:source src="http://192.168.1.20:8085/?action=stream" > -->
+<!--                     </html:source> -->
+<!--                 </html:video> -->
+                    <html:img height="240" src="http://192.168.1.20:8085/?action=stream" >
+                    </html:img>
+            </VBox>
+        </content>
+    </Page>
+
+</mvc:View>

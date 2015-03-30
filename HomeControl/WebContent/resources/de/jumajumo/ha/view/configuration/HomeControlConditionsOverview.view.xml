@@ -1,0 +1,30 @@
+<mvc:View controllerName="de.jumajumo.ha.view.configuration.HomeControlConditionsOverview"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<Page title="conditions" showNavButton="true" navButtonPress="goBack">
+		<content>
+			<Table id="conditionsOverview" inset="false"
+				items="{configuration>/conditions}">
+				<columns>
+					<Column>
+						<Text text="Name" />
+					</Column>
+					<Column width="12em">
+						<Text text="UUID" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier title="{configuration>name}" text="{configuration>beanName}"
+								class="sapMTableContentMargin" />
+							<Text text="{configuration>uuid}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</Page>
+
+</mvc:View>

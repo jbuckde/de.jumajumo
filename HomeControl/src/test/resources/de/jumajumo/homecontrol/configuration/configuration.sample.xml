@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jj:configuration xmlns:jj="http://www.jumajumo.de/homecontrol/configuration">
+    <jj:actionChains>
+        <jj:actionChain uuid="5f8b9c31-833f-4de5-8c24-d57435763156" name="OpenGarageDoor">
+            <jj:triggerRefs>
+                <jj:triggerRef uuid="7a05244d-1886-49d0-8e52-eb5c167ab282" name="trigger for user request">
+                    <jj:triggerUuid>573e766f-409c-485e-8114-df9bf982363e</jj:triggerUuid>
+                </jj:triggerRef>
+            </jj:triggerRefs>
+            <jj:actionRefs>
+                <jj:actionRef uuid="6f76685b-16fe-47ab-9589-b2e0470439be" name="OpenGarageDoorAction">
+                    <jj:actionUuid>c57cf1df-2c95-4ecc-a1d0-8097be284843</jj:actionUuid>
+                    <jj:conditionRefs>
+                        <jj:conditionRef uuid="efbcf90b-3b82-4a05-ad26-bbfbb60ce5b8" name="false condition">
+                            <jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f</jj:conditionUuid>
+                        </jj:conditionRef>
+                    </jj:conditionRefs>
+                </jj:actionRef>
+            </jj:actionRefs>
+        </jj:actionChain>
+    </jj:actionChains>
+    <jj:devices>
+        <jj:device uuid="5920a5fe-8c30-41ba-ab72-76f2481c10b0" name="GarageDevice">
+            <jj:protocol>http</jj:protocol>
+            <jj:hostName>192.168.1.81</jj:hostName>
+            <jj:actors>
+                <jj:actor uuid="4661402f-4618-4309-a43d-9786eeafd099" name="GaragDeviceOpenDoorActor">
+                    <jj:requestInfo>
+                        <jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+                        <jj:path>/cgi-bin/tasterRelais1.sh</jj:path>
+                    </jj:requestInfo>
+                </jj:actor>
+            </jj:actors>
+        </jj:device>
+    </jj:devices>
+    <jj:triggers>
+        <jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jj:triggerByRestCall" uuid="573e766f-409c-485e-8114-df9bf982363e" name="trigger for a request to open the garage door">
+            <jj:requestInfo>
+                <jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+                <jj:path>opengaragedoor</jj:path>
+            </jj:requestInfo>
+        </jj:trigger>
+    </jj:triggers>
+    <jj:conditions>
+        <jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46f" name="false condition">
+            <jj:beanName>conditionIsFalse</jj:beanName>
+        </jj:condition>
+    </jj:conditions>
+    <jj:actions>
+        <jj:action uuid="c57cf1df-2c95-4ecc-a1d0-8097be284843" name="GarageDoorOpenAction">
+            <jj:actorUuids>
+                <jj:actorUuid>4661402f-4618-4309-a43d-9786eeafd099</jj:actorUuid>
+            </jj:actorUuids>
+        </jj:action>
+    </jj:actions>
+</jj:configuration>

@@ -1,0 +1,6 @@
+[
+{"name":"Tennistraining", "date":"2014-10-17T13:34:00.000Z"},
+{"name":"Elternabend", "date":"2014-09-25T16:30:00.000Z"},
+{"name":"Julia Schulfest", "date":"2014-09-06T13:34:00.000Z"},
+{"name":"Feierabend", "date":"2014-09-05T13:34:00.000Z"}
+]

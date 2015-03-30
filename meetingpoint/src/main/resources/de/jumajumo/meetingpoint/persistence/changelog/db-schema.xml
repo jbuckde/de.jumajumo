@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="jb" id="sequence">
+		<createSequence sequenceName="NODE_SEQ" incrementBy="100"
+			startValue="100" />
+	</changeSet>
+
+
+	<changeSet author="jb" id="tables">
+
+		<createTable tableName="USERPROFILE">
+			<!-- object header -->
+			<column name="ID" type="${type.bigint}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="PK_USERPROFILE" />
+			</column>
+			<column name="VERSION" type="${type.bigint}" />
+			<column name="UUID" type="${type.uuid}">
+				<constraints nullable="false" unique="true" />
+			</column>
+
+			<column name="LOGIN_NAME" type="${type.char.255}" />
+			<column name="USER_NAME" type="${type.char.255}" />
+			<column name="DISPLAY_NAME" type="${type.char.255}" />
+			<column name="IMAGE_URL" type="${type.char.1024}" />
+			<column name="PROFILE_URL" type="${type.char.1024}" />
+			<column name="PROVIDER" type="${type.char.255}" />
+			<column name="PROVIDER_USER_ID" type="${type.char.1024}" />
+
+		</createTable>
+
+		<createTable tableName="MEETING_POINT">
+			<!-- object header -->
+			<column name="ID" type="${type.bigint}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="PK_MEETING" />
+			</column>
+			<column name="VERSION" type="${type.bigint}" />
+			<column name="UUID" type="${type.uuid}">
+				<constraints nullable="false" unique="true" />
+			</column>
+
+			<column name="NAME" type="${type.char.255}" />
+			<column name="MEETING_DATE" type="${type.timestamp}" />
+			<column name="ADDRESS" type="${type.char.1024}" />
+			<column name="INITIATOR_ID" type="${type.bigint}" />
+		</createTable>
+
+		<createTable tableName="MEETINGPOINT_PARTICIPANTS">
+			<column name="MEETING_ID" type="${type.bigint}" />
+			<column name="PARTICIPANT_ID" type="${type.bigint}" />
+		</createTable>
+		
+		<createTable tableName="MEETINGPOINT_PARTICIPANT">
+			<column name="ID" type="${type.bigint}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="PK_MEETING_PARTICIPANT" />
+			</column>
+			<column name="VERSION" type="${type.bigint}" />
+			<column name="UUID" type="${type.uuid}">
+				<constraints nullable="false" unique="true" />
+			</column>
+			
+			<column name="USERPROFILE_ID" type="${type.bigint}" />
+			<column name="LAST_FEED_MESSAGE" type="${type.char.255}" />
+			<column name="GEO_POSITION" type="${type.char.255}" />
+			<column name="POSITION_UPDATED" type="${type.timestamp}" />
+			
+		</createTable>
+		
+		<createTable tableName="MEETINGPOINT_FEEDS">
+			<column name="MEETING_ID" type="${type.bigint}" />
+			<column name="FEED_ID" type="${type.bigint}" />
+		</createTable>
+
+		<createTable tableName="MEETINGPOINT_FEED">
+			<column name="ID" type="${type.bigint}">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="PK_MEETING_FEED" />
+			</column>
+			<column name="VERSION" type="${type.bigint}" />
+			<column name="UUID" type="${type.uuid}">
+				<constraints nullable="false" unique="true" />
+			</column>
+
+			<column name="POSTED_AT" type="${type.timestamp}" />
+			<column name="POSTED_FROM_ID" type="${type.bigint}" />
+			<column name="FEED_MESSAGE" type="${type.char.255}" />
+		</createTable>
+
+	</changeSet>
+</databaseChangeLog>

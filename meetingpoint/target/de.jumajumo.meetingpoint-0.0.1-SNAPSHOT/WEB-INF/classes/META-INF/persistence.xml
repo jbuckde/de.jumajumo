@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0">
+	<persistence-unit name="de.jumajumo.meetingpoint" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>de.jumajumo.core.persistence.AbstractEntityObject</class>
+		<class>de.jumajumo.meetingpoint.persistence.MeetingPoint</class>
+		<class>de.jumajumo.meetingpoint.persistence.UserProfile</class>
+		<class>de.jumajumo.meetingpoint.persistence.Location</class>
+		<class>de.jumajumo.meetingpoint.persistence.MeetingPointFeed</class>
+		<class>de.jumajumo.meetingpoint.persistence.MeetingPointParticipant</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		<properties>
+			<!-- EclipseLink specific properties -->
+			<property name="eclipselink.weaving" value="dynamic" />
+			<property name="eclipselink.logging.level" value="SEVERE" />
+			<property name="showSql" value="false" />
+
+			<property name="eclipselink.logging.timestamp" value="false" />
+			<property name="eclipselink.logging.thread" value="false" />
+			<property name="eclipselink.logging.exceptions" value="true" />
+			<property name="eclipselink.orm.throw.exceptions" value="true" />
+			<property name="eclipselink.ddl-generation" value="none" />
+			<property name="eclipselink.jpa.uppercase-column-names" value="true" />
+
+			<property name="eclipselink.jdbc.batch-writing" value="JDBC" />
+			<property name="eclipselink.jdbc.batch-writing.size" value="1000" />
+
+			<property name="eclipselink.jdbc.cache-statements" value="true" />
+			<property name="eclipselink.jdbc.cache-statements.size" value="1000" />
+
+			<property name="eclipselink.cache.shared.default" value="false" />
+		</properties>
+
+	</persistence-unit>
+</persistence>

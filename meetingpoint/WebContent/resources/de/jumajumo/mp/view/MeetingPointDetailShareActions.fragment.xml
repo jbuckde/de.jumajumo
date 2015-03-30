@@ -1,0 +1,34 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core" xmlns:share="jumajumo.core.controls.share" xmlns:html="http://www.w3.org/1999/xhtml">
+
+
+	<Popover showHeader="false" contentWidth="320px" contentHeight="500px"
+		placement="Bottom">
+
+		<share:EMail
+			url="{path:'uuid', formatter:'jumajumo.mp.util.Formatter.formatStableUrl'}"
+			messageText="Einladung:" />
+		<html:br />
+		<html:br />
+
+		<share:GooglePlus
+			url="{path:'uuid', formatter:'jumajumo.mp.util.Formatter.formatStableUrl'}"
+			messageText="Einladung:" />
+		<html:br />
+		<html:br />
+
+		<share:Twitter
+			url="{path:'uuid', formatter:'jumajumo.mp.util.Formatter.formatStableUrl'}"
+			messageText="Einladung:" />
+		<html:br />
+		<html:br />
+
+		<Text text="Copy URL for sharing:" />
+		<html:br />
+		<share:UrlForCopy
+			url="{path:'uuid', formatter:'jumajumo.mp.util.Formatter.formatStableUrl'}"
+			messageText="Einladung:" />
+		<html:br />
+	</Popover>
+
+</core:FragmentDefinition>

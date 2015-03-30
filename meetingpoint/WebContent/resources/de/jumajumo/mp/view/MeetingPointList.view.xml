@@ -1,0 +1,68 @@
+<mvc:View controllerName="de.jumajumo.mp.view.MeetingPointList"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+
+	<Page showHeader="false">
+		<!-- <headerContent> -->
+		<!-- </headerContent> -->
+		<footer>
+			<Toolbar>
+				<Button icon="sap-icon://add" press="addMeetingpoint"></Button>
+				<Button icon="sap-icon://refresh" press="loadData"></Button>
+<!-- 				<Button icon="resources/icons/add/add_icon_96.png" press="addMeetingpoint"></Button> -->
+<!-- 				<Button icon="resources/icons/refresh/refresh_icon_96.png" -->
+<!-- 					press="loadData"></Button> -->
+			</Toolbar>
+		</footer>
+
+		<content>
+			<html:div style="position:absolute; z-index:-1; opacity:0.2">
+				<Image height="12rem" src="resources/images/startscreen.png" class="mpPaddingLeft4rem"/>
+<!-- 				<Image height="12rem" src="resources\icons\mp\mp_icon_96.png" class="mpPaddingLeft4rem"/> -->
+<!-- 				<Image height="12rem" src="https://lh5.googleusercontent.com/-fB22C2kwC3E/VErNQtSUqvI/AAAAAAAARuw/zCmSKPH7W78/s931-fcrop64=1,00001fffffffdfff/IMG_20140823_144855.jpg" /> -->
+			</html:div>
+			<html:div class="mpPadding20" style="background-color: transparent">
+				<Image
+					src="{path:'usercontext>/imageUrl', formatter:'jumajumo.core.util.ImageFormatter.formatUserProfileUrl'}"
+					class="mpProfileImage" width="32px" />
+				<ObjectIdentifier title="Treffpunkte" text="{usercontext>/displayName}"
+					class="mpPadding20" />
+			</html:div>
+
+			<List mode="{device>/listMode}"
+				items="{
+					path : '/',
+					sorter : {
+						path : 'date',
+						descending : false
+					}
+				}" class="mpObjectList">
+				<items>
+					<ObjectListItem title="{name}" type="{device>/listItemType}"
+						icon="{initiatorImageUrl}"
+						number="{path:'date', formatter:'jumajumo.core.util.DateFormatter.distanceFromNowValue'}"
+						numberUnit="{path:'date', formatter:'jumajumo.core.util.DateFormatter.distanceFromNowUnit'}"
+						numberState="{path:'date', formatter:'jumajumo.core.util.DateFormatter.distanceToState'}"
+						press="doSelectMeeting" detailPress="doSelectMeeting"
+						iconDensityAware="false">
+						<attributes>
+							<ObjectAttribute text="{address}" />
+<!-- 							<ObjectAttribute -->
+<!-- 								text="{path:'date', formatter:'jumajumo.core.util.DateFormatter.formatDateTime'}" /> -->
+<!-- 							<ObjectAttribute text="{initiatorName}" /> -->
+						</attributes>
+<!-- 						<firstStatus> -->
+<!-- 							<ObjectStatus text="{location/distance/text}" /> -->
+<!-- 							<ObjectStatus text="von mir organisiert" state="None" /> -->
+<!-- 						</firstStatus> -->
+<!-- 						<secondStatus> -->
+<!-- 							<ObjectStatus text="{location/duration/text}" /> -->
+<!-- 						</secondStatus> -->
+					</ObjectListItem>
+
+				</items>
+			</List>
+		</content>
+	</Page>
+
+</mvc:View>

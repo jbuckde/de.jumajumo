@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- Portable database type definitions -->
+	<property name="type.bigint" value="FIXED(19,0)" dbms="maxdb" />
+	<property name="type.bigint" value="BIGINT" dbms="common,derby" />
+
+	<property name="type.uuid" value="VARCHAR(36)" dbms="common,derby,maxdb" />
+	
+	<property name="type.timestamp" value="TIMESTAMP" dbms="common,derby,maxdb" />
+	
+	<property name="type.char.255" value="VARCHAR(255)" dbms="common,derby,maxdb" />
+	<property name="type.char.1024" value="VARCHAR(1024)" dbms="common,derby,maxdb" />
+</databaseChangeLog>
+

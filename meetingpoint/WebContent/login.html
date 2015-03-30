@@ -1,0 +1,29 @@
+<html>
+<body background="resources/images/startscreen.png"
+	style="background-size: 70%; background-repeat: no-repeat; background-position-y: center;">
+
+	<div id="login-header"
+		style="position: absolute; left: 15%; top: 5%; font-family: cursive; font-size: xx-large; color: gray;">
+		<span>Treffpunkte</span>
+	</div>
+
+	<div id="login-section"
+		style="position: absolute; left: 50%; top: 15%; padding: 20px;">
+		<form class="login" action="/dispatcher/signin/google"
+			method="POST">
+			<input type="hidden" name="scope" value="profile" />
+			<p>
+				<input type="image" src="/resources/images/sign-in-with-google.png" onclick="javascript:submit()" height="40px" style="cursor: pointer" value="submit"/>
+<!-- 				<img src="/mp/resources/images/sign-in-with-google.png" onclick="javascript:submit()" height="40px" style="cursor: pointer"/> -->
+<!-- 				<input type="submit" value="Login with Google" /> -->
+			</p>
+		</form>
+<!-- 		<form class="login" action="/mp/dispatcher/signin/facebook" -->
+<!-- 			method="POST"> -->
+<!-- 			<p> -->
+<!-- 				<input type="submit" value="Login with Facebook" /> -->
+<!-- 			</p> -->
+<!-- 		</form> -->
+	</div>
+</body>
+</html>

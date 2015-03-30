@@ -1,0 +1,82 @@
+<mvc:View controllerName="de.jumajumo.mp.view.MeetingPointDetail"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:map="jumajumo.core.controls.map"
+	xmlns:share="jumajumo.core.controls.share">
+
+
+
+	<Page
+		title="Treffpunkt">
+		<headerContent>
+			<Button icon="sap-icon://share" press="openShareActionSheet" />
+			<Button icon="sap-icon://edit" press="editMeetingpoint" />
+			<Button icon="sap-icon://log" press="logout" />
+		</headerContent>
+
+		<ObjectHeader title="{name}" type="{device>/listItemType}"
+			icon="resources/icons/mp/mp_icon_96.png"
+			number="{path:'date', formatter:'jumajumo.core.util.DateFormatter.distanceFromNowValue'}"
+			numberUnit="{path:'date', formatter:'jumajumo.core.util.DateFormatter.distanceFromNowUnit'}"
+			numberState="{path:'date', formatter:'jumajumo.core.util.DateFormatter.distanceToState'}"
+			press="doSelectMeeting" detailPress="doSelectMeeting"
+			iconDensityAware="false">
+			<attributes>
+				<ObjectAttribute text="{address}" />
+				<ObjectAttribute text="{path: 'initiatorName', formatter: 'jumajumo.mp.util.MeetingPointFormatter.initiatorLabeld'}" />
+				<ObjectAttribute
+					text="{path:'date', formatter:'jumajumo.core.util.DateFormatter.formatDateTime'}"
+					state="None" />
+			</attributes>
+			<firstStatus>
+				<ObjectStatus text="{path:'location/distance/text'}" />
+			</firstStatus>
+			<secondStatus>
+				<ObjectStatus text="{path:'location/duration/text'}" />
+			</secondStatus>
+		</ObjectHeader>
+
+		<IconTabBar select="onDetailSelect" id="idIconTabBar">
+			<items>
+				<IconTabFilter key="participants" text="Teilnehmer"
+					icon="sap-icon://group">
+					<content>
+						<List mode="{device>/listMode}" items="{path : 'participants'}"	class="mpParticipantList">
+							<items>
+								<StandardListItem title="{path:'displayName'}" description="{lastFeedMessage}" info="{location/distance/text}" infoState="Success"
+									icon="{path:'imageUrl', formatter:'jumajumo.core.util.ImageFormatter.formatUserProfileUrl'}">
+								</StandardListItem>
+							</items>
+						</List>
+					</content>
+				</IconTabFilter>
+				<IconTabFilter key="stream" text="Nachrichten"	icon="sap-icon://discussion">
+					<FeedInput post="postMessage" showIcon="false" placeholde="Nachricht senden"
+						class="sapUiExploredFeedMargin"/>
+					<List showSeparators="Inner" items="{feeds}" class="mpFeedList">
+						<FeedListItem sender="{postedFrom}" senderPress="pressFeedSender"
+							iconPress="pressFeedIcon" iconDensityAware="false" info="info"
+							icon="{path:'postedFromImageUrl', formatter:'jumajumo.core.util.ImageFormatter.formatUserProfileUrl'}"
+							timestamp="{path:'postedAt', formatter:'jumajumo.core.util.DateFormatter.formatDateTime'}"
+							text="{feedMessage}" class="mpImage" />
+					</List>
+				</IconTabFilter>
+				<IconTabFilter key="map" text="Karte" icon="sap-icon://map">
+					<content>
+						<map:GoogleMap sourceAddress="{currentAddress}" targetAddress="{address}" />
+					</content>
+				</IconTabFilter>
+			</items>
+		</IconTabBar>
+		<!-- sourceAddress="Bad Schussenried" -->
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+<!-- 		        <Switch state="true" customTextOn="Autotrack" customTextOff="No Tracking"> -->
+<!-- 		        </Switch>			 -->
+				<Button text="track position" press="trackPosition" />
+				<CheckBox text="Autotrack" value="true"/>
+			</Toolbar>
+		</footer>
+	</Page>
+
+</mvc:View>

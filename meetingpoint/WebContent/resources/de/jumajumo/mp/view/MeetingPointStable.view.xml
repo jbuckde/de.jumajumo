@@ -1,0 +1,10 @@
+<mvc:View controllerName="de.jumajumo.mp.view.MeetingPointStable"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:map="jumajumo.core.controls.map"
+	xmlns:share="jumajumo.core.controls.share">
+
+	<Page title="Stable Link">
+		<Text text="stable"></Text>
+	</Page>
+
+</mvc:View>

@@ -1,0 +1,50 @@
+@CHARSET "ISO-8859-1";
+
+.mpPadding20 {
+	padding: 20px;
+}
+
+.mpPaddingLeft4rem {
+	padding-left: 4rem;
+}
+
+
+.mpImage {
+	background-color: cadetblue;
+}
+
+.mpImage .sapMImg {
+	background-color: cadetblue;
+}
+
+.mpProfileImage {
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+}
+
+.sapMBarRight {
+	display: list-item;
+}
+
+.mpObjectList .sapMObjLIcon  {
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+}
+
+.sapMFeedListItemFigure a img {
+	border: 0rem;
+	border-radius: 50%;
+	height: 32px;
+	width: 32px;
+}
+
+.mpFeedList .sapMFeedListItem figure {
+	height: 2rem;
+}
+
+.mpParticipantList .sapMImg {
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+	height: 32px;
+	width: 32px;
+}

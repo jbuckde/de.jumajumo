@@ -1,0 +1,36 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:commons="sap.ui.commons">
+  <l:Grid defaultSpan="L12 M12 S12" width="auto">
+    <l:content>
+      <f:Form minWidth="1024" maxContainerCols="2" editable="true">
+        <f:title>
+          <core:Title text="Treffpunkt" />
+        </f:title>
+        <f:layout>
+          <f:ResponsiveGridLayout labelSpanL="3" labelSpanM="3" emptySpanL="4" emptySpanM="4" columnsL="1" columnsM="1" />
+        </f:layout>
+        <f:formContainers>
+          <f:FormContainer>
+            <f:formElements>
+              <f:FormElement label="Name">
+                <f:fields>
+                  <Input value="{name}" />
+                </f:fields>
+              </f:FormElement>
+              <f:FormElement label="Adresse">
+                <f:fields>
+                  <Input value="{address}" />
+                </f:fields>
+              </f:FormElement>
+              <f:FormElement label="Datum und Uhrzeit">
+                <f:fields>
+<!--                   <DatePicker value="{date}" valueFormat="yyyyMMdd" displayFormat="long"/> -->
+                  <DateTimeInput type="DateTime" value="{date}" valueFormat="yyyyMMddkkmm"/>
+                </f:fields>
+              </f:FormElement>
+            </f:formElements>
+          </f:FormContainer>
+        </f:formContainers>
+      </f:Form>
+    </l:content>
+  </l:Grid>
+</core:FragmentDefinition>

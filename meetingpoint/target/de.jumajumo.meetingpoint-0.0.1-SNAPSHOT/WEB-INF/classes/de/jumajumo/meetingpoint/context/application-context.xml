@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans    
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+	<context:component-scan base-package="de.jumajumo.*" />
+	<mvc:annotation-driven />
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- <bean id="dataSource" -->
+	<!-- class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+	<!-- <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" 
+		/> -->
+	<!-- <property name="url" value="jdbc:derby:memory:DemoDB;create=true" /> -->
+	<!-- <property name="username" value="demo" /> -->
+	<!-- <property name="password" value="demo" /> -->
+	<!-- </bean> -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.sap.dbtech.jdbc.DriverSapDB" />
+		<property name="url" value="jdbc:sapdb:maxdb" />
+		<property name="username" value="MP" />
+		<property name="password" value="MP" />
+	</bean>
+
+	<!-- create/update the database (before JPA runs) -->
+	<bean id="databaseUpdater" class="liquibase.integration.spring.SpringLiquibase"
+		depends-on="dataSource">
+		<property name="dataSource" ref="dataSource" />
+		<property name="dropFirst" value="false" />
+		<property name="changeLog"
+			value="classpath:de/jumajumo/meetingpoint/persistence/changelog/db-changelog.xml" />
+	</bean>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="javax.persistence.nonJtaDataSource">
+					<ref bean="dataSource" />
+				</entry>
+			</map>
+		</property>
+		<property name="persistenceUnitName" value="de.jumajumo.meetingpoint" />
+		<property name="jpaVendorAdapter">
+			<bean
+				class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
+				<property name="showSql" value="false" />
+				<property name="generateDdl" value="false" />
+
+				<property name="databasePlatform"
+					value="org.eclipse.persistence.platform.database.MaxDBPlatform" />
+
+			</bean>
+		</property>
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+</beans>

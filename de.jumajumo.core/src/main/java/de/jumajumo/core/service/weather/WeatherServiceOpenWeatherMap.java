@@ -65,7 +65,7 @@ public class WeatherServiceOpenWeatherMap implements WeatherService
 	protected CurrentWeather loadFromService(final String location)
 			throws RestClientException
 	{
-		final List<HttpMessageConverter<?>> converters = new ArrayList<>();
+		final List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
 		converters.add(new OpenWeatherMapMessageConverter());
 
 		final RestTemplate restTemplate = new RestTemplate(converters);

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import de.jumajumo.homecontrol.configuration.ConfigurationContextHolder;
 import de.jumajumo.homecontrol.configuration.server.Condition;
 import de.jumajumo.homecontrol.service.condition.ConditionChecker;
+import de.jumajumo.homecontrol.service.condition.ConditionPropertyAware;
 
 @Service
 public class ConditionServiceImpl implements ConditionService
@@ -45,17 +46,22 @@ public class ConditionServiceImpl implements ConditionService
 	public boolean isConditionSatisfied(Condition condition)
 	{
 		String conditionBeanName = condition.getBeanName();
-
 		ConditionChecker conditionBean = (ConditionChecker) appContext
 				.getBean(conditionBeanName);
 
+		if (conditionBean instanceof ConditionPropertyAware)
+		{
+			((ConditionPropertyAware) conditionBean).setProperties(condition
+					.getProperties());
+		}
+
 		if (null != conditionBean)
 		{
+
 			return conditionBean.checkCondition();
 		} else
 		{
 			return false;
 		}
 	}
-
 }

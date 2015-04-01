@@ -45,6 +45,22 @@
         <jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46f" name="false condition">
             <jj:beanName>conditionIsFalse</jj:beanName>
         </jj:condition>
+        <jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46e" name="false with script">
+            <jj:beanName>conditionScript</jj:beanName>
+            <jj:properties>
+            	<jj:property>
+            		<jj:key>script</jj:key>
+            		<jj:value>
+            			<![CDATA[
+            			function checkCondition() 
+            			{ 
+            				return false; 
+            			}
+            			]]>
+            		</jj:value>
+            	</jj:property>
+            </jj:properties>
+        </jj:condition>
     </jj:conditions>
     <jj:actions>
         <jj:action uuid="c57cf1df-2c95-4ecc-a1d0-8097be284843" name="GarageDoorOpenAction">

@@ -1,6 +1,13 @@
 package de.jumajumo.homecontrol.configuration.server;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import de.jumajumo.homecontrol.configuration.AbstractConfigurationObject;
+import de.jumajumo.homecontrol.configuration.property.Property;
 
 /**
  * The Class Condition carries information on a condition that can be used in
@@ -10,6 +17,10 @@ import de.jumajumo.homecontrol.configuration.AbstractConfigurationObject;
 public class Condition extends AbstractConfigurationObject
 {
 	private String beanName;
+
+	@XmlElementWrapper(name = "properties")
+	@XmlElement(name = "property")
+	private List<Property> properties;
 
 	@Override
 	public int hashCode()
@@ -48,5 +59,20 @@ public class Condition extends AbstractConfigurationObject
 	public void setBeanName(String beanName)
 	{
 		this.beanName = beanName;
+	}
+
+	public List<Property> getProperties()
+	{
+		if (null == this.properties)
+		{
+			this.properties = new ArrayList<Property>();
+		}
+
+		return properties;
+	}
+
+	public void setProperties(List<Property> properties)
+	{
+		this.properties = properties;
 	}
 }

@@ -23,10 +23,10 @@
                 <jj:actionRef uuid="6f76685b-16fe-47ab-9589-b2e0470439be" name="OpenGarageDoor">
                     <jj:actionUuid>c57cf1df-2c95-4ecc-a1d0-8097be284843</jj:actionUuid>
                     <jj:conditionRefs>
-                        <jj:conditionRef uuid="efbcf90b-3b82-4a05-ad26-bbfbb60ce5b8" name="DoNotExecute">
-                            <jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f</jj:conditionUuid>
+                        <jj:conditionRef uuid="efbcf90b-3b82-4a05-ad26-bbfbb60ce5b9" name="true condition">
+                            <jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46e</jj:conditionUuid>
                         </jj:conditionRef>
-                        <jj:conditionRef uuid="efbcf90b-3b82-4a05-ad26-bbfbb60ce5b9" name="condition #2">
+                        <jj:conditionRef uuid="efbcf90b-3b82-4a05-ad26-bbfbb60ce5b8" name="DoNotExecute">
                             <jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f</jj:conditionUuid>
                         </jj:conditionRef>
                     </jj:conditionRefs>
@@ -69,8 +69,37 @@
         </jj:trigger>
     </jj:triggers>
     <jj:conditions>
+    	<jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46e" name="TrueCondition">
+            <jj:beanName>conditionScript</jj:beanName>
+            <jj:properties>
+            	<jj:property>
+            		<jj:key>script</jj:key>
+            		<jj:value>
+            			<![CDATA[
+            			function checkCondition() 
+            			{ 
+            				return true; 
+            			}
+            			]]>
+            		</jj:value>
+            	</jj:property>
+            </jj:properties>
+        </jj:condition>
         <jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46f" name="FalseCondition">
-            <jj:beanName>conditionIsFalse</jj:beanName>
+            <jj:beanName>conditionScript</jj:beanName>
+            <jj:properties>
+            	<jj:property>
+            		<jj:key>script</jj:key>
+            		<jj:value>
+            			<![CDATA[
+            			function checkCondition() 
+            			{ 
+            				return false; 
+            			}
+            			]]>
+            		</jj:value>
+            	</jj:property>
+            </jj:properties>
         </jj:condition>
         <jj:condition uuid="4ebd0e67-03f3-4c14-88e9-e2af50c0ae9c" name="IsItDarkCondition">
             <jj:beanName>conditionIsItDark</jj:beanName>

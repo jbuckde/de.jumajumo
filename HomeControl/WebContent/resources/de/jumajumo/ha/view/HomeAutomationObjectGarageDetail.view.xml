@@ -2,16 +2,17 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:html="http://www.w3.org/1999/xhtml"
     controllerName="de.jumajumo.ha.view.HomeAutomationObjectGarageDetail"
-    xmlns="sap.m" >
+    xmlns="sap.m" resourceBundleUrl="resources/de/jumajumo/ha/view/garage.properties"
+	resourceBundleAlias="ui">
 
     <Page
         showNavButton="{device>/isPhone}"
-        title="Garage" 
+        title="{ui>page.title}" 
         navButtonPress="goBack">
 
         <content>
 
-            <ObjectHeader title="Door" >
+            <ObjectHeader title="{ui>objectheader.title}" >
                 <attributes>
                     <ObjectAttribute text="{healthCheck>/garageDoorSwitchActive}" />
                 </attributes>
@@ -22,7 +23,7 @@
 
                 <Button
                     press="switchDoor"
-                    text="switch door"/>
+                    text="{ui>button.switchDoor}"/>
 
                 <html:br />
                     <html:img width="99%" src="http://192.168.1.20:8085/?action=stream" >

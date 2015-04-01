@@ -1,18 +1,17 @@
 <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
 	xmlns:html="http://www.w3.org/1999/xhtml" controllerName="de.jumajumo.ha.view.HomeAutomationObjectCameraDetail"
-	xmlns="sap.m">
+	xmlns="sap.m" resourceBundleUrl="resources/de/jumajumo/ha/view/camera.properties"
+	resourceBundleAlias="ui">
 
-	<Page showNavButton="{device>/isPhone}" title="Cameras"
+	<Page showNavButton="{device>/isPhone}" title="{ui>page.title}"
 		navButtonPress="goBack">
-		<ObjectHeader title="Cameras">
-		</ObjectHeader>
 
 		<IconTabBar class="iconTabBarPaddingTop" expanded="{device>/isNoPhone}">
 			<items>
-				<IconTabFilter text="door" icon="sap-icon://video">
+				<IconTabFilter text="{ui>tab.door}" icon="sap-icon://video">
 					<html:img class="imgborder" src="http://www.wetterwarte-sued.com/webcam/stadt/stadt.jpg" alt="" width="99%" border="0"/>
 				</IconTabFilter>
-				<IconTabFilter text="garage" icon="sap-icon://video">
+				<IconTabFilter text="{ui>tab.garage}" icon="sap-icon://video">
 					<html:img src="http://webcam.allianz-arena.de/aa-cam-01/full_2.jpg?1427924232" width="99%" border="0" />
 				</IconTabFilter>
 			</items>

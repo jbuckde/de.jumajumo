@@ -16,9 +16,6 @@
                     <ObjectAttribute text="{healthCheck>/garageDoorSwitchActive}" />
                 </attributes>
 
-                <firstStatus>
-                    <ObjectStatus text="show door state here" />
-                </firstStatus>
             </ObjectHeader>
 
             <VBox alignItems="Center" >
@@ -28,16 +25,7 @@
                     text="switch door"/>
 
                 <html:br />
-                
-<!--                 <html:video -->
-<!--                     controls="" -->
-<!--                     height="240" -->
-<!--                     width="320" > -->
-
-<!--                     <html:source src="http://192.168.1.20:8085/?action=stream" > -->
-<!--                     </html:source> -->
-<!--                 </html:video> -->
-                    <html:img height="240" src="http://192.168.1.20:8085/?action=stream" >
+                    <html:img width="99%" src="http://192.168.1.20:8085/?action=stream" >
                     </html:img>
             </VBox>
         </content>

@@ -36,6 +36,14 @@ sap.ui.core.UIComponent.extend("jumajumo.ha.Component",
 					targetAggregation : "detailPages"
 				},
 				{
+					pattern : "homeAutomationObject/camera",
+					name : "homeAutomationObjectCamera",
+					view : "HomeAutomationObjectCameraDetail",
+					viewPath : "jumajumo.ha.view",
+					viewLevel : 2,
+					targetAggregation : "detailPages"
+				},
+				{
 					pattern : "homeControlConfiguration",
 					name : "homeControlConfiguration",
 					view : "HomeControlConfiguration",

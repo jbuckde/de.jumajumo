@@ -10,7 +10,7 @@
 						icon="sap-icon://car-rental" iconDensityAware="true" press="navToGarage">
 					</ObjectListItem>
 					<ObjectListItem title="Camera" type="{device>/listItemType}"
-						icon="sap-icon://video" iconDensityAware="true">
+						icon="sap-icon://video" iconDensityAware="true" press="navToCamera">
 					</ObjectListItem>
 					<ObjectListItem title="Lightning" type="{device>/listItemType}"
 						icon="sap-icon://lightbulb" iconDensityAware="true">

@@ -209,6 +209,7 @@
     "sapUiUx3ShellHoverColor": "#000000",
     "sapUiUx3ShellSideBarBaseWidth": "40px",
     "sapUiUx3ShellPaneOverflowButtonHeight": "120px",
+    "sapUiUx3ShellToolPaletteIconFontColor": "#8899aa",
     "sapUiUx3ExactLstExpandOffset": "0 0",
     "sapUiUx3ExactLstRootExpandOffset": "0 3",
     "sapUiUx3ExactLstCollapseWidth": "24px",
@@ -264,10 +265,12 @@
     "sapUiPositiveBG": "#b5e7a8",
     "sapUiShadowTint": "#000000",
     "sapUiShadow": "5px 5px 10px rgba(0, 0, 0, 0.5)",
+    "sapUiThemeDesignerCustomCss": "false",
+    "sapUiMarginTiny": "0.5rem",
+    "sapUiMarginSmall": "1rem",
+    "sapUiMarginMedium": "2rem",
+    "sapUiMarginLarge": "3rem",
     "sapUiFormTitleSize": "H3",
     "sapUiFormSubTitleSize": "H4",
-    "sapUiRFLPadding": "3px",
-    "sap.ui.layout.FormLayout:sapUiFormSubTitleSize": "H4",
-    "sap.ui.layout.FormLayout:sapUiFormTitleSize": "H3",
-    "sap.ui.layout.ResponsiveFlowLayout:sapUiRFLPadding": "3px"
+    "sapUiRFLPadding": "3px"
 }

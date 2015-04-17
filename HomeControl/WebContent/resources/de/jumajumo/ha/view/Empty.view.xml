@@ -7,6 +7,10 @@
 						icon="sap-icon://car-rental"
 						iconDensityAware="true"
 						press="navToGarage"></StandardTile>
+	        <StandardTile title="Cameras"
+						icon="sap-icon://video"
+						iconDensityAware="true"
+						press="navToCamera"></StandardTile>
 	        <StandardTile title="Configuration"
 						icon="sap-icon://settings"
 						iconDensityAware="true"

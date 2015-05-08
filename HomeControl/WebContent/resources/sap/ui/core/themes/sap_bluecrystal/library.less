@@ -124,7 +124,6 @@ html.sap-tablet input, html.sap-tablet textarea, html.sap-tablet [contenteditabl
 }
 
 
-
 /* Calculate the Background Variants */
 
 .sapGlobalBackgroundVariantMixin() when (@sapUiGlobalBackgroundVariant = 1) {
@@ -678,6 +677,38 @@ html[data-sap-ui-browser^=ie] .sapUiBusy {
 
 .sapUiSizeCondensed .sapUiTableCell>.sapUiIcon:last-child {
 	padding-right: 0.5rem;
+}
+
+.sapUiIconColorNeutral {
+	color: @sapUiNeutral;
+}
+
+.sapUiIconColorCritical {
+	color: @sapUiCritical;
+}
+
+.sapUiIconColorPositive {
+	color: @sapUiPositive;
+}
+
+.sapUiIconColorNegative {
+	color: @sapUiNegative;
+}
+
+.sapUiIconBGColorNeutral {
+	background-color: @sapUiNeutral;
+}
+
+.sapUiIconBGColorCritical {
+	background-color: @sapUiCritical;
+}
+
+.sapUiIconBGColorPositive {
+	background-color: @sapUiPositive;
+}
+
+.sapUiIconBGColorNegative {
+	background-color: @sapUiNegative;
 }
 /* END "Icon.less" */
 

@@ -270,6 +270,7 @@
     "sapUiMarginSmall": "1rem",
     "sapUiMarginMedium": "2rem",
     "sapUiMarginLarge": "3rem",
+    "sapUiEscapedEmptyString": "",
     "sapUiTableRowHeight": "28px",
     "sapUiTableColHdrHeight": "28px",
     "sapUiTableRowHdrWidth": "22px",

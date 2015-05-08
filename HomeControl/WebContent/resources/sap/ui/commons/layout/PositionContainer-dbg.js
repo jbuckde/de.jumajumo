@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Eleme
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -399,10 +399,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Eleme
 	 * @private
 	 */
 	var getPropertyInfo = function(oControl, sPropertyName) {
-		var oMetadata = oControl.getMetadata();
-		oMetadata._enrichChildInfos();
-		var oPropertyInfo = oMetadata.getAllProperties()[sPropertyName];
-		if (oPropertyInfo && sap.ui.base.DataType.getType(oPropertyInfo.type) == sap.ui.base.DataType.getType("sap.ui.core.CSSSize")) {
+		var oPropertyInfo = oControl.getMetadata().getProperty(sPropertyName);
+		if (oPropertyInfo && oPropertyInfo.type === 'sap.ui.core.CSSSize') {
 			return oPropertyInfo;
 		}
 		return null;

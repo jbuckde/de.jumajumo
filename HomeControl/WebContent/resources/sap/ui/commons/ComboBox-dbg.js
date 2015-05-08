@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		this._sCloseId = null;
 		this.setAccessibleRole(sap.ui.core.AccessibleRole.Combobox);
 
-		if (sap.ui.Device.browser.mobile) {
+		if (!sap.ui.Device.system.desktop) {
 			this.mobile = true;
 		}
 	};

@@ -22,7 +22,8 @@ sap.ui.define(['jquery.sap.global'],
 	ObjectAttributeRenderer.render = function(oRm, oOA) {
 		// return immediately if control is invisible
 		if (!oOA._isEmpty()) {
-			var oParent = oOA.getParent();
+			var oParent = oOA.getParent(),
+				sTextDir = oOA.getTextDirection();
 			oRm.write("<div");
 			oRm.writeControlData(oOA);
 			oRm.addClass("sapMObjectAttributeDiv");
@@ -36,6 +37,14 @@ sap.ui.define(['jquery.sap.global'],
 			if (sTooltip) {
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
+			
+			// ARIA
+			if (oOA.getActive()) {
+				oRm.writeAccessibilityState(oOA, {
+					role: "link"
+				});
+			}
+
 			oRm.write(">");
 			if (oParent && (oParent instanceof sap.m.ObjectHeader)) {
 				if (oOA.getProperty("title")) {
@@ -54,6 +63,9 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				oRm.write("<span id=\"" + oOA.getId() + "-text\"");
 				oRm.addClass("sapMObjectAttributeText");
+				if (sTextDir && sTextDir !== sap.ui.core.TextDirection.Inherit) {
+					oRm.writeAttribute("dir", sTextDir.toLowerCase());
+				}
 				oRm.writeClasses();
 				oRm.write(">");
 				oRm.writeEscaped(oOA.getProperty("text"));

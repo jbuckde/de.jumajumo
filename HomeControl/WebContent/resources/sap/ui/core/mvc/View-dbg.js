@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * and provides lifecycle events. 
 	 *  
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -90,9 +90,79 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			 * Fired before this View is re-rendered. Use to unbind event handlers from HTML elements etc.
 			 */
 			beforeRendering : {}
-		}
+		},
+		specialSettings : { 
+			
+			/**
+			 * Controller instance to use for this view. 
+			 */
+			controller : true,
+			
+			/**
+			 * Name of the controller class to use for this view. 
+			 * If given, it overrides the same information in the view definition (XML, HTML).
+			 */
+			controllerName : true,
+			
+			/**
+			 * Preprocessors that the view can use before constructing the view. 
+			 * @private
+			 */
+			preprocessors : true,
+			
+			/**
+			 * (module) Name of a resource bundle that should be loaded for this view  
+			 */
+			resourceBundleName : true,
+			
+			/**
+			 * URL of a resource bundle that should be loaded for this view 
+			 */
+			resourceBundleUrl : true,
+			
+			/**
+			 * Locale that should be used to load a resourcebundle for thisview 
+			 */
+			resourceBundleLocale : true,
+			
+			/**
+			 * Model name under which the resource bundle should be stored.
+			 */
+			resourceBundleAlias : true,
+			
+			/**
+			 * Type of the view
+			 */
+			type : true,
+			
+			/**
+			 * A view definition
+			 */ 
+			viewContent : true,
+
+			/**
+			 * Additional configuration data that should be given to the view at construction time 
+			 * and which will be available early, even before model data or other constructor settings are applied.  
+			 */ 
+			viewData : true
+
+		} 
 	}});
 	
+	/**
+	 * preprocess view content
+	 * 
+	 * @private
+	 */
+	View.prototype._preprocessViewContent = function(){
+		if ( View._sContentPreprocessor ){
+			jQuery.sap.require(View._sContentPreprocessor);
+			var ContentPreprocessor = jQuery.sap.getObject(View._sContentPreprocessor);
+			if ( ContentPreprocessor && ContentPreprocessor.process ){
+				ContentPreprocessor.process(this);
+			}
+		}
+	};
 	
 	/**
 	 * initialize the View and connect (create if no instance is given) the Controller
@@ -108,7 +178,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		this.oViewData = mSettings.viewData;
 		// remember the name of this View
 		this.sViewName = mSettings.viewName;
-		
+		// remember the preprocessors
+		this.mPreprocessors = mSettings.preprocessors || {};
+
 		//check if there are custom properties configured for this view, and only if there are, create a settings preprocessor applying these
 		if (sap.ui.core.CustomizingConfiguration && sap.ui.core.CustomizingConfiguration.hasCustomProperties(this.sViewName, this)) {
 			var that = this;
@@ -136,6 +208,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		if (this.onControllerConnected) {
 			this.onControllerConnected(this.oController);
 		}
+		
+		this._preprocessViewContent();
 
 		// notifies the listeners that the View is initialized
 		this.fireAfterInit();
@@ -282,6 +356,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		return oClone;
 	};
 
+	/**
+	 * @param {string} sType
+	 *   the type of preprocessor, e.g. "json", "text", or "xml"
+	 * @param {object|string|Element} vSource
+	 *   the view source as a JSON object, a raw text, or an XML document element
+	 * @returns {object|string|Element}
+	 *   the processed source (same type, of course!)
+	 * @protected
+	 */
+	View.prototype.runPreprocessor = function (sType, vSource) {
+		var sCaller,
+			oConfig = this.mPreprocessors[sType],
+			fnPreprocessor;
+
+		if (oConfig) {
+			fnPreprocessor = oConfig.preprocessor;
+			if (!fnPreprocessor && sType === "xml") {
+				jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
+				fnPreprocessor = sap.ui.core.util.XMLPreprocessor.process;
+			}
+			sCaller = this + " (" + this.sViewName + ")";
+			jQuery.sap.log.debug(sCaller + ": Running preprocessor for " + sType, null,
+				"sap.ui.core.mvc.View");
+			return fnPreprocessor(vSource, oConfig, sCaller);
+		}
+		return vSource;
+	};
 
 	/**
 	 * An (optional) method to be implemented by Views.
@@ -298,23 +399,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	/**
 	 * Creates a view of the given type, name and with the given id.
 	 *
-	 * The <code>oView</code> configuration object can have the following properties for the view
+	 * The <code>vView</code> configuration object can have the following properties for the view
 	 * instantiation:
 	 * <ul>
-	 * <li>The ID <code>oView.id</code> specifies an ID for the View instance. If no ID is given,
+	 * <li>The ID <code>vView.id</code> specifies an ID for the View instance. If no ID is given,
 	 * an ID will be generated.</li>
-	 * <li>The view name <code>oView.viewName</code> corresponds to an XML module that can be loaded
-	 * via the module system (oView.viewName + suffix ".view.xml")</li>
-	 * <li>The controller instance <code>oView.controller</code> must be a valid controller implementation.
+	 * <li>The view name <code>vView.viewName</code> corresponds to an XML module that can be loaded
+	 * via the module system (vView.viewName + suffix ".view.xml")</li>
+	 * <li>The controller instance <code>vView.controller</code> must be a valid controller implementation.
 	 * The given controller instance overrides the controller defined in the view definition</li>
-	 * <li>The view type <code>oView.type</code> specifies what kind of view will be instantiated. All valid
+	 * <li>The view type <code>vView.type</code> specifies what kind of view will be instantiated. All valid
 	 * view types are listed in the enumeration sap.ui.core.mvc.ViewType.</li>
-	 * <li>The view data <code>oView.viewData</code> can hold user specific data. This data is available
+	 * <li>The view data <code>vView.viewData</code> can hold user specific data. This data is available
 	 * during the whole lifecycle of the view and the controller</li>
 	 * </ul>
 	 *
 	 * @param {string} sId id of the newly created view, only allowed for instance creation
-	 * @param {object} [vView] the view configuration object
+	 * @param {string|object} [vView] the view name or view configuration object
 	 * @public
 	 * @static
 	 * @return {sap.ui.core.mvc.View} the created View instance
@@ -445,7 +546,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		// return undefined
 	};
-	
+
 	return View;
 
 }, /* bExport= */ true);

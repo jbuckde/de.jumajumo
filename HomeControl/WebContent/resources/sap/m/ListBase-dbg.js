@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -173,6 +173,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			 * @since 1.16
 			 */
 			infoToolbar : {type : "sap.m.Toolbar", multiple : false}
+		},
+		associations: {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.28.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
 		events : {
 	
@@ -377,17 +385,20 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this._aSelectedPaths = [];
 		this._aNavSections = [];
 		this._bUpdating = false;
-		
+		this._bRendering = false;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	ListBase.prototype.onBeforeRendering = function() {
+		this._bRendering = true;
 		this._aNavSections = [];
 		this._removeSwipeContent();
 	};
 	
 	ListBase.prototype.onAfterRendering = function() {
-		this._startItemNavigation();
+		this._bRendering = false;
+		this._sLastMode = this.getMode();
+		this._bItemNavigationInvalidated = true;
 		if (!this._oGrowingDelegate && this.isBound("items")) {
 			this._updateFinished();
 		}
@@ -633,8 +644,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.setSelectedItem = function(oListItem, bSelect, bFireEvent) {
-		if (!oListItem instanceof sap.m.ListItemBase) {
-			jQuery.sap.log.warning("setSelectedItem is called without ListItem parameter on " + this);
+		if (this.indexOfItem(oListItem) < 0) {
+			jQuery.sap.log.warning("setSelectedItem is called without valid ListItem parameter on " + this);
 			return;
 		}
 		if (this._bSelectionMode) {
@@ -767,18 +778,48 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this;
 	};
 	
-	ListBase.prototype.setMode = function(sMode) {
-		var sOldMode = this.getMode();
-		if (sOldMode != sMode) {
-			this.setProperty("mode", sMode);
-			var iSelectionLength = this.getSelectedItems().length;
-			this._bSelectionMode = this.getMode().indexOf("Select") > -1;
 	
-			// remove selection only if needed
-			if (iSelectionLength > 1 || !this._bSelectionMode) {
-				this.removeSelections(true);
-			}
+	/**
+	 * Returns the last list mode, the mode that is rendered
+	 * This can be used to detect mode changes during rendering
+	 * 
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.getLastMode = function(sMode) {
+		return this._sLastMode;
+	};
+	
+	ListBase.prototype.setMode = function(sMode) {
+		sMode = this.validateProperty("mode", sMode);
+		var sOldMode = this.getMode();
+		if (sOldMode == sMode) {
+			return this;
 		}
+		
+		// update property with invalidate
+		this.setProperty("mode", sMode);
+		
+		// determine the selection mode
+		this._bSelectionMode = sMode.indexOf("Select") > -1;
+		
+		// remove selections if mode is not a selection mode
+		if (!this._bSelectionMode) {
+			this.removeSelections(true);
+			return this;
+		}
+		
+		// update selection status of items 
+		var aSelecteds = this.getSelectedItems();
+		if (aSelecteds.length > 1) {
+			// remove selection if there are more than one item is selected
+			// we cannot determine 
+			this.removeSelections(true);
+		} else if (sOldMode === sap.m.ListMode.MultiSelect) {
+			// if old mode is multi select then we need to remember selected item 
+			// in case of new item selection right after setMode call
+			this._oSelectedItem = aSelecteds[0];
+		}
+		
 		return this;
 	};
 	
@@ -805,6 +846,30 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this;
 	};
 	
+	/*
+	 * Sets internal remembered selected context paths.
+	 * This method can be called to reset remembered selection
+	 * and does not change selection of the items until binding update.
+	 *
+	 * @param {String[]} aSelectedPaths valid binding context path array
+	 * @since 1.26
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.setSelectedContextPaths = function(aSelectedPaths) {
+		this._aSelectedPaths = aSelectedPaths || [];
+	};
+
+	/*
+	 * Returns internal remembered selected context paths as a copy
+	 *
+	 * @return {String[]} selected items binding context path
+	 * @since 1.26
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.getSelectedContextPaths = function() {
+		return this._aSelectedPaths.slice(0);
+	};
+	
 	/* Determines is whether all selectable items are selected or not
 	 * @protected
 	 */
@@ -818,7 +883,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return aItems.length > 0 && iSelectedItemCount == iSelectableItemCount;
 	};
 	
-	
 	/*
 	 * Returns only visible items
 	 * @protected
@@ -829,35 +893,32 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	};
 	
-	/*
-	 * This function runs when setVisible is called from ListItemBase
-	 * @protected
-	 */
-	ListBase.prototype.onItemVisibleChange = function(oItem, bVisible) {
-		// invalidate the item navigation
-		this._bItemNavigationInvalidated = true;
+	
+	// this gets called when items DOM is changed
+	ListBase.prototype.onItemDOMUpdate = function(oListItem) {
+		if (!this._bRendering) {
+			this._startItemNavigation(true);
+		}
 	};
 	
-	/*
-	 * This function runs when setSelected is called from ListItemBase
-	 * @protected
-	 */
-	ListBase.prototype.onItemSetSelected = function(oItem, bSelect) {
-		if (this.getMode() == "MultiSelect") {
-			this._updateSelectedPaths(oItem, bSelect);
+	// this gets called when selected property of the ListItem is changed
+	ListBase.prototype.onItemSelectedChange = function(oListItem, bSelected) {
+		
+		if (this.getMode() == sap.m.ListMode.MultiSelect) {
+			this._updateSelectedPaths(oListItem, bSelected);
 			return;
 		}
 	
-		if (bSelect) {
+		if (bSelected) {
 			this._aSelectedPaths.length = 0;
 			this._oSelectedItem && this._oSelectedItem.setSelected(false, true);
-			this._oSelectedItem = oItem;
-		} else if (this._oSelectedItem === oItem) {
+			this._oSelectedItem = oListItem;
+		} else if (this._oSelectedItem === oListItem) {
 			this._oSelectedItem = null;
 		}
 	
-		// update selection path for item
-		this._updateSelectedPaths(oItem, bSelect);
+		// update selection path for the list item
+		this._updateSelectedPaths(oListItem, bSelected);
 	};
 	
 	/*
@@ -881,16 +942,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * This hook method get called if growing feature is enabled and after new page loaded
 	 * @protected
 	 */
-	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {
-		// remove nodata text if we get new data
-		if (this.getShowNoData() && oGrowingInfo.total) {
-			this.$("nodata").remove();
-		}
-	
-		// refresh item navigation
-		this._startItemNavigation();
-	
-		// fire events
+	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {	
 		this._fireUpdateFinished(oGrowingInfo);
 		this.fireGrowingFinished(oGrowingInfo);
 	};
@@ -939,7 +991,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this.removeSelections(true);
 			this._hideBusyIndicator();
 			this._oGrowingDelegate && this._oGrowingDelegate.reset();
-			this._oItemNavigation && this._oItemNavigation.setFocusedIndex(-1);
+			
+			/* reset focused position */
+			if (this._oItemNavigation) {
+				this._oItemNavigation.iFocusedIndex = -1;
+			}
 		}
 	};
 	
@@ -974,6 +1030,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	// fire updateFinished event delayed to make sure rendering phase is done
 	ListBase.prototype._fireUpdateFinished = function(oInfo) {
 		jQuery.sap.delayedCall(0, this, function() {
+			this._startItemNavigation(true);
 			this._hideBusyIndicator();
 			this.fireUpdateFinished({
 				reason : this._sUpdateReason,
@@ -1015,33 +1072,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * Apply ListBase settings to given list item if selectable
 	 * TODO: There should be a better way to set these private variables
 	 */
-	ListBase.prototype._applySettingsToItem = function(oItem, bOnlyProperties) {
-		if (!oItem) {
-			return oItem;
+	ListBase.prototype._applySettingsToItem = function(oListItem) {
+	
+		if (oListItem && !oListItem.getParent() && oListItem.getSelected()) {
+			this.onItemSelectedChange(oListItem, true);
 		}
 	
-		oItem._listId = this.getId();
-		oItem._showUnread = this.getShowUnread();
-		if (!oItem.isSelectable()) {
-			return oItem;
-		}
-	
-		oItem._mode = this.getMode();
-		oItem._modeAnimationOn = this.getModeAnimationOn();
-		oItem._includeItemInSelection = this.getIncludeItemInSelection();
-		if (bOnlyProperties) {
-			return oItem;
-		}
-	
-		// FIXME: very lame to share events
-		oItem._select = this._select;
-		oItem._delete = this._delete;
-	
-		if (!oItem.getParent() && oItem.getSelected()) {
-			this.onItemSetSelected(oItem, true);
-		}
-	
-		return oItem;
+		return oListItem;
 	};
 	
 	// select item if it was already selected before and not selected now
@@ -1056,25 +1093,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 	};
 	
-	// List fires select event caused by checkbox/radiobutton
-	ListBase.prototype._select = function(oEvent) {
-		var oListItem = sap.ui.getCore().byId(this.oParent.getId()),
-			oList = sap.ui.getCore().byId(oListItem._listId),
-			bSelect = oEvent.getParameter("selected"),
-			sMode = oList.getMode();
-	
-		oListItem.setSelected(bSelect);
-	
-		if (sMode == "MultiSelect") {
-			oList._fireSelectionChangeEvent([oListItem]);
-		} else if (oList._bSelectionMode && bSelect) {
-			oList._fireSelectionChangeEvent([oListItem]);
+	// this gets called from item when selection is changed via checkbox/radiobutton/press event
+	ListBase.prototype.onItemSelect = function(oListItem, bSelected) {
+		if (this.getMode() == sap.m.ListMode.MultiSelect) {
+			this._fireSelectionChangeEvent([oListItem]);
+		} else if (this._bSelectionMode && bSelected) {
+			this._fireSelectionChangeEvent([oListItem]);
 		}
-	};
-	
-	// List fires select event caused by the list item
-	ListBase.prototype._selectTapped = function(oListItem) {
-		this._fireSelectionChangeEvent([oListItem]);
 	};
 	
 	// Fire selectionChange event and support old select event API
@@ -1092,25 +1117,31 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	
 		// support old API
-		this.fireSelect({ listItem : oListItem });
+		this.fireSelect({
+			listItem : oListItem 
+		});
 	};
 	
-	// List fires delete event caused by the delete image
-	ListBase.prototype._delete = function(oEvent) {
-		var oListItem = sap.ui.getCore().byId(this.oParent.getId());
-		var oList = sap.ui.getCore().byId(oListItem._listId);
-		oList.fireDelete({
+	// this gets called from item when delete is triggered via delete button
+	ListBase.prototype.onItemDelete = function(oListItem) {
+		this.fireDelete({
 			listItem : oListItem
 		});
 	};
 	
-	// this will be called from item when it is pressed to fire event
-	// FIXME: why item does not fire its own events
-	ListBase.prototype._onItemPressed = function(oItem, oEvent) {
-		jQuery.sap.delayedCall(0, this, function(){
+	// this gets called from item when item is pressed(enter/tap/click)
+	ListBase.prototype.onItemPress = function(oListItem, oSrcControl) {
+		
+		// do not fire press event for inactive type 
+		if (oListItem.getType() == sap.m.ListType.Inactive) {
+			return;
+		}
+		
+		// fire event async
+		jQuery.sap.delayedCall(0, this, function() {
 			this.fireItemPress({
-				listItem : oItem,
-				srcControl : oEvent.srcControl || oItem
+				listItem : oListItem,
+				srcControl : oSrcControl
 			});
 		});
 	};
@@ -1147,7 +1178,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this.removeEventDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
 			this._oItemNavigation = null;
-			this._oLastNavItem = null;
 		}
 	};
 	
@@ -1385,7 +1415,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	ListBase.prototype.invalidate = function(oOrigin) {
 		if (oOrigin && oOrigin === this.getSwipeContent()) {
 			this._bRerenderSwipeContent = true;
-			return this._renderSwipeContent();
+			this._isSwipeActive && this._renderSwipeContent();
+			return this;
 		}
 	
 		Control.prototype.invalidate.apply(this, arguments);
@@ -1409,6 +1440,35 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	};
 	
+	// returns accessibility role
+	ListBase.prototype.getRole = function() {
+		var sMode = this.getMode(),
+			mMode = sap.m.ListMode;
+		
+		return (sMode == mMode.None || sMode == mMode.Delete) ? "list" : "listbox";
+	};
+	
+	// this gets called after navigation items are focused
+	ListBase.prototype.onNavigationItemFocus = function(oEvent, bHasHeader, bHasFooter) {
+		var iIndex = oEvent.getParameter("index"),
+			aItemDomRefs = this._oItemNavigation.getItemDomRefs(),
+			oItemDomRef = aItemDomRefs[iIndex],
+			iSetSize = aItemDomRefs.length,
+			oBinding = this.getBinding("items");
+		
+		// use binding length if list is in scroll to load growing mode
+		if (this.getGrowing() && this.getGrowingScrollToLoad() && oBinding && oBinding.isLengthFinal()) {
+			iSetSize = oBinding.getLength();
+		} else {
+			bHasHeader && iSetSize--;
+			bHasFooter && iSetSize--;
+		}
+
+		this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
+		oItemDomRef.setAttribute("aria-posinset", bHasHeader ? iIndex : iIndex + 1);
+		oItemDomRef.setAttribute("aria-setsize", iSetSize);
+	};
+	
 	/* Keyboard Handling */
 	ListBase.prototype.getNavigationRoot = function() {
 		return this.getDomRef("listUl");
@@ -1426,12 +1486,21 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this;
 	};
 	
-	ListBase.prototype._startItemNavigation = function() {
+	ListBase.prototype._startItemNavigation = function(bIfNeeded) {
+		// if focus is not on the list then only invalidate the item navigation
+		if (bIfNeeded) {
+			var oNavigationRoot = this.getNavigationRoot();
+			if (!oNavigationRoot || !oNavigationRoot.contains(document.activeElement)) {
+				this._bItemNavigationInvalidated = true;
+				return;
+			}
+		}
+		
 		// clear invalidation
 		this._bItemNavigationInvalidated = false;
 	
-		// item navigation breaks scrolling in iScroll
-		if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android && sap.ui.Device.os.version < 4.1) {
+		// no item navigation for old android that breaks focus handling
+		if (sap.ui.Device.os.android && sap.ui.Device.os.version < 4.1) {
 			return;
 		}
 	
@@ -1456,6 +1525,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 				sapnext : ["alt"],
 				sapprevious : ["alt"]
 			});
+			
+			// attach to the focus event of the navigation items
+			this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, this.onNavigationItemFocus, this);
+			
 		}
 		// configure navigation root
 		var oNavigationRoot = this.getNavigationRoot();
@@ -1463,13 +1536,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		
 		// configure navigatable items
 		this.setNavigationItems(this._oItemNavigation, oNavigationRoot);
-		
-		// configure invalid focus index incase of item remove
-		var iFocusIndex = this._oItemNavigation.getFocusedIndex();
-		var iNavigationItemsLength = this._oItemNavigation.getItemDomRefs().length;
-		if (iFocusIndex > iNavigationItemsLength - 1) {
-			this._oItemNavigation.setFocusedIndex(iNavigationItemsLength - 1);
-		}
 	};
 	
 	/*
@@ -1539,8 +1605,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// move focus out of the table for nodata row
 	ListBase.prototype.onsaptabprevious = function(oEvent) {
-		if (oEvent.target.id == this.getId("nodata")) {
+		var sTargetId = oEvent.target.id;
+		if (sTargetId == this.getId("nodata")) {
 			this.forwardTab(false);
+		} else if (sTargetId == this.getId("trigger")) {
+			this.focusPrevious();
+			oEvent.preventDefault();
 		}
 	};
 	
@@ -1627,7 +1697,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// Ctrl + A to switch select all/none
 	ListBase.prototype.onkeydown = function(oEvent) {
-		
+
 		var bCtrlA = (oEvent.which == jQuery.sap.KeyCodes.A) && (oEvent.metaKey || oEvent.ctrlKey);
 		if (oEvent.isMarked() || !bCtrlA || !jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
@@ -1646,6 +1716,29 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 		
 		oEvent.setMarked();
+	};
+	
+	ListBase.prototype.onmousedown = function(oEvent) {
+		// check whether item navigation should be reapplied from scratch
+		if (this._bItemNavigationInvalidated) {
+			this._startItemNavigation();
+		}
+	};
+	
+	// focus to previously focused element known in item navigation
+	ListBase.prototype.focusPrevious = function() {
+		// get the last focused element from the ItemNavigation
+		var aNavigationDomRefs = this._oItemNavigation.getItemDomRefs();
+		var iLastFocusedIndex = this._oItemNavigation.getFocusedIndex();
+		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
+
+		// find related item control to get tabbables
+		var oRelatedControl = $LastFocused.control(0) || {};
+		var $Tabbables = oRelatedControl.getTabbables ? oRelatedControl.getTabbables() : $LastFocused.find(":sapTabbable");
+		
+		// get the last tabbable item or itself and focus
+		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
+		$FocusElement.focus();
 	};
 	
 	// Handles focus to reposition the focus to correct place
@@ -1670,18 +1763,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return;
 		}
 	
-		// get the last focused element from the ItemNavigation
-		var aNavigationDomRefs = this._oItemNavigation.getItemDomRefs();
-		var iLastFocusedIndex = this._oItemNavigation.getFocusedIndex();
-		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
-
-		// find related item control to get tabbables
-		var oRelatedControl = $LastFocused.control(0) || {};
-		var $Tabbables = oRelatedControl.getTabbables ? oRelatedControl.getTabbables() : $LastFocused.find(":sapTabbable");
-		
-		// get the last tabbable item or itself and focus
-		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
-		$FocusElement.focus();
+		this.focusPrevious();
 		oEvent.setMarked();
 	};
 

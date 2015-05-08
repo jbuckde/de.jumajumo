@@ -42,6 +42,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		NavigationPropertyPath: true,
 		AnnotationPath: true
 	};
+	
+	var mMultipleArgumentDynamicExpressions = {
+		And: true,
+		Or: true,
+		// Not: true,
+		Eq: true,
+		Ne: true,
+		Gt: true,
+		Ge: true,
+		Lt: true,
+		Le: true,
+		If: true,
+		Collection: true
+	};	
 
 	/**
 	 * !!! EXPERIMENTAL !!!
@@ -54,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.26.10
+	 * 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -127,7 +141,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Fire event loaded to attached listeners.
+	 * Checks whether annotations loading has already failed.
+	 * Note:
+	 * For asynchronous annotations {@link #attachFailed} has to be used also.
 	 *
 	 * @public
 	 * @returns {boolean} whether annotations request has failed
@@ -389,7 +405,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				for (var nodeIndexValue = 0; nodeIndexValue < propertyAnnotationNodes.length; nodeIndexValue += 1) {
 					propertyAnnotationNode = this.xPath.nextNode(propertyAnnotationNodes, nodeIndexValue);
 					sTermValue = this.replaceWithAlias(propertyAnnotationNode.getAttribute("Term"), oAlias);
-					var sQualifierValue = propertyAnnotationNode.getAttribute("Qualifier");
+					var sQualifierValue = annotationNode.getAttribute("Qualifier") || propertyAnnotationNode.getAttribute("Qualifier");
 					if (sQualifierValue) {
 						sTermValue += "#" + sQualifierValue;
 					}
@@ -424,7 +440,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				propertyAnnotationNodes = this.xPath.selectNodes(oXMLDoc, "./d:Annotation", annotationNode);
 				for (var nodeIndexAnnotation = 0; nodeIndexAnnotation < propertyAnnotationNodes.length; nodeIndexAnnotation += 1) {
 					propertyAnnotationNode = this.xPath.nextNode(propertyAnnotationNodes, nodeIndexAnnotation);
-					annotationQualifier = propertyAnnotationNode.getAttribute("Qualifier");
+					annotationQualifier = annotationNode.getAttribute("Qualifier") || propertyAnnotationNode.getAttribute("Qualifier");
 					annotationTerm = this.replaceWithAlias(propertyAnnotationNode.getAttribute("Term"), oAlias);
 					if (annotationQualifier) {
 						annotationTerm += "#" + annotationQualifier;
@@ -744,8 +760,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		sPropertyName,
 		sType,
 		oPropExtension,
-		oReturn;
-	
+		oReturn = {
+			types : oPropertyTypes
+		};
+
+		if (!oMetadata.dataServices.schema) {
+			return oReturn;
+		}
+
 		for (var i = oMetadata.dataServices.schema.length - 1; i >= 0; i -= 1) {
 			oMetadataSchema = oMetadata.dataServices.schema[i];
 			if (oMetadataSchema.entityType) {
@@ -755,6 +777,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				for (var j in aEntityTypes) {
 					oEntityType = aEntityTypes[j];
 					oExtensions = {};
+					oProperties = {};
 					if (oEntityType.hasStream && oEntityType.hasStream === "true") {
 						continue;
 					}
@@ -808,10 +831,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			oReturn = {
 				types : oPropertyTypes,
 				extensions : oPropertyExtensions
-			};
-		} else {
-			oReturn = {
-				types : oPropertyTypes
 			};
 		}
 		return oReturn;
@@ -881,41 +900,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 	};
 	ODataAnnotations.prototype.getPropertyValueAttributes = function(documentNode, oAlias) {
-		var attrName = "", attrValue = "", i, propertyValueAttributes = {};
+		var sKey = "", sValue = "", i, propertyValueAttributes = {};
 		for (i = 0; i < documentNode.attributes.length; i += 1) {
 			var sAttrName = documentNode.attributes[i].name;
 			if (sAttrName !== "Property" && sAttrName !== "Term" && sAttrName !== "Qualifier") {
-				attrName = documentNode.attributes[i].name;
-				attrValue = documentNode.attributes[i].value;
+				sKey = documentNode.attributes[i].name;
+				sValue = documentNode.attributes[i].value;
 			}
-		}
-		if (attrName.length > 0) {
-			propertyValueAttributes[attrName] = this.replaceWithAlias(attrValue, oAlias);
+			if (sKey) {
+				propertyValueAttributes[sKey] = this.replaceWithAlias(sValue, oAlias);
+			}
 		}
 		return propertyValueAttributes;
 	};
 
 	ODataAnnotations.prototype.getSimpleNodeValue = function(xmlDoc, documentNode) {
-		var oValue = {}, stringValueNodes, stringValueNode, pathValueNodes, pathValueNode, applyValueNodes, applyValueNode;
-		if (documentNode.hasChildNodes()) {
-			stringValueNodes = this.xPath.selectNodes(xmlDoc, "./d:String", documentNode);
-			if (stringValueNodes.length > 0) {
-				stringValueNode = this.xPath.nextNode(stringValueNodes, 0);
-				oValue["String"] = this.xPath.getNodeText(stringValueNode);
-			} else {
-				pathValueNodes = this.xPath.selectNodes(xmlDoc, "./d:Path", documentNode);
-				if (pathValueNodes.length > 0) {
-					pathValueNode = this.xPath.nextNode(pathValueNodes, 0);
-					oValue["Path"] = this.xPath.getNodeText(pathValueNode);
-				} else {
-					applyValueNodes = this.xPath.selectNodes(xmlDoc, "./d:Apply", documentNode);
-					if (applyValueNodes.length > 0) {
-						applyValueNode = this.xPath.nextNode(applyValueNodes, 0);
-						oValue["Apply"] = this.getApplyFunctions(xmlDoc, applyValueNode, this.xPath);
-					}
-				}
+		var oValue = {};
+
+		var oValueNodes = this.xPath.selectNodes(xmlDoc, "./d:String | ./d:Path | ./d:Apply", documentNode);
+		for (var i = 0; i < oValueNodes.length; ++i) {
+			var oValueNode = this.xPath.nextNode(oValueNodes, i);
+			var vValue;
+
+			switch (oValueNode.nodeName) {
+				case "Apply":
+					vValue = this.getApplyFunctions(xmlDoc, oValueNode, this.xPath);
+					break;
+
+				default:
+					vValue = this.xPath.getNodeText(oValueNode);
+					break;
 			}
+
+			oValue[oValueNode.nodeName] = vValue;
 		}
+
 		return oValue;
 	};
 	ODataAnnotations.prototype.getPropertyValue = function(xmlDoc, documentNode, oAlias) {
@@ -968,7 +987,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							for (nodeIndex = 0; nodeIndex < collectionNodes.length; nodeIndex += 1) {
 								pathNode = this.xPath.nextNode(collectionNodes, nodeIndex);
 								oPath = {};
-								oPath[pathNode.nodeName] = xPath.getNodeText(pathNode);
+								oPath[pathNode.nodeName] = this.replaceWithAlias(xPath.getNodeText(pathNode), oAlias);
 								propertyValue.push(oPath);
 							}
 						} else {
@@ -994,7 +1013,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 										} else {
 											vValue = this.getPropertyValueAttributes(oOtherNode, oAlias);
 										}
-										propertyValue[oOtherNode.nodeName] = vValue;
+										
+										var sNodeName = oOtherNode.nodeName;
+										var sParentName = oOtherNode.parentNode.nodeName;
+										
+										
+										// For dynamic expressions, add a Parameters Array so we can iterate over all parameters in 
+										// their order within the document
+										if (mMultipleArgumentDynamicExpressions[sParentName]) {
+											if (!Array.isArray(propertyValue)) {
+												propertyValue = [];
+											}
+											
+											var mValue = {};
+											mValue[sNodeName] = vValue;
+											propertyValue.push(mValue);
+										} else {
+											if (propertyValue[sNodeName]) {
+												jQuery.sap.log.warning(
+													"Annotation contained multiple " + sNodeName + " values. Only the last " +
+													"one will be stored"
+												);
+											}
+											propertyValue[sNodeName] = vValue;
+										}
 									}
 								}
 							} else if (documentNode.nodeName in mTextNodeWhitelist) {

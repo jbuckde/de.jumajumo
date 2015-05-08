@@ -15,6 +15,21 @@
 	border-color: @sapHCStandardFG;
 }
 
+.sapMMultiComboBoxFocused:not(.sapMInputBaseReadonly) > .sapMMultiComboBoxBorder::before {
+	border: 2px dotted @sapHCStandardFG;
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	pointer-events: none;
+}
+
+.sapMMultiComboBox.sapMMultiComboBoxFocused .sapMInputBaseInner:focus {
+	outline: 0 none;
+}
+
 .sapMMultiComboBox > .sapMMultiComboBoxBorder {
 	background: @sapHCStandardBG;
 	border: .0625rem solid @sapHCStandardFG;
@@ -83,6 +98,30 @@
 
 .sapUiSizeCompact .sapMMultiComboBoxShadowDiv {
 	height: 1.625rem;
+}
+
+
+/* Keep placeholder invisible, when at least one token is chosen */
+
+/* Webkit */
+.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner::-webkit-input-placeholder {
+	color: transparent;
+}
+
+/* Firefox 19+ */
+.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner::-moz-placeholder {
+	color: transparent;
+}
+
+/* IE */
+.sapMMultiComboBoxHasToken .sapMMultiComboBoxInputInner:-ms-input-placeholder {
+	color: transparent;
+}
+
+/* Keep placeholder invisible, when at least one token is chosen. IE solution */
+.sapMMultiComboBoxHasToken > .sapMInputBasePlaceholder {
+	color: transparent;
+	max-width: 0;
 }
 
 // If a non-native placeholder is used, make sure that it is in front of children elements.

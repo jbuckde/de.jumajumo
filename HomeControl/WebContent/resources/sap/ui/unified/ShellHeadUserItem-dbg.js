@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -39,11 +39,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 			 * The name of the user.
 			 */
 			username : {type : "string", group : "Appearance", defaultValue : ''},
+			
+			/**
+			 * The user item is intended to be used for user settings. Normally these settings are done via a Menu or Dialog.
+			 * If this property is set to true an indicator for such a popup mechanismn is shown in the item.
+			 * @since 1.27.0
+			 */
+			showPopupIndicator : {type : "boolean", group : "Accessibility", defaultValue : true},
 	
 			/**
 			 * An image of the user, normally an URI to a image but also an icon from the sap.ui.core.IconPool is possible.
 			 */
 			image : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null}
+		},
+		associations : {
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
 	

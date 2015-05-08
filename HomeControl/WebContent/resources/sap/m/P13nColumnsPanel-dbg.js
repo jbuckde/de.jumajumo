@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @class The ColumnsPanel can be used for personalization of the table to define column specific settings
 	 * @extends sap.m.P13nPanel
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @constructor
 	 * @public
 	 * @since 1.26.0
@@ -1461,6 +1461,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * This method does a re-initialization of the panel
+	 * 
+	 * @public
+	 * @since 1.28
+	 */
+	P13nColumnsPanel.prototype.reInitialize = function() {
+
+		// Reactivate one time sorting
+		this._oTableItemsOrdering.fOrderOnlyFirstTime();
+		this._oTableItemsOrdering.fCheckReOrdering();
+	};
+
+	/**
 	 * Required adaptations after rendering
 	 * 
 	 * @private
@@ -1540,6 +1553,23 @@ sap.ui.define([
 
 			oPayload.tableItemsChanged = this._getTableItemsChangeStatus();
 		}
+
+		return oPayload;
+	};
+
+	/**
+	 * Delivers a payload for columnsPanel that can be used at consumer side
+	 * 
+	 * @public
+	 * @since 1.28
+	 * @returns {object} oPayload, which contains useful information
+	 */
+	P13nColumnsPanel.prototype.getResetPayload = function() {
+		var oPayload = null;
+
+		oPayload = {
+			"oPanel": this
+		};
 
 		return oPayload;
 	};

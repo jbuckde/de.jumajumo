@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @extends sap.ui.model.ClientModel
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @param {object} oData either the URL where to load the JSON from or a JS object
 	 * @constructor
@@ -35,21 +35,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @alias sap.ui.model.json.JSONModel
 	 */
 	var JSONModel = ClientModel.extend("sap.ui.model.json.JSONModel", /** @lends sap.ui.model.json.JSONModel.prototype */ {
-		
+
 		constructor : function(oData) {
 			ClientModel.apply(this, arguments);
-			
+
 			if (oData && typeof oData == "object") {
 				this.setData(oData);
 			}
 		},
-	
+
 		metadata : {
 			publicMethods : ["setJSON", "getJSON"]
 		}
-	
+
 	});
-	
+
 	/**
 	 * Sets the JSON encoded data to the model.
 	 *
@@ -61,13 +61,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	JSONModel.prototype.setData = function(oData, bMerge){
 		if (bMerge) {
 			// do a deep copy
-			this.oData = jQuery.extend(true, {}, this.oData, oData);
+			this.oData = jQuery.extend(true, jQuery.isArray(this.oData) ? [] : {}, this.oData, oData);
 		} else {
 			this.oData = oData;
 		}
 		this.checkUpdate();
 	};
-	
+
 	/**
 	 * Sets the JSON encoded string data to the model.
 	 *
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 				reason : "", srcText : e, line : -1, linepos : -1, filepos : -1});
 		}
 	};
-	
+
 	/**
 	 * Serializes the current JSON data of the model into a string.
 	 * Note: May not work in Internet Explorer 8 because of lacking JSON support (works only if IE 8 mode is enabled)
@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	JSONModel.prototype.getJSON = function(){
 		return JSON.stringify(this.oData);
 	};
-	
+
 	/**
 	 * Load JSON-encoded data from the server using a GET HTTP request and store the resulting JSON data in the model.
 	 * Note: Due to browser security restrictions, most "Ajax" requests are subject to the same origin policy,
@@ -124,11 +124,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 */
 	JSONModel.prototype.loadData = function(sURL, oParameters, bAsync, sType, bMerge, bCache, mHeaders){
 		var that = this;
-	
+
 		bAsync = (bAsync !== false);
 		sType = sType || "GET";
 		bCache = bCache === undefined ? this.bCache : bCache;
-	
+
 		this.fireRequestSent({url : sURL, type : sType, async : bAsync, headers: mHeaders,
 			info : "cache=" + bCache + ";bMerge=" + bMerge, infoObject: {cache : bCache, merge : bMerge}});
 		this._ajax({
@@ -151,14 +151,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 			var oError = { message : textStatus, statusCode : XMLHttpRequest.status, statusText : XMLHttpRequest.statusText, responseText : XMLHttpRequest.responseText};
 			jQuery.sap.log.fatal("The following problem occurred: " + textStatus, XMLHttpRequest.responseText + ","
 						+ XMLHttpRequest.status + "," + XMLHttpRequest.statusText);
-	
+
 			that.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders,
 				info : "cache=" + bCache + ";bMerge=" + bMerge, infoObject: {cache : bCache, merge : bMerge}, success: false, errorobject: oError});
 			that.fireRequestFailed(oError);
 		  }
 		});
 	};
-	
+
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 *
@@ -167,7 +167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 		var oBinding = new JSONPropertyBinding(this, sPath, oContext, mParameters);
 		return oBinding;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.Model.prototype.bindList
 	 *
@@ -176,7 +176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 		var oBinding = new JSONListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
 		return oBinding;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.Model.prototype.bindTree
 	 *
@@ -186,13 +186,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 *         and the found data in this array is included in the tree but only if also the parent array is included.
 	 *         If this parameter is not specified then all found arrays in the data structure are bound.
 	 *         If the tree data structure doesn't contain an array you don't have to specify this parameter.
-	 *         
+	 *
 	 */
 	JSONModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters) {
 		var oBinding = new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters);
 		return oBinding;
 	};
-	
+
 	/**
 	 * Sets a new value for the given property <code>sPropertyName</code> in the model.
 	 * If the model value changed all interested parties are informed.
@@ -200,28 +200,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	 * @param {string}  sPath path of the property to set
 	 * @param {any}     oValue value to set the property to
 	 * @param {object} [oContext=null] the context which will be used to set the property
+	 * @param {boolean} [bAsyncUpdate] whether to update other bindings dependent on this property asynchronously
+	 * @return {boolean} true if the value was set correctly and false if errors occurred like the entry was not found.
 	 * @public
 	 */
-	JSONModel.prototype.setProperty = function(sPath, oValue, oContext) {
-		var sObjectPath = sPath.substring(0, sPath.lastIndexOf("/")),
-			sProperty = sPath.substr(sPath.lastIndexOf("/") + 1);
-		
-		// check if path / context is valid
-		if (!this.resolve(sPath, oContext)) {
-			return;
+	JSONModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
+		var sResolvedPath = this.resolve(sPath, oContext),
+			iLastSlash, sObjectPath, sProperty;
+
+		// return if path / context is invalid
+		if (!sResolvedPath) {
+			return false;
 		}
 		
-		if (!sObjectPath && !oContext) {
-			oContext = this.oData;
+		// If data is set on root, call setData instead
+		if (sResolvedPath == "/") {
+			this.setData(oValue);
+			return true;
 		}
-	
-		var oObject = this._getObject(sObjectPath, oContext);
+
+		iLastSlash = sResolvedPath.lastIndexOf("/");
+		// In case there is only one slash at the beginning, sObjectPath must contain this slash
+		sObjectPath = sResolvedPath.substring(0, iLastSlash || 1);
+		sProperty = sResolvedPath.substr(iLastSlash + 1);
+
+		var oObject = this._getObject(sObjectPath);
 		if (oObject) {
 			oObject[sProperty] = oValue;
-			this.checkUpdate();
+			this.checkUpdate(false, bAsyncUpdate);
+			return true;
 		}
+		return false;
 	};
-	
+
 	/**
 	* Returns the value for the property with the given <code>sPropertyName</code>
 	*
@@ -233,9 +244,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 	*/
 	JSONModel.prototype.getProperty = function(sPath, oContext) {
 		return this._getObject(sPath, oContext);
-	
+
 	};
-	
+
 	/**
 	 * @param {string} sPath
 	 * @param {object} [oContext]
@@ -245,8 +256,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 		var oNode = this.isLegacySyntax() ? this.oData : null;
 		if (oContext instanceof sap.ui.model.Context) {
 			oNode = this._getObject(oContext.getPath());
-		}
-		else if (oContext) {
+		} else if (oContext) {
 			oNode = oContext;
 		}
 		if (!sPath) {
@@ -265,12 +275,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', './JSONListBindi
 		}
 		return oNode;
 	};
-	
+
 	JSONModel.prototype.isList = function(sPath, oContext) {
 		var sAbsolutePath = this.resolve(sPath, oContext);
 		return jQuery.isArray(this._getObject(sAbsolutePath));
 	};
-	
+
 
 	return JSONModel;
 

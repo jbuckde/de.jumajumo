@@ -136,13 +136,16 @@ sap.ui.define("sap/ui/unified/CalendarRenderer",['jquery.sap.global'],
 
 		oCal._iMode = 0; // it's rendered always as DayPicker
 
-		var oDate = oCal._getFocusedDate();
 		var sId = oCal.getId();
 		var sTooltip = oCal.getTooltip_AsString();
+		var aMonths = oCal.getAggregation("month");
 
 		oRm.write("<div");
 		oRm.writeControlData(oCal);
 		oRm.addClass("sapUiCal");
+		if (aMonths.length > 1) {
+			oRm.addClass("sapUiCalMulti");
+		}
 		oRm.writeClasses();
 		// This makes the calendar focusable and therefore
 		// the white empty areas can be clicked without closing the calendar
@@ -150,10 +153,11 @@ sap.ui.define("sap/ui/unified/CalendarRenderer",['jquery.sap.global'],
 		oRm.writeAttribute("tabindex", "-1");
 
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-		oRm.writeAccessibilityState(oCal, {
-			role: "dialog",
-			label: rb.getText("DATEPICKER_DIALOG")
-		});
+		var mAccProps = {labelledby: {value: "", append: false}}; // render on Month
+		if (oCal._bPoupupMode) {
+			mAccProps["role"] = "dialog";
+		}
+		oRm.writeAccessibilityState(oCal, mAccProps);
 
 		if (sTooltip) {
 			oRm.writeAttributeEscaped('title', sTooltip);
@@ -161,11 +165,18 @@ sap.ui.define("sap/ui/unified/CalendarRenderer",['jquery.sap.global'],
 
 		oRm.write(">"); // div element
 
-		this.renderHeader(oRm, oCal, oDate);
+		var oHeader = oCal.getAggregation("header");
+		oRm.renderControl(oHeader);
 
-		this.renderDayPicker(oRm, oCal, oDate);
+		oRm.write("<div id=\"" + sId + "-content\" class=\"sapUiCalContent\">");
+		for (var i = 0; i < aMonths.length; i++) {
+			var oMonth = aMonths[i];
+			oRm.renderControl(oMonth);
+		}
+		oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
+		oRm.write("</div>");
 
-		oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCancel\" tabindex=\"-1\">");
+		oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");
 		oRm.write(rb.getText("CALENDAR_CANCEL"));
 		oRm.write("</button>");
 
@@ -173,301 +184,6 @@ sap.ui.define("sap/ui/unified/CalendarRenderer",['jquery.sap.global'],
 		oRm.write("<div id=\"" + sId + "-end\" tabindex=\"0\" style=\"width:0;height:0;position:absolute;right:0;bottom:0;\"></div>");
 
 		oRm.write("</div>");
-	};
-
-	CalendarRenderer.renderHeader = function(oRm, oCal, oDate){
-
-		var oLocaleData = oCal._getLocaleData();
-		var sId = oCal.getId();
-		var iMonth = oDate.getUTCMonth();
-		var iYear = oDate.getUTCFullYear();
-		var aMonthNames = [];
-		if (oCal._bLongMonth || !oCal._bNamesLengthChecked) {
-			aMonthNames = oLocaleData.getMonthsStandAlone("wide");
-		} else {
-			aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
-		}
-
-		oRm.write("<div");
-		oRm.addClass("sapUiCalHead");
-		oRm.writeClasses();
-		oRm.write(">"); // div element
-		oRm.write("<button id=\"" + sId + "-prev\" class=\"sapUiCalPrev\" tabindex=\"-1\">");
-		oRm.writeIcon("sap-icon://slim-arrow-left");
-		oRm.write("</button>");
-
-		oRm.write("<button");
-		oRm.writeAttributeEscaped('id', sId + '-month');
-		oRm.addClass("sapUiCalMonthPick");
-		oRm.writeAttribute('tabindex', "-1");
-		oRm.writeClasses();
-		oRm.write(">"); // button element
-		oRm.write(aMonthNames[iMonth]);
-		oRm.write("</button>");
-
-		oRm.write("<button");
-		oRm.writeAttributeEscaped('id', sId + '-year');
-		oRm.addClass("sapUiCalYearPick");
-		oRm.writeAttribute('tabindex', "-1");
-		oRm.writeClasses();
-		oRm.write(">"); // button element
-		oRm.write(iYear);
-		oRm.write("</button>");
-
-		oRm.write("<button id=\"" + sId + "-next\" class=\"sapUiCalNext\" tabindex=\"-1\">");
-		oRm.writeIcon("sap-icon://slim-arrow-right");
-		oRm.write("</button>");
-		oRm.write("</div>");
-
-	};
-
-	CalendarRenderer.renderDayPicker = function(oRm, oCal, oDate){
-
-		var oLocaleData = oCal._getLocaleData();
-		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
-		var sId = oCal.getId();
-
-		// week numbers
-		var aWeekDays = [];
-		if (oCal._bLongWeekDays || !oCal._bNamesLengthChecked) {
-			aWeekDays = oLocaleData.getDaysStandAlone("abbreviated");
-		} else {
-			aWeekDays = oLocaleData.getDaysStandAlone("narrow");
-		}
-		for ( var i = 0; i < 7; i++) {
-			oRm.write("<div");
-			oRm.addClass("sapUiCalWH");
-			if (i == 0) {
-				oRm.addClass("sapUiCalFirstWDay");
-			}
-			oRm.writeClasses();
-			oRm.write(">"); // div element
-			oRm.write(aWeekDays[(i + iFirstDayOfWeek) % 7]);
-			oRm.write("</div>");
-		}
-
-		// days
-		oRm.write("<div id=\"" + sId + "-days\" class=\"sapUiCalDays\">"); // extra DIV around the days to allow rerendering only it's content
-		this.renderDays(oRm, oCal, oDate);
-		oRm.write("</div>");
-
-	};
-
-	CalendarRenderer.renderDays = function(oRm, oCal, oDate){
-
-		if (!oDate) {
-			oDate = oCal._getFocusedDate();
-		}
-
-		var sLocale = oCal.getLocale();
-		var oLocaleData = oCal._getLocaleData();
-		var iMonth = oDate.getUTCMonth();
-		var iYear = oDate.getUTCFullYear();
-		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
-		var iWeekendStart = oLocaleData.getWeekendStart();
-		var iWeekendEnd = oLocaleData.getWeekendEnd();
-		var oToday = new Date();
-		var sId = oCal.getId();
-
-		// determine weekday of first day in month
-		var oFirstDay = new Date(oDate.getTime());
-		oFirstDay.setUTCDate(1);
-		var iWeekDay = oFirstDay.getUTCDay();
-		var iDaysOldMonth = iWeekDay - iFirstDayOfWeek;
-		if (iDaysOldMonth < 0) {
-			iDaysOldMonth = 7 + iDaysOldMonth;
-		}
-
-		if (iDaysOldMonth > 0) {
-			// determine first day for display
-			oFirstDay.setUTCDate(1 - iDaysOldMonth);
-		}
-
-		var oDay = new Date(oFirstDay.getTime());
-		var sYyyymmdd = "";
-		var iNextMonth = (iMonth + 1) % 12;
-		var iSelected = 0;
-		var oType;
-
-		do {
-
-			sYyyymmdd = oCal._oFormatYyyymmdd.format(oDay, true);
-			iWeekDay = oDay.getUTCDay();
-			iSelected = oCal._checkDateSelected(oDay);
-			oType = oCal._getDateType(oDay);
-			oRm.write("<div");
-			oRm.writeAttribute("id", sId + "-" + sYyyymmdd);
-			oRm.addClass("sapUiCalDay");
-			oRm.addClass("sapUiCalWDay" + iWeekDay);
-			if (iWeekDay == iFirstDayOfWeek) {
-				oRm.addClass("sapUiCalFirstWDay");
-			}
-			if (iMonth != oDay.getUTCMonth()) {
-				oRm.addClass("sapUiCalDayOtherMonth");
-			}
-			if (oDay.getUTCMonth() == oToday.getMonth() && oDay.getUTCFullYear() == oToday.getFullYear() && oDay.getUTCDate() == oToday.getDate()) {
-				oRm.addClass("sapUiCalDayToday");
-			}
-
-			if (iSelected > 0) {
-				oRm.addClass("sapUiCalDaySel"); // day selected
-			}
-			if (iSelected == 2) {
-				oRm.addClass("sapUiCalDaySelStart"); // interval start
-			} else if (iSelected == 3) {
-				oRm.addClass("sapUiCalDaySelEnd"); // interval end
-			} else if (iSelected == 4) {
-				oRm.addClass("sapUiCalDaySelBetween"); // interval between
-			} else if (iSelected == 5) {
-				oRm.addClass("sapUiCalDaySelStart"); // interval start
-				oRm.addClass("sapUiCalDaySelEnd"); // interval end
-			}
-
-			if (oType) {
-				oRm.addClass("sapUiCalDay" + oType.type);
-				if (oType.tooltip) {
-					oRm.writeAttributeEscaped('title', oType.tooltip);
-				}
-			}
-
-			if ((iWeekDay >= iWeekendStart && iWeekDay <= iWeekendEnd) ||
-					( iWeekendEnd < iWeekendStart && ( iWeekDay >= iWeekendStart || iWeekDay <= iWeekendEnd))) {
-				oRm.addClass("sapUiCalDayWeekEnd");
-			}
-			oRm.writeAttribute("tabindex", "-1");
-			oRm.writeAttribute("data-sap-day", sYyyymmdd);
-			oRm.writeClasses();
-			oRm.write(">"); // div element
-
-			oRm.write("<span class=\"sapUiCalDayNum\">");
-			oRm.write(oDay.getUTCDate());
-			oRm.write("</span>");
-
-			if (iWeekDay == iFirstDayOfWeek) {
-				// add week number - inside first day of the week to allow better position and make it easier for ItemNavigation
-				oRm.write("<span class=\"sapUiCalWeekNum\">");
-				oRm.write(this.calculateWeekNumber(oDay, iYear, sLocale, oLocaleData));
-				oRm.write("</span>");
-			}
-
-			oRm.write("</div>");
-
-			oDay.setUTCDate(oDay.getUTCDate() + 1);
-
-		} while (oDay.getUTCMonth() != iNextMonth || oDay.getUTCDay() != iFirstDayOfWeek);
-
-	};
-
-	CalendarRenderer.calculateWeekNumber = function(oDate, iYear, sLocale, oLocaleData){
-
-		var iWeekNum = 0;
-		var iWeekDay = 0;
-		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
-
-		switch (sLocale) {
-		case "en-US":
-			/*
-			 * in US the week starts with Sunday
-			 * The first week of the year starts with January 1st. But Dec. 31 is still in the last year
-			 * So the week beginning in December and ending in January has 2 week numbers
-			 */
-			var oJanFirst = new Date(oDate.getTime());
-			oJanFirst.setUTCFullYear(iYear, 0, 1);
-			iWeekDay = oJanFirst.getUTCDay();
-
-			//get the date for the same weekday like jan 1.
-			var oCheckDate = new Date(oDate.getTime());
-			oCheckDate.setUTCDate(oCheckDate.getUTCDate() - oCheckDate.getUTCDay() + iWeekDay);
-
-			iWeekNum = Math.round((oCheckDate.getTime() - oJanFirst.getTime()) / 86400000 / 7) + 1;
-
-			break;
-
-		default:
-			// normally the first week of the year is the one where the first Thursday of the year is
-			// find Thursday of this week
-			// if the checked day is before the 1. day of the week use a day of the previous week to check
-			var oThursday = new Date(oDate.getTime());
-		oThursday.setUTCDate(oThursday.getUTCDate() - iFirstDayOfWeek);
-		iWeekDay = oThursday.getUTCDay();
-		oThursday.setUTCDate(oThursday.getUTCDate() - iWeekDay + 4);
-
-		var oFirstDayOfYear = new Date(oThursday.getTime());
-		oFirstDayOfYear.setUTCMonth(0, 1);
-		iWeekDay = oFirstDayOfYear.getUTCDay();
-		var iAddDays = 0;
-		if (iWeekDay > 4) {
-			iAddDays = 7; // first day of year is after Thursday, so first Thursday is in the next week
-		}
-		var oFirstThursday = new Date(oFirstDayOfYear.getTime());
-		oFirstThursday.setUTCDate(1 - iWeekDay + 4 + iAddDays);
-
-		iWeekNum = Math.round((oThursday.getTime() - oFirstThursday.getTime()) / 86400000 / 7) + 1;
-
-		break;
-		}
-
-		return iWeekNum;
-
-	};
-
-	CalendarRenderer.renderMonthPicker = function(oRm, oCal, oDate){
-
-		var oLocaleData = oCal._getLocaleData();
-		var sId = oCal.getId();
-		var aMonthNames = [];
-		if (oCal._bLongMonth || !oCal._bNamesLengthChecked) {
-			aMonthNames = oLocaleData.getMonthsStandAlone("wide");
-		} else {
-			aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
-		}
-		var iMonth = oDate.getUTCMonth();
-
-		oRm.write("<div id=\"" + sId + "-months\" class=\"sapUiCalMonths\">");
-
-		for ( var i = 0; i < 12; i++) {
-			oRm.write("<div");
-			oRm.writeAttribute("id", sId + "-m" + i);
-			oRm.addClass("sapUiCalMonth");
-			if (i == iMonth) {
-				oRm.addClass("sapUiCalMonthSel");
-			}
-			oRm.writeAttribute("tabindex", "-1");
-			oRm.writeClasses();
-			oRm.write(">"); // div element
-			oRm.write(aMonthNames[i]);
-			oRm.write("</div>");
-		}
-
-		oRm.write("</div>");
-
-	};
-
-	CalendarRenderer.renderYearPicker = function(oRm, oCal, oDate){
-
-		var sId = oCal.getId();
-		var iCurrentYear = oDate.getUTCFullYear();
-		var iYear = 0;
-
-		oRm.write("<div id=\"" + sId + "-years\" class=\"sapUiCalYears\">");
-
-		for ( var i = 0; i < 20; i++) {
-			iYear = iCurrentYear - 10 + i;
-			oRm.write("<div");
-			oRm.writeAttribute("id", sId + "-y" + iYear);
-			oRm.addClass("sapUiCalYear");
-			if (i == 10) {
-				oRm.addClass("sapUiCalYearSel");
-			}
-			oRm.writeAttribute("tabindex", "-1");
-			oRm.writeClasses();
-			oRm.write(">"); // div element
-			oRm.write(iYear);
-			oRm.write("</div>");
-		}
-
-		oRm.write("</div>");
-
 	};
 
 	return CalendarRenderer;
@@ -559,7 +275,7 @@ sap.ui.define("sap/ui/unified/CurrencyRenderer",['jquery.sap.global'],
 	/**
 	 * Currency renderer.
 	 *
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @namespace
 	 */
 	var CurrencyRenderer = {
@@ -575,8 +291,15 @@ sap.ui.define("sap/ui/unified/CurrencyRenderer",['jquery.sap.global'],
 	 *            oMenu An object representation of the control that should be rendered
 	 */
 	CurrencyRenderer.render = function(oRm,oCurrency) {
+		var sTooltip = oCurrency.getTooltip_AsString();
+
 		oRm.write("<div");
 		oRm.writeControlData(oCurrency);
+
+		if (sTooltip) {
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
+
 		oRm.addClass("sapUiUfdCurrency");
 		if (!oCurrency._hasValue()) {
 			oRm.addClass("sapUiUfdCurrencyNoVal");
@@ -659,7 +382,10 @@ sap.ui.define("sap/ui/unified/FileUploaderRenderer",['jquery.sap.global'],
 		rm.write('>');
 	
 		// the SAPUI5 TextField and Button
-		rm.write('<div class="sapUiFupInp"');
+		rm.write('<div ');
+		if (!oFileUploader.bMobileLib) {
+			rm.write('class="sapUiFupInp"');
+		}
 		if (accessibility) {
 			rm.writeAttribute("role", "textbox");
 			rm.writeAttribute("aria-readonly", "true");
@@ -723,7 +449,7 @@ sap.ui.define("sap/ui/unified/MenuRenderer",['jquery.sap.global'],
 	 * Menu renderer.
 	 * @author SAP - TD Core UI&AM UI Infra
 	 *
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @namespace
 	 */
 	var MenuRenderer = {
@@ -895,8 +621,11 @@ sap.ui.define("sap/ui/unified/ShellLayoutRenderer",['jquery.sap.global'],
 		
 		rm.write("<hr id='", id, "-brand' class='sapUiUfdShellBrand'/>");
 		
-		rm.write("<header id='", id, "-hdr'  class='sapUiUfdShellHead'><div>");
-		rm.write("<div id='", id, "-hdrcntnt' class='sapUiUfdShellCntnt'>");
+		rm.write("<header id='", id, "-hdr'  class='sapUiUfdShellHead'");
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAttribute("role", "banner");
+		}
+		rm.write("><div><div id='", id, "-hdrcntnt' class='sapUiUfdShellCntnt'>");
 		if (oShell.getHeader()) {
 			rm.renderControl(oShell.getHeader());
 		}
@@ -964,18 +693,29 @@ sap.ui.define("sap/ui/unified/ShellOverlayRenderer",['jquery.sap.global'],
 			rm.addClass("sapUiUfdShellOvrlyAnim");
 		}
 		rm.writeClasses();
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAccessibilityState(oControl, {
+				role: "dialog"
+			});
+		}
 		rm.write("><span id='", oControl.getId(), "-focfirst' tabIndex='0'></span><div id='", oControl.getId(), "-inner'>");
 		
 		rm.write("<header class='sapUiUfdShellOvrlyHead'>");
 		rm.write("<hr class='sapUiUfdShellOvrlyBrand'/>");
-		rm.write("<div class='sapUiUfdShellOvrlyHeadCntnt'>");
-		rm.write("<div id='" + oControl.getId() + "-hdr-center' class='sapUiUfdShellOvrlyHeadCenter'>");
+		rm.write("<div class='sapUiUfdShellOvrlyHeadCntnt'");
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAttribute("role", "toolbar");
+		}
+		rm.write("><div id='" + oControl.getId() + "-hdr-center' class='sapUiUfdShellOvrlyHeadCenter'>");
 		ShellOverlayRenderer.renderSearch(rm, oControl);
 		rm.write("</div>");
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 			sCloseTxt = rb.getText("SHELL_OVERLAY_CLOSE");
 		rm.write("<a tabindex='0' href='javascript:void(0);' id='" + oControl.getId() + "-close' class='sapUiUfdShellOvrlyHeadClose'");
 		rm.writeAttributeEscaped("title", sCloseTxt);
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			rm.writeAttribute("role", "button");
+		}
 		rm.write(">");
 		rm.writeEscaped(sCloseTxt);
 		rm.write("</a></div></header>");
@@ -1128,6 +868,719 @@ sap.ui.define("sap/ui/unified/SplitContainerRenderer",['jquery.sap.global'],
 }, /* bExport= */ true);
 
 }; // end of sap/ui/unified/SplitContainerRenderer.js
+if ( !jQuery.sap.isDeclared('sap.ui.unified.calendar.CalendarUtils') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+/**
+ * Calendar Utility Class
+ *
+ * @namespace
+ * @name sap.ui.unified.calendar
+ * @public
+ */
+
+// Provides class sap.ui.unified.caledar.CalendarUtils
+jQuery.sap.declare('sap.ui.unified.calendar.CalendarUtils'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
+sap.ui.define("sap/ui/unified/calendar/CalendarUtils",['jquery.sap.global'],
+	function(jQuery) {
+	"use strict";
+
+	// Static class
+
+	/**
+	 * @alias sap.ui.unified.caledar.CalendarUtils
+	 * @namespace
+	 * @private
+	 */
+	var CalendarUtils = {};
+
+	/**
+	 * Creates a Date in local timezone from UTC timezone
+	 * @param {Date} oDate in UTC timezone
+	 * @return {Date} in local timezone
+	 * @private
+	 */
+	CalendarUtils._createLocalDate = function(oDate) {
+
+		var oLocaleDate;
+
+		if (oDate) {
+			oLocaleDate = new Date(oDate.getTime() + oDate.getTimezoneOffset() * 60000);
+		}
+
+		return oLocaleDate;
+
+	};
+
+	/**
+	 * Creates a Date in UTC timezone from local timezone
+	 * @param {Date} oDate in local timezone
+	 * @return {Date} in UTC timezone
+	 * @private
+	 */
+	CalendarUtils._createUTCDate = function(oDate) {
+
+		var oUTCDate;
+
+		if (oDate) {
+			oUTCDate = new Date(Date.UTC(oDate.getFullYear(),oDate.getMonth(),oDate.getDate()));
+			if (oDate.getFullYear() < 1000) {
+				oUTCDate.setUTCFullYear(oDate.getFullYear());
+			}
+		}
+
+		return oUTCDate;
+
+	};
+
+	/**
+	 * Calculates the week number for a date
+	 * @param {Date} oDate date to get week number
+	 * @param {int} iYear year for the week number. (In en-US the week number for the last Days in December depends on the year.)
+	 * @param {string} sLocale used locale
+	 * @param {object} oLocaleData locale date for used locale
+	 * @return {integer} week number
+	 * @private
+	 */
+	CalendarUtils.calculateWeekNumber = function(oDate, iYear, sLocale, oLocaleData){
+
+		var iWeekNum = 0;
+		var iWeekDay = 0;
+		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+
+		if (sLocale == "en-US") {
+			/*
+			 * in US the week starts with Sunday
+			 * The first week of the year starts with January 1st. But Dec. 31 is still in the last year
+			 * So the week beginning in December and ending in January has 2 week numbers
+			 */
+			var oJanFirst = new Date(oDate.getTime());
+			oJanFirst.setUTCFullYear(iYear, 0, 1);
+			iWeekDay = oJanFirst.getUTCDay();
+
+			//get the date for the same weekday like jan 1.
+			var oCheckDate = new Date(oDate.getTime());
+			oCheckDate.setUTCDate(oCheckDate.getUTCDate() - oCheckDate.getUTCDay() + iWeekDay);
+
+			iWeekNum = Math.round((oCheckDate.getTime() - oJanFirst.getTime()) / 86400000 / 7) + 1;
+
+		}else {
+			// normally the first week of the year is the one where the first Thursday of the year is
+			// find Thursday of this week
+			// if the checked day is before the 1. day of the week use a day of the previous week to check
+			var oThursday = new Date(oDate.getTime());
+			oThursday.setUTCDate(oThursday.getUTCDate() - iFirstDayOfWeek);
+			iWeekDay = oThursday.getUTCDay();
+			oThursday.setUTCDate(oThursday.getUTCDate() - iWeekDay + 4);
+
+			var oFirstDayOfYear = new Date(oThursday.getTime());
+			oFirstDayOfYear.setUTCMonth(0, 1);
+			iWeekDay = oFirstDayOfYear.getUTCDay();
+			var iAddDays = 0;
+			if (iWeekDay > 4) {
+				iAddDays = 7; // first day of year is after Thursday, so first Thursday is in the next week
+			}
+			var oFirstThursday = new Date(oFirstDayOfYear.getTime());
+			oFirstThursday.setUTCDate(1 - iWeekDay + 4 + iAddDays);
+
+			iWeekNum = Math.round((oThursday.getTime() - oFirstThursday.getTime()) / 86400000 / 7) + 1;
+
+		}
+
+		return iWeekNum;
+
+	};
+
+	return CalendarUtils;
+
+}, /* bExport= */ true);
+
+}; // end of sap/ui/unified/calendar/CalendarUtils.js
+if ( !jQuery.sap.isDeclared('sap.ui.unified.calendar.HeaderRenderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+jQuery.sap.declare('sap.ui.unified.calendar.HeaderRenderer'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
+sap.ui.define("sap/ui/unified/calendar/HeaderRenderer",['jquery.sap.global'],
+	function(jQuery) {
+	"use strict";
+
+
+	/**
+	 * Header renderer.
+	 * @namespace
+	 */
+	var HeaderRenderer = {
+	};
+
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.Header} oHead an object representation of the control that should be rendered
+	 */
+	HeaderRenderer.render = function(oRm, oHead){
+
+		var sTooltip = oHead.getTooltip_AsString();
+		var sId = oHead.getId();
+		var mAccProps = {};
+
+		oRm.write("<div");
+		oRm.writeControlData(oHead);
+		oRm.addClass("sapUiCalHead");
+		oRm.writeClasses();
+
+		if (sTooltip) {
+			oRm.writeAttributeEscaped('title', sTooltip);
+		}
+
+		oRm.writeAccessibilityState(oHead);
+
+		oRm.write(">"); // div element
+
+		oRm.write("<button");
+		oRm.writeAttributeEscaped('id', sId + '-prev');
+		oRm.addClass("sapUiCalHeadPrev");
+		if (!oHead.getEnabledPrevious()) {
+			oRm.addClass("sapUiCalDsbl");
+			oRm.writeAttribute('disabled', "disabled");
+		}
+		oRm.writeAttribute('tabindex', "-1");
+		oRm.writeClasses();
+		oRm.write(">"); // button element
+		oRm.writeIcon("sap-icon://slim-arrow-left");
+		oRm.write("</button>");
+
+		oRm.write("<button");
+		oRm.writeAttributeEscaped('id', sId + '-B1');
+		oRm.addClass("sapUiCalHeadB");
+		oRm.addClass("sapUiCalHeadB1");
+		oRm.writeAttribute('tabindex', "-1");
+		oRm.writeClasses();
+		if (oHead.getAriaLabelButton1()) {
+			mAccProps["label"] = oHead.getAriaLabelButton1();
+		}
+		oRm.writeAccessibilityState(null, mAccProps);
+		mAccProps = {};
+		oRm.write(">"); // button element
+		oRm.write(oHead.getTextButton1() || "");
+		oRm.write("</button>");
+
+		oRm.write("<button");
+		oRm.writeAttributeEscaped('id', sId + '-B2');
+		oRm.addClass("sapUiCalHeadB");
+		oRm.addClass("sapUiCalHeadB2");
+		oRm.writeAttribute('tabindex', "-1");
+		oRm.writeClasses();
+		if (oHead.getAriaLabelButton2()) {
+			mAccProps["label"] = oHead.getAriaLabelButton2();
+		}
+		oRm.writeAccessibilityState(null, mAccProps);
+		oRm.write(">"); // button element
+		oRm.write(oHead.getTextButton2() || "");
+		oRm.write("</button>");
+
+		oRm.write("<button");
+		oRm.writeAttributeEscaped('id', sId + '-next');
+		oRm.addClass("sapUiCalHeadNext");
+		if (!oHead.getEnabledNext()) {
+			oRm.addClass("sapUiCalDsbl");
+			oRm.writeAttribute('disabled', "disabled");
+		}
+		oRm.writeAttribute('tabindex', "-1");
+		oRm.writeClasses();
+		oRm.write(">"); // button element
+		oRm.writeIcon("sap-icon://slim-arrow-right");
+		oRm.write("</button>");
+
+		oRm.write("</div>");
+
+	};
+
+	return HeaderRenderer;
+
+}, /* bExport= */ true);
+
+}; // end of sap/ui/unified/calendar/HeaderRenderer.js
+if ( !jQuery.sap.isDeclared('sap.ui.unified.calendar.MonthPickerRenderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+jQuery.sap.declare('sap.ui.unified.calendar.MonthPickerRenderer'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
+sap.ui.define("sap/ui/unified/calendar/MonthPickerRenderer",['jquery.sap.global'],
+	function(jQuery) {
+	"use strict";
+
+
+	/**
+	 * MonthPicker renderer.
+	 * @namespace
+	 */
+	var MonthPickerRenderer = {
+	};
+
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.MonthPicker} oMP an object representation of the control that should be rendered
+	 */
+	MonthPickerRenderer.render = function(oRm, oMP){
+
+		var sTooltip = oMP.getTooltip_AsString();
+		var oLocaleData = oMP._getLocaleData();
+		var sId = oMP.getId();
+		var aMonthNames = [];
+		var aMonthNamesWide = [];
+		if (oMP._bLongMonth || !oMP._bNamesLengthChecked) {
+			aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+		} else {
+			aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
+			aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide");
+		}
+		var iMonth = oMP.getMonth();
+
+		oRm.write("<div");
+		oRm.writeControlData(oMP);
+		oRm.addClass("sapUiCalMonthPicker");
+		oRm.writeClasses();
+
+		if (sTooltip) {
+			oRm.writeAttributeEscaped('title', sTooltip);
+		}
+
+		oRm.writeAccessibilityState(oMP, {
+			role: "grid",
+			readonly: "true",
+			multiselectable: "false"
+		});
+
+		oRm.write(">"); // div element
+
+		var mAccProps;
+
+		for ( var i = 0; i < 12; i++) {
+			mAccProps = {
+					role: "gridcell"
+				};
+			if (!oMP._bLongMonth && oMP._bNamesLengthChecked) {
+				mAccProps["label"] = aMonthNamesWide[i];
+			}
+
+			if (i == 0 || i % oMP._iColumns == 0) {
+				// begin of row
+				oRm.write("<div");
+				oRm.writeAccessibilityState(null, {role: "row"});
+				oRm.write(">"); // div element
+			}
+
+			oRm.write("<div");
+			oRm.writeAttribute("id", sId + "-m" + i);
+			oRm.addClass("sapUiCalMonth");
+			if (i == iMonth) {
+				oRm.addClass("sapUiCalMonthSel");
+			}
+			oRm.writeAttribute("tabindex", "-1");
+			oRm.writeClasses();
+			oRm.writeAccessibilityState(null, mAccProps);
+			oRm.write(">"); // div element
+			oRm.write(aMonthNames[i]);
+			oRm.write("</div>");
+
+			if ((i + 1) % oMP._iColumns == 0) {
+				// end of row
+				oRm.write("</div>");
+			}
+		}
+
+		oRm.write("</div>");
+
+	};
+
+	return MonthPickerRenderer;
+
+}, /* bExport= */ true);
+
+}; // end of sap/ui/unified/calendar/MonthPickerRenderer.js
+if ( !jQuery.sap.isDeclared('sap.ui.unified.calendar.MonthRenderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+jQuery.sap.declare('sap.ui.unified.calendar.MonthRenderer'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
+sap.ui.define("sap/ui/unified/calendar/MonthRenderer",['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils'],
+	function(jQuery, CalendarUtils) {
+	"use strict";
+
+
+	/**
+	 * Month renderer.
+	 * @namespace
+	 */
+	var MonthRenderer = {
+	};
+
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.Month} oMonth an object representation of the control that should be rendered
+	 */
+	MonthRenderer.render = function(oRm, oMonth){
+
+		var oDate = oMonth._getDate();
+		var sTooltip = oMonth.getTooltip_AsString();
+		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		var sId = oMonth.getId();
+		var oAriaLabel = {value: sId + "-Descr", append: true};
+
+		oRm.write("<div");
+		oRm.writeControlData(oMonth);
+		oRm.addClass("sapUiCalMonthView");
+		oRm.writeClasses();
+
+		if (sTooltip) {
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
+
+		if (oMonth.getShowHeader()) {
+			oAriaLabel.value = oAriaLabel.value + " " + sId + "-Head";
+		}
+
+		oRm.writeAccessibilityState(oMonth, {
+			role: "grid",
+			readonly: "true",
+			multiselectable: !oMonth.getSingleSelection() || oMonth.getIntervalSelection(),
+			labelledby: oAriaLabel
+		});
+
+		oRm.write(">"); // div element
+
+		oRm.write("<span id=\"" + sId + "-Descr\" style=\"display: none;\">" + rb.getText("CALENDAR_DIALOG") + "</span>");
+
+		this.renderMonth(oRm, oMonth, oDate);
+
+		oRm.write("</div>");
+
+	};
+
+	MonthRenderer.renderMonth = function(oRm, oMonth, oDate){
+
+		var oLocaleData = oMonth._getLocaleData();
+		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+		var sId = oMonth.getId();
+		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+
+		// header
+		if (oMonth.getShowHeader()) {
+			var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+			oRm.write("<div id=\"" + sId + "-Head\"class=\"sapUiCalMonthHead\" >");
+			oRm.write(aMonthNames[oDate.getUTCMonth()]);
+			oRm.write("</div>");
+		}
+
+		// week numbers
+		var aWeekDays = [];
+		if (oMonth._bLongWeekDays || !oMonth._bNamesLengthChecked) {
+			aWeekDays = oLocaleData.getDaysStandAlone("abbreviated");
+		} else {
+			aWeekDays = oLocaleData.getDaysStandAlone("narrow");
+		}
+		var aWeekDaysWide = oLocaleData.getDaysStandAlone("wide");
+
+		oRm.write("<div");
+		oRm.writeAttribute("id", sId + "-CW");
+		oRm.addStyle("display", "none");
+		oRm.writeStyles();
+		oRm.writeAccessibilityState(null, {role: "columnheader"});
+		oRm.write(">"); // div
+		oRm.write(rb.getText("CALENDAR_WEEK"));
+		oRm.write("</div>");
+
+		oRm.write("<div");
+		oRm.writeAccessibilityState(null, {role: "row"});
+		oRm.write(">"); // div
+
+		for ( var i = 0; i < 7; i++) {
+			oRm.write("<div");
+			oRm.addClass("sapUiCalWH");
+			oRm.writeAttribute("id", sId + "-WH" + ((i + iFirstDayOfWeek) % 7) );
+			if (i == 0) {
+				oRm.addClass("sapUiCalFirstWDay");
+			}
+			oRm.writeClasses();
+			oRm.writeAccessibilityState(null, {role: "columnheader", label: aWeekDaysWide[(i + iFirstDayOfWeek) % 7]});
+			oRm.write(">"); // div element
+			oRm.write(aWeekDays[(i + iFirstDayOfWeek) % 7]);
+			oRm.write("</div>");
+		}
+
+		oRm.write("</div>");
+
+		// days
+		oRm.write("<div id=\"" + sId + "-days\" class=\"sapUiCalDays\">"); // extra DIV around the days to allow rerendering only it's content
+		this.renderDays(oRm, oMonth, oDate);
+		oRm.write("</div>");
+
+	};
+
+	MonthRenderer.renderDays = function(oRm, oMonth, oDate){
+
+		if (!oDate) {
+			oDate = oMonth._getFocusedDate();
+		}
+
+		var sLocale = oMonth._getLocale();
+		var oLocaleData = oMonth._getLocaleData();
+		var iMonth = oDate.getUTCMonth();
+		var iYear = oDate.getUTCFullYear();
+		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+		var iWeekendStart = oLocaleData.getWeekendStart();
+		var iWeekendEnd = oLocaleData.getWeekendEnd();
+		var sToday = oLocaleData.getRelativeDay(0);
+		var oToday = new Date();
+		var sId = oMonth.getId();
+
+		// determine weekday of first day in month
+		var oFirstDay = new Date(oDate.getTime());
+		oFirstDay.setUTCDate(1);
+		var iWeekDay = oFirstDay.getUTCDay();
+		var iDaysOldMonth = iWeekDay - iFirstDayOfWeek;
+		if (iDaysOldMonth < 0) {
+			iDaysOldMonth = 7 + iDaysOldMonth;
+		}
+
+		if (iDaysOldMonth > 0) {
+			// determine first day for display
+			oFirstDay.setUTCDate(1 - iDaysOldMonth);
+		}
+
+		var oDay = new Date(oFirstDay.getTime());
+		var sYyyymmdd = "";
+		var iNextMonth = (iMonth + 1) % 12;
+		var iSelected = 0;
+		var oType;
+		var mAccProps;
+		var iWeekNumber = 0;
+		var oFormatLong = oMonth._getFormatLong();
+
+		do {
+			mAccProps = {
+					role: "gridcell",
+					selected: false,
+					label: ""
+				};
+
+			sYyyymmdd = oMonth._oFormatYyyymmdd.format(oDay, true);
+			iWeekDay = oDay.getUTCDay();
+			iSelected = oMonth._checkDateSelected(oDay);
+			oType = oMonth._getDateType(oDay);
+
+			if (iWeekDay == iFirstDayOfWeek) {
+				// begin of row
+				oRm.write("<div");
+				oRm.writeAccessibilityState(null, {role: "row"});
+				oRm.write(">"); // div
+			}
+
+			oRm.write("<div");
+			oRm.writeAttribute("id", sId + "-" + sYyyymmdd);
+			oRm.addClass("sapUiCalDay");
+			oRm.addClass("sapUiCalWDay" + iWeekDay);
+			if (iWeekDay == iFirstDayOfWeek) {
+				oRm.addClass("sapUiCalFirstWDay");
+				iWeekNumber = CalendarUtils.calculateWeekNumber(oDay, iYear, sLocale, oLocaleData);
+			}
+			if (iMonth != oDay.getUTCMonth()) {
+				oRm.addClass("sapUiCalDayOtherMonth");
+				mAccProps["disabled"] = true;
+			}
+			if (oDay.getUTCMonth() == oToday.getMonth() && oDay.getUTCFullYear() == oToday.getFullYear() && oDay.getUTCDate() == oToday.getDate()) {
+				oRm.addClass("sapUiCalDayToday");
+				mAccProps["label"] = sToday + " ";
+			}
+
+			if (iSelected > 0) {
+				oRm.addClass("sapUiCalDaySel"); // day selected
+				mAccProps["selected"] = true;
+			}
+			if (iSelected == 2) {
+				oRm.addClass("sapUiCalDaySelStart"); // interval start
+			} else if (iSelected == 3) {
+				oRm.addClass("sapUiCalDaySelEnd"); // interval end
+			} else if (iSelected == 4) {
+				oRm.addClass("sapUiCalDaySelBetween"); // interval between
+			} else if (iSelected == 5) {
+				oRm.addClass("sapUiCalDaySelStart"); // interval start
+				oRm.addClass("sapUiCalDaySelEnd"); // interval end
+			}
+
+			if (oType) {
+				oRm.addClass("sapUiCalDay" + oType.type);
+				if (oType.tooltip) {
+					oRm.writeAttributeEscaped('title', oType.tooltip);
+				}
+			}
+
+			if ((iWeekDay >= iWeekendStart && iWeekDay <= iWeekendEnd) ||
+					( iWeekendEnd < iWeekendStart && ( iWeekDay >= iWeekendStart || iWeekDay <= iWeekendEnd))) {
+				oRm.addClass("sapUiCalDayWeekEnd");
+			}
+			oRm.writeAttribute("tabindex", "-1");
+			oRm.writeAttribute("data-sap-day", sYyyymmdd);
+			oRm.writeClasses();
+			mAccProps["describedby"] = sId + "-CW" + " " + sId + "-WNum-" +  iWeekNumber + " " + sId + "-WH" + iWeekDay;
+			mAccProps["label"] = mAccProps["label"] + oFormatLong.format(oDay, true);
+			oRm.writeAccessibilityState(null, mAccProps);
+			oRm.write(">"); // div element
+
+			oRm.write("<span");
+			oRm.addClass("sapUiCalDayNum");
+			oRm.writeClasses();
+			oRm.write(">"); // span
+			oRm.write(oDay.getUTCDate());
+			oRm.write("</span>");
+
+			if (iWeekDay == iFirstDayOfWeek) {
+				// add week number - inside first day of the week to allow better position and make it easier for ItemNavigation
+				oRm.write("<span");
+				oRm.writeAttribute("id", sId + "-WNum-" +  iWeekNumber);
+				oRm.addClass("sapUiCalWeekNum");
+				oRm.writeClasses();
+				oRm.writeAccessibilityState(null, {role: "rowheader", desribedby:sId + "-CW"});
+				oRm.write(">"); // span
+				oRm.write(iWeekNumber);
+				oRm.write("</span>");
+			}
+
+			oRm.write("</div>");
+
+			if (iWeekDay == (iFirstDayOfWeek + 6) % 7) {
+				// end of row
+				oRm.write("</div>");
+			}
+
+			oDay.setUTCDate(oDay.getUTCDate() + 1);
+		} while (oDay.getUTCMonth() != iNextMonth || oDay.getUTCDay() != iFirstDayOfWeek);
+
+	};
+
+	return MonthRenderer;
+
+}, /* bExport= */ true);
+
+}; // end of sap/ui/unified/calendar/MonthRenderer.js
+if ( !jQuery.sap.isDeclared('sap.ui.unified.calendar.YearPickerRenderer') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+jQuery.sap.declare('sap.ui.unified.calendar.YearPickerRenderer'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
+sap.ui.define("sap/ui/unified/calendar/YearPickerRenderer",['jquery.sap.global'],
+	function(jQuery) {
+	"use strict";
+
+
+	/**
+	 * YearPicker renderer.
+	 * @namespace
+	 */
+	var YearPickerRenderer = {
+	};
+
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.YearPicker} oYP an object representation of the control that should be rendered
+	 */
+	YearPickerRenderer.render = function(oRm, oYP){
+
+		var sTooltip = oYP.getTooltip_AsString();
+		var sId = oYP.getId();
+		var iCurrentYear = oYP.getYear();
+
+		oRm.write("<div");
+		oRm.writeControlData(oYP);
+		oRm.addClass("sapUiCalYearPicker");
+		oRm.writeClasses();
+
+		if (sTooltip) {
+			oRm.writeAttributeEscaped('title', sTooltip);
+		}
+
+		oRm.writeAccessibilityState(oYP, {
+			role: "grid",
+			readonly: "true",
+			multiselectable: "false"
+		});
+
+		oRm.write(">"); // div element
+
+		var iYear = iCurrentYear - 10;
+
+		if (iYear >= 9980) {
+			iYear = 9980;
+		}else if (iYear < 1) {
+			iYear = 1;
+		}
+
+		for ( var i = 0; i < 20; i++) {
+			if (i == 0 || i % oYP._iColumns == 0) {
+				// begin of row
+				oRm.write("<div");
+				oRm.writeAccessibilityState(null, {role: "row"});
+				oRm.write(">"); // div element
+			}
+
+			oRm.write("<div");
+			oRm.writeAttribute("id", sId + "-y" + iYear);
+			oRm.addClass("sapUiCalYear");
+			if (iYear == iCurrentYear) {
+				oRm.addClass("sapUiCalYearSel");
+			}
+			oRm.writeAttribute("tabindex", "-1");
+			oRm.writeClasses();
+			oRm.writeAccessibilityState(null, {role: "gridcell"});
+			oRm.write(">"); // div element
+			oRm.write(iYear);
+			oRm.write("</div>");
+			iYear++;
+
+			if ((i + 1) % oYP._iColumns == 0) {
+				// end of row
+				oRm.write("</div>");
+			}
+		}
+
+		oRm.write("</div>");
+
+	};
+
+	return YearPickerRenderer;
+
+}, /* bExport= */ true);
+
+}; // end of sap/ui/unified/calendar/YearPickerRenderer.js
 if ( !jQuery.sap.isDeclared('sap.ui.unified.library') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
@@ -1153,14 +1606,14 @@ sap.ui.define("sap/ui/unified/library",['jquery.sap.global',
 	 * @namespace
 	 * @name sap.ui.unified
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @public
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.unified",
-		version: "1.26.10",
+		version: "1.28.5",
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.unified.CalendarDayType",
@@ -1168,6 +1621,10 @@ sap.ui.define("sap/ui/unified/library",['jquery.sap.global',
 		],
 		interfaces: [],
 		controls: [
+			"sap.ui.unified.calendar.Header",
+			"sap.ui.unified.calendar.Month",
+			"sap.ui.unified.calendar.MonthPicker",
+			"sap.ui.unified.calendar.YearPicker",
 			"sap.ui.unified.Calendar",
 			"sap.ui.unified.CalendarLegend",
 			"sap.ui.unified.ContentSwitcher",
@@ -1389,1629 +1846,13 @@ sap.ui.define("sap/ui/unified/library",['jquery.sap.global',
 		};
 	}
 
+	sap.ui.unified.calendar = sap.ui.unified.calendar || {};
+
 	return sap.ui.unified;
 
 }, /* bExport= */ false);
 
 }; // end of sap/ui/unified/library.js
-if ( !jQuery.sap.isDeclared('sap.ui.unified.Calendar') ) {
-/*!
- * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
- * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
- */
-
-// Provides control sap.ui.unified.Calendar.
-jQuery.sap.declare('sap.ui.unified.Calendar'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
-jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
-jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
-jQuery.sap.require('sap.ui.core.LocaleData'); // unlisted dependency retained
-jQuery.sap.require('sap.ui.core.delegate.ItemNavigation'); // unlisted dependency retained
-jQuery.sap.require('sap.ui.model.type.Date'); // unlisted dependency retained
-sap.ui.define("sap/ui/unified/Calendar",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/model/type/Date', './library'],
-	function(jQuery, Control, LocaleData, ItemNavigation, Date1, library) {
-	"use strict";
-
-	/**
-	 * Constructor for a new Calendar.
-	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
-	 *
-	 * @class
-	 * Basic Calendar.
-	 * This calendar ist used for DatePickers
-	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
-	 *
-	 * @constructor
-	 * @public
-	 * @since 1.22.0
-	 * @alias sap.ui.unified.Calendar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	var Calendar = Control.extend("sap.ui.unified.Calendar", /** @lends sap.ui.unified.Calendar.prototype */ { metadata : {
-
-		library : "sap.ui.unified",
-		properties : {
-
-			/**
-			 * If set, interval selection is allowed
-			 */
-			intervalSelection : {type : "boolean", group : "Misc", defaultValue : false},
-
-			/**
-			 * If set, only a single date or interval, if intervalSelection is enabled, can be selected
-			 */
-			singleSelection : {type : "boolean", group : "Misc", defaultValue : true}
-		},
-		aggregations : {
-
-			/**
-			 * Date Ranges for selected dates of the DatePicker
-			 */
-			selectedDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "selectedDate"}, 
-
-			/**
-			 * Date Range with type to visualize special days in the Calendar.
-			 * If one day is assigned to more than one Type, only the first one will be used.
-			 * @since 1.24.0
-			 */
-			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"}
-		},
-		events : {
-
-			/**
-			 * Date selection changed
-			 */
-			select : {}, 
-
-			/**
-			 * Date selection was cancelled
-			 */
-			cancel : {}
-		}
-	}});
-
-	/*
-	 * There are different modes (stored in this._iMode)
-	 * The standard is 0, that means a calendar showing a calendar with the days of one month.
-	 * If 1 a month picker is shown.
-	 * if 2 a year picker is shown.
-	 */
-
-	(function() {
-
-		Calendar.prototype.init = function(){
-
-			this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
-
-			this._iMode = 0; // days are shown
-
-			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
-
-			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
-
-			this._oMinDate = new Date(Date.UTC(1, 0, 1));
-			this._oMinDate.setUTCFullYear(1); // otherwise year 1 will be converted to year 1901
-			this._oMaxDate = new Date(Date.UTC(9999, 11, 31));
-
-		};
-
-		Calendar.prototype.exit = function(){
-
-			if (this._sRenderMonth) {
-				jQuery.sap.clearDelayedCall(this._sRenderMonth);
-			}
-
-		};
-
-		//	sap.ui.unified.Calendar.prototype.onBeforeRendering = function(){
-		//	};
-
-		Calendar.prototype.onAfterRendering = function(){
-
-			var that = this;
-
-			_initItemNavigation(that);
-
-			// check if day names and month names are too big -> use smaller ones
-			_checkNamesLength(that);
-
-			_togglePrevNext(that, this._getFocusedDate(), true);
-
-		};
-
-		// overwrite invalidate to recognize changes on selectedDates
-		Calendar.prototype.invalidate = function(oOrigin) {
-
-			if (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange)) {
-				Control.prototype.invalidate.apply(this, arguments);
-			} else if (this.getDomRef() && this._iMode == 0 && !this._sRenderMonth) {
-				// DateRange changed -> only rerender days
-				// do this only once if more DateRanges / Special days are changed
-				var that = this;
-				this._sRenderMonth = jQuery.sap.delayedCall(0, this, _renderMonth, [that]);
-			}
-
-		};
-
-		/**
-		 * sets the locale for the DatePicker
-		 * only for internal use
-		 * @param {string} sLocale  new value for <code>locale</code>
-		 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
-		 * @private
-		 */
-		Calendar.prototype.setLocale = function(sLocale){
-
-			if (this._sLocale != sLocale) {
-				this._sLocale = sLocale;
-				this._oLocaleData = undefined;
-				this.invalidate();
-			}
-
-			return this;
-
-		};
-
-		/**
-		 * gets the used locale for the DatePicker
-		 * only for internal use
-		 * @return {string} sLocale
-		 * @private
-		 */
-		Calendar.prototype.getLocale = function(){
-
-			if (!this._sLocale) {
-				this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
-			}
-
-			return this._sLocale;
-
-		};
-
-		Calendar.prototype._getFocusedDate = function(){
-
-			if (!this._oFocusedDate) {
-				var that = this;
-				_determineFocusedDate(that);
-			}
-
-			return this._oFocusedDate;
-
-		};
-
-		Calendar.prototype._setFocusedDate = function(oDate){
-
-			this._oFocusedDate = new Date(oDate);
-
-		};
-
-		/**
-		 * Sets the focused date of the calendar.
-		 *
-		 * @param {object} oDate
-		 *         JavaScript date object for focused date.
-		 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-		Calendar.prototype.focusDate = function(oDate){
-
-			if (oDate && (!this._oFocusedDate || this._oFocusedDate.getTime() != oDate.getTime())) {
-				if (!(oDate instanceof Date)) {
-					throw new Error("Date must be a JavaScript date object; " + this);
-				}
-
-				var iYear = oDate.getFullYear();
-				if (iYear < 1 || iYear > 9999) {
-					throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-				}
-
-				this._setFocusedDate(_createUTCDate(oDate));
-
-				if (this.getDomRef() && this._iMode == 0) {
-					var that = this;
-					_renderMonth(that);
-				}
-			}
-
-			return this;
-
-		};
-
-		/**
-		 * sets the Popup mode
-		 * e.G. Tab-chain should not leave calendar
-		 * only for internal use
-		 * @param {boolean} bPoupupMode <code>PopupMode</code>
-		 * @private
-		 */
-		Calendar.prototype.setPopupMode = function(bPoupupMode){
-
-			this._bPoupupMode = bPoupupMode;
-
-		};
-
-		/*
-		 * gets localeData for used locale
-		 * if no locale is given use rendered one
-		 */
-		Calendar.prototype._getLocaleData = function(){
-
-			if (!this._oLocaleData) {
-				var sLocale = this.getLocale();
-				var oLocale = new sap.ui.core.Locale(sLocale);
-				this._oLocaleData = LocaleData.getInstance(oLocale);
-			}
-
-			return this._oLocaleData;
-
-		};
-
-		Calendar.prototype.onclick = function(oEvent){
-
-			if (oEvent.isMarked("delayedMouseEvent") ) {
-				return;
-			}
-
-			var that = this;
-			var oFocusedDate = this._getFocusedDate();
-
-			if (jQuery.sap.containsOrEquals(this.getDomRef("next"), oEvent.target) && !this.$("next").attr("disabled")) {
-					switch (this._iMode) {
-					case 0: // day picker
-						oFocusedDate.setUTCMonth(oFocusedDate.getUTCMonth() + 1, 1);
-						_renderMonth(that);
-						break;
-
-					case 1: // month picker
-						oFocusedDate.setUTCFullYear(oFocusedDate.getUTCFullYear() + 1);
-						this.$("year").text(oFocusedDate.getUTCFullYear());
-						_togglePrevNext(that, oFocusedDate);
-						break;
-
-					case 2: // year picker
-						_updateYears(that, true, this._oItemNavigation.getFocusedIndex());
-						break;
-						// no default
-					}
-			} else if (jQuery.sap.containsOrEquals(this.getDomRef("prev"), oEvent.target) && !this.$("prev").attr("disabled")) {
-				switch (this._iMode) {
-				case 0: // day picker
-					oFocusedDate.setUTCDate(1);
-					oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
-					_renderMonth(that);
-					break;
-
-				case 1: // month picker
-					oFocusedDate.setUTCFullYear(oFocusedDate.getUTCFullYear() - 1);
-					this.$("year").text(oFocusedDate.getUTCFullYear());
-					_togglePrevNext(that, oFocusedDate);
-					break;
-
-				case 2: // year picker
-					_updateYears(that, false, this._oItemNavigation.getFocusedIndex());
-					break;
-					// no default
-				}
-			} else if (oEvent.target.id == this.getId() + "-month") {
-				if (this._iMode != 1) {
-					_showMonthPicker(that);
-				} else {
-					_hideMonthPicker(that);
-				}
-				// add ItemNavigation again (might be removed by Tab)
-				this.addDelegate(this._oItemNavigation);
-			} else if (oEvent.target.id == this.getId() + "-year") {
-				if (this._iMode != 2) {
-					_showYearPicker(that);
-				} else {
-					_hideYearPicker(that);
-				}
-				// add ItemNavigation again (might be removed by Tab)
-				this.addDelegate(this._oItemNavigation);
-			} else if (oEvent.target.id == this.getId() + "-cancel") {
-				this.onsapescape(oEvent);
-			}
-
-		};
-
-		Calendar.prototype._handleMouseMove = function(oEvent){
-
-			if (!this.$().is(":visible")) {
-				// calendar was closed -> remove mousemove handler
-				jQuery(window.document).unbind('mousemove', this._mouseMoveProxy);
-				this._bMouseMove = undefined;
-			}
-
-			var $Target = jQuery(oEvent.target);
-
-			if ($Target.hasClass("sapUiCalDayNum")) {
-				$Target = $Target.parent();
-			}
-
-			if ($Target.hasClass("sapUiCalDay")) {
-				var oFocusedDate = this._getFocusedDate();
-				var oOldFocusedDate = oFocusedDate;
-				oFocusedDate = this._oFormatYyyymmdd.parse($Target.attr("data-sap-day"), true);
-				this._setFocusedDate(oFocusedDate);
-
-				if (oFocusedDate.getTime() != oOldFocusedDate.getTime()) {
-					var that = this;
-					if ($Target.hasClass("sapUiCalDayOtherMonth")) {
-						// in other month -> change month
-						_renderMonth(that);
-					} else {
-						_selectDay(that, oFocusedDate, false, true);
-						this._bMoveChange = true;
-					}
-
-				}
-			}
-
-		};
-
-		Calendar.prototype.onmouseup = function(oEvent){
-
-			if (this._bMouseMove) {
-				jQuery(window.document).unbind('mousemove', this._mouseMoveProxy);
-				this._bMouseMove = undefined;
-
-				// focus now selected day
-				var oFocusedDate = this._getFocusedDate();
-				var aDomRefs = this.$("days").children(".sapUiCalDay");
-
-				for ( var i = 0; i < aDomRefs.length; i++) {
-					var $DomRef = jQuery(aDomRefs[i]);
-					if (!$DomRef.hasClass("sapUiCalDayOtherMonth")) {
-						if ($DomRef.attr("data-sap-day") == this._oFormatYyyymmdd.format(oFocusedDate, true)) {
-							$DomRef.focus();
-							break;
-						}
-					}
-				}
-
-				if (this._bMoveChange) {
-					// selection was changed -> make it final
-					var that = this;
-					_selectDay(that, oFocusedDate);
-					this._bMoveChange = false;
-					_fireSelect(that);
-				}
-			}
-
-		};
-		/*
-		sap.ui.unified.Calendar.prototype.onswipeleft = function(oEvent) {
-
-			var that = this;
-			var oFocusedDate = this._getFocusedDate();
-
-			oFocusedDate.setUTCMonth(oFocusedDate.getUTCMonth()+1, 1);
-			_renderMonth(that);
-
-		};
-
-		sap.ui.unified.Calendar.prototype.onswiperight = function(oEvent) {
-
-			var that = this;
-			var oFocusedDate = this._getFocusedDate();
-
-			oFocusedDate.setUTCDate(1);
-			oFocusedDate.setUTCDate(oFocusedDate.getUTCDate()-1);
-			_renderMonth(that);
-
-		};
-		*/
-		Calendar.prototype.onsapselect = function(oEvent){
-
-			// focused item must be selected
-			var that = this;
-			var iIndex = 0;
-
-			switch (this._iMode) {
-			case 0: // day picker
-				if (jQuery.sap.containsOrEquals(this.getDomRef("days"), oEvent.target)) {
-					_selectDay(that, that._getFocusedDate());
-					_fireSelect(that);
-
-					//to prevent bubbling into input field if in DatePicker
-					oEvent.stopPropagation();
-					oEvent.preventDefault();
-				}
-				break;
-
-			case 1: // month picker
-				if (jQuery.sap.containsOrEquals(this.getDomRef("months"), oEvent.target)) {
-					iIndex = this._oItemNavigation.getFocusedIndex();
-					_selectMonth(that, iIndex);
-				}
-				break;
-
-			case 2: // year picker
-				if (jQuery.sap.containsOrEquals(this.getDomRef("years"), oEvent.target)) {
-					iIndex = this._oItemNavigation.getFocusedIndex();
-					_selectYear(that, iIndex);
-				}
-				break;
-				// no default
-			}
-
-		};
-
-		Calendar.prototype.onsapselectmodifiers = function(oEvent){
-
-			this.onsapselect(oEvent);
-
-		};
-
-		Calendar.prototype.onsapescape = function(oEvent){
-
-			var that = this;
-
-			switch (this._iMode) {
-			case 0: // day picker
-				this.fireCancel();
-				break;
-
-			case 1: // month picker
-				_hideMonthPicker(that);
-				break;
-
-			case 2: // year picker
-				_hideYearPicker(that);
-				break;
-				// no default
-			}
-
-		};
-
-		Calendar.prototype.onsapshow = function(oEvent){
-
-			if (this._bPoupupMode) {
-				var that = this;
-				switch (this._iMode) {
-				case 1: // month picker
-					_hideMonthPicker(that);
-					break;
-
-				case 2: // year picker
-					_hideYearPicker(that);
-					break;
-					// no default
-				}
-				this.fireCancel();
-
-				oEvent.preventDefault(); // otherwise IE opens the address bar history
-
-			}
-
-		};
-
-		Calendar.prototype.onsaphide = Calendar.prototype.onsapshow;
-
-		Calendar.prototype.onsappageupmodifiers = function(oEvent){
-
-			// not handled by ItemNavigation
-			if (jQuery.sap.containsOrEquals(this.getDomRef("days"), oEvent.target)) {
-				// go one year back
-				var oFocusedDate = this._getFocusedDate();
-				var that = this;
-				var iYear = oFocusedDate.getUTCFullYear();
-
-				if (oEvent.metaKey || oEvent.ctrlKey) {
-					oFocusedDate.setUTCFullYear(iYear - 10);
-				} else {
-					oFocusedDate.setUTCFullYear(iYear - 1);
-				}
-
-				if (oFocusedDate.getTime() < this._oMinDate.getTime()){
-					this._setFocusedDate(this._oMinDate);
-				}
-				_renderMonth(that);
-			}
-
-			// cancel the event otherwise the browser select some text
-			oEvent.preventDefault();
-
-		};
-
-		Calendar.prototype.onsappagedownmodifiers = function(oEvent){
-
-			// not handled by ItemNavigation
-			if (jQuery.sap.containsOrEquals(this.getDomRef("days"), oEvent.target)) {
-				// go one year forward
-				var oFocusedDate = this._getFocusedDate();
-				var that = this;
-				var iYear = oFocusedDate.getUTCFullYear();
-
-				if (oEvent.metaKey || oEvent.ctrlKey) {
-					oFocusedDate.setUTCFullYear(iYear + 10);
-				} else {
-					oFocusedDate.setUTCFullYear(iYear + 1);
-				}
-
-				if (oFocusedDate.getTime() > this._oMaxDate.getTime()){
-					this._setFocusedDate(this._oMaxDate);
-				}
-				_renderMonth(that);
-			}
-
-			// cancel the event otherwise the browser select some text
-			oEvent.preventDefault();
-
-		};
-
-		Calendar.prototype.onsappageup = function(oEvent){
-
-			if (oEvent.target.id == this.getId() + "-month" || oEvent.target.id == this.getId() + "-year") {
-				//prevent browser scrolling
-				oEvent.preventDefault();
-			}
-
-		};
-
-		Calendar.prototype.onsappagedown = Calendar.prototype.onsappageup;
-
-		Calendar.prototype.onsaptabnext = function(oEvent){
-
-			// if tab was pressed on a day it should jump to the month and then to the year button
-
-			if (jQuery.sap.containsOrEquals(this.getDomRef("days"), oEvent.target) ||
-					jQuery.sap.containsOrEquals(this.getDomRef("months"), oEvent.target) ||
-					jQuery.sap.containsOrEquals(this.getDomRef("years"), oEvent.target)) {
-				// tab from a day
-				jQuery.sap.focus(this.getDomRef("month"));
-
-				if (!this._bPoupupMode) {
-					// remove Tabindex from day - to break cycle
-					jQuery(this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-				}
-
-				// remove ItemNavigation to prevent arrow navigation on buttons
-				this.removeDelegate(this._oItemNavigation);
-
-				oEvent.preventDefault();
-			} else if (oEvent.target.id == this.getId() + "-month") {
-				jQuery.sap.focus(this.getDomRef("year"));
-
-				// remove ItemNavigation to prevent arrow navigation on buttons
-				this.removeDelegate(this._oItemNavigation);
-
-				oEvent.preventDefault();
-			} else if (oEvent.target.id == this.getId() + "-year") {
-				// add ItemNavigation again
-				this.addDelegate(this._oItemNavigation);
-			}
-
-		};
-
-		Calendar.prototype.onsaptabprevious = function(oEvent){
-
-			if (jQuery.sap.containsOrEquals(this.getDomRef("days"), oEvent.target) ||
-					jQuery.sap.containsOrEquals(this.getDomRef("months"), oEvent.target) ||
-					jQuery.sap.containsOrEquals(this.getDomRef("years"), oEvent.target)) {
-				// tab from a day
-				if (this._bPoupupMode) {
-					jQuery.sap.focus(this.getDomRef("year"));
-
-					// remove ItemNavigation to prevent arrow navigation on buttons
-					this.removeDelegate(this._oItemNavigation);
-
-					oEvent.preventDefault();
-				}
-			} else if (oEvent.target.id == this.getId() + "-month") {
-				// add ItemNavigation again
-				this.addDelegate(this._oItemNavigation);
-				this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex());
-
-				oEvent.preventDefault();
-			} else if (oEvent.target.id == this.getId() + "-year") {
-				jQuery.sap.focus(this.getDomRef("month"));
-
-				oEvent.preventDefault();
-			}
-
-		};
-
-		Calendar.prototype.onsapnext = function(oEvent){
-
-			if (oEvent.target.id == this.getId() + "-month" || oEvent.target.id == this.getId() + "-year") {
-				//prevent browser scrolling
-				oEvent.preventDefault();
-			}
-
-		};
-
-		Calendar.prototype.onsapprevious = Calendar.prototype.onsapnext;
-
-		Calendar.prototype.onfocusin = function(oEvent){
-
-			if (oEvent.target.id == this.getId() + "-end") {
-				// focus via tab+shift (otherwise not possible to go to this element)
-				jQuery.sap.focus(this.getDomRef("year"));
-
-				// remove Tabindex from day - to break cycle
-				jQuery(this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-
-				// remove ItemNavigation to prevent arrow navigation on buttons
-				this.removeDelegate(this._oItemNavigation);
-			}
-
-			// remove tabindex of dummy element if focus is inside calendar
-			jQuery.sap.byId(this.getId() + "-end").attr("tabindex", "-1");
-
-		};
-
-		Calendar.prototype.onsapfocusleave = function(oEvent){
-
-			if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
-				// put dummy element back to tab-chain
-				jQuery.sap.byId(this.getId() + "-end").attr("tabindex", "0");
-				// add ItemNavigation again
-				this.addDelegate(this._oItemNavigation);
-			}
-
-		};
-
-		/*
-		 * Checks if a date is selected and what kind of selected
-		 * @return {int} iSelected 0: not selected; 1: single day selected, 2: interval start, 3: interval end, 4: interval between
-		 * @private
-		 */
-		Calendar.prototype._checkDateSelected = function(oDate){
-
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
-
-			var iSelected = 0;
-			var aSelectedDates = this.getSelectedDates();
-			var oTimeStamp = oDate.getTime();
-
-			for ( var i = 0; i < aSelectedDates.length; i++) {
-				// initalize the time part of the start and end time
-				var oRange = aSelectedDates[i];
-				var oTmpDate = _createUTCDate(oRange.getStartDate());
-				var oStartDate;
-				var oStartTimeStamp = 0;
-				if (oTmpDate) {
-					oStartDate = oTmpDate;
-					oStartTimeStamp = oStartDate.getTime();
-				}
-				var oEndDate;
-				var oEndTimeStamp = 0;
-				if (this.getIntervalSelection()) {
-					oTmpDate = _createUTCDate(oRange.getEndDate());
-					if (oTmpDate) {
-						oEndDate = oTmpDate;
-						oEndTimeStamp = oEndDate.getTime();
-					}
-				}
-
-				if (oTimeStamp == oStartTimeStamp && !oEndDate ) {
-					iSelected = 1; // single day selected
-					break;
-				} else if (oTimeStamp == oStartTimeStamp && oEndDate ) {
-					iSelected = 2; // interval start
-					if (oEndDate && oTimeStamp == oEndTimeStamp) {
-						// one day interval
-						iSelected = 5;
-					}
-					break;
-				} else if (oEndDate && oTimeStamp == oEndTimeStamp) {
-					iSelected = 3; // interval end
-					break;
-				} else if (oEndDate && oTimeStamp > oStartTimeStamp && oTimeStamp < oEndTimeStamp) {
-					iSelected = 4; // interval between
-					break;
-				}
-
-				if (this.getSingleSelection()) {
-					// if single selection only check the first range
-					break;
-				}
-			}
-
-			return iSelected;
-
-		};
-
-		/*
-		 * gets the type of a single date checking the specialDates aggregation
-		 * the first hit is used
-		 * @return {object} date type and tooltip defined in CalendarDayType
-		 * @private
-		 */
-		Calendar.prototype._getDateType = function(oDate){
-
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
-
-			var oType;
-			var aSpecialDates = this.getSpecialDates();
-			var oTimeStamp = oDate.getTime();
-
-			for ( var i = 0; i < aSpecialDates.length; i++) {
-				// initialize the time part of the start and end time
-				var oRange = aSpecialDates[i];
-				var oTmpDate = _createUTCDate(oRange.getStartDate());
-				var oStartDate;
-				var oStartTimeStamp = 0;
-				if (oTmpDate) {
-					oStartDate = oTmpDate;
-					oStartTimeStamp = oStartDate.getTime();
-				}
-				var oEndDate;
-				var oEndTimeStamp = 0;
-				oTmpDate = _createUTCDate(oRange.getEndDate());
-				if (oTmpDate) {
-					oEndDate = oTmpDate;
-					oEndTimeStamp = oEndDate.getTime();
-				}
-
-				if ((oTimeStamp == oStartTimeStamp && !oEndDate) || (oTimeStamp >= oStartTimeStamp && oTimeStamp <= oEndTimeStamp)) {
-					oType = {type: oRange.getType(), tooltip: oRange.getTooltip_AsString()};
-					break;
-				}
-			}
-
-			return oType;
-
-		};
-
-		function _handleAfterFocus(oControlEvent){
-
-			var iIndex = oControlEvent.getParameter("index");
-			var oEvent = oControlEvent.getParameter("event");
-
-			if (!oEvent) {
-				return; // happens if focus is set via ItemNavigation.focusItem directly
-			}
-
-			var that = this;
-			var oFocusedDate = this._getFocusedDate();
-
-			if (this._iMode == 0) {
-				// day picker
-
-				var aDomRefs = this.$("days").children(".sapUiCalDay");
-				var i = 0;
-
-				// find out what day was focused
-				var $DomRef = jQuery(aDomRefs[iIndex]);
-				var $DomRefDay;
-				if ($DomRef.hasClass("sapUiCalDayOtherMonth")) {
-					if (oEvent.type == "saphomemodifiers" && (oEvent.metaKey || oEvent.ctrlKey)) {
-						// on ctrl+home key focus first day of month
-						oFocusedDate.setUTCDate(1);
-						_focusDate(that, oFocusedDate);
-					} else if (oEvent.type == "sapendmodifiers" && (oEvent.metaKey || oEvent.ctrlKey)) {
-						// on ctrl+end key focus last day of month
-						for ( i = aDomRefs.length - 1; i > 0 ; i--) {
-							$DomRefDay = jQuery(aDomRefs[i]);
-							if (!$DomRefDay.hasClass("sapUiCalDayOtherMonth")) {
-								oFocusedDate = this._oFormatYyyymmdd.parse($DomRefDay.attr("data-sap-day"), true);
-								this._setFocusedDate(oFocusedDate);
-								break;
-							}
-						}
-						if (oFocusedDate.getTime() >= this._oMinDate.getTime() && oFocusedDate.getTime() <= this._oMaxDate.getTime()) {
-								this._oItemNavigation.focusItem(i);
-						}else {
-							_focusDate(that, oFocusedDate);
-						}
-					} else {
-						// switch to the requested month and focus the chosen day
-						oFocusedDate = this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), true);
-						if (!oFocusedDate) {
-							oFocusedDate = this._getFocusedDate(); // e.g. year > 9999
-						}
-
-						if (oFocusedDate.getTime() >= this._oMinDate.getTime() && oFocusedDate.getTime() <= this._oMaxDate.getTime()) {
-							this._setFocusedDate(oFocusedDate);
-							_renderMonth(that);
-						}else {
-							_focusDate(that, oFocusedDate);
-						}
-					}
-				} else {
-					// day in current month focused
-					if (!jQuery(oEvent.target).hasClass("sapUiCalWeekNum")) {
-						// not if clicked on week number
-						oFocusedDate = this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), true);
-						if (oFocusedDate.getTime() >= this._oMinDate.getTime() && oFocusedDate.getTime() <= this._oMaxDate.getTime()) {
-							this._setFocusedDate(oFocusedDate);
-						}else {
-							_focusDate(that, oFocusedDate);
-						}
-					}
-				}
-			}
-
-			if (oEvent.type == "mousedown") {
-				// as no click event is fired in some cases, e.g. if month is changed (because of changing DOM) select the day on mousedown
-				_handleMousedown(that, oEvent, oFocusedDate, iIndex);
-			}
-
-		}
-
-		function _handleFocusAgain(oControlEvent){
-
-			var iIndex = oControlEvent.getParameter("index");
-			var oEvent = oControlEvent.getParameter("event");
-
-			if (!oEvent) {
-				return; // happens if focus is set via ItemNavigation.focusItem directly
-			}
-
-			if (oEvent.type == "mousedown") {
-				// as no click event is fired in some cases, e.g. if month is changed (because of changing DOM) select the day on mousedown
-				var that = this;
-				var oFocusedDate = this._getFocusedDate();
-				_handleMousedown(that, oEvent, oFocusedDate, iIndex);
-			}
-
-		}
-
-		function _handleMousedown(oThis, oEvent, oFocusedDate, iIndex){
-
-			switch (oThis._iMode) {
-			case 0: // day picker
-				_selectDay(oThis, oFocusedDate, oEvent.shiftKey);
-				_fireSelect(oThis);
-				if (oThis.getIntervalSelection() && oThis.$().is(":visible")) {
-					// if calendar was closed in select event, do not add mousemove handler
-					jQuery(window.document).bind('mousemove', oThis._mouseMoveProxy);
-					oThis._bMouseMove = true;
-				}
-				break;
-
-			case 1: // month picker
-				_selectMonth(oThis, iIndex);
-				break;
-
-			case 2: // year picker
-				_selectYear(oThis, iIndex);
-				break;
-				// no default
-			}
-			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
-			oEvent.setMark("cancelAutoClose");
-
-		}
-
-		function _handleBorderReached(oControlEvent){
-
-			var oEvent = oControlEvent.getParameter("event");
-			var iMonth = 0;
-			var oFocusedDate = this._getFocusedDate();
-
-			if (oEvent.type) {
-				var that = this;
-
-				switch (this._iMode) {
-				case 0: // day picker
-					switch (oEvent.type) {
-					case "sapnext":
-					case "sapnextmodifiers":
-						// last day in month reached
-						if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN) {
-							//goto same day next week
-							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + 7);
-						} else {
-							//go to next day
-							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + 1);
-						}
-						break;
-
-					case "sapprevious":
-					case "sappreviousmodifiers":
-						// first day in month reached
-						if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
-							//goto same day previous week
-							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 7);
-						} else {
-							//go to previous day
-							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
-						}
-						break;
-
-					case "sappagedown":
-						// go to same day next month
-						iMonth = oFocusedDate.getUTCMonth() + 1;
-						oFocusedDate.setUTCMonth(iMonth);
-						// but if the day doesn't exist in this month, go to last day of the month
-						if (iMonth % 12 != oFocusedDate.getUTCMonth()) {
-							while (iMonth != oFocusedDate.getUTCMonth()) {
-								oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
-							}
-						}
-						break;
-
-					case "sappageup":
-						// go to same day previous month
-						iMonth = oFocusedDate.getUTCMonth() - 1;
-						oFocusedDate.setUTCMonth(iMonth);
-						if (iMonth < 0) {
-							iMonth = 11;
-						}
-						// but if the day doesn't exist in this month, go to last day of the month
-						if (iMonth != oFocusedDate.getUTCMonth()) {
-							while (iMonth != oFocusedDate.getUTCMonth()) {
-								oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
-							}
-						}
-						break;
-
-					default:
-						break;
-					}
-
-					if (oFocusedDate.getTime() > this._oMaxDate.getTime()) {
-						oFocusedDate.setUTCFullYear(this._oMaxDate.getUTCFullYear());
-						oFocusedDate.setUTCMonth(this._oMaxDate.getUTCMonth());
-						oFocusedDate.setUTCDate(this._oMaxDate.getUTCDate());
-					}
-					if (oFocusedDate.getTime() < this._oMinDate.getTime()) {
-						oFocusedDate.setUTCFullYear(this._oMinDate.getUTCFullYear());
-						oFocusedDate.setUTCMonth(this._oMinDate.getUTCMonth());
-						oFocusedDate.setUTCDate(this._oMinDate.getUTCDate());
-					}
-
-					_renderMonth(that);
-					break;
-
-				case 1: // month picker
-					break;
-
-				case 2: // year picker
-					switch (oEvent.type) {
-					case "sapnext":
-					case "sapnextmodifiers":
-						if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN) {
-							//same column in first row of next group
-							_updateYears(that, true, this._oItemNavigation.getFocusedIndex() - 16);
-						} else {
-							// first year in next group
-							_updateYears(that, true, 0);
-						}
-						break;
-
-					case "sapprevious":
-					case "sappreviousmodifiers":
-						if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
-							//same column in last row of previous group
-							_updateYears(that, false, 16 + this._oItemNavigation.getFocusedIndex());
-						} else {
-							// last year in previous group
-							_updateYears(that, false, 19);
-						}
-						break;
-
-					case "sappagedown":
-						// same index in next group
-						_updateYears(that, true, this._oItemNavigation.getFocusedIndex());
-						break;
-
-					case "sappageup":
-						// same index in previous group
-						_updateYears(that, false, this._oItemNavigation.getFocusedIndex());
-						break;
-
-					default:
-						break;
-					}
-					break;
-					// no default
-				}
-			}
-
-		}
-
-		function _initItemNavigation(oThis){
-
-			var oDate = oThis._getFocusedDate();
-			var sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate, true);
-			var aDomRefs = [];
-			var oRootDomRef;
-			var iIndex = 0;
-			var iColumns = 0;
-			var bNoColumnChange = false;
-			var bCycling = true;
-
-			switch (oThis._iMode) {
-			case 0: // day picker
-				oRootDomRef = oThis.$("days").get(0);
-				aDomRefs = oThis.$("days").children(".sapUiCalDay");
-
-				for ( var i = 0; i < aDomRefs.length; i++) {
-					var $DomRef = jQuery(aDomRefs[i]);
-					if ($DomRef.attr("data-sap-day") === sYyyymmdd) {
-						iIndex = i;
-					}
-				}
-
-				iColumns = 7;
-				bNoColumnChange = true;
-				bCycling = false;
-
-				break;
-
-			case 1: // month picker
-				oRootDomRef = oThis.$("months").get(0);
-				aDomRefs = oThis.$("months").children(".sapUiCalMonth");
-				iIndex = oDate.getUTCMonth();
-
-				iColumns = 3;
-
-				break;
-
-			case 2: // year picker
-				oRootDomRef = oThis.$("years").get(0);
-				aDomRefs = oThis.$("years").children(".sapUiCalYear");
-				iIndex = 10;
-
-				iColumns = 4;
-				bNoColumnChange = true;
-				bCycling = false;
-
-				break;
-				// no default
-			}
-
-
-			if (!oThis._oItemNavigation) {
-				oThis._oItemNavigation = new ItemNavigation();
-				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, _handleAfterFocus, oThis);
-				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, _handleFocusAgain, oThis);
-				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, _handleBorderReached, oThis);
-				oThis.addDelegate(oThis._oItemNavigation);
-				oThis._oItemNavigation.setHomeEndColumnMode(true, true);
-				oThis._oItemNavigation.setDisabledModifiers({
-					sapnext : ["alt"],
-					sapprevious : ["alt"],
-					saphome : ["alt"],
-					sapend : ["alt"]
-				});
-			}
-			oThis._oItemNavigation.setRootDomRef(oRootDomRef);
-			oThis._oItemNavigation.setItemDomRefs(aDomRefs);
-			oThis._oItemNavigation.setCycling(bCycling);
-			oThis._oItemNavigation.setColumns(iColumns, bNoColumnChange);
-			oThis._oItemNavigation.setFocusedIndex(iIndex);
-			oThis._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
-
-		}
-
-		function _renderMonth(oThis){
-
-			oThis._sRenderMonth = undefined; // initialize delayed call
-
-			var oDate = oThis._getFocusedDate();
-			var $Container = oThis.$("days");
-
-			if ($Container.length > 0) {
-				var oRm = sap.ui.getCore().createRenderManager();
-				oThis.getRenderer().renderDays(oRm, oThis, oDate);
-				oRm.flush($Container[0]);
-				oRm.destroy();
-			}
-
-			// fire internal event for DatePicker for with number of rendered days. If Calendar becomes larger maybe popup must change position
-			oThis.fireEvent("_renderMonth", {days: $Container.children(".sapUiCalDay").length});
-
-			// change month and year
-			var aMonthNames = [];
-			if (oThis._bLongMonth || !oThis._bNamesLengthChecked) {
-				aMonthNames = oThis._getLocaleData().getMonthsStandAlone("wide");
-			} else {
-				aMonthNames = oThis._getLocaleData().getMonthsStandAlone("abbreviated");
-			}
-			oThis.$("month").text(aMonthNames[oDate.getUTCMonth()]);
-			oThis.$("year").text(oDate.getUTCFullYear());
-
-			_initItemNavigation(oThis);
-			oThis._oItemNavigation.focusItem(oThis._oItemNavigation.getFocusedIndex());
-
-			_togglePrevNext(oThis, oDate, true);
-
-		}
-
-		/**
-		 * Creates a Date in local timezone from UTC timezone
-		 * @param {Date} oDate in UTC timezone
-		 * @return {Date} in local timezone
-		 * @private
-		 */
-		function _createLocalDate(oDate) {
-			if (oDate) {
-				return new Date(oDate.getTime() + oDate.getTimezoneOffset() * 60000);
-			}
-		}
-
-		/**
-		 * Creates a Date in UTC timezone from local timezone
-		 * @param {Date} oDate in local timezone
-		 * @return {Date} in UTC timezone
-		 * @private
-		 */
-		function _createUTCDate(oDate) {
-			if (oDate) {
-				var oUTCDate = new Date(Date.UTC(oDate.getFullYear(),oDate.getMonth(),oDate.getDate()));
-				if (oDate.getFullYear() < 1000) {
-					oUTCDate.setUTCFullYear(oDate.getFullYear());
-				}
-				return oUTCDate;
-			}
-
-		}
-
-		function _selectDay(oThis, oDate, bIntervalEnd, bMove){
-
-			var aSelectedDates = oThis.getSelectedDates();
-			var oDateRange;
-			var aDomRefs = oThis.$("days").children(".sapUiCalDay");
-			var $DomRef;
-			var sYyyymmdd;
-			var i = 0;
-			if (oThis.getSingleSelection()) {
-				var oStartDate;
-
-				if (aSelectedDates.length > 0) {
-					oDateRange = aSelectedDates[0];
-					oStartDate = _createUTCDate(oDateRange.getStartDate());
-				} else {
-					oDateRange = new sap.ui.unified.DateRange();
-					oThis.addAggregation("selectedDates", oDateRange, true); // no re-rendering
-				}
-
-				if (oThis.getIntervalSelection()/* && bIntervalEnd*/ && (!oDateRange.getEndDate() || bMove) && oStartDate) {
-					// single interval selection
-					var oEndDate;
-					if (oDate.getTime() < oStartDate.getTime()) {
-						oEndDate = oStartDate;
-						oStartDate = oDate;
-						if (!bMove) {
-							// in move mode do not set date. this bring broblems if on backward move the start date would be cahnged
-							oDateRange.setProperty("startDate", _createLocalDate(oStartDate), true); // no-rerendering
-							oDateRange.setProperty("endDate", _createLocalDate(oEndDate), true); // no-rerendering
-						}
-					} else if (oDate.getTime() >= oStartDate.getTime()) {
-						// single day ranges are allowed
-						oEndDate = oDate;
-						if (!bMove) {
-							oDateRange.setProperty("endDate", _createLocalDate(oEndDate), true); // no-rerendering
-						}
-					}
-
-					var oDay;
-					for ( i = 0; i < aDomRefs.length; i++) {
-						$DomRef = jQuery(aDomRefs[i]);
-						oDay = oThis._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), true);
-
-						if (oDay.getTime() == oStartDate.getTime()) {
-							$DomRef.addClass("sapUiCalDaySelStart");
-							$DomRef.addClass("sapUiCalDaySel");
-							if (oEndDate && oDay.getTime() == oEndDate.getTime()) {
-								// start day and end day are the same
-								$DomRef.addClass("sapUiCalDaySelEnd");
-							}
-						} else if (oEndDate && oDay.getTime() > oStartDate.getTime() && oDay.getTime() < oEndDate.getTime()) {
-							$DomRef.addClass("sapUiCalDaySel");
-							$DomRef.addClass("sapUiCalDaySelBetween");
-						} else if (oEndDate && oDay.getTime() == oEndDate.getTime()) {
-							$DomRef.addClass("sapUiCalDaySelEnd");
-							$DomRef.addClass("sapUiCalDaySel");
-						} else {
-							if ($DomRef.hasClass("sapUiCalDaySel")) {
-								$DomRef.removeClass("sapUiCalDaySel");
-							}
-							if ($DomRef.hasClass("sapUiCalDaySelStart")) {
-								$DomRef.removeClass("sapUiCalDaySelStart");
-							} else if ($DomRef.hasClass("sapUiCalDaySelBetween")) {
-								$DomRef.removeClass("sapUiCalDaySelBetween");
-							} else if ($DomRef.hasClass("sapUiCalDaySelEnd")) {
-								$DomRef.removeClass("sapUiCalDaySelEnd");
-							}
-						}
-					}
-				} else {
-					// single day selection or start a new interval
-					sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate, true);
-					for ( i = 0; i < aDomRefs.length; i++) {
-						$DomRef = jQuery(aDomRefs[i]);
-						if (!$DomRef.hasClass("sapUiCalDayOtherMonth") && $DomRef.attr("data-sap-day") == sYyyymmdd) {
-							$DomRef.addClass("sapUiCalDaySel");
-						} else if ($DomRef.hasClass("sapUiCalDaySel")/*oOldDate && parseInt($DomRef.attr("data-sap-day")) == oOldDate.getUTCDate()*/) {
-							$DomRef.removeClass("sapUiCalDaySel");
-						}
-						if ($DomRef.hasClass("sapUiCalDaySelStart")) {
-							$DomRef.removeClass("sapUiCalDaySelStart");
-						} else if ($DomRef.hasClass("sapUiCalDaySelBetween")) {
-							$DomRef.removeClass("sapUiCalDaySelBetween");
-						} else if ($DomRef.hasClass("sapUiCalDaySelEnd")) {
-							$DomRef.removeClass("sapUiCalDaySelEnd");
-						}
-					}
-					oDateRange.setProperty("startDate", _createLocalDate(oDate), true); // no-rerendering
-					oDateRange.setProperty("endDate", undefined, true); // no-rerendering
-				}
-			} else {
-				// multiple selection
-				if (oThis.getIntervalSelection()) {
-					throw new Error("Calender don't support multiple interval selection");
-
-				} else {
-					var iSelected = oThis._checkDateSelected(oDate);
-					if (iSelected > 0) {
-						// already selected - deselect
-						for ( i = 0; i < aSelectedDates.length; i++) {
-							if (aSelectedDates[i].getStartDate() && oDate.getTime() == _createUTCDate(aSelectedDates[i].getStartDate()).getTime()) {
-								oThis.removeAggregation("selectedDates", i, true); // no re-rendering
-								break;
-							}
-						}
-					} else {
-						// not selected -> select
-						oDateRange = new sap.ui.unified.DateRange({startDate: _createLocalDate(oDate)});
-						oThis.addAggregation("selectedDates", oDateRange, true); // no re-rendering
-					}
-					sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate, true);
-					for ( i = 0; i < aDomRefs.length; i++) {
-						$DomRef = jQuery(aDomRefs[i]);
-						if (!$DomRef.hasClass("sapUiCalDayOtherMonth") && $DomRef.attr("data-sap-day") == sYyyymmdd) {
-							if (iSelected > 0) {
-								$DomRef.removeClass("sapUiCalDaySel");
-							} else {
-								$DomRef.addClass("sapUiCalDaySel");
-							}
-						}
-					}
-				}
-			}
-
-		}
-
-		function _determineFocusedDate(oThis){
-
-			var aSelectedDates = oThis.getSelectedDates();
-			if (aSelectedDates && aSelectedDates[0] && aSelectedDates[0].getStartDate()) {
-				// selected dates are provided -> use first one to focus
-				oThis._oFocusedDate = _createUTCDate(aSelectedDates[0].getStartDate());
-			} else {
-				// use current date
-				var newDate = new Date();
-				oThis._oFocusedDate = _createUTCDate(newDate);
-			}
-
-		}
-
-		function _showMonthPicker(oThis){
-
-			if (oThis._iMode == 2) {
-				_hideYearPicker(oThis);
-			}
-
-			var oDate = oThis._getFocusedDate();
-			var oRm = sap.ui.getCore().createRenderManager();
-			var $Container = oThis.$();
-
-			oThis.getRenderer().renderMonthPicker(oRm, oThis, oDate);
-			oRm.flush($Container[0], false, true); // insert it
-			oRm.destroy();
-
-			oThis._iMode = 1;
-
-			// remove tabindex from focused day
-			jQuery(oThis._oItemNavigation.getItemDomRefs()[oThis._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-
-			_initItemNavigation(oThis);
-			jQuery.sap.focus(oThis._oItemNavigation.getItemDomRefs()[oThis._oItemNavigation.getFocusedIndex()]);
-
-			_togglePrevNext(oThis, oDate, false);
-
-		}
-
-		function _hideMonthPicker(oThis){
-
-			oThis.$("months").remove();
-			oThis._iMode = 0;
-			_initItemNavigation(oThis);
-			jQuery.sap.focus(oThis._oItemNavigation.getItemDomRefs()[oThis._oItemNavigation.getFocusedIndex()]);
-
-			var oFocusedDate = oThis._getFocusedDate();
-			oThis.$("year").text(oFocusedDate.getUTCFullYear());
-			_togglePrevNext(oThis, oFocusedDate, true);
-
-		}
-
-		function _selectMonth(oThis, iMonth){
-
-			var oFocusedDate = oThis._getFocusedDate();
-
-			oFocusedDate.setUTCMonth(iMonth);
-
-			if (iMonth != oFocusedDate.getUTCMonth() ) {
-				// day did not exist in this month (e.g. 31) -> go to last day of month
-				oFocusedDate.setUTCDate(0);
-			}
-
-			if (oFocusedDate.getTime() < oThis._oMinDate.getTime()) {
-				oThis._setFocusedDate(oThis._oMinDate);
-			}else if (oFocusedDate.getTime() > oThis._oMaxDate.getTime()){
-				oThis._setFocusedDate(oThis._oMaxDate);
-			}
-
-			_renderMonth(oThis);
-
-			_hideMonthPicker(oThis);
-
-		}
-
-		function _showYearPicker(oThis){
-
-			if (oThis._iMode == 1) {
-				_hideMonthPicker(oThis);
-			}
-
-			var oDate = oThis._getFocusedDate();
-			var oRm = sap.ui.getCore().createRenderManager();
-			var $Container = oThis.$();
-			var iYearMax = oThis._oMaxDate.getUTCFullYear();
-			var iYearMin = oThis._oMinDate.getUTCFullYear();
-
-			if (iYearMax - iYearMin <= 20) {
-				return;
-			}
-
-			if (oDate.getUTCFullYear() > ( iYearMax - 10 )) {
-				oDate.setUTCFullYear(iYearMax - 9);
-				oThis.$("next").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
-			} else {
-				oThis.$("next").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
-			}
-			if (oDate.getUTCFullYear() < ( iYearMin + 9 )) {
-				oDate.setUTCFullYear(iYearMin + 10);
-				oThis.$("prev").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
-			} else {
-				oThis.$("prev").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
-			}
-
-			oThis.getRenderer().renderYearPicker(oRm, oThis, oDate);
-			oRm.flush($Container[0], false, true); // insert it
-			oRm.destroy();
-
-			// check special case if only 4 weeks are displayed (e.g. February 2021) -> top padding must be removed
-			var aDomRefs = oThis.$("days").children(".sapUiCalDay");
-			if (aDomRefs.length == 28) {
-				oThis.$("years").addClass("sapUiCalYearNoTop");
-			}
-
-			oThis._iMode = 2;
-
-			// remove tabindex from focused day
-			jQuery(oThis._oItemNavigation.getItemDomRefs()[oThis._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-
-			_initItemNavigation(oThis);
-			jQuery.sap.focus(oThis._oItemNavigation.getItemDomRefs()[oThis._oItemNavigation.getFocusedIndex()]);
-
-		}
-
-		function _hideYearPicker(oThis){
-
-			oThis.$("years").remove();
-			oThis._iMode = 0;
-			_initItemNavigation(oThis);
-			jQuery.sap.focus(oThis._oItemNavigation.getItemDomRefs()[oThis._oItemNavigation.getFocusedIndex()]);
-
-			var oFocusedDate = oThis._getFocusedDate();
-			_togglePrevNext(oThis, oFocusedDate, true);
-
-		}
-
-		function _selectYear(oThis, iIndex){
-
-			var oFocusedDate = oThis._getFocusedDate();
-			var aDomRefs = oThis.$("years").children(".sapUiCalYear");
-			var sYear = jQuery(aDomRefs[iIndex]).text();
-
-			oFocusedDate.setUTCFullYear(sYear);
-
-			if (oFocusedDate.getTime() < oThis._oMinDate.getTime()) {
-				oThis._setFocusedDate(oThis._oMinDate);
-			}else if (oFocusedDate.getTime() > oThis._oMaxDate.getTime()){
-				oThis._setFocusedDate(oThis._oMaxDate);
-			}
-
-			_renderMonth(oThis);
-
-			_hideYearPicker(oThis);
-
-		}
-
-		function _updateYears(oThis, bForward, iSelectedIndex){
-
-			var aDomRefs = oThis.$("years").children(".sapUiCalYear");
-			var iFirstYear = parseInt(jQuery(aDomRefs[0]).text(), 10);
-			var oFocusedDate = oThis._getFocusedDate();
-			var sCurrentYear = oFocusedDate.getUTCFullYear().toString();
-			var iYearMax = oThis._oMaxDate.getUTCFullYear();
-			var iYearMin = oThis._oMinDate.getUTCFullYear();
-
-			if (bForward) {
-				iFirstYear = iFirstYear + 20;
-			} else {
-				iFirstYear = iFirstYear - 20;
-			}
-
-			if (iFirstYear >= iYearMax - 19) {
-				iFirstYear = iYearMax - 19;
-				oThis.$("next").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
-			}else {
-				oThis.$("next").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
-			}
-			if (iFirstYear <= iYearMin) {
-				iFirstYear = iYearMin;
-				oThis.$("prev").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
-			} else {
-				oThis.$("prev").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
-			}
-
-			var iYear = iFirstYear;
-			for ( var i = 0; i < aDomRefs.length; i++) {
-				var $DomRef = jQuery(aDomRefs[i]);
-				$DomRef.attr("id", oThis.getId() + "-y" + iYear);
-				$DomRef.text(iYear);
-				if ($DomRef.hasClass("sapUiCalYearSel") && $DomRef.text() != sCurrentYear) {
-					$DomRef.removeClass("sapUiCalYearSel");
-				} else if (!$DomRef.hasClass("sapUiCalYearSel") && $DomRef.text() == sCurrentYear) {
-					$DomRef.addClass("sapUiCalYearSel");
-				}
-				iYear++;
-			}
-
-			oThis._oItemNavigation.focusItem(iSelectedIndex);
-
-		}
-
-		function _checkNamesLength(oThis){
-
-			if (!oThis._bNamesLengthChecked) {
-				// only once - cannot change by rerendering - only by theme change
-				var i = 0;
-				var oWeekDay;
-				var oLocaleData;
-
-				// check day names
-				var aWeekHeaders = oThis.$().children(".sapUiCalWH");
-				var bTooLong = false;
-
-				for ( i = 0; i < aWeekHeaders.length; i++) {
-					oWeekDay = aWeekHeaders[i];
-					if (oWeekDay.clientWidth < oWeekDay.scrollWidth) {
-						bTooLong = true;
-						break;
-					}
-				}
-
-				if (bTooLong) {
-					oThis._bLongWeekDays = false;
-					oLocaleData = oThis._getLocaleData();
-					var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
-					var aDayNames = oLocaleData.getDaysStandAlone("narrow");
-					for ( i = 0; i < aDayNames.length; i++) {
-						oWeekDay = aWeekHeaders[i];
-						jQuery(oWeekDay).text(aDayNames[(i + iFirstDayOfWeek) % 7]);
-					}
-				} else {
-					oThis._bLongWeekDays = true;
-				}
-
-				// check month names
-				_showMonthPicker(oThis);
-
-				var aMonths = oThis.$("months").children();
-				bTooLong = false;
-				for ( i = 0; i < aMonths.length; i++) {
-					var oMonth = aMonths[i];
-					if (oMonth.clientWidth < oMonth.scrollWidth) {
-						bTooLong = true;
-						break;
-					}
-				}
-				if (bTooLong) {
-					oThis._bLongMonth = false;
-					if (!oLocaleData) {
-						oLocaleData = oThis._getLocaleData();
-					}
-					// change month name on button but not chnage month picker, becuase it is hided again
-					var aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
-					var oDate = oThis._getFocusedDate();
-					oThis.$("month").text(aMonthNames[oDate.getUTCMonth()]);
-				} else {
-					oThis._bLongMonth = true;
-				}
-
-				_hideMonthPicker(oThis);
-
-				oThis._bNamesLengthChecked = true;
-			}
-
-		}
-
-		function _fireSelect(oThis){
-
-			if (oThis._bMouseMove) {
-				// detach mouse move handler because calendar might be losed in select event handler
-				jQuery(window.document).unbind('mousemove', oThis._mouseMoveProxy);
-				oThis._bMouseMove = undefined;
-			}
-
-			oThis.fireSelect();
-
-		}
-
-		function _togglePrevNext (oThis, oDate, bCheckMonth){
-
-			var iYear = oDate.getUTCFullYear();
-			var iYearMax = oThis._oMaxDate.getUTCFullYear();
-			var iYearMin = oThis._oMinDate.getUTCFullYear();
-			var iMonth = oDate.getUTCMonth();
-			var iMonthMax = oThis._oMaxDate.getUTCMonth();
-			var iMonthMin = oThis._oMinDate.getUTCMonth();
-
-			if (iYear > iYearMax || (iYear == iYearMax && ( !bCheckMonth || iMonth >= iMonthMax ))) {
-				oThis.$("next").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
-			}else {
-				oThis.$("next").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
-			}
-
-			if (iYear < iYearMin || (iYear == iYearMin && ( !bCheckMonth || iMonth <= iMonthMin ))) {
-				oThis.$("prev").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
-			}else {
-				oThis.$("prev").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
-			}
-
-		}
-
-		function _focusDate (oThis, oDate){
-
-			// if a date should be focused thats out of the borders -> focus the border
-			var oFocusedDate;
-			if (oDate.getTime() < oThis._oMinDate.getTime()) {
-				oFocusedDate = oThis._oMinDate;
-			}else if (oDate.getTime() > oThis._oMaxDate.getTime()){
-				oFocusedDate = oThis._oMaxDate;
-			}else {
-				oFocusedDate = oDate;
-			}
-
-			oThis._setFocusedDate(oFocusedDate);
-
-			var sYyyymmdd = oThis._oFormatYyyymmdd.format(oFocusedDate, true);
-			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
-			var $DomRefDay;
-			for ( var i = 0; i < aDomRefs.length; i++) {
-				$DomRefDay = jQuery(aDomRefs[i]);
-				if ($DomRefDay.attr("data-sap-day") == sYyyymmdd) {
-					oThis._oItemNavigation.focusItem(i);
-					break;
-				}
-			}
-
-		}
-
-	}());
-
-	return Calendar;
-
-}, /* bExport= */ true);
-
-}; // end of sap/ui/unified/Calendar.js
 if ( !jQuery.sap.isDeclared('sap.ui.unified.CalendarLegend') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
@@ -3040,7 +1881,7 @@ sap.ui.define("sap/ui/unified/CalendarLegend",['jquery.sap.global', 'sap/ui/core
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -3107,7 +1948,7 @@ sap.ui.define("sap/ui/unified/CalendarLegendItem",['jquery.sap.global', 'sap/ui/
 	 * @class
 	 * Item to be displayed in a CalendarLegend.
 	 * @extends sap.ui.core.Element
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -3167,7 +2008,7 @@ sap.ui.define("sap/ui/unified/ContentSwitcher",['jquery.sap.global', 'sap/ui/cor
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -3359,7 +2200,7 @@ sap.ui.define("sap/ui/unified/Currency",['jquery.sap.global', 'sap/ui/core/Contr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -3511,7 +2352,7 @@ sap.ui.define("sap/ui/unified/DateRange",['jquery.sap.global', 'sap/ui/core/Elem
 	 * @class
 	 * Date range for use in DatePicker
 	 * @extends sap.ui.core.Element
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -3604,7 +2445,7 @@ sap.ui.define("sap/ui/unified/DateTypeRange",['jquery.sap.global', './DateRange'
 	 * @class
 	 * Date range with calendar day type information. Used to visualize special days in the Calendar.
 	 * @extends sap.ui.unified.DateRange
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -3665,7 +2506,7 @@ sap.ui.define("sap/ui/unified/FileUploader",['jquery.sap.global', 'sap/ui/core/C
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -4429,6 +3270,99 @@ sap.ui.define("sap/ui/unified/FileUploader",['jquery.sap.global', 'sap/ui/core/C
 		return this;
 	};
 
+	FileUploader.prototype.sendFiles = function(aXhr, aFiles, iIndex) {
+
+		if (iIndex >= aFiles.length) {
+			return;
+		}
+
+		var that = this;
+		var oXhr = aXhr[iIndex];
+		var sFilename = aFiles[iIndex].name;
+
+		if (sap.ui.Device.browser.internet_explorer && aFiles[iIndex].type) {
+			var sContentType = aFiles[iIndex].type;
+			oXhr.xhr.setRequestHeader("Content-Type", sContentType);
+			oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
+		}
+
+		var oRequestHeaders = oXhr.requestHeaders;
+
+		var fnProgressListener = function(oProgressEvent) {
+			var oProgressData = {
+				lengthComputable: !!oProgressEvent.lengthComputable,
+				loaded: oProgressEvent.loaded,
+				total: oProgressEvent.total
+			};
+			that.fireUploadProgress({
+				"lengthComputable": oProgressData.lengthComputable,
+				"loaded": oProgressData.loaded,
+				"total": oProgressData.total,
+				"fileName": sFilename,
+				"requestHeaders": oRequestHeaders
+			});
+		};
+
+		var fnAbordListerner = function(oAbortEvent) {
+			that.fireUploadAborted({
+				"fileName": sFilename,
+				"requestHeaders": oRequestHeaders
+			});
+		};
+
+		oXhr.xhr.upload.addEventListener("progress", fnProgressListener);
+
+		//relay the abort event, if the xhr was aborted manually
+		oXhr.xhr.upload.addEventListener("abort", fnAbordListerner);
+
+		oXhr.xhr.onreadystatechange = function() {
+
+			var sResponse;
+			var sResponseRaw;
+			var mHeaders = {};
+			var sPlainHeader;
+			var aHeaderLines;
+			var iHeaderIdx;
+			var sReadyState;
+			sReadyState = oXhr.xhr.readyState;
+			var sStatus = oXhr.xhr.status;
+
+			if (oXhr.xhr.readyState == 4) {
+				//this check is needed, because (according to the xhr spec) the readyState is set to OPEN (4)
+				//as soon as the xhr is aborted. Only after the progress events are fired, the state is set to UNSENT (0)
+				if (oXhr.xhr.responseXML) {
+					sResponse = oXhr.xhr.responseXML.documentElement.textContent;
+				}
+				sResponseRaw = oXhr.xhr.response;
+
+				//Parse the http-header into a map
+				sPlainHeader = oXhr.xhr.getAllResponseHeaders();
+				if (sPlainHeader) {
+					aHeaderLines = sPlainHeader.split("\u000d\u000a");
+					for (var i = 0; i < aHeaderLines.length; i++) {
+						if (aHeaderLines[i]) {
+							iHeaderIdx = aHeaderLines[i].indexOf("\u003a\u0020");
+							mHeaders[aHeaderLines[i].substring(0, iHeaderIdx)] = aHeaderLines[i].substring(iHeaderIdx + 2);
+						}
+					}
+				}
+				that.fireUploadComplete({
+					"fileName": sFilename,
+					"headers": mHeaders,
+					"response": sResponse,
+					"responseRaw": sResponseRaw,
+					"readyStateXHR": sReadyState,
+					"status": sStatus,
+					"requestHeaders": oRequestHeaders
+				});
+				iIndex++;
+				that.sendFiles(aXhr, aFiles, iIndex);
+			}
+			that._bUploading = false;
+		};
+		oXhr.xhr.send(aFiles[iIndex]);
+	};
+
 
 	/**
 	 * Starts the upload (as defined by uploadUrl)
@@ -4442,76 +3376,45 @@ sap.ui.define("sap/ui/unified/FileUploader",['jquery.sap.global', 'sap/ui/core/C
 		if (!this.getEnabled()) {
 			return;
 		}
-		var uploadForm = this.getDomRef("fu_form"),
-			that = this;
+		var uploadForm = this.getDomRef("fu_form");
 
 		try {
 			if (uploadForm) {
 				this._bUploading = true;
 				if (this.getSendXHR() && window.File) {
-					var oFiles = jQuery.sap.domById(this.getId() + "-fu").files;
-					if (oFiles.length > 0) {
-
-						var oXhr;
-						//keep a reference on the current upload xhr
-						this._uploadXHR = new window.XMLHttpRequest();
-						oXhr = {
+					var aFiles = jQuery.sap.domById(this.getId() + "-fu").files;
+					if (aFiles.length > 0) {
+						if (this.getUseMultipart()) {
+							//one xhr request for all files
+							var iFiles = 1;
+						} else {
+							//several xhr requests for every file
+							var iFiles = aFiles.length;
+						}
+						var aXhr = [];
+						for (var j = 0; j < iFiles; j++) {
+							//keep a reference on the current upload xhr
+							this._uploadXHR = new window.XMLHttpRequest();
+							aXhr[j] = {
 								xhr: this._uploadXHR,
 								requestHeaders: []
-						};
-
-						var sFilename = oFiles[0].name;
-
-						if (sap.ui.Device.browser.internet_explorer && oFiles[0].type) {
-							var sContentType = oFiles[0].type;
-							oXhr.xhr.setRequestHeader("Content-Type", sContentType);
-							oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
-						}
-
-						var oRequestHeaders = oXhr.requestHeaders;
-
-						var fnProgressListener = function(oProgressEvent) {
-							var oProgressData = {
-								lengthComputable: !!oProgressEvent.lengthComputable,
-								loaded: oProgressEvent.loaded,
-								total: oProgressEvent.total
 							};
-							that.fireUploadProgress({
-								"lengthComputable": oProgressData.lengthComputable,
-								"loaded": oProgressData.loaded,
-								"total": oProgressData.total,
-								"fileName": sFilename,
-								"requestHeaders": oRequestHeaders
-							});
-						};
-
-						var fnAbordListerner = function(oAbortEvent) {
-							that.fireUploadAborted({
-								"fileName": sFilename,
-								"requestHeaders": oRequestHeaders
-							});
-						};
-
-						oXhr.xhr.upload.addEventListener("progress", fnProgressListener);
-
-						//relay the abort event, if the xhr was aborted manually
-						oXhr.xhr.upload.addEventListener("abort",  fnAbordListerner);
-
-						oXhr.xhr.open("POST", this.getUploadUrl(), true);
-						if (this.getHeaderParameters()) {
-							var oHeaderParams = this.getHeaderParameters();
-							for (var i = 0; i < oHeaderParams.length; i++) {
-								var sHeader = oHeaderParams[i].getName();
-								var sValue = oHeaderParams[i].getValue();
-								oXhr.xhr.setRequestHeader(sHeader, sValue);
-								oXhr.requestHeaders.push({name: sHeader, value: sValue});
+							aXhr[j].xhr.open("POST", this.getUploadUrl(), true);
+							if (this.getHeaderParameters()) {
+								var oHeaderParams = this.getHeaderParameters();
+								for (var i = 0; i < oHeaderParams.length; i++) {
+									var sHeader = oHeaderParams[i].getName();
+									var sValue = oHeaderParams[i].getValue();
+									aXhr[j].xhr.setRequestHeader(sHeader, sValue);
+									aXhr[j].requestHeaders.push({name: sHeader, value: sValue});
+								}
 							}
 						}
 						if (this.getUseMultipart()) {
 							var formData = new window.FormData();
 							var name = jQuery.sap.domById(this.getId() + "-fu").name;
-							for (var i = 0; i < oFiles.length; i++) {
-								formData.append(name, oFiles[i]);
+							for (var i = 0; i < aFiles.length; i++) {
+								formData.append(name, aFiles[i]);
 							}
 							formData.append("_charset_", "UTF-8");
 							var data = jQuery.sap.domById(this.getId() + "-fu_data").name;
@@ -4529,51 +3432,10 @@ sap.ui.define("sap/ui/unified/FileUploader",['jquery.sap.global', 'sap/ui/core/C
 									formData.append(sName, sValue);
 								}
 							}
-							oXhr.xhr.send(formData);
+							this.sendFiles(aXhr, [formData], 0);
 						} else {
-							oXhr.xhr.send(oFiles[0]);
+							this.sendFiles(aXhr, aFiles, 0);
 						}
-
-						oXhr.xhr.onreadystatechange = function() {
-							var sResponse;
-							var sResponseRaw;
-							var mHeaders = {};
-							var sPlainHeader;
-							var aHeaderLines;
-							var iHeaderIdx;
-							var sReadyState = oXhr.xhr.readyState;
-							var sStatus = oXhr.xhr.status;
-							if (oXhr.xhr.readyState == 4) {
-								//this check is needed, because (according to the xhr spec) the readyState is set to OPEN (4)
-								//as soon as the xhr is aborted. Only after the progress events are fired, the state is set to UNSENT (0)
-								if (oXhr.xhr.responseXML) {
-									sResponse = oXhr.xhr.responseXML.documentElement.textContent;
-								}
-								sResponseRaw = oXhr.xhr.response;
-
-								//Parse the http-header into a map
-								sPlainHeader = oXhr.xhr.getAllResponseHeaders();
-								if (sPlainHeader) {
-									aHeaderLines = sPlainHeader.split("\u000d\u000a");
-									for (var i = 0; i < aHeaderLines.length; i++) {
-										if (aHeaderLines[i]) {
-											iHeaderIdx = aHeaderLines[i].indexOf("\u003a\u0020");
-											mHeaders[aHeaderLines[i].substring(0, iHeaderIdx)] = aHeaderLines[i].substring(iHeaderIdx + 2);
-										}
-									}
-								}
-								that.fireUploadComplete({
-									"fileName": sFilename,
-									"headers": mHeaders,
-									"response": sResponse,
-									"responseRaw": sResponseRaw,
-									"readyStateXHR": sReadyState,
-									"status": sStatus,
-									"requestHeaders": oRequestHeaders
-								});
-							}
-							that._bUploading = false;
-						};
 						this._bUploading = false;
 					}
 				} else {
@@ -4675,15 +3537,15 @@ sap.ui.define("sap/ui/unified/FileUploader",['jquery.sap.global', 'sap/ui/core/C
 			var sFileString = '';
 
 			if (window.File) {
-				var oFiles = oEvent.target.files;
+				var aFiles = oEvent.target.files;
 
-				for (var i = 0; i < oFiles.length; i++) {
-					var sName = oFiles[i].name;
-					var sType = oFiles[i].type;
+				for (var i = 0; i < aFiles.length; i++) {
+					var sName = aFiles[i].name;
+					var sType = aFiles[i].type;
 					if (!sType) {
 						sType = "unknown";
 					}
-					var fSize = ((oFiles[i].size / 1024) / 1024);
+					var fSize = ((aFiles[i].size / 1024) / 1024);
 					if (fMaxSize && (fSize > fMaxSize)) {
 						jQuery.sap.log.info("File: " + sName + " is of size " + fSize + " MB which exceeds the file size limit of " + fMaxSize + " MB.");
 						this.fireFileSizeExceed({
@@ -4703,7 +3565,7 @@ sap.ui.define("sap/ui/unified/FileUploader",['jquery.sap.global', 'sap/ui/core/C
 					if (aMimeTypes && aMimeTypes.length > 0) {
 						var bWrongMime = true;
 						for (var j = 0; j < aMimeTypes.length; j++) {
-							if (sType.match(aMimeTypes[j])) {
+							if (sType == aMimeTypes[j]) {
 								bWrongMime = false;
 							}
 						}
@@ -4735,7 +3597,7 @@ sap.ui.define("sap/ui/unified/FileUploader",['jquery.sap.global', 'sap/ui/core/C
 							return;
 						}
 					}
-					sFileString = sFileString + '"' + oFiles[i].name + '" ';
+					sFileString = sFileString + '"' + aFiles[i].name + '" ';
 				}
 				if (sFileString) {
 					this.fireFileAllowed();
@@ -4965,7 +3827,7 @@ sap.ui.define("sap/ui/unified/FileUploaderParameter",['jquery.sap.global', 'sap/
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -5026,7 +3888,7 @@ sap.ui.define("sap/ui/unified/MenuItemBase",['jquery.sap.global', 'sap/ui/core/E
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -5175,7 +4037,7 @@ sap.ui.define("sap/ui/unified/MenuTextFieldItem",['jquery.sap.global', 'sap/ui/c
 	 * @extends sap.ui.unified.MenuItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -5296,6 +4158,7 @@ sap.ui.define("sap/ui/unified/MenuTextFieldItem",['jquery.sap.global', 'sap/ui/c
 		
 		var that = this;
 		function focusTF() {
+			oMenu.closeSubmenu(false, true);
 			that.$("tf").focus();
 		}
 		
@@ -5373,6 +4236,7 @@ sap.ui.define("sap/ui/unified/MenuTextFieldItem",['jquery.sap.global', 'sap/ui/c
 	
 	
 	MenuTextFieldItem.prototype.onclick = function(oEvent){
+		this.getParent().closeSubmenu(false, true);
 		if (!sap.ui.Device.system.desktop && this.getParent().checkEnabled(this)) {
 			this.focus();
 		}
@@ -5527,7 +4391,7 @@ sap.ui.define("sap/ui/unified/ShellHeadItem",['jquery.sap.global', 'sap/ui/core/
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -5576,6 +4440,12 @@ sap.ui.define("sap/ui/unified/ShellHeadItem",['jquery.sap.global', 'sap/ui/core/
 			 */
 			visible : {type : "boolean", group : "Appearance", defaultValue : true}
 		},
+		associations : {
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
 		events : {
 	
 			/**
@@ -5616,6 +4486,7 @@ sap.ui.define("sap/ui/unified/ShellHeadItem",['jquery.sap.global', 'sap/ui/core/
 		bSelected = !!bSelected;
 		this.setProperty("selected", bSelected, true);
 		this.$().toggleClass("sapUiUfdShellHeadItmSel", bSelected);
+		this.$().attr("aria-pressed", bSelected);
 		return this;
 	};
 	
@@ -5694,7 +4565,7 @@ sap.ui.define("sap/ui/unified/ShellHeadUserItem",['jquery.sap.global', 'sap/ui/c
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -5711,11 +4582,24 @@ sap.ui.define("sap/ui/unified/ShellHeadUserItem",['jquery.sap.global', 'sap/ui/c
 			 * The name of the user.
 			 */
 			username : {type : "string", group : "Appearance", defaultValue : ''},
+			
+			/**
+			 * The user item is intended to be used for user settings. Normally these settings are done via a Menu or Dialog.
+			 * If this property is set to true an indicator for such a popup mechanismn is shown in the item.
+			 * @since 1.27.0
+			 */
+			showPopupIndicator : {type : "boolean", group : "Accessibility", defaultValue : true},
 	
 			/**
 			 * An image of the user, normally an URI to a image but also an icon from the sap.ui.core.IconPool is possible.
 			 */
 			image : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null}
+		},
+		associations : {
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
 	
@@ -5827,6 +4711,9 @@ sap.ui.define("sap/ui/unified/ShellHeader",['jquery.sap.global', './library'],
 				rm.write("<div");
 				rm.writeControlData(oHeader);
 				rm.writeAttribute("class", "sapUiUfdShellHeader");
+				if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+					rm.writeAttribute("role", "toolbar");
+				}
 				rm.write(">");
 				
 				rm.write("<div id='", id, "-hdr-begin' class='sapUiUfdShellHeadBegin'>");
@@ -5847,6 +4734,9 @@ sap.ui.define("sap/ui/unified/ShellHeader",['jquery.sap.global', './library'],
 			renderSearch: function(rm, oHeader) {
 				var oSearch = oHeader.getSearch();
 				rm.write("<div id='", oHeader.getId(), "-hdr-search'");
+				if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+					rm.writeAttribute("role", "search");
+				}
 				rm.writeAttribute("class", "sapUiUfdShellSearch" + (oHeader.getSearchVisible() ? "" : " sapUiUfdShellHidden"));
 				rm.write("><div>");
 				if (oSearch) {
@@ -5883,6 +4773,13 @@ sap.ui.define("sap/ui/unified/ShellHeader",['jquery.sap.global', './library'],
 					if (tooltip) {
 						rm.writeAttributeEscaped("title", tooltip);
 					}
+					if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+						rm.writeAccessibilityState(aItems[i], {
+							role: "button",
+							selected: null,
+							pressed: aItems[i].getSelected()
+						});
+					}
 					rm.write("><span></span><div class='sapUiUfdShellHeadItmMarker'><div></div></div></a>");
 				}
 				
@@ -5891,18 +4788,30 @@ sap.ui.define("sap/ui/unified/ShellHeader",['jquery.sap.global', './library'],
 					rm.write("<a tabindex='0' href='javascript:void(0);'");
 					rm.writeElementData(oUser);
 					rm.addClass("sapUiUfdShellHeadUsrItm");
+					if (!oUser.getShowPopupIndicator()) {
+						rm.addClass("sapUiUfdShellHeadUsrItmWithoutPopup");
+					}
 					rm.writeClasses();
 					var tooltip = oUser.getTooltip_AsString();
 					if (tooltip) {
 						rm.writeAttributeEscaped("title", tooltip);
 					}
-					rm.write("><span id='", oUser.getId(), "-img' class='sapUiUfdShellHeadUsrItmImg'></span>");
+					if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+						rm.writeAccessibilityState(oUser, {
+							role: "button"
+						});
+						if (oUser.getShowPopupIndicator()) {
+							rm.writeAttribute("aria-haspopup", "true");
+						}
+					}
+					
+					rm.write("><span id='", oUser.getId(), "-img' aria-hidden='true' class='sapUiUfdShellHeadUsrItmImg'></span>");
 					rm.write("<span id='" + oUser.getId() + "-name' class='sapUiUfdShellHeadUsrItmName'");
 					var sUserName = oUser.getUsername() || "";
 					rm.writeAttributeEscaped("title", sUserName);
 					rm.write(">");
 					rm.writeEscaped(sUserName);
-					rm.write("</span><span class='sapUiUfdShellHeadUsrItmExp'></span></a>");
+					rm.write("</span><span class='sapUiUfdShellHeadUsrItmExp' aria-hidden='true'></span></a>");
 				}
 				
 				rm.write("</div>");
@@ -6054,7 +4963,7 @@ sap.ui.define("sap/ui/unified/SplitContainer",['jquery.sap.global', 'sap/ui/core
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -6380,6 +5289,3183 @@ sap.ui.define("sap/ui/unified/SplitContainer",['jquery.sap.global', 'sap/ui/core
 }, /* bExport= */ true);
 
 }; // end of sap/ui/unified/SplitContainer.js
+if ( !jQuery.sap.isDeclared('sap.ui.unified.calendar.Header') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+// Provides control sap.ui.unified.Calendar.
+jQuery.sap.declare('sap.ui.unified.calendar.Header'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.LocaleData'); // unlisted dependency retained
+sap.ui.define("sap/ui/unified/calendar/Header",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/unified/library'],
+	function(jQuery, Control, LocaleData, library) {
+	"use strict";
+
+	/**
+	 * Constructor for a new MonthPicker.
+	 *
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] initial settings for the new control
+	 *
+	 * @class
+	 * renders a calendar header
+	 * This is used inside the calendar. Not for stand alone usage
+	 * @extends sap.ui.core.Control
+	 * @version 1.28.5
+	 *
+	 * @constructor
+	 * @public
+	 * @since 1.28.0
+	 * @alias sap.ui.unified.calendar.Header
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	var Header = Control.extend("sap.ui.unified.calendar.Header", /** @lends sap.ui.unified.calendar.Header.prototype */ { metadata : {
+
+		library : "sap.ui.unified",
+		properties : {
+
+			/**
+			 * Text of the first button (normally month)
+			 */
+			textButton1 : {type : "string", group : "Misc"},
+
+			/**
+			 * aria-label of the first button (normally month)
+			 */
+			ariaLabelButton1 : {type : "string", group : "Misc"},
+
+			/**
+			 * Text of the second button (normally year)
+			 */
+			textButton2 : {type : "string", group : "Misc"},
+
+			/**
+			 * aria-label of the second button (normally year)
+			 */
+			ariaLabelButton2 : {type : "string", group : "Misc"},
+
+			/**
+			 * enables the previous button
+			 */
+			enabledPrevious : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * enables the Next button
+			 */
+			enabledNext : {type : "boolean", group : "Misc", defaultValue : true}
+
+		},
+		events : {
+
+			/**
+			 * previous button pressed
+			 */
+			pressPrevious : {},
+
+			/**
+			 * next button pressed
+			 */
+			pressNext : {},
+
+			/**
+			 * first button pressed (normally month)
+			 */
+			pressButton1 : {},
+
+			/**
+			 * second button pressed (normally year)
+			 */
+			pressButton2 : {}
+
+		}
+	}});
+
+	(function() {
+
+		Header.prototype.onAfterRendering = function(){
+
+//			var that = this;
+
+		};
+
+		Header.prototype.setTextButton1 = function(sText){
+
+			this.setProperty("textButton1", sText, true);
+
+			if (this.getDomRef()) {
+				this.$("B1").text(sText);
+			}
+
+		};
+
+		Header.prototype.setAriaLabelButton1 = function(sText){
+
+			this.setProperty("ariaLabelButton1", sText, true);
+
+			if (this.getDomRef()) {
+				if (sText) {
+					this.$("B1").attr("aria-label", sText);
+				} else {
+					this.$("B1").removeAttr("aria-label");
+				}
+			}
+
+		};
+
+		Header.prototype.setTextButton2 = function(sText){
+
+			this.setProperty("textButton2", sText, true);
+
+			if (this.getDomRef()) {
+				this.$("B2").text(sText);
+			}
+
+		};
+
+		Header.prototype.setAriaLabelButton2 = function(sText){
+
+			this.setProperty("ariaLabelButton2", sText, true);
+
+			if (this.getDomRef()) {
+				if (sText) {
+					this.$("B2").attr("aria-label", sText);
+				} else {
+					this.$("B2").removeAttr("aria-label");
+				}
+			}
+
+		};
+
+		Header.prototype.setEnabledPrevious = function(bEnabled){
+
+			this.setProperty("enabledPrevious", bEnabled, true);
+
+			if (this.getDomRef()) {
+				if (bEnabled) {
+					this.$("prev").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
+				}else {
+					this.$("prev").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
+				}
+			}
+
+		};
+
+		Header.prototype.setEnabledNext = function(bEnabled){
+
+			this.setProperty("enabledNext", bEnabled, true);
+
+			if (this.getDomRef()) {
+				if (bEnabled) {
+					this.$("next").toggleClass("sapUiCalDsbl", false).removeAttr("disabled");
+				}else {
+					this.$("next").toggleClass("sapUiCalDsbl", true).attr("disabled", "disabled");
+				}
+			}
+
+		};
+
+		Header.prototype.onclick = function(oEvent){
+
+			if (oEvent.isMarked("delayedMouseEvent") ) {
+				return;
+			}
+
+			if (jQuery.sap.containsOrEquals(this.getDomRef("prev"), oEvent.target) && this.getEnabledPrevious()) {
+				this.firePressPrevious();
+			}	else if (jQuery.sap.containsOrEquals(this.getDomRef("next"), oEvent.target) && this.getEnabledNext()){
+				this.firePressNext();
+			} else if (oEvent.target.id == this.getId() + "-B1"){
+				this.firePressButton1();
+			} else if (oEvent.target.id == this.getId() + "-B2"){
+				this.firePressButton2();
+			}
+
+		};
+
+		Header.prototype.onsapnext = function(oEvent){
+
+			//prevent browser scrolling
+			oEvent.preventDefault();
+
+		};
+
+	}());
+
+	return Header;
+
+}, /* bExport= */ true);
+
+}; // end of sap/ui/unified/calendar/Header.js
+if ( !jQuery.sap.isDeclared('sap.ui.unified.calendar.Month') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+// Provides control sap.ui.unified.Calendar.
+jQuery.sap.declare('sap.ui.unified.calendar.Month'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.LocaleData'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.delegate.ItemNavigation'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.model.type.Date'); // unlisted dependency retained
+sap.ui.define("sap/ui/unified/calendar/Month",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/library'],
+	function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, library) {
+	"use strict";
+
+	/**
+	 * Constructor for a new calendar/Month.
+	 *
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] initial settings for the new control
+	 *
+	 * @class
+	 * renders a month with ItemNavigation
+	 * This is used inside the calendar. Not for stand alone usage
+	 * If used inside the calendar the properties and aggregation are directly taken from the parent
+	 * (To not duplicate and sync DateRanges and so on...)
+	 * @extends sap.ui.core.Control
+	 * @version 1.28.5
+	 *
+	 * @constructor
+	 * @public
+	 * @since 1.28.0
+	 * @alias sap.ui.unified.calendar.Month
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	var Month = Control.extend("sap.ui.unified.calendar.Month", /** @lends sap.ui.unified.calendar.Month.prototype */ { metadata : {
+
+		library : "sap.ui.unified",
+		properties : {
+
+			/**
+			 * the month including this date is rendered and this date is initial focused (if no other focus set)
+			 */
+			date : {type : "object", group : "Misc"},
+
+			/**
+			 * If set, interval selection is allowed
+			 */
+			intervalSelection : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * If set, only a single date or interval, if intervalSelection is enabled, can be selected
+			 */
+			singleSelection : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * If set, a header with the month name is shown
+			 */
+			showHeader : {type : "boolean", group : "Misc", defaultValue : false}
+		},
+		aggregations : {
+
+			/**
+			 * Date Ranges for selected dates of the DatePicker
+			 */
+			selectedDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "selectedDate"},
+
+			/**
+			 * Date Range with type to visualize special days in the Calendar.
+			 * If one day is assigned to more than one Type, only the first one will be used.
+			 */
+			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"}
+		},
+		associations: {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+		},
+		events : {
+
+			/**
+			 * Date selection changed
+			 */
+			select : {},
+
+			/**
+			 * Date focus changed
+			 */
+			focus : {
+				parameters : {
+					/**
+					 * focused date
+					 */
+					date : {type : "object"},
+					/**
+					 * focused date is in an other month that the displayed one
+					 */
+					otherMonth : {type : "boolean"}
+				}
+			}
+		}
+	}});
+
+	(function() {
+
+		Month.prototype.init = function(){
+
+			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+			this._oFormatLong = sap.ui.core.format.DateFormat.getInstance({style: "long"});
+
+			this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
+
+		};
+
+		Month.prototype.exit = function(){
+
+			if (this._oItemNavigation) {
+				this.removeDelegate(this._oItemNavigation);
+				this._oItemNavigation.destroy();
+				delete this._oItemNavigation;
+			}
+
+			if (this._sRenderMonth) {
+				jQuery.sap.clearDelayedCall(this._sRenderMonth);
+			}
+
+		};
+
+		Month.prototype.onAfterRendering = function(){
+
+			var that = this;
+
+			_initItemNavigation(that);
+
+			// check if day names are too big -> use smaller ones
+			_checkNamesLength(that);
+
+		};
+
+		// overwrite invalidate to recognize changes on selectedDates
+		Month.prototype.invalidate = function(oOrigin) {
+
+			if (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange)) {
+				Control.prototype.invalidate.apply(this, arguments);
+			} else if (this.getDomRef() && !this._sRenderMonth) {
+				// DateRange changed -> only rerender days
+				// do this only once if more DateRanges / Special days are changed
+				var that = this;
+				this._sRenderMonth = jQuery.sap.delayedCall(0, this, _renderMonth, [that]);
+			}
+
+		};
+
+		Month.prototype.setDate = function(oDate){
+
+			var that = this;
+			_changeDate(that, oDate, false);
+
+			return this;
+
+		};
+
+		Month.prototype._setDate = function(oDate){
+
+			var oLocaleDate = CalendarUtils._createLocalDate(oDate);
+			this.setProperty("date", oLocaleDate, true);
+			this._oUTCDate = oDate;
+
+		};
+
+		Month.prototype._getDate = function(){
+
+			if (!this._oUTCDate) {
+				this._oUTCDate = CalendarUtils._createUTCDate(new Date());
+			}
+
+			return this._oUTCDate;
+
+		};
+
+		/**
+		 * displays the month of a given date without setting the focus
+		 *
+		 * @param {object} oDate JavaScript date object for focused date.
+		 * @returns {sap.ui.unified.calendar.Month} <code>this</code> to allow method chaining
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		Month.prototype.displayDate = function(oDate){
+
+			var that = this;
+			_changeDate(that, oDate, true);
+
+			return this;
+
+		};
+
+		/*
+		 * Use rendered locale for stand alone control
+		 * But as Calendar can have an own locale, use this one if used inside Calendar
+		 */
+		Month.prototype._getLocale = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent.getLocale) {
+				return oParent.getLocale();
+			} else if (!this._sLocale) {
+				this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			}
+
+			return this._sLocale;
+
+		};
+
+		/*
+		 * gets localeData for used locale
+		 * Use rendered locale for stand alone control
+		 * But as Calendar can have an own locale, use this one if used inside Calendar
+		 */
+		Month.prototype._getLocaleData = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent._getLocaleData) {
+				return oParent._getLocaleData();
+			} else if (!this._oLocaleData) {
+				var sLocale = this._getLocale();
+				var oLocale = new sap.ui.core.Locale(sLocale);
+				this._oLocaleData = LocaleData.getInstance(oLocale);
+			}
+
+			return this._oLocaleData;
+
+		};
+
+		/*
+		 * get format for long date output depending on used locale
+		 */
+		Month.prototype._getFormatLong = function(){
+
+			var sLocale = this._getLocale();
+
+			if (this._oFormatLong.oLocale.toString() != sLocale) {
+				var oLocale = new sap.ui.core.Locale(sLocale);
+				this._oFormatLong = sap.ui.core.format.DateFormat.getInstance({style: "long"} , oLocale);
+			}
+
+			return this._oFormatLong;
+
+		};
+
+		/*
+		 * if used inside Calendar get the value from the parent
+		 * To don't have sync issues...
+		 */
+		Month.prototype.getIntervalSelection = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent.getIntervalSelection) {
+				return oParent.getIntervalSelection();
+			} else {
+				return this.getProperty("intervalSelection");
+			}
+
+		};
+
+		/*
+		 * if used inside Calendar get the value from the parent
+		 * To don't have sync issues...
+		 */
+		Month.prototype.getSingleSelection = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent.getSingleSelection) {
+				return oParent.getSingleSelection();
+			} else {
+				return this.getProperty("singleSelection");
+			}
+
+		};
+
+		/*
+		 * if used inside Calendar get the value from the parent
+		 * To don't have sync issues...
+		 */
+		Month.prototype.getSelectedDates = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent.getSelectedDates) {
+				return oParent.getSelectedDates();
+			} else {
+				return this.getAggregation("selectedDates", []);
+			}
+
+		};
+
+		/*
+		 * if used inside Calendar get the value from the parent
+		 * To don't have sync issues...
+		 */
+		Month.prototype.getSpecialDates = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent.getSpecialDates) {
+				return oParent.getSpecialDates();
+			} else {
+				return this.getAggregation("specialDates", []);
+			}
+
+		};
+
+		/*
+		 * if used inside Calendar get the value from the parent
+		 * To don't have sync issues...
+		 */
+		Month.prototype.getShowHeader = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent._getShowMonthHeader) {
+				return oParent._getShowMonthHeader();
+			} else {
+				return this.getProperty("showHeader");
+			}
+
+		};
+
+		/*
+		 * if used inside Calendar get the value from the parent
+		 * To don't have sync issues...
+		 */
+		Month.prototype.getAriaLabelledBy = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent.getAriaLabelledBy) {
+				return oParent.getAriaLabelledBy();
+			} else {
+				return this.getAssociation("ariaLabelledBy", []);
+			}
+
+		};
+
+		/*
+		 * Checks if a date is selected and what kind of selected
+		 * @return {int} iSelected 0: not selected; 1: single day selected, 2: interval start, 3: interval end, 4: interval between
+		 * @private
+		 */
+		Month.prototype._checkDateSelected = function(oDate){
+
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object " + this);
+			}
+
+			var iSelected = 0;
+			var aSelectedDates = this.getSelectedDates();
+			var oTimeStamp = oDate.getTime();
+
+			for ( var i = 0; i < aSelectedDates.length; i++) {
+				// initalize the time part of the start and end time
+				var oRange = aSelectedDates[i];
+				var oTmpDate = CalendarUtils._createUTCDate(oRange.getStartDate());
+				var oStartDate;
+				var oStartTimeStamp = 0;
+				if (oTmpDate) {
+					oStartDate = oTmpDate;
+					oStartTimeStamp = oStartDate.getTime();
+				}
+				var oEndDate;
+				var oEndTimeStamp = 0;
+				if (this.getIntervalSelection()) {
+					oTmpDate = CalendarUtils._createUTCDate(oRange.getEndDate());
+					if (oTmpDate) {
+						oEndDate = oTmpDate;
+						oEndTimeStamp = oEndDate.getTime();
+					}
+				}
+
+				if (oTimeStamp == oStartTimeStamp && !oEndDate ) {
+					iSelected = 1; // single day selected
+					break;
+				} else if (oTimeStamp == oStartTimeStamp && oEndDate ) {
+					iSelected = 2; // interval start
+					if (oEndDate && oTimeStamp == oEndTimeStamp) {
+						// one day interval
+						iSelected = 5;
+					}
+					break;
+				} else if (oEndDate && oTimeStamp == oEndTimeStamp) {
+					iSelected = 3; // interval end
+					break;
+				} else if (oEndDate && oTimeStamp > oStartTimeStamp && oTimeStamp < oEndTimeStamp) {
+					iSelected = 4; // interval between
+					break;
+				}
+
+				if (this.getSingleSelection()) {
+					// if single selection only check the first range
+					break;
+				}
+			}
+
+			return iSelected;
+
+		};
+
+		/*
+		 * gets the type of a single date checking the specialDates aggregation
+		 * the first hit is used
+		 * @return {object} date type and tooltip defined in CalendarDayType
+		 * @private
+		 */
+		Month.prototype._getDateType = function(oDate){
+
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object " + this);
+			}
+
+			var oType;
+			var aSpecialDates = this.getSpecialDates();
+			var oTimeStamp = oDate.getTime();
+
+			for ( var i = 0; i < aSpecialDates.length; i++) {
+				// initialize the time part of the start and end time
+				var oRange = aSpecialDates[i];
+				var oTmpDate = CalendarUtils._createUTCDate(oRange.getStartDate());
+				var oStartDate;
+				var oStartTimeStamp = 0;
+				if (oTmpDate) {
+					oStartDate = oTmpDate;
+					oStartTimeStamp = oStartDate.getTime();
+				}
+				var oEndDate;
+				var oEndTimeStamp = 0;
+				oTmpDate = CalendarUtils._createUTCDate(oRange.getEndDate());
+				if (oTmpDate) {
+					oEndDate = oTmpDate;
+					oEndTimeStamp = oEndDate.getTime();
+				}
+
+				if ((oTimeStamp == oStartTimeStamp && !oEndDate) || (oTimeStamp >= oStartTimeStamp && oTimeStamp <= oEndTimeStamp)) {
+					oType = {type: oRange.getType(), tooltip: oRange.getTooltip_AsString()};
+					break;
+				}
+			}
+
+			return oType;
+
+		};
+
+		Month.prototype._handleMouseMove = function(oEvent){
+
+			if (!this.$().is(":visible")) {
+				// calendar was closed -> remove mousemove handler
+				this._unbindMousemove(true);
+			}
+
+			var $Target = jQuery(oEvent.target);
+
+			if ($Target.hasClass("sapUiCalDayNum")) {
+				$Target = $Target.parent();
+			}
+
+			var that = this;
+
+			if ($Target.hasClass("sapUiCalDay")) {
+				var oOldFocusedDate = this._getDate();
+				if (!jQuery.sap.containsOrEquals(this.getDomRef(), oEvent.target)) {
+					// in multi month mode day can be in other month
+					var aSelectedDates = this.getSelectedDates();
+
+					if (aSelectedDates.length > 0 && this.getSingleSelection()) {
+						var oStartDate = CalendarUtils._createUTCDate(aSelectedDates[0].getStartDate());
+						var oEndDate = this._oFormatYyyymmdd.parse($Target.attr("data-sap-day"), true);
+						if (oEndDate.getTime() >= oStartDate.getTime()) {
+							_updateSelection(that, oStartDate, oEndDate);
+						}else {
+							_updateSelection(that, oEndDate, oStartDate);
+						}
+					}
+				}else {
+					var oFocusedDate = this._oFormatYyyymmdd.parse($Target.attr("data-sap-day"), true);
+
+					if (oFocusedDate.getTime() != oOldFocusedDate.getTime()) {
+						if ($Target.hasClass("sapUiCalDayOtherMonth")) {
+							// in other month -> change month
+							this.fireFocus({date: oFocusedDate, otherMonth: true});
+						} else {
+							this._setDate(oFocusedDate);
+							_selectDay(that, oFocusedDate, false, true);
+							this._bMoveChange = true;
+						}
+
+					}
+				}
+			}
+
+		};
+
+		Month.prototype.onmouseup = function(oEvent){
+
+			if (this._bMouseMove) {
+				this._unbindMousemove(true);
+
+				// focus now selected day
+				var oFocusedDate = this._getDate();
+				var aDomRefs = this._oItemNavigation.getItemDomRefs();
+
+				for ( var i = 0; i < aDomRefs.length; i++) {
+					var $DomRef = jQuery(aDomRefs[i]);
+					if (!$DomRef.hasClass("sapUiCalDayOtherMonth")) {
+						if ($DomRef.attr("data-sap-day") == this._oFormatYyyymmdd.format(oFocusedDate, true)) {
+							$DomRef.focus();
+							break;
+						}
+					}
+				}
+
+				if (this._bMoveChange) {
+					// selection was changed -> make it final
+					var $Target = jQuery(oEvent.target);
+
+					if ($Target.hasClass("sapUiCalDayNum")) {
+						$Target = $Target.parent();
+					}
+
+					if ($Target.hasClass("sapUiCalDay")) {
+						oFocusedDate = this._oFormatYyyymmdd.parse($Target.attr("data-sap-day"), true);
+					}
+
+					var that = this;
+					_selectDay(that, oFocusedDate);
+					this._bMoveChange = false;
+					_fireSelect(that);
+				}
+			}
+
+		};
+
+		Month.prototype.onsapselect = function(oEvent){
+
+			// focused item must be selected
+			var that = this;
+
+			_selectDay(that, that._getDate());
+			_fireSelect(that);
+
+			//to prevent bubbling into input field if in DatePicker
+			oEvent.stopPropagation();
+			oEvent.preventDefault();
+
+		};
+
+		Month.prototype.onsapselectmodifiers = function(oEvent){
+
+			this.onsapselect(oEvent);
+
+		};
+
+		Month.prototype.onsappageupmodifiers = function(oEvent){
+
+			// not handled by ItemNavigation
+			// go one or 10 years back
+			var oFocusedDate = new Date(this._getDate().getTime());
+			var iYear = oFocusedDate.getUTCFullYear();
+
+			if (oEvent.metaKey || oEvent.ctrlKey) {
+				oFocusedDate.setUTCFullYear(iYear - 10);
+			} else {
+				oFocusedDate.setUTCFullYear(iYear - 1);
+			}
+
+			this.fireFocus({date: oFocusedDate, otherMonth: true});
+
+			// cancel the event otherwise the browser select some text
+			oEvent.preventDefault();
+
+		};
+
+		Month.prototype.onsappagedownmodifiers = function(oEvent){
+
+			// not handled by ItemNavigation
+			// go one or 10 years forward
+			var oFocusedDate = new Date(this._getDate().getTime());
+			var iYear = oFocusedDate.getUTCFullYear();
+
+			if (oEvent.metaKey || oEvent.ctrlKey) {
+				oFocusedDate.setUTCFullYear(iYear + 10);
+			} else {
+				oFocusedDate.setUTCFullYear(iYear + 1);
+			}
+
+			this.fireFocus({date: oFocusedDate, otherMonth: true});
+
+			// cancel the event otherwise the browser select some text
+			oEvent.preventDefault();
+
+		};
+
+		/*
+		 * called from the calendar in multi-month case to update the interval visualization
+		 * for all months.
+		 */
+		Month.prototype._updateSelection = function(){
+
+			var aSelectedDates = this.getSelectedDates();
+
+			if (aSelectedDates.length > 0 && this.getSingleSelection()) {
+				var that = this;
+				var oStartDate = CalendarUtils._createUTCDate(aSelectedDates[0].getStartDate());
+				var oEndDate = CalendarUtils._createUTCDate(aSelectedDates[0].getEndDate());
+				_updateSelection(that, oStartDate, oEndDate);
+			}
+
+		};
+
+		/*
+		 * in Calendar with more than one months, other months must handle mousemove too
+		 */
+		Month.prototype._bindMousemove = function( bFireEvent ){
+
+			jQuery(window.document).bind('mousemove', this._mouseMoveProxy);
+			this._bMouseMove = true;
+
+			if (bFireEvent) {
+				// fire internal event for Calendar. In MultiMonth case all months must react on mousemove
+				this.fireEvent("_bindMousemove");
+			}
+
+		};
+
+		Month.prototype._unbindMousemove = function( bFireEvent ){
+
+			jQuery(window.document).unbind('mousemove', this._mouseMoveProxy);
+			this._bMouseMove = undefined;
+
+			if (bFireEvent) {
+				// fire internal event for Calendar. In MultiMonth case all months must react on mousemove
+				this.fireEvent("_unbindMousemove");
+			}
+
+		};
+
+		Month.prototype.onThemeChanged = function(){
+
+			if (this._bNoThemeChange) {
+				// already called from Calendar
+				return;
+			}
+
+			this._bNamesLengthChecked = undefined;
+			this._bLongWeekDays = undefined;
+			var aWeekHeaders = this.$().children(".sapUiCalWH");
+			var oLocaleData = this._getLocaleData();
+			var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+			var aDayNames = oLocaleData.getDaysStandAlone("abbreviated");
+			for (var i = 0; i < aDayNames.length; i++) {
+				var oWeekDay = aWeekHeaders[i];
+				jQuery(oWeekDay).text(aDayNames[(i + iFirstDayOfWeek) % 7]);
+			}
+
+			var that = this;
+			_checkNamesLength(that);
+
+		};
+
+		function _initItemNavigation(oThis){
+
+			var oDate = oThis._getDate();
+			var sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate, true);
+			var iIndex = 0;
+
+			var oRootDomRef = oThis.$("days").get(0);
+//			var aDomRefs = oThis.$("days").children(".sapUiCalDay");
+			var aDomRefs = oThis.$("days").find(".sapUiCalDay");
+
+			for ( var i = 0; i < aDomRefs.length; i++) {
+				var $DomRef = jQuery(aDomRefs[i]);
+				if ($DomRef.attr("data-sap-day") === sYyyymmdd) {
+					iIndex = i;
+					break;
+				}
+			}
+
+			if (!oThis._oItemNavigation) {
+				oThis._oItemNavigation = new ItemNavigation();
+				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, _handleAfterFocus, oThis);
+				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, _handleFocusAgain, oThis);
+				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, _handleBorderReached, oThis);
+				oThis.addDelegate(oThis._oItemNavigation);
+				oThis._oItemNavigation.setHomeEndColumnMode(true, true);
+				oThis._oItemNavigation.setDisabledModifiers({
+					sapnext : ["alt"],
+					sapprevious : ["alt"],
+					saphome : ["alt"],
+					sapend : ["alt"]
+				});
+			}
+			oThis._oItemNavigation.setRootDomRef(oRootDomRef);
+			oThis._oItemNavigation.setItemDomRefs(aDomRefs);
+			oThis._oItemNavigation.setCycling(false);
+			oThis._oItemNavigation.setColumns(7, true);
+			oThis._oItemNavigation.setFocusedIndex(iIndex);
+			oThis._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
+
+		}
+
+		function _handleAfterFocus(oControlEvent){
+
+			var iIndex = oControlEvent.getParameter("index");
+			var oEvent = oControlEvent.getParameter("event");
+
+			if (!oEvent) {
+				return; // happens if focus is set via ItemNavigation.focusItem directly
+			}
+
+			var that = this;
+			var oOldDate = this._getDate();
+			var oFocusedDate = new Date(oOldDate.getTime());
+			var bOtherMonth = false;
+
+			var aDomRefs = this._oItemNavigation.getItemDomRefs();
+			var i = 0;
+
+			// find out what day was focused
+			var $DomRef = jQuery(aDomRefs[iIndex]);
+			var $DomRefDay;
+			/* eslint-disable no-lonely-if */
+			if ($DomRef.hasClass("sapUiCalDayOtherMonth")) {
+				if (oEvent.type == "saphomemodifiers" && (oEvent.metaKey || oEvent.ctrlKey)) {
+					// on ctrl+home key focus first day of month
+					oFocusedDate.setUTCDate(1);
+					_focusDate(that, oFocusedDate);
+				} else if (oEvent.type == "sapendmodifiers" && (oEvent.metaKey || oEvent.ctrlKey)) {
+					// on ctrl+end key focus last day of month
+					for ( i = aDomRefs.length - 1; i > 0 ; i--) {
+						$DomRefDay = jQuery(aDomRefs[i]);
+						if (!$DomRefDay.hasClass("sapUiCalDayOtherMonth")) {
+							oFocusedDate = this._oFormatYyyymmdd.parse($DomRefDay.attr("data-sap-day"), true);
+							break;
+						}
+					}
+					_focusDate(that, oFocusedDate);
+				} else {
+					// focus old date again, but tell parent about the new date
+					bOtherMonth = true;
+					oFocusedDate = this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), true);
+					if (!oFocusedDate) {
+						oFocusedDate = new Date(oOldDate.getTime()); // e.g. year > 9999
+					}
+					_focusDate(that, oOldDate);
+
+				}
+			} else {
+				// day in current month focused
+				if (jQuery(oEvent.target).hasClass("sapUiCalWeekNum")) {
+					// click on week number - focus old date
+					_focusDate(that, oFocusedDate);
+				}else {
+					// not if clicked on week number
+					oFocusedDate = this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), true);
+					this._setDate(oFocusedDate);
+				}
+			}
+
+			this.fireFocus({date: oFocusedDate, otherMonth: bOtherMonth});
+
+			if (oEvent.type == "mousedown") {
+				// as no click event is fired in some cases, e.g. if month is changed (because of changing DOM) select the day on mousedown
+				_handleMousedown(that, oEvent, oFocusedDate, iIndex);
+			}
+
+		}
+
+		function _handleFocusAgain(oControlEvent){
+
+			var iIndex = oControlEvent.getParameter("index");
+			var oEvent = oControlEvent.getParameter("event");
+
+			if (!oEvent) {
+				return; // happens if focus is set via ItemNavigation.focusItem directly
+			}
+
+			if (oEvent.type == "mousedown") {
+				// as no click event is fired in some cases, e.g. if month is changed (because of changing DOM) select the day on mousedown
+				var that = this;
+				var oFocusedDate = this._getDate();
+				_handleMousedown(that, oEvent, oFocusedDate, iIndex);
+			}
+
+		}
+
+		function _handleBorderReached(oControlEvent){
+
+			var oEvent = oControlEvent.getParameter("event");
+			var iMonth = 0;
+			var oOldDate = this._getDate();
+			var oFocusedDate = new Date(oOldDate.getTime());
+
+			if (oEvent.type) {
+				switch (oEvent.type) {
+				case "sapnext":
+				case "sapnextmodifiers":
+					// last day in month reached
+					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN) {
+						//goto same day next week
+						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + 7);
+					} else {
+						//go to next day
+						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + 1);
+					}
+					break;
+
+				case "sapprevious":
+				case "sappreviousmodifiers":
+					// first day in month reached
+					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
+						//goto same day previous week
+						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 7);
+					} else {
+						//go to previous day
+						oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
+					}
+					break;
+
+				case "sappagedown":
+					// go to same day next month
+					iMonth = oFocusedDate.getUTCMonth() + 1;
+					oFocusedDate.setUTCMonth(iMonth);
+					// but if the day doesn't exist in this month, go to last day of the month
+					if (iMonth % 12 != oFocusedDate.getUTCMonth()) {
+						while (iMonth != oFocusedDate.getUTCMonth()) {
+							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
+						}
+					}
+					break;
+
+				case "sappageup":
+					// go to same day previous month
+					iMonth = oFocusedDate.getUTCMonth() - 1;
+					oFocusedDate.setUTCMonth(iMonth);
+					if (iMonth < 0) {
+						iMonth = 11;
+					}
+					// but if the day doesn't exist in this month, go to last day of the month
+					if (iMonth != oFocusedDate.getUTCMonth()) {
+						while (iMonth != oFocusedDate.getUTCMonth()) {
+							oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
+						}
+					}
+					break;
+
+				default:
+					break;
+				}
+
+				this.fireFocus({date: oFocusedDate, otherMonth: true});
+
+			}
+
+		}
+
+		function _handleMousedown(oThis, oEvent, oFocusedDate, iIndex){
+
+			_selectDay(oThis, oFocusedDate, oEvent.shiftKey);
+			_fireSelect(oThis);
+			if (oThis.getIntervalSelection() && oThis.$().is(":visible")) {
+				// if calendar was closed in select event, do not add mousemove handler
+				oThis._bindMousemove(true);
+			}
+
+			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
+			oEvent.setMark("cancelAutoClose");
+
+		}
+
+		function _changeDate (oThis, oDate, bNoFocus){
+
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + oThis);
+			}
+
+			var iYear = oDate.getFullYear();
+			if (iYear < 1 || iYear > 9999) {
+				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + oThis);
+			}
+
+			var oOldDate = oThis._getDate();
+			oThis.setProperty("date", oDate, true);
+			oThis._oUTCDate = CalendarUtils._createUTCDate(oDate);
+
+			if (oThis.getDomRef()) {
+				oDate = CalendarUtils._createUTCDate(oDate);
+				if (oThis._oUTCDate.getUTCFullYear() == oOldDate.getUTCFullYear() && oThis._oUTCDate.getUTCMonth() == oOldDate.getUTCMonth()) {
+					if (!bNoFocus) {
+					_focusDate(oThis, oThis._oUTCDate, true);
+					}
+				} else {
+					_renderMonth(oThis, bNoFocus);
+				}
+			}
+
+		}
+
+		function _focusDate (oThis, oDate, bNoSetDate){
+
+			if (!bNoSetDate) {
+				oThis.setDate(oDate);
+			}
+
+			var sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate, true);
+			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
+			var $DomRefDay;
+			for ( var i = 0; i < aDomRefs.length; i++) {
+				$DomRefDay = jQuery(aDomRefs[i]);
+				if ($DomRefDay.attr("data-sap-day") == sYyyymmdd) {
+					oThis._oItemNavigation.focusItem(i);
+					break;
+				}
+			}
+
+		}
+
+		function _renderMonth(oThis, bNoFocus){
+
+			oThis._sRenderMonth = undefined; // initialize delayed call
+
+			var oDate = oThis._getDate();
+			var $Container = oThis.$("days");
+
+			if ($Container.length > 0) {
+				var oRm = sap.ui.getCore().createRenderManager();
+				oThis.getRenderer().renderDays(oRm, oThis, oDate);
+				oRm.flush($Container[0]);
+				oRm.destroy();
+			}
+
+			if (oThis.getShowHeader()) {
+				var oLocaleData = oThis._getLocaleData();
+				var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+				oThis.$("Head").text(aMonthNames[oDate.getUTCMonth()]);
+			}
+
+			// fire internal event for DatePicker for with number of rendered days. If Calendar becomes larger maybe popup must change position
+			oThis.fireEvent("_renderMonth", {days: $Container.children(".sapUiCalDay").length});
+
+			_initItemNavigation(oThis);
+			if (!bNoFocus) {
+				oThis._oItemNavigation.focusItem(oThis._oItemNavigation.getFocusedIndex());
+			}
+
+		}
+
+		function _selectDay(oThis, oDate, bIntervalEnd, bMove){
+
+			var aSelectedDates = oThis.getSelectedDates();
+			var oDateRange;
+			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
+			var $DomRef;
+			var sYyyymmdd;
+			var i = 0;
+			var oParent = oThis.getParent();
+			var oAggOwner = oThis;
+
+			if (oParent && oParent.getSelectedDates) {
+				// if used in Calendar use the aggregation of this one
+				oAggOwner = oParent;
+			}
+
+			/* eslint-disable no-lonely-if */
+			if (oThis.getSingleSelection()) {
+				var oStartDate;
+
+				if (aSelectedDates.length > 0) {
+					oDateRange = aSelectedDates[0];
+					oStartDate = CalendarUtils._createUTCDate(oDateRange.getStartDate());
+				} else {
+					oDateRange = new sap.ui.unified.DateRange();
+					oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
+				}
+
+				if (oThis.getIntervalSelection()/* && bIntervalEnd*/ && (!oDateRange.getEndDate() || bMove) && oStartDate) {
+					// single interval selection
+					var oEndDate;
+					if (oDate.getTime() < oStartDate.getTime()) {
+						oEndDate = oStartDate;
+						oStartDate = oDate;
+						if (!bMove) {
+							// in move mode do not set date. this bring broblems if on backward move the start date would be cahnged
+							oDateRange.setProperty("startDate", CalendarUtils._createLocalDate(oStartDate), true); // no-rerendering
+							oDateRange.setProperty("endDate", CalendarUtils._createLocalDate(oEndDate), true); // no-rerendering
+						}
+					} else if (oDate.getTime() >= oStartDate.getTime()) {
+						// single day ranges are allowed
+						oEndDate = oDate;
+						if (!bMove) {
+							oDateRange.setProperty("endDate", CalendarUtils._createLocalDate(oEndDate), true); // no-rerendering
+						}
+					}
+					_updateSelection(oThis, oStartDate, oEndDate);
+				} else {
+					// single day selection or start a new interval
+					_updateSelection(oThis, oDate);
+
+					oDateRange.setProperty("startDate", CalendarUtils._createLocalDate(oDate), true); // no-rerendering
+					oDateRange.setProperty("endDate", undefined, true); // no-rerendering
+				}
+			} else {
+				// multiple selection
+				if (oThis.getIntervalSelection()) {
+					throw new Error("Calender don't support multiple interval selection");
+
+				} else {
+					var iSelected = oThis._checkDateSelected(oDate);
+					if (iSelected > 0) {
+						// already selected - deselect
+						for ( i = 0; i < aSelectedDates.length; i++) {
+							if (aSelectedDates[i].getStartDate() && oDate.getTime() == CalendarUtils._createUTCDate(aSelectedDates[i].getStartDate()).getTime()) {
+								oAggOwner.removeAggregation("selectedDates", i, true); // no re-rendering
+								break;
+							}
+						}
+					} else {
+						// not selected -> select
+						oDateRange = new sap.ui.unified.DateRange({startDate: CalendarUtils._createLocalDate(oDate)});
+						oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
+					}
+					sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate, true);
+					for ( i = 0; i < aDomRefs.length; i++) {
+						$DomRef = jQuery(aDomRefs[i]);
+						if (!$DomRef.hasClass("sapUiCalDayOtherMonth") && $DomRef.attr("data-sap-day") == sYyyymmdd) {
+							if (iSelected > 0) {
+								$DomRef.removeClass("sapUiCalDaySel");
+								$DomRef.attr("aria-selected", "false");
+							} else {
+								$DomRef.addClass("sapUiCalDaySel");
+								$DomRef.attr("aria-selected", "true");
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		function _updateSelection(oThis, oStartDate, oEndDate){
+
+			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
+			var $DomRef;
+			var i = 0;
+
+			if (!oEndDate) {
+				// start of interval or single date
+				var sYyyymmdd = oThis._oFormatYyyymmdd.format(oStartDate, true);
+				for ( i = 0; i < aDomRefs.length; i++) {
+					$DomRef = jQuery(aDomRefs[i]);
+					if (!$DomRef.hasClass("sapUiCalDayOtherMonth") && $DomRef.attr("data-sap-day") == sYyyymmdd) {
+						$DomRef.addClass("sapUiCalDaySel");
+						$DomRef.attr("aria-selected", "true");
+					} else if ($DomRef.hasClass("sapUiCalDaySel")) {
+						$DomRef.removeClass("sapUiCalDaySel");
+						$DomRef.attr("aria-selected", "false");
+					}
+					if ($DomRef.hasClass("sapUiCalDaySelStart")) {
+						$DomRef.removeClass("sapUiCalDaySelStart");
+					} else if ($DomRef.hasClass("sapUiCalDaySelBetween")) {
+						$DomRef.removeClass("sapUiCalDaySelBetween");
+					} else if ($DomRef.hasClass("sapUiCalDaySelEnd")) {
+						$DomRef.removeClass("sapUiCalDaySelEnd");
+					}
+				}
+			} else {
+				var oDay;
+				for ( i = 0; i < aDomRefs.length; i++) {
+					$DomRef = jQuery(aDomRefs[i]);
+					oDay = oThis._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), true);
+					if (oDay.getTime() == oStartDate.getTime()) {
+						$DomRef.addClass("sapUiCalDaySelStart");
+						$DomRef.addClass("sapUiCalDaySel");
+						$DomRef.attr("aria-selected", "true");
+						if (oEndDate && oDay.getTime() == oEndDate.getTime()) {
+							// start day and end day are the same
+							$DomRef.addClass("sapUiCalDaySelEnd");
+						}
+						$DomRef.removeClass("sapUiCalDaySelBetween");
+					} else if (oEndDate && oDay.getTime() > oStartDate.getTime() && oDay.getTime() < oEndDate.getTime()) {
+						$DomRef.addClass("sapUiCalDaySel");
+						$DomRef.attr("aria-selected", "true");
+						$DomRef.addClass("sapUiCalDaySelBetween");
+						$DomRef.removeClass("sapUiCalDaySelStart");
+						$DomRef.removeClass("sapUiCalDaySelEnd");
+					} else if (oEndDate && oDay.getTime() == oEndDate.getTime()) {
+						$DomRef.addClass("sapUiCalDaySelEnd");
+						$DomRef.addClass("sapUiCalDaySel");
+						$DomRef.attr("aria-selected", "true");
+						$DomRef.removeClass("sapUiCalDaySelStart");
+						$DomRef.removeClass("sapUiCalDaySelBetween");
+					} else {
+						if ($DomRef.hasClass("sapUiCalDaySel")) {
+							$DomRef.removeClass("sapUiCalDaySel");
+							$DomRef.attr("aria-selected", "false");
+						}
+						if ($DomRef.hasClass("sapUiCalDaySelStart")) {
+							$DomRef.removeClass("sapUiCalDaySelStart");
+						} else if ($DomRef.hasClass("sapUiCalDaySelBetween")) {
+							$DomRef.removeClass("sapUiCalDaySelBetween");
+						} else if ($DomRef.hasClass("sapUiCalDaySelEnd")) {
+							$DomRef.removeClass("sapUiCalDaySelEnd");
+						}
+					}
+				}
+			}
+
+		}
+
+		function _fireSelect(oThis){
+
+			if (oThis._bMouseMove) {
+				// detach mouse move handler because calendar might be losed in select event handler
+				oThis._unbindMousemove(true);
+			}
+
+			oThis.fireSelect();
+
+		}
+
+		function _checkNamesLength(oThis){
+
+			if (!oThis._bNamesLengthChecked) {
+				// only once - cannot change by rerendering - only by theme change
+				var oWeekDay;
+
+				// check day names
+				var aWeekHeaders = oThis.$().find(".sapUiCalWH");
+				var bTooLong = false;
+				var i = 0;
+
+				for (i = 0; i < aWeekHeaders.length; i++) {
+					oWeekDay = aWeekHeaders[i];
+					if (oWeekDay.clientWidth < oWeekDay.scrollWidth) {
+						bTooLong = true;
+						break;
+					}
+				}
+
+				if (bTooLong) {
+					oThis._bLongWeekDays = false;
+					var oLocaleData = oThis._getLocaleData();
+					var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+					var aDayNames = oLocaleData.getDaysStandAlone("narrow");
+					for ( i = 0; i < aDayNames.length; i++) {
+						oWeekDay = aWeekHeaders[i];
+						jQuery(oWeekDay).text(aDayNames[(i + iFirstDayOfWeek) % 7]);
+					}
+				} else {
+					oThis._bLongWeekDays = true;
+				}
+
+				oThis._bNamesLengthChecked = true;
+			}
+
+		}
+
+	}());
+
+	return Month;
+
+}, /* bExport= */ true);
+
+}; // end of sap/ui/unified/calendar/Month.js
+if ( !jQuery.sap.isDeclared('sap.ui.unified.calendar.MonthPicker') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+// Provides control sap.ui.unified.Calendar.
+jQuery.sap.declare('sap.ui.unified.calendar.MonthPicker'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.LocaleData'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.delegate.ItemNavigation'); // unlisted dependency retained
+sap.ui.define("sap/ui/unified/calendar/MonthPicker",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/unified/library'],
+	function(jQuery, Control, LocaleData, ItemNavigation, library) {
+	"use strict";
+
+	/**
+	 * Constructor for a new MonthPicker.
+	 *
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] initial settings for the new control
+	 *
+	 * @class
+	 * renders a MonthPicker with ItemNavigation
+	 * This is used inside the calendar. Not for stand alone usage
+	 * @extends sap.ui.core.Control
+	 * @version 1.28.5
+	 *
+	 * @constructor
+	 * @public
+	 * @since 1.28.0
+	 * @alias sap.ui.unified.calendar.MonthPicker
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	var MonthPicker = Control.extend("sap.ui.unified.calendar.MonthPicker", /** @lends sap.ui.unified.calendar.MonthPicker.prototype */ { metadata : {
+
+		library : "sap.ui.unified",
+		properties : {
+
+			/**
+			 * The month is initial focused and selected
+			 * The value must be between 0 and 11
+			 */
+			month : {type : "int", group : "Misc", defaultValue : 0}
+
+		},
+		events : {
+
+			/**
+			 * Month selection changed
+			 */
+			select : {}
+
+		}
+	}});
+
+	(function() {
+
+		MonthPicker.prototype.init = function(){
+
+			this._iColumns = 3;
+
+		};
+
+		MonthPicker.prototype.onAfterRendering = function(){
+
+			var that = this;
+
+			_initItemNavigation(that);
+
+			// check if day names are too big -> use smaller ones
+			_checkNamesLength(that);
+
+		};
+
+		MonthPicker.prototype.setMonth = function(iMonth){
+
+			// no rerendering needed, just select new month
+			this.setProperty("month", iMonth, true);
+			iMonth = this.getProperty("month"); // to have type conversion, validation....
+
+			if (iMonth < 0 || iMonth > 11) {
+				throw new Error("Property month must be between 0 and 11; " + this);
+			}
+
+			if (this.getDomRef()) {
+				var that = this;
+				_selectMonth(that, iMonth);
+				this._oItemNavigation.focusItem(iMonth);
+			}
+
+
+		};
+
+		/*
+		 * Use rendered locale for stand alone control
+		 * But as Calendar can have an own locale, use this one if used inside Calendar
+		 */
+		MonthPicker.prototype._getLocale = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent._getLocale) {
+				return oParent._getLocale();
+			} else if (!this._sLocale) {
+				this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			}
+
+			return this._sLocale;
+
+		};
+
+		/*
+		 * gets localeData for used locale
+		 * Use rendered locale for stand alone control
+		 * But as Calendar can have an own locale, use this one if used inside Calendar
+		 */
+		MonthPicker.prototype._getLocaleData = function(){
+
+			var oParent = this.getParent();
+
+			if (oParent && oParent._getLocaleData) {
+				return oParent._getLocaleData();
+			} else if (!this._oLocaleData) {
+				var sLocale = this._getLocale();
+				var oLocale = new sap.ui.core.Locale(sLocale);
+				this._oLocaleData = LocaleData.getInstance(oLocale);
+			}
+
+			return this._oLocaleData;
+
+		};
+
+		MonthPicker.prototype.onsapselect = function(oEvent){
+
+			// focused item must be selected
+			var that = this;
+			var iIndex = this._oItemNavigation.getFocusedIndex();
+
+			_selectMonth(that, iIndex);
+			this.fireSelect();
+
+		};
+
+		MonthPicker.prototype.onThemeChanged = function(){
+
+			if (this._bNoThemeChange) {
+				// already called from Calendar
+				return;
+			}
+
+			this._bNamesLengthChecked = undefined;
+			var aMonths = this._oItemNavigation.getItemDomRefs();
+			this._bLongMonth = false;
+			var oLocaleData = this._getLocaleData();
+			// change month name on button but not change month picker, because it is hided again
+			var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+			for (var i = 0; i < aMonths.length; i++) {
+				var $Month = jQuery(aMonths[i]);
+				$Month.text(aMonthNames[i]);
+			}
+
+			var that = this;
+			_checkNamesLength(that);
+
+		};
+
+		function _initItemNavigation(oThis){
+
+			var oRootDomRef = oThis.getDomRef();
+			var aDomRefs = oThis.$().find(".sapUiCalMonth");
+			var iIndex = oThis.getMonth();
+
+			if (!oThis._oItemNavigation) {
+				oThis._oItemNavigation = new ItemNavigation();
+				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, _handleAfterFocus, oThis);
+				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, _handleFocusAgain, oThis);
+				oThis.addDelegate(oThis._oItemNavigation);
+				oThis._oItemNavigation.setHomeEndColumnMode(true, true);
+				oThis._oItemNavigation.setDisabledModifiers({
+					sapnext : ["alt"],
+					sapprevious : ["alt"],
+					saphome : ["alt"],
+					sapend : ["alt"]
+				});
+			}
+			oThis._oItemNavigation.setRootDomRef(oRootDomRef);
+			oThis._oItemNavigation.setItemDomRefs(aDomRefs);
+			oThis._oItemNavigation.setCycling(true);
+			oThis._oItemNavigation.setColumns(oThis._iColumns, false);
+			oThis._oItemNavigation.setFocusedIndex(iIndex);
+			oThis._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
+
+		}
+
+		function _handleAfterFocus(oControlEvent){
+
+			var iIndex = oControlEvent.getParameter("index");
+			var oEvent = oControlEvent.getParameter("event");
+
+			if (!oEvent) {
+				return; // happens if focus is set via ItemNavigation.focusItem directly
+			}
+
+			if (oEvent.type == "mousedown") {
+				// as no click event is fired in some cases
+				var that = this;
+				_handleMousedown(that, oEvent, iIndex);
+			}
+
+		}
+
+		function _handleFocusAgain(oControlEvent){
+
+			var iIndex = oControlEvent.getParameter("index");
+			var oEvent = oControlEvent.getParameter("event");
+
+			if (!oEvent) {
+				return; // happens if focus is set via ItemNavigation.focusItem directly
+			}
+
+			if (oEvent.type == "mousedown") {
+				// as no click event is fired in some cases
+				var that = this;
+				_handleMousedown(that, oEvent, iIndex);
+			}
+
+		}
+
+		function _handleMousedown(oThis, oEvent, iIndex){
+
+			_selectMonth(oThis, iIndex);
+			oThis.fireSelect();
+
+			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
+			oEvent.setMark("cancelAutoClose");
+
+		}
+
+		function _selectMonth(oThis, iMonth, bNoSetDate){
+
+			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
+			var $DomRef;
+			var sId = oThis.getId() + "-m" + iMonth;
+			for ( var i = 0; i < aDomRefs.length; i++) {
+				$DomRef = jQuery(aDomRefs[i]);
+				if ($DomRef.attr("id") == sId) {
+					$DomRef.addClass("sapUiCalMonthSel");
+				}else {
+					$DomRef.removeClass("sapUiCalMonthSel");
+				}
+			}
+
+			if (!bNoSetDate) {
+				oThis.setProperty("month", iMonth, true);
+			}
+
+		}
+
+		function _checkNamesLength(oThis){
+
+			if (!oThis._bNamesLengthChecked) {
+				var i = 0;
+				// only once - cannot change by rerendering - only by theme change
+				var aMonths = oThis._oItemNavigation.getItemDomRefs();
+				var bTooLong = false;
+				for (i = 0; i < aMonths.length; i++) {
+					var oMonth = aMonths[i];
+					if (oMonth.clientWidth < oMonth.scrollWidth) {
+						bTooLong = true;
+						break;
+					}
+				}
+				if (bTooLong) {
+					oThis._bLongMonth = false;
+					var oLocaleData = oThis._getLocaleData();
+					// change month name on button but not change month picker, because it is hided again
+					var aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
+					var aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide");
+					for (i = 0; i < aMonths.length; i++) {
+						var $Month = jQuery(aMonths[i]);
+						$Month.text(aMonthNames[i]);
+						$Month.attr("aria-label", aMonthNamesWide[i]);
+					}
+				} else {
+					oThis._bLongMonth = true;
+				}
+
+				oThis._bNamesLengthChecked = true;
+			}
+
+		}
+
+	}());
+
+	return MonthPicker;
+
+}, /* bExport= */ true);
+
+}; // end of sap/ui/unified/calendar/MonthPicker.js
+if ( !jQuery.sap.isDeclared('sap.ui.unified.calendar.YearPicker') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+// Provides control sap.ui.unified.Calendar.
+jQuery.sap.declare('sap.ui.unified.calendar.YearPicker'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.delegate.ItemNavigation'); // unlisted dependency retained
+sap.ui.define("sap/ui/unified/calendar/YearPicker",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/unified/library'],
+	function(jQuery, Control, ItemNavigation, library) {
+	"use strict";
+
+	/**
+	 * Constructor for a new YearPicker.
+	 *
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] initial settings for the new control
+	 *
+	 * @class
+	 * renders a YearPicker with ItemNavigation
+	 * This is used inside the calendar. Not for stand alone usage
+	 * @extends sap.ui.core.Control
+	 * @version 1.28.5
+	 *
+	 * @constructor
+	 * @public
+	 * @since 1.28.0
+	 * @alias sap.ui.unified.calendar.YearPicker
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	var YearPicker = Control.extend("sap.ui.unified.calendar.YearPicker", /** @lends sap.ui.unified.calendar.YearPicker.prototype */ { metadata : {
+
+		library : "sap.ui.unified",
+		properties : {
+
+			/**
+			 * The year is initial focused and selected
+			 * The value must be between 0 and 9999
+			 */
+			year : {type : "int", group : "Misc", defaultValue : 2000}
+
+		},
+		events : {
+
+			/**
+			 * Month selection changed
+			 */
+			select : {}
+
+		}
+	}});
+
+	(function() {
+
+		YearPicker.prototype.init = function(){
+
+			this._iColumns = 4;
+
+		};
+
+		YearPicker.prototype.onAfterRendering = function(){
+
+			var that = this;
+
+			_initItemNavigation(that);
+
+		};
+
+		YearPicker.prototype.setYear = function(iYear){
+
+			// no rerendering needed, just select new year or update years
+			this.setProperty("year", iYear, true);
+			iYear = this.getProperty("year"); // to have type conversion, validation....
+
+			if (iYear < 1 || iYear > 9999) {
+				throw new Error("Property year must be between 0 and 9999; " + this);
+			}
+
+			if (this.getDomRef()) {
+				var that = this;
+				var iFirstYear = iYear - 10;
+				_updateYears(that, iFirstYear, 10);
+			}
+
+
+		};
+
+		/**
+		 * displays the next page
+		 *
+		 * @returns {sap.ui.unified.calendar.YearPicker} <code>this</code> to allow method chaining
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		YearPicker.prototype.nextPage = function(){
+
+			var that = this;
+			_updatePage(that, true, this._oItemNavigation.getFocusedIndex());
+
+			return this;
+
+		};
+
+		/**
+		 * displays the previous page
+		 *
+		 * @returns {sap.ui.unified.calendar.YearPicker} <code>this</code> to allow method chaining
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		YearPicker.prototype.previousPage = function(){
+
+			var that = this;
+			_updatePage(that, false, this._oItemNavigation.getFocusedIndex());
+
+			return this;
+
+		};
+
+		YearPicker.prototype.onsapselect = function(oEvent){
+
+			// focused item must be selected
+			var that = this;
+			var iIndex = this._oItemNavigation.getFocusedIndex();
+
+			_selectYear(that, iIndex);
+			this.fireSelect();
+
+		};
+
+
+		function _initItemNavigation(oThis){
+
+			var iYear = oThis.getYear();
+			var oRootDomRef = oThis.getDomRef();
+			var aDomRefs = oThis.$().find(".sapUiCalYear");
+			var iIndex = 10;
+
+			if (iYear > 9990) {
+				iIndex = iIndex + iYear - 9990;
+			} else if (iYear <= 10){
+				iIndex = iIndex - 11 + iYear;
+			}
+
+			if (!oThis._oItemNavigation) {
+				oThis._oItemNavigation = new ItemNavigation();
+				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, _handleAfterFocus, oThis);
+				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, _handleFocusAgain, oThis);
+				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, _handleBorderReached, oThis);
+				oThis.addDelegate(oThis._oItemNavigation);
+				oThis._oItemNavigation.setHomeEndColumnMode(true, true);
+				oThis._oItemNavigation.setDisabledModifiers({
+					sapnext : ["alt"],
+					sapprevious : ["alt"],
+					saphome : ["alt"],
+					sapend : ["alt"]
+				});
+			}
+			oThis._oItemNavigation.setRootDomRef(oRootDomRef);
+			oThis._oItemNavigation.setItemDomRefs(aDomRefs);
+			oThis._oItemNavigation.setCycling(false);
+			oThis._oItemNavigation.setColumns(oThis._iColumns, true);
+			oThis._oItemNavigation.setFocusedIndex(iIndex);
+			oThis._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
+
+		}
+
+		function _handleAfterFocus(oControlEvent){
+
+			var iIndex = oControlEvent.getParameter("index");
+			var oEvent = oControlEvent.getParameter("event");
+
+			if (!oEvent) {
+				return; // happens if focus is set via ItemNavigation.focusItem directly
+			}
+
+			if (oEvent.type == "mousedown") {
+				// as no click event is fired in some cases
+				var that = this;
+				_handleMousedown(that, oEvent, iIndex);
+			}
+
+		}
+
+		function _handleFocusAgain(oControlEvent){
+
+			var iIndex = oControlEvent.getParameter("index");
+			var oEvent = oControlEvent.getParameter("event");
+
+			if (!oEvent) {
+				return; // happens if focus is set via ItemNavigation.focusItem directly
+			}
+
+			if (oEvent.type == "mousedown") {
+				// as no click event is fired in some cases
+				var that = this;
+				_handleMousedown(that, oEvent, iIndex);
+			}
+
+		}
+
+		function _handleMousedown(oThis, oEvent, iIndex){
+
+			_selectYear(oThis, iIndex);
+			oThis.fireSelect();
+
+			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
+			oEvent.setMark("cancelAutoClose");
+
+		}
+
+		function _handleBorderReached(oControlEvent){
+
+			var oEvent = oControlEvent.getParameter("event");
+
+			if (oEvent.type) {
+				var that = this;
+
+				switch (oEvent.type) {
+				case "sapnext":
+				case "sapnextmodifiers":
+					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN) {
+						//same column in first row of next group
+						_updatePage(that, true, this._oItemNavigation.getFocusedIndex() - 16);
+					} else {
+						// first year in next group
+						_updatePage(that, true, 0);
+					}
+					break;
+
+				case "sapprevious":
+				case "sappreviousmodifiers":
+					if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
+						//same column in last row of previous group
+						_updatePage(that, false, 16 + this._oItemNavigation.getFocusedIndex());
+					} else {
+						// last year in previous group
+						_updatePage(that, false, 19);
+					}
+					break;
+
+				case "sappagedown":
+					// same index in next group
+					_updatePage(that, true, this._oItemNavigation.getFocusedIndex());
+					break;
+
+				case "sappageup":
+					// same index in previous group
+					_updatePage(that, false, this._oItemNavigation.getFocusedIndex());
+					break;
+
+				default:
+					break;
+				}
+			}
+
+		}
+
+		function _selectYear(oThis, iIndex){
+
+			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
+			var sYear = jQuery(aDomRefs[iIndex]).text();
+			var $DomRef;
+			var sId = oThis.getId() + "-y" + sYear;
+			for ( var i = 0; i < aDomRefs.length; i++) {
+				$DomRef = jQuery(aDomRefs[i]);
+				if ($DomRef.attr("id") == sId) {
+					$DomRef.addClass("sapUiCalYearSel");
+				}else {
+					$DomRef.removeClass("sapUiCalYearSel");
+				}
+			}
+
+			oThis.setProperty("year", parseInt(sYear, 10), true);
+
+		}
+
+		function _updatePage(oThis, bForward, iSelectedIndex){
+
+			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
+			var iFirstYear = parseInt(jQuery(aDomRefs[0]).text(), 10);
+
+			if (bForward) {
+				iFirstYear = iFirstYear + 20;
+			} else {
+				iFirstYear = iFirstYear - 20;
+			}
+
+			_updateYears(oThis, iFirstYear, iSelectedIndex);
+
+		}
+
+		function _updateYears(oThis, iFirstYear, iSelectedIndex){
+
+			var sCurrentYear = oThis.getYear().toString();
+
+			if (iFirstYear >= 9980) {
+				iSelectedIndex = iSelectedIndex + iFirstYear - 9980;
+				iFirstYear = 9980;
+			}else if (iFirstYear < 1) {
+				iSelectedIndex = iSelectedIndex + iFirstYear - 1;
+				iFirstYear = 1;
+			}
+
+			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
+			var iYear = iFirstYear;
+			for ( var i = 0; i < aDomRefs.length; i++) {
+				var $DomRef = jQuery(aDomRefs[i]);
+				$DomRef.attr("id", oThis.getId() + "-y" + iYear);
+				$DomRef.text(iYear);
+				if ($DomRef.hasClass("sapUiCalYearSel") && $DomRef.text() != sCurrentYear) {
+					$DomRef.removeClass("sapUiCalYearSel");
+				} else if (!$DomRef.hasClass("sapUiCalYearSel") && $DomRef.text() == sCurrentYear) {
+					$DomRef.addClass("sapUiCalYearSel");
+				}
+				iYear++;
+			}
+
+			oThis._oItemNavigation.focusItem(iSelectedIndex);
+
+		}
+
+
+	}());
+
+	return YearPicker;
+
+}, /* bExport= */ true);
+
+}; // end of sap/ui/unified/calendar/YearPicker.js
+if ( !jQuery.sap.isDeclared('sap.ui.unified.Calendar') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+ */
+
+// Provides control sap.ui.unified.Calendar.
+jQuery.sap.declare('sap.ui.unified.Calendar'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
+jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.core.LocaleData'); // unlisted dependency retained
+jQuery.sap.require('sap.ui.model.type.Date'); // unlisted dependency retained
+sap.ui.define("sap/ui/unified/Calendar",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils',
+               './calendar/Header', './calendar/Month', './calendar/MonthPicker', './calendar/YearPicker', './library'],
+	function(jQuery, Control, LocaleData, Date1, CalendarUtils, Header, Month, MonthPicker, YearPicker, library) {
+	"use strict";
+
+	/**
+	 * Constructor for a new Calendar.
+	 *
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] initial settings for the new control
+	 *
+	 * @class
+	 * Basic Calendar.
+	 * This calendar is used for DatePickers
+	 * @extends sap.ui.core.Control
+	 * @version 1.28.5
+	 *
+	 * @constructor
+	 * @public
+	 * @since 1.22.0
+	 * @alias sap.ui.unified.Calendar
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	var Calendar = Control.extend("sap.ui.unified.Calendar", /** @lends sap.ui.unified.Calendar.prototype */ { metadata : {
+
+		library : "sap.ui.unified",
+		properties : {
+
+			/**
+			 * If set, interval selection is allowed
+			 */
+			intervalSelection : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * If set, only a single date or interval, if intervalSelection is enabled, can be selected
+			 */
+			singleSelection : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * number of months displayed
+			 * on phones always only one month is displayed
+			 * @since 1.28.0
+			 */
+			months : {type : "int", group : "Misc", defaultValue : 1}
+		},
+		aggregations : {
+
+			/**
+			 * Date Ranges for selected dates of the DatePicker
+			 */
+			selectedDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "selectedDate"},
+
+			/**
+			 * Date Range with type to visualize special days in the Calendar.
+			 * If one day is assigned to more than one Type, only the first one will be used.
+			 * @since 1.24.0
+			 */
+			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
+
+			/**
+			 * Hidden, for internal use only.
+			 */
+			header : {type : "sap.ui.unified.calendar.Header", multiple : false, visibility : "hidden"},
+			month : {type : "sap.ui.unified.calendar.Month", multiple : true, visibility : "hidden"},
+			monthPicker : {type : "sap.ui.unified.calendar.MonthPicker", multiple : false, visibility : "hidden"},
+			yearPicker : {type : "sap.ui.unified.calendar.YearPicker", multiple : false, visibility : "hidden"}
+
+		},
+		associations: {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.28.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+		},
+		events : {
+
+			/**
+			 * Date selection changed
+			 */
+			select : {},
+
+			/**
+			 * Date selection was cancelled
+			 */
+			cancel : {}
+		}
+	}});
+
+	/*
+	 * There are different modes (stored in this._iMode)
+	 * The standard is 0, that means a calendar showing a calendar with the days of one month.
+	 * If 1 a month picker is shown.
+	 * if 2 a year picker is shown.
+	 */
+
+	(function() {
+
+		Calendar.prototype.init = function(){
+
+			this._iMode = 0; // days are shown
+
+			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+
+			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+
+			this._oMinDate = new Date(Date.UTC(1, 0, 1));
+			this._oMinDate.setUTCFullYear(1); // otherwise year 1 will be converted to year 1901
+			this._oMaxDate = new Date(Date.UTC(9999, 11, 31));
+
+			var oHeader = new Header(this.getId() + "--Head");
+			oHeader.attachEvent("pressPrevious", _handlePrevious, this);
+			oHeader.attachEvent("pressNext", _handleNext, this);
+			oHeader.attachEvent("pressButton1", _handleButton1, this);
+			oHeader.attachEvent("pressButton2", _handleButton2, this);
+			this.setAggregation("header",oHeader);
+
+			var oMonth = new Month(this.getId() + "--Month0");
+			oMonth.attachEvent("focus", _handleFocus, this);
+			oMonth.attachEvent("select", _handleSelect, this);
+			oMonth.attachEvent("_renderMonth", _handleRenderMonth, this);
+			oMonth.attachEvent("_bindMousemove", _handleBindMousemove, this);
+			oMonth.attachEvent("_unbindMousemove", _handleUnbindMousemove, this);
+			oMonth._bNoThemeChange = true;
+			this.addAggregation("month",oMonth);
+
+			var oMonthPicker = new MonthPicker(this.getId() + "--MP");
+			oMonthPicker.attachEvent("select", _handleSelectMonth, this);
+			oMonthPicker._bNoThemeChange = true;
+			this.setAggregation("monthPicker",oMonthPicker);
+
+			var oYearPicker = new YearPicker(this.getId() + "--YP");
+			oYearPicker.attachEvent("select", _handleSelectYear, this);
+			this.setAggregation("yearPicker",oYearPicker);
+
+		};
+
+		Calendar.prototype.exit = function(){
+
+		};
+
+		sap.ui.unified.Calendar.prototype.onBeforeRendering = function(){
+
+			var oDate = this._getFocusedDate();
+			var that = this;
+			_setHeaderText(that, oDate);
+
+			var aMonths = this.getAggregation("month");
+			for (var i = 0; i < aMonths.length; i++) {
+				var oMonth = aMonths[i];
+				var oMonthDate = new Date(oDate.getTime());
+				if (i > 0) {
+					oMonthDate.setUTCDate(1);
+				}
+				oMonthDate.setUTCMonth(oDate.getUTCMonth() + i);
+				oMonth.setDate(CalendarUtils._createLocalDate(oMonthDate));
+			}
+
+		};
+
+		Calendar.prototype.onAfterRendering = function(){
+
+			var that = this;
+
+			// check if day names and month names are too big -> use smaller ones
+			_checkNamesLength(that);
+
+			_togglePrevNext(that, this._getFocusedDate(), true);
+
+		};
+
+		// overwrite invalidate to recognize changes on selectedDates
+		Calendar.prototype.invalidate = function(oOrigin) {
+
+			if (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange)) {
+				Control.prototype.invalidate.apply(this, arguments);
+			} else if (this.getDomRef() && this._iMode == 0) {
+				// DateRange changed -> only rerender days
+				var aMonths = this.getAggregation("month");
+				for (var i = 0; i < aMonths.length; i++) {
+					var oMonth = aMonths[i];
+					oMonth.invalidate(oOrigin);
+				}
+			}
+
+		};
+
+		/**
+		 * sets the locale for the DatePicker
+		 * only for internal use
+		 * @param {string} sLocale  new value for <code>locale</code>
+		 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+		 * @private
+		 */
+		Calendar.prototype.setLocale = function(sLocale){
+
+			if (this._sLocale != sLocale) {
+				this._sLocale = sLocale;
+				this._oLocaleData = undefined;
+				this.invalidate();
+			}
+
+			return this;
+
+		};
+
+		/**
+		 * gets the used locale for the DatePicker
+		 * only for internal use
+		 * @return {string} sLocale
+		 * @private
+		 */
+		Calendar.prototype.getLocale = function(){
+
+			if (!this._sLocale) {
+				this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			}
+
+			return this._sLocale;
+
+		};
+
+		Calendar.prototype._getFocusedDate = function(){
+
+			if (!this._oFocusedDate) {
+				var that = this;
+				_determineFocusedDate(that);
+			}
+
+			return this._oFocusedDate;
+
+		};
+
+		Calendar.prototype._setFocusedDate = function(oDate){
+
+			this._oFocusedDate = new Date(oDate);
+
+		};
+
+		/**
+		 * Sets the focused date of the calendar.
+		 *
+		 * @param {object} oDate
+		 *         JavaScript date object for focused date.
+		 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+		 * @since 1.28.0
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		Calendar.prototype.focusDate = function(oDate){
+
+			var that = this;
+			_displayDate(that, oDate, false);
+
+			return this;
+
+		};
+
+		/**
+		 * Displays a date in the calendar but don't set the focus.
+		 *
+		 * @param {object} oDate
+		 *         JavaScript date object for focused date.
+		 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		Calendar.prototype.displayDate = function(oDate){
+
+			var that = this;
+			_displayDate(that, oDate, true);
+
+			return this;
+
+		};
+
+		/**
+		 * sets the Popup mode
+		 * e.G. Tab-chain should not leave calendar
+		 * only for internal use
+		 * @param {boolean} bPoupupMode <code>PopupMode</code>
+		 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
+		 * @private
+		 */
+		Calendar.prototype.setPopupMode = function(bPoupupMode){
+
+			this._bPoupupMode = bPoupupMode;
+
+			return this; 
+
+		};
+
+		Calendar.prototype.setMonths = function(iMonths){
+
+			this.setProperty("months", iMonths, false); // rerender
+			var that = this;
+			iMonths = _getMonths(that); // to use validation
+
+			var aMonths = this.getAggregation("month");
+			var i = 0;
+			var oMonth;
+
+			if (aMonths.length < iMonths) {
+				for (i = aMonths.length; i < iMonths; i++) {
+					oMonth = new Month(this.getId() + "--Month" + i);
+					oMonth.attachEvent("focus", _handleFocus, this);
+					oMonth.attachEvent("select", _handleSelect, this);
+					oMonth.attachEvent("_renderMonth", _handleRenderMonth, this);
+					oMonth.attachEvent("_bindMousemove", _handleBindMousemove, this);
+					oMonth.attachEvent("_unbindMousemove", _handleUnbindMousemove, this);
+					oMonth._bNoThemeChange = true;
+					this.addAggregation("month",oMonth);
+				}
+			}else if (aMonths.length > iMonths){
+				for (i = aMonths.length; i > iMonths; i--) {
+					oMonth = this.removeAggregation("month", i - 1);
+					oMonth.destroy();
+				}
+			}
+
+			return this;
+
+		};
+
+		/*
+		 * gets localeData for used locale
+		 * if no locale is given use rendered one
+		 */
+		Calendar.prototype._getLocaleData = function(){
+
+			if (!this._oLocaleData) {
+				var sLocale = this.getLocale();
+				var oLocale = new sap.ui.core.Locale(sLocale);
+				this._oLocaleData = LocaleData.getInstance(oLocale);
+			}
+
+			return this._oLocaleData;
+
+		};
+
+		/*
+		 * gets the information if month headers should be shown
+		 * used by Month controls instead of updating the controls on every change
+		 */
+		Calendar.prototype._getShowMonthHeader = function(){
+
+			var that = this;
+			var iMonths = _getMonths(that);
+			if (iMonths > 2) {
+				return true;
+			}else {
+				return false;
+			}
+
+		};
+
+		Calendar.prototype.onclick = function(oEvent){
+
+			if (oEvent.isMarked("delayedMouseEvent") ) {
+				return;
+			}
+
+			if (oEvent.target.id == this.getId() + "-cancel") {
+				this.onsapescape(oEvent);
+			}
+
+		};
+
+		Calendar.prototype.onmousedown = function(oEvent){
+
+			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
+			oEvent.setMark("cancelAutoClose");
+
+		};
+
+		Calendar.prototype.onsapescape = function(oEvent){
+
+			var that = this;
+
+			switch (this._iMode) {
+			case 0: // day picker
+				this.fireCancel();
+				break;
+
+			case 1: // month picker
+				_hideMonthPicker(that);
+				break;
+
+			case 2: // year picker
+				_hideYearPicker(that);
+				break;
+				// no default
+			}
+
+		};
+
+		Calendar.prototype.onsapshow = function(oEvent){
+
+			if (this._bPoupupMode) {
+				var that = this;
+				switch (this._iMode) {
+				case 1: // month picker
+					_hideMonthPicker(that);
+					break;
+
+				case 2: // year picker
+					_hideYearPicker(that);
+					break;
+					// no default
+				}
+				this.fireCancel();
+
+				oEvent.preventDefault(); // otherwise IE opens the address bar history
+
+			}
+
+		};
+
+		Calendar.prototype.onsaphide = Calendar.prototype.onsapshow;
+
+		Calendar.prototype.onsaptabnext = function(oEvent){
+
+			// if tab was pressed on a day it should jump to the month and then to the year button
+			var oHeader = this.getAggregation("header");
+
+			if (jQuery.sap.containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+				jQuery.sap.focus(oHeader.getDomRef("B1"));
+
+				if (!this._bPoupupMode) {
+					// remove Tabindex from day, month, year - to break cycle
+					var aMonths = this.getAggregation("month");
+					var oMonthPicker = this.getAggregation("monthPicker");
+					var oYearPicker = this.getAggregation("yearPicker");
+					for (var i = 0; i < aMonths.length; i++) {
+						var oMonth = aMonths[i];
+						jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+					}
+					if (oMonthPicker.getDomRef()) {
+						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+					}
+					if (oYearPicker.getDomRef()) {
+						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+					}
+				}
+
+				oEvent.preventDefault();
+			} else if (oEvent.target.id == oHeader.getId() + "-B1") {
+				jQuery.sap.focus(oHeader.getDomRef("B2"));
+
+				oEvent.preventDefault();
+			//} else if (oEvent.target.id == oHeader.getId() + "-B2") {
+				// go to next element on page, in Popup mode to day, month or year
+			}
+
+		};
+
+		Calendar.prototype.onsaptabprevious = function(oEvent){
+
+			var oHeader = this.getAggregation("header");
+
+			if (jQuery.sap.containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+				// tab from day, month or year -> go to header
+
+				if (this._bPoupupMode) {
+					jQuery.sap.focus(oHeader.getDomRef("B2"));
+					oEvent.preventDefault();
+				}
+			} else if (oEvent.target.id == oHeader.getId() + "-B1") {
+				// focus day, month or year
+				var aMonths = this.getAggregation("month");
+				var oMonthPicker = this.getAggregation("monthPicker");
+				var oYearPicker = this.getAggregation("yearPicker");
+				var oFocusedDate;
+				switch (this._iMode) {
+				case 0: // day picker
+					oFocusedDate = this._getFocusedDate();
+					for (var i = 0; i < aMonths.length; i++) {
+						var oMonth = aMonths[i];
+						var oMonthDate = CalendarUtils._createUTCDate(oMonth.getDate());
+						if (oFocusedDate.getTime() == oMonthDate.getTime()) {
+							oMonth._oItemNavigation.focusItem(oMonth._oItemNavigation.getFocusedIndex());
+						} else {
+							jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
+						}
+					}
+					break;
+
+				case 1: // month picker
+					oMonthPicker._oItemNavigation.focusItem(oMonthPicker._oItemNavigation.getFocusedIndex());
+					break;
+
+				case 2: // year picker
+					oYearPicker._oItemNavigation.focusItem(oYearPicker._oItemNavigation.getFocusedIndex());
+					break;
+					// no default
+				}
+
+				oEvent.preventDefault();
+			} else if (oEvent.target.id == oHeader.getId() + "-B2") {
+				jQuery.sap.focus(oHeader.getDomRef("B1"));
+
+				oEvent.preventDefault();
+			}
+		};
+
+		Calendar.prototype.onfocusin = function(oEvent){
+
+			if (oEvent.target.id == this.getId() + "-end") {
+				// focus via tab+shift (otherwise not possible to go to this element)
+				var oHeader = this.getAggregation("header");
+				var aMonths = this.getAggregation("month");
+				var oMonthPicker = this.getAggregation("monthPicker");
+				var oYearPicker = this.getAggregation("yearPicker");
+
+				jQuery.sap.focus(oHeader.getDomRef("B2"));
+
+				if (!this._bPoupupMode) {
+					// remove Tabindex from day, month, year - to break cycle
+					for (var i = 0; i < aMonths.length; i++) {
+						var oMonth = aMonths[i];
+						jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+					}
+					if (oMonthPicker.getDomRef()) {
+						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+					}
+					if (oYearPicker.getDomRef()) {
+						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+					}
+				}
+			}
+
+			// remove tabindex of dummy element if focus is inside calendar
+			jQuery.sap.byId(this.getId() + "-end").attr("tabindex", "-1");
+
+		};
+
+		Calendar.prototype.onsapfocusleave = function(oEvent){
+
+			if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+				// put dummy element back to tab-chain
+				jQuery.sap.byId(this.getId() + "-end").attr("tabindex", "0");
+
+				if (!this._bPoupupMode) {
+					// restore Tabindex from day, month, year
+					var aMonths = this.getAggregation("month");
+					var oMonthPicker = this.getAggregation("monthPicker");
+					var oYearPicker = this.getAggregation("yearPicker");
+					for (var i = 0; i < aMonths.length; i++) {
+						var oMonth = aMonths[i];
+						jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
+					}
+					if (oMonthPicker.getDomRef()) {
+						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
+					}
+					if (oYearPicker.getDomRef()) {
+						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
+					}
+				}
+			}
+
+		};
+
+		Calendar.prototype.onThemeChanged = function() {
+
+			//If the calendar is not yet rendered we cannot perform the theme change operations, which include DOM manipulation
+			if (!this.getDomRef()) {
+				return;
+			}
+
+			var that = this;
+			this._bNamesLengthChecked = undefined;
+			var oMonthPicker = this.getAggregation("monthPicker");
+			_showMonthPicker(that);
+			oMonthPicker._bNoThemeChange = false;
+			oMonthPicker.onThemeChanged( arguments );
+			oMonthPicker._bNoThemeChange = true;
+			this._bLongMonth = oMonthPicker._bLongMonth;
+			_hideMonthPicker(that);
+
+			var aMonths = this.getAggregation("month");
+			for (var i = 0; i < aMonths.length; i++) {
+				var oMonth = aMonths[i];
+				oMonth._bNoThemeChange = false;
+				oMonth.onThemeChanged( arguments );
+				oMonth._bNoThemeChange = true;
+			}
+
+			var oDate = this._getFocusedDate();
+			_setHeaderText(that, oDate);
+
+			// check if day names and month names are too big -> use smaller ones
+			_checkNamesLength(that);
+
+		};
+
+		function _renderMonth(oThis, bNoFocus){
+
+			var oDate = oThis._getFocusedDate();
+			var aMonths = oThis.getAggregation("month");
+			var bFound = false;
+			var oMonth;
+			var oMonthDate;
+			var oFirstDate;
+			var i = 0;
+			for (i = 0; i < aMonths.length; i++) {
+				oMonth = aMonths[i];
+				oMonthDate = CalendarUtils._createUTCDate(oMonth.getDate());
+				if (i == 0) {
+					oFirstDate = new Date(oMonthDate.getTime());
+				}
+				if (oMonthDate.getUTCFullYear() == oDate.getUTCFullYear() && oMonthDate.getUTCMonth() == oDate.getUTCMonth()) {
+					bFound = true;
+					if (!bNoFocus) {
+						oMonth.setDate(CalendarUtils._createLocalDate(oDate));
+					} else {
+						oMonth.setDisplay(CalendarUtils._createLocalDate(oDate));
+					}
+				}
+			}
+
+			if (!bFound) {
+				// date not found in existing months - render new ones
+				oFirstDate = new Date(oDate.getTime());
+
+				for (i = 0; i < aMonths.length; i++) {
+					oMonth = aMonths[i];
+					oMonthDate = new Date(oDate.getTime());
+					if (i > 0) {
+						oMonthDate.setUTCDate(1);
+					}
+					oMonthDate.setUTCMonth(oDate.getUTCMonth() + i);
+					if (!bNoFocus && oMonthDate.getUTCFullYear() == oDate.getUTCFullYear() && oMonthDate.getUTCMonth() == oDate.getUTCMonth()) {
+						oMonth.setDate(CalendarUtils._createLocalDate(oMonthDate));
+					}else {
+						oMonth.displayDate(CalendarUtils._createLocalDate(oMonthDate));
+					}
+				}
+
+				// change month and year
+				_setHeaderText(oThis, oFirstDate);
+
+				_togglePrevNext(oThis, oDate, true);
+			}
+
+		}
+
+		function _determineFocusedDate(oThis){
+
+			var aSelectedDates = oThis.getSelectedDates();
+			if (aSelectedDates && aSelectedDates[0] && aSelectedDates[0].getStartDate()) {
+				// selected dates are provided -> use first one to focus
+				oThis._oFocusedDate = CalendarUtils._createUTCDate(aSelectedDates[0].getStartDate());
+			} else {
+				// use current date
+				var newDate = new Date();
+				oThis._oFocusedDate = CalendarUtils._createUTCDate(newDate);
+			}
+
+		}
+
+		function _showMonthPicker(oThis){
+
+			if (oThis._iMode == 2) {
+				_hideYearPicker(oThis);
+			}
+
+			var oDate = oThis._getFocusedDate();
+			var oMonthPicker = oThis.getAggregation("monthPicker");
+			if (oMonthPicker.getDomRef()) {
+				// already rendered
+				oMonthPicker.$().css("display", "");
+			} else {
+				var oRm = sap.ui.getCore().createRenderManager();
+				var $Container = oThis.$("content");
+				oRm.renderControl(oMonthPicker);
+				oRm.flush($Container[0], false, true); // insert it
+				oRm.destroy();
+			}
+			oThis.$("contentOver").css("display", "");
+
+			oMonthPicker.setMonth(oDate.getUTCMonth());
+			oThis._iMode = 1;
+
+			_togglePrevNext(oThis, oDate, false);
+
+		}
+
+		function _hideMonthPicker(oThis){
+
+			oThis._iMode = 0;
+
+			var oMonthPicker = oThis.getAggregation("monthPicker");
+			oMonthPicker.$().css("display", "none");
+			oThis.$("contentOver").css("display", "none");
+
+			_renderMonth(oThis);
+
+		}
+
+		function _showYearPicker(oThis){
+
+			if (oThis._iMode == 1) {
+				_hideMonthPicker(oThis);
+			}
+
+			var oDate = oThis._getFocusedDate();
+			var iYear = oDate.getUTCFullYear();
+			var iYearMax = oThis._oMaxDate.getUTCFullYear();
+			var iYearMin = oThis._oMinDate.getUTCFullYear();
+
+			if (iYearMax - iYearMin <= 20) {
+				return;
+			}
+
+			var oHeader = oThis.getAggregation("header");
+
+			if (iYear > ( iYearMax - 10 )) {
+				iYear = iYearMax - 9;
+				oHeader.setEnabledNext(false);
+			} else {
+				oHeader.setEnabledNext(true);
+			}
+			if (iYear < ( iYearMin + 9 )) {
+				iYear = iYearMin + 10;
+				oHeader.setEnabledPrevious(false);
+			} else {
+				oHeader.setEnabledPrevious(true);
+			}
+
+			var oYearPicker = oThis.getAggregation("yearPicker");
+			if (oYearPicker.getDomRef()) {
+				// already rendered
+				oYearPicker.$().css("display", "");
+			} else {
+				var oRm = sap.ui.getCore().createRenderManager();
+				var $Container = oThis.$("content");
+				oRm.renderControl(oYearPicker);
+				oRm.flush($Container[0], false, true); // insert it
+				oRm.destroy();
+			}
+			oThis.$("contentOver").css("display", "");
+
+			oYearPicker.setYear(iYear);
+
+			// check special case if only 4 weeks are displayed (e.g. February 2021) -> top padding must be removed
+			// can only happen if only one month is displayed -> otherwise at least one month has more than 28 days.
+			if (_getMonths(oThis) > 1) {
+				var oMonth = oThis.getAggregation("month")[0];
+				var aDomRefs = oMonth.$("days").children(".sapUiCalDay");
+				if (aDomRefs.length == 28) {
+					oYearPicker.$().addClass("sapUiCalYearNoTop");
+				}else {
+					oYearPicker.$().removeClass("sapUiCalYearNoTop");
+				}
+			}
+
+			oThis._iMode = 2;
+
+		}
+
+		function _hideYearPicker(oThis){
+
+			oThis._iMode = 0;
+
+			var oYearPicker = oThis.getAggregation("yearPicker");
+			oYearPicker.$().css("display", "none");
+			oThis.$("contentOver").css("display", "none");
+
+			_renderMonth(oThis);
+
+		}
+
+		function _checkNamesLength(oThis){
+
+			if (!oThis._bNamesLengthChecked) {
+				// check month names
+				_showMonthPicker(oThis);
+				_hideMonthPicker(oThis);
+
+				var oMonthPicker = oThis.getAggregation("monthPicker");
+				oThis._bLongMonth = oMonthPicker._bLongMonth;
+
+				oThis._bNamesLengthChecked = true;
+
+				if (!oThis._bLongMonth) {
+					// update short month name (long name used by default)
+					var oDate = oThis._getFocusedDate();
+					_setHeaderText(oThis, oDate);
+				}
+			}
+
+		}
+
+		function _togglePrevNext (oThis, oDate, bCheckMonth){
+
+			var iYear = oDate.getUTCFullYear();
+			var iYearMax = oThis._oMaxDate.getUTCFullYear();
+			var iYearMin = oThis._oMinDate.getUTCFullYear();
+			var iMonth = oDate.getUTCMonth();
+			var iMonthMax = oThis._oMaxDate.getUTCMonth();
+			var iMonthMin = oThis._oMinDate.getUTCMonth();
+			var oHeader = oThis.getAggregation("header");
+
+			if (iYear > iYearMax || (iYear == iYearMax && ( !bCheckMonth || iMonth >= iMonthMax ))) {
+				oHeader.setEnabledNext(false);
+			}else {
+				oHeader.setEnabledNext(true);
+			}
+
+			if (iYear < iYearMin || (iYear == iYearMin && ( !bCheckMonth || iMonth <= iMonthMin ))) {
+				oHeader.setEnabledPrevious(false);
+			}else {
+				oHeader.setEnabledPrevious(true);
+			}
+
+		}
+
+		function _focusDate (oThis, oDate, bOtherMonth){
+
+			// if a date should be focused thats out of the borders -> focus the border
+			var oFocusedDate;
+			var bChanged = false;
+			if (oDate.getTime() < oThis._oMinDate.getTime()) {
+				oFocusedDate = oThis._oMinDate;
+				bChanged = true;
+			}else if (oDate.getTime() > oThis._oMaxDate.getTime()){
+				oFocusedDate = oThis._oMaxDate;
+				bChanged = true;
+			}else {
+				oFocusedDate = oDate;
+			}
+
+			oThis._setFocusedDate(oFocusedDate);
+
+			if (bChanged || bOtherMonth) {
+				_renderMonth(oThis);
+			}
+
+		}
+
+		function _setHeaderText (oThis, oDate){
+
+			// sets the text for the month and the year button th the header 
+
+			var oLocaleData = oThis._getLocaleData();
+			var iMonth = oDate.getUTCMonth();
+			var aMonthNames = [];
+			var aMonthNamesWide = [];
+			var sAriaLabel;
+			var bShort = false;
+			if (oThis._bLongMonth || !oThis._bNamesLengthChecked) {
+				aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+			} else {
+				bShort = true;
+				aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
+				aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide");
+			}
+
+			var iMonths = _getMonths(oThis);
+			var sText;
+			if (iMonths > 1) {
+				var sPattern = oLocaleData.getIntervalPattern();
+				sText = sPattern.replace(/\{0\}/, aMonthNames[iMonth]).replace(/\{1\}/, aMonthNames[(iMonth + iMonths - 1) % 12]);
+				if (bShort) {
+					sAriaLabel = sPattern.replace(/\{0\}/, aMonthNamesWide[iMonth]).replace(/\{1\}/, aMonthNamesWide[(iMonth + iMonths - 1) % 12]);
+				}
+			}else {
+				sText = aMonthNames[iMonth];
+				if (bShort) {
+					sAriaLabel = aMonthNamesWide[iMonth];
+				}
+			}
+
+			var oHeader = oThis.getAggregation("header");
+			oHeader.setTextButton1(sText);
+			if (bShort) {
+				oHeader.setAriaLabelButton1(sAriaLabel);
+			}
+			oHeader.setTextButton2((oDate.getUTCFullYear()).toString());
+
+		}
+
+		function _displayDate (oThis, oDate, bNoFocus){
+
+			if (oDate && (!oThis._oFocusedDate || oThis._oFocusedDate.getTime() != oDate.getTime())) {
+				if (!(oDate instanceof Date)) {
+					throw new Error("Date must be a JavaScript date object; " + oThis);
+				}
+
+				var iYear = oDate.getFullYear();
+				if (iYear < 1 || iYear > 9999) {
+					throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + oThis);
+				}
+
+				oThis._setFocusedDate(CalendarUtils._createUTCDate(oDate));
+
+				if (oThis.getDomRef() && oThis._iMode == 0) {
+					_renderMonth(oThis, bNoFocus);
+				}
+			}
+
+		}
+
+		function _getMonths (oThis){
+
+			// in phone mode always only one month is displayed
+			if (sap.ui.Device.system.phone) {
+				return 1;
+			} else {
+				return oThis.getMonths();
+			}
+
+		}
+
+		// handlers for sub-controls
+		function _handlePrevious (oEvent){
+
+			var that = this;
+			var oFocusedDate = this._getFocusedDate();
+			var oHeader = this.getAggregation("header");
+			var oYearPicker = this.getAggregation("yearPicker");
+			var iMonths = _getMonths(that);
+			var oFirstMonthDate;
+			var bNoFocus = false;
+
+			switch (this._iMode) {
+			case 0: // day picker
+				if (iMonths > 1) {
+					oFirstMonthDate = CalendarUtils._createUTCDate(this.getAggregation("month")[0].getDate());
+					oFirstMonthDate.setUTCDate(1);
+					oFirstMonthDate.setUTCMonth(oFirstMonthDate.getUTCMonth() - iMonths + 1);
+					this._setFocusedDate(oFirstMonthDate);
+					oFocusedDate = this._getFocusedDate();
+					bNoFocus = true;
+				}else {
+					oFocusedDate.setUTCDate(1);
+				}
+
+				oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
+				_renderMonth(that, bNoFocus);
+
+				if (iMonths > 1) {
+					oFocusedDate.setUTCMonth(oFocusedDate.getUTCMonth() + iMonths, 1);
+					oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
+					_renderMonth(that);
+				}
+				break;
+
+			case 1: // month picker
+				oFocusedDate.setUTCFullYear(oFocusedDate.getUTCFullYear() - 1);
+				oHeader.setTextButton2((oFocusedDate.getUTCFullYear()).toString());
+				_togglePrevNext(that, oFocusedDate);
+				break;
+
+			case 2: // year picker
+				oYearPicker.previousPage();
+				break;
+				// no default
+			}
+
+		}
+
+		function _handleNext (oEvent){
+
+			var that = this;
+			var oFocusedDate = this._getFocusedDate();
+			var oHeader = this.getAggregation("header");
+			var oYearPicker = this.getAggregation("yearPicker");
+			var iMonths = _getMonths(that);
+			var oFirstMonthDate;
+
+			switch (this._iMode) {
+			case 0: // day picker
+				if (iMonths > 1) {
+					oFirstMonthDate = CalendarUtils._createUTCDate(this.getAggregation("month")[0].getDate());
+					this._setFocusedDate(oFirstMonthDate);
+					oFocusedDate = this._getFocusedDate();
+				}
+				oFocusedDate.setUTCMonth(oFocusedDate.getUTCMonth() + iMonths, 1);
+				_renderMonth(that);
+				break;
+
+			case 1: // month picker
+				oFocusedDate.setUTCFullYear(oFocusedDate.getUTCFullYear() + 1);
+				oHeader.setTextButton2((oFocusedDate.getUTCFullYear()).toString());
+				_togglePrevNext(that, oFocusedDate);
+				break;
+
+			case 2: // year picker
+				oYearPicker.nextPage();
+				break;
+				// no default
+			}
+
+		}
+
+		function _handleButton1 (oEvent){
+
+			var that = this;
+
+			if (this._iMode != 1) {
+				_showMonthPicker(that);
+			} else {
+				_hideMonthPicker(that);
+			}
+
+		}
+
+		function _handleButton2 (oEvent){
+
+			var that = this;
+
+			if (this._iMode != 2) {
+				_showYearPicker(that);
+			} else {
+				_hideYearPicker(that);
+			}
+
+		}
+
+		function _handleRenderMonth (oEvent){
+
+			// fire internal event for DatePicker for with number of rendered days. If Calendar becomes larger maybe popup must change position
+			this.fireEvent("_renderMonth", {days: oEvent.getParameter("days")});
+
+		}
+
+		function _handleSelect (oEvent){
+
+			var that = this;
+
+			if (_getMonths(that) > 1) {
+				var aMonths = this.getAggregation("month");
+				for (var i = 0; i < aMonths.length; i++) {
+					var oMonth = aMonths[i];
+					if (oMonth.getId() != oEvent.oSource.getId()) {
+						oMonth._updateSelection();
+					}
+				}
+			}
+
+			this.fireSelect();
+
+		}
+
+		function _handleFocus (oEvent){
+
+			var oDate = oEvent.getParameter("date");
+			var bOtherMonth = oEvent.getParameter("otherMonth");
+			var that = this;
+
+			_focusDate(that, oDate, bOtherMonth);
+
+		}
+
+		function _handleBindMousemove (oEvent){
+
+			var that = this;
+
+			if (_getMonths(that) > 1) {
+				var aMonths = this.getAggregation("month");
+				for (var i = 0; i < aMonths.length; i++) {
+					var oMonth = aMonths[i];
+					if (oMonth.getId() != oEvent.oSource.getId()) {
+						oMonth._bindMousemove();
+					}
+				}
+			}
+
+		}
+
+		function _handleUnbindMousemove (oEvent){
+
+			var that = this;
+
+			if (_getMonths(that) > 1) {
+				var aMonths = this.getAggregation("month");
+				for (var i = 0; i < aMonths.length; i++) {
+					var oMonth = aMonths[i];
+					if (oMonth.getId() != oEvent.oSource.getId()) {
+						oMonth._unbindMousemove();
+					}
+				}
+			}
+
+		}
+
+		function _handleSelectMonth (oEvent){
+
+			var oFocusedDate = this._getFocusedDate();
+			var oMonthPicker = this.getAggregation("monthPicker");
+			var iMonth = oMonthPicker.getMonth();
+			var that = this;
+
+			oFocusedDate.setUTCMonth(iMonth);
+
+			if (iMonth != oFocusedDate.getUTCMonth() ) {
+				// day did not exist in this month (e.g. 31) -> go to last day of month
+				oFocusedDate.setUTCDate(0);
+			}
+
+			if (oFocusedDate.getTime() < this._oMinDate.getTime()) {
+				this._setFocusedDate(this._oMinDate);
+			}else if (oFocusedDate.getTime() > this._oMaxDate.getTime()){
+				this._setFocusedDate(this._oMaxDate);
+			}
+
+			_hideMonthPicker(that);
+
+		}
+
+		function _handleSelectYear (oEvent){
+
+			var oFocusedDate = this._getFocusedDate();
+			var oYearPicker = this.getAggregation("yearPicker");
+			var iYear = oYearPicker.getYear();
+			var that = this;
+
+			oFocusedDate.setUTCFullYear(iYear);
+
+			if (oFocusedDate.getTime() < this._oMinDate.getTime()) {
+				this._setFocusedDate(this._oMinDate);
+			}else if (oFocusedDate.getTime() > this._oMaxDate.getTime()){
+				this._setFocusedDate(this._oMaxDate);
+			}
+
+			_hideYearPicker(that);
+
+		}
+
+	}());
+
+	return Calendar;
+
+}, /* bExport= */ true);
+
+}; // end of sap/ui/unified/Calendar.js
 if ( !jQuery.sap.isDeclared('sap.ui.unified.Menu') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
@@ -6398,11 +8484,11 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Menu.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -6410,7 +8496,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -6418,31 +8504,33 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Menu = Control.extend("sap.ui.unified.Menu", /** @lends sap.ui.unified.Menu.prototype */ { metadata : {
-	
+
 		library : "sap.ui.unified",
 		properties : {
-	
+
 			/**
-			 * 
+			 *
 			 * Disabled menus have other colors than enabled ones, depending on customer settings.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
-			 * 
+			 *
 			 * The label/description provided for screen readers
+			 * @deprecated Since version 1.27.0
+			 * Please use association ariaLabelledBy instead.
 			 */
 			ariaDescription : {type : "string", group : "Accessibility", defaultValue : null},
-	
+
 			/**
-			 * 
+			 *
 			 * Max. number of items to be displayed before an overflow mechanimn appears. Values smaller than 1 mean infinite number of visible items.
 			 * The menu can not become larger than the screen height.
 			 */
 			maxVisibleItems : {type : "int", group : "Behavior", defaultValue : 0},
-	
+
 			/**
-			 * 
+			 *
 			 * The number of items to be shifted up or down upon Page-up or Page-up key navigation. Values smaller than 1 mean infinite number of page items.
 			 * @since 1.25.0
 			 */
@@ -6450,14 +8538,14 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		},
 		defaultAggregation : "items",
 		aggregations : {
-	
+
 			/**
 			 * Aggregation of menu items
 			 */
 			items : {type : "sap.ui.unified.MenuItemBase", multiple : true, singularName : "item"}
 		},
 		associations : {
-	
+
 			/**
 			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
 			 * @since 1.26.3
@@ -6465,15 +8553,15 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
-	
+
 			/**
-			 * 
+			 *
 			 * Provides the application an alternative option to listen to select events. This event is only fired on the root menu of a menu hierarchy.
 			 * Note that there is also a select event available for MenuItem; if the current event is used, the select event of a MenuItem becomes redundant.
 			 */
 			itemSelect : {
 				parameters : {
-	
+
 					/**
 					 * The selected item
 					 */
@@ -6482,16 +8570,16 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			}
 		}
 	}});
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	(function(window) {
-	
-	
+
+
 	Menu.prototype.init = function(){
 		var that = this;
 		this.bOpen = false;
@@ -6510,7 +8598,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		};
 		this.bUseTopStyle = false;
 	};
-	
+
 	/**
 	 * Does all the cleanup when the Menu is to be destroyed.
 	 * Called from Element's destroy() method.
@@ -6523,17 +8611,17 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			this.oPopup.destroy();
 			delete this.oPopup;
 		}
-		
+
 		jQuery.sap.unbindAnyEvent(this.fAnyEventHandlerProxy);
 		if (this._bOrientationChangeBound) {
 			jQuery(window).unbind("orientationchange", this.fOrientationChangeHandler);
 			this._bOrientationChangeBound = false;
 		}
-		
+
 		// Cleanup
 		this._resetDelayedRerenderItems();
 	};
-	
+
 	/**
 	 * Called when the control or its children are changed.
 	 * @private
@@ -6545,7 +8633,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			Control.prototype.invalidate.apply(this, arguments);
 		}
 	};
-	
+
 	/**
 	 * Called before rendering starts by the renderer
 	 * @private
@@ -6553,7 +8641,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 	Menu.prototype.onBeforeRendering = function() {
 		this._resetDelayedRerenderItems();
 	};
-	
+
 	/**
 	 * Called when the rendering is complete
 	 * @private
@@ -6566,64 +8654,64 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 				aItems[i].onAfterRendering();
 			}
 		}
-		
+
 		if (this.oHoveredItem) {
 			this.oHoveredItem.hover(true, this);
 		}
-		
+
 		checkAndLimitHeight(this);
 	};
-	
+
 	Menu.prototype.onThemeChanged = function(){
 		if (this.getDomRef() && this.getPopup().getOpenState() === sap.ui.core.OpenState.OPEN) {
 			checkAndLimitHeight(this);
 			this.getPopup()._applyPosition(this.getPopup()._oLastPosition);
 		}
 	};
-	
-	
+
+
 	//****** API Methods ******
-	
+
 	Menu.prototype.setPageSize = function(iSize){
 		return this.setProperty("pageSize", iSize, true); /*No rerendering required*/
 	};
-	
+
 	Menu.prototype.addItem = function(oItem){
 		this.addAggregation("items", oItem, !!this.getDomRef());
 		this._delayedRerenderItems();
 		return this;
 	};
-	
+
 	Menu.prototype.insertItem = function(oItem, idx){
 		this.insertAggregation("items", oItem, idx, !!this.getDomRef());
 		this._delayedRerenderItems();
 		return this;
 	};
-	
+
 	Menu.prototype.removeItem = function(oItem){
 		this.removeAggregation("items", oItem, !!this.getDomRef());
 		this._delayedRerenderItems();
 		return this;
 	};
-	
+
 	Menu.prototype.removeAllItems = function(){
 		var oRes = this.removeAllAggregation("items", !!this.getDomRef());
 		this._delayedRerenderItems();
 		return oRes;
 	};
-	
+
 	Menu.prototype.destroyItems = function(){
 		this.destroyAggregation("items", !!this.getDomRef());
 		this._delayedRerenderItems();
 		return this;
 	};
-	
+
 	Menu.prototype._delayedRerenderItems = function(){
 		if (!this.getDomRef()) {
 			return;
 		}
 		this._resetDelayedRerenderItems();
-		
+
 		this._itemRerenderTimer = jQuery.sap.delayedCall(0, this, function(){
 			var oDomRef = this.getDomRef();
 			if (oDomRef) {
@@ -6636,43 +8724,43 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			}
 		});
 	};
-	
+
 	Menu.prototype._resetDelayedRerenderItems = function(){
 		if (this._itemRerenderTimer) {
 			jQuery.sap.clearDelayedCall(this._itemRerenderTimer);
 			delete this._itemRerenderTimer;
 		}
 	};
-	
-	
+
+
 
 	/**
 	 * Opens the menu
 	 *
 	 * @param {boolean} bWithKeyboard
-	 * 
+	 *
 	 *         An indicator whether the first item shall be highlighted, or not. It is highlighted in the case that the menu is opened via keyboard.
 	 * @param {object} oOpenerRef
-	 * 
+	 *
 	 *         DOMNode or sap.ui.core.Element that opens the menu; the DOMNode or sap.ui.core.Element will be focused again after the menu is closed. This parameter is optional.
 	 * @param {sap.ui.core.Dock} sMy
-	 * 
+	 *
 	 *         The popup content's reference position for docking.
 	 *         See also sap.ui.core.Popup.Dock and sap.ui.core.Popup.open.
 	 * @param {sap.ui.core.Dock} sAt
-	 * 
+	 *
 	 *         The 'of' element's reference point for docking to.
 	 *         See also sap.ui.core.Popup.Dock and sap.ui.core.Popup.open.
 	 * @param {object} oOf
-	 * 
+	 *
 	 *         The DOM element or sap.ui.core.Element to dock to.
 	 *         See also sap.ui.core.Popup.open.
 	 * @param {string} sOffset
-	 * 
+	 *
 	 *         The offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right).
 	 *         See also sap.ui.core.Popup.open.
 	 * @param {sap.ui.core.Collision} sCollision
-	 * 
+	 *
 	 *         The collision defines how the position of an element should be adjusted in case it overflows the window in some direction.
 	 *         See also sap.ui.core.Popup.open.
 	 * @type void
@@ -6683,31 +8771,32 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		if (this.bOpen) {
 			return;
 		}
-		
+
 		setItemToggleState(this, true);
-	
+
 		this.bOpen = true;
 		this.oOpenerRef = oOpenerRef;
-	
+		this.bIgnoreOpenerDOMRef = false;
+
 		// Open the sap.ui.core.Popup
 		this.getPopup().open(0, my, at, of, offset || "0 0", collision || "_sapUiCommonsMenuFlip _sapUiCommonsMenuFlip", true);
-	
+
 		// Set the tab index of the menu and focus
 		var oDomRef = this.getDomRef();
 		jQuery(oDomRef).attr("tabIndex", 0).focus();
-		
+
 		// Mark the first item when using the keyboard
 		if (bWithKeyboard) {
 			this.setHoveredItem(this.getNextSelectableItem(-1));
 		}
-	
+
 		jQuery.sap.bindAnyEvent(this.fAnyEventHandlerProxy);
 		if (sap.ui.Device.support.orientation && this.getRootMenu() === this) {
 			jQuery(window).bind("orientationchange", this.fOrientationChangeHandler);
 			this._bOrientationChangeBound = true;
 		}
 	};
-	
+
 	/**
 	 * This function is called when the Menu was opened.
 	 *
@@ -6717,7 +8806,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 	Menu.prototype._menuOpened = function() {
 		fnIe8RepaintBug(this);
 	};
-	
+
 
 	/**
 	 * Closes the menu
@@ -6730,43 +8819,41 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		if (!this.bOpen || Menu._dbg /*Avoid closing for debugging purposes*/) {
 			return;
 		}
-		
+
 		setItemToggleState(this, false);
-		
+
 		// Remove fixed flag if it existed
 		delete this._bFixed;
-	
+
 		jQuery.sap.unbindAnyEvent(this.fAnyEventHandlerProxy);
 		if (this._bOrientationChangeBound) {
 			jQuery(window).unbind("orientationchange", this.fOrientationChangeHandler);
 			this._bOrientationChangeBound = false;
 		}
-	
+
 		this.bOpen = false;
 		// Close all sub menus if there are any
-		if (this.oOpenedSubMenu) {
-			this.oOpenedSubMenu.close();
-		}
-	
+		this.closeSubmenu();
+
 		// Reset the hover state
 		this.setHoveredItem();
-	
+
 		// Reset the tab index of the menu and focus the opener (if there is any)
 		jQuery(this.getDomRef()).attr("tabIndex", -1);
-	
+
 		// Close the sap.ui.core.Popup
 		this.getPopup().close(0);
-	
+
 		//Remove the Menus DOM after it is closed
 		this._resetDelayedRerenderItems();
 		this.$().remove();
 		this.bOutput = false;
-	
+
 		if (this.isSubMenu()) {
 			this.getParent().getParent().oOpenedSubMenu = null;
 		}
 	};
-	
+
 	/**
 	 * This function is called when the Menu was closed.
 	 *
@@ -6776,7 +8863,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 	Menu.prototype._menuClosed = function() {
 		//TBD: standard popup autoclose: this.close(); //Ensure proper cleanup
 		if (this.oOpenerRef) {
-			if (!this.ignoreOpenerDOMRef) {
+			if (!this.bIgnoreOpenerDOMRef) {
 				try {
 					this.oOpenerRef.focus();
 				} catch (e) {
@@ -6786,16 +8873,16 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			this.oOpenerRef = undefined;
 		}
 	};
-	
+
 	//****** Event Handlers ******
-	
+
 	Menu.prototype.onclick = function(oEvent){
 		this.selectItem(this.getItemByDomRef(oEvent.target), false, !!(oEvent.metaKey || oEvent.ctrlKey));
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
-	
+
+
 	Menu.prototype.onsapnext = function(oEvent){
 		//right or down (RTL: left or down)
 		if (oEvent.keyCode != jQuery.sap.KeyCodes.ARROW_DOWN) {
@@ -6805,15 +8892,15 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			}
 			return;
 		}
-	
+
 		//Go to the next selectable item
 		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1;
 		this.setHoveredItem(this.getNextSelectableItem(iIdx));
-		
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	Menu.prototype.onsapprevious = function(oEvent){
 		//left or up (RTL: right or up)
 		if (oEvent.keyCode != jQuery.sap.KeyCodes.ARROW_UP) {
@@ -6825,31 +8912,31 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			oEvent.stopPropagation();
 			return;
 		}
-	
+
 		//Go to the previous selectable item
 		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1;
 		this.setHoveredItem(this.getPreviousSelectableItem(iIdx));
-	
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	Menu.prototype.onsaphome = function(oEvent){
 		//Go to the first selectable item
 		this.setHoveredItem(this.getNextSelectableItem(-1));
-	
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	Menu.prototype.onsapend = function(oEvent){
 		//Go to the last selectable item
 		this.setHoveredItem(this.getPreviousSelectableItem(this.getItems().length));
-	
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	Menu.prototype.onsappagedown = function(oEvent) {
 		if (this.getPageSize() < 1) {
 			this.onsapend(oEvent);
@@ -6857,23 +8944,23 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		}
 		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1;
 		iIdx += this.getPageSize();
-			
+
 		if (iIdx >= this.getItems().length) {
 			this.onsapend(oEvent);
 			return;
 		}
 		this.setHoveredItem(this.getNextSelectableItem(iIdx - 1)); //subtract 1 to preserve computed page offset because getNextSelectableItem already offsets 1 item down
-			
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	Menu.prototype.onsappageup = function(oEvent) {
 		if (this.getPageSize() < 1) {
 			this.onsaphome(oEvent);
 			return;
 		}
-	
+
 		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1;
 		iIdx -= this.getPageSize();
 		if (iIdx < 0) {
@@ -6881,17 +8968,17 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			return;
 		}
 		this.setHoveredItem(this.getPreviousSelectableItem(iIdx + 1)); //add 1 to preserve computed page offset because getPreviousSelectableItem already offsets one item up
-	
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	Menu.prototype.onsapselect = function(oEvent){
 		this._sapSelectOnKeyDown = true;
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	Menu.prototype.onkeyup = function(oEvent){
 		//like sapselect but on keyup:
 		//Using keydown has the following side effect:
@@ -6911,23 +8998,23 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	Menu.prototype.onsapbackspace = function(oEvent){
 		if (jQuery(oEvent.target).prop("tagName") != "INPUT") {
 			oEvent.preventDefault(); //CSN 4537657 2012: Stop browser history navigation
 		}
 	};
 	Menu.prototype.onsapbackspacemodifiers = Menu.prototype.onsapbackspace;
-	
+
 	Menu.prototype.onsapescape = function(oEvent){
 		this.close();
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	Menu.prototype.onsaptabnext = Menu.prototype.onsapescape;
 	Menu.prototype.onsaptabprevious = Menu.prototype.onsapescape;
-	
+
 	Menu.prototype.onmouseover = function(oEvent){
 		if (!sap.ui.Device.system.desktop) {
 			return;
@@ -6936,40 +9023,37 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		if (!this.bOpen || !oItem || oItem == this.oHoveredItem) {
 			return;
 		}
-	
+
 		if (this.oOpenedSubMenu && jQuery.sap.containsOrEquals(this.oOpenedSubMenu.getDomRef(), oEvent.target)) {
 			return;
 		}
-	
+
 		this.setHoveredItem(oItem);
-	
-		if (this.oOpenedSubMenu && !this.oOpenedSubMenu._bFixed) {
-			this.oOpenedSubMenu.close();
-			this.oOpenedSubMenu = null;
-		}
-	
+
+		this.closeSubmenu(true);
+
 		if (jQuery.sap.checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			this.getDomRef().focus();
 		}
-	
+
 		if (this.checkEnabled(oItem)) {
 			this.openSubmenu(oItem, false, true);
 		}
 	};
-	
+
 	Menu.prototype.onmouseout = function(oEvent){
 		if (!sap.ui.Device.system.desktop) {
 			return;
 		}
 		fnIe8RepaintBug(this);
-		
+
 		if (jQuery.sap.checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			if (!this.oOpenedSubMenu || !this.oOpenedSubMenu.getParent() === this.oHoveredItem) {
 				this.setHoveredItem(null);
 			}
 		}
 	};
-	
+
 	/**
 	 * Handles the onsapfocusleave event
 	 * @param {jQuery.Event} oEvent The browser event
@@ -6982,9 +9066,9 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		}
 		this.getRootMenu().handleOuterEvent(this.getId(), oEvent); //TBD: standard popup autoclose
 	};
-	
+
 	//****** Helper Methods ******
-	
+
 	Menu.prototype.handleOuterEvent = function(oMenuId, oEvent){
 		//See sap.ui.core.Popup implementation: Target is to use autoclose mechanismn of the popup
 		//but currently there autoclose only works for 2 hierarchy levels and not for n as needed by the menu
@@ -6992,7 +9076,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		//   (all needed further code locations for that change are marked with "TBD: standard popup autoclose")
 		var isInMenuHierarchy = false,
 			touchEnabled = this.getPopup().touchEnabled;
-		
+
 		if (oEvent.type == "mousedown" || oEvent.type == "touchstart") {
 			// Suppress the delayed mouse event from mobile browser
 			if (touchEnabled && (oEvent.isMarked("delayedMouseEvent") || oEvent.isMarked("cancelAutoClose"))) {
@@ -7020,14 +9104,13 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 				}
 			}
 		}
-	
+
 		if (!isInMenuHierarchy) {
-			this.ignoreOpenerDOMRef = true;
+			this.bIgnoreOpenerDOMRef = true;
 			this.close();
-			this.ignoreOpenerDOMRef = false;
 		}
 	};
-	
+
 	Menu.prototype.getItemByDomRef = function(oDomRef){
 		var oItems = this.getItems(),
 			iLength = oItems.length;
@@ -7040,35 +9123,34 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		}
 		return null;
 	};
-	
+
 	Menu.prototype.selectItem = function(oItem, bWithKeyboard, bCtrlKey){
 		if (!oItem || !(oItem instanceof MenuItemBase && this.checkEnabled(oItem))) {
 			return;
 		}
-	
+
 		var oSubMenu = oItem.getSubmenu();
-	
+
 		if (!oSubMenu) {
 			// This is a normal item -> Close all menus and fire event.
 			this.getRootMenu().close();
 		} else {
 			if (!sap.ui.Device.system.desktop && this.oOpenedSubMenu === oSubMenu) {
-				this.oOpenedSubMenu.close();
-				this.oOpenedSubMenu = null;
+				this.closeSubmenu();
 			} else {
 				// Item with sub menu was triggered -> Open sub menu and fire event.
 				this.openSubmenu(oItem, bWithKeyboard);
 			}
 		}
-	
+
 		oItem.fireSelect({item: oItem, ctrlKey: bCtrlKey});
 		this.getRootMenu().fireItemSelect({item: oItem});
 	};
-	
+
 	Menu.prototype.isSubMenu = function(){
 		return this.getParent() && this.getParent().getParent && this.getParent().getParent() instanceof Menu;
 	};
-	
+
 	Menu.prototype.getRootMenu = function(){
 		var that = this;
 		while (that.isSubMenu()) {
@@ -7076,7 +9158,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		}
 		return that;
 	};
-	
+
 	Menu.prototype.getMenuLevel = function(){
 		var iLevel = 1;
 		var that = this;
@@ -7086,7 +9168,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		}
 		return iLevel;
 	};
-	
+
 	Menu.prototype.getPopup = function (){
 		if (!this.oPopup) {
 			this.oPopup = new Popup(this, false, true, false); // content, modal, shadow, autoclose (TBD: standard popup autoclose)
@@ -7096,28 +9178,29 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		}
 		return this.oPopup;
 	};
-	
+
 	Menu.prototype.setHoveredItem = function(oItem){
 		if (this.oHoveredItem) {
 			this.oHoveredItem.hover(false, this);
 		}
-	
+
 		if (!oItem) {
 			this.oHoveredItem = null;
 			jQuery(this.getDomRef()).removeAttr("aria-activedescendant");
 			return;
 		}
-	
+
 		this.oHoveredItem = oItem;
 		oItem.hover(true, this);
 		this._setActiveDescendant(this.oHoveredItem);
-		
+
 		this.scrollToItem(this.oHoveredItem);
 	};
-	
+
 	Menu.prototype._setActiveDescendant = function(oItem){
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (sap.ui.getCore().getConfiguration().getAccessibility() && oItem) {
 			var that = this;
+			that.$().removeAttr("aria-activedescendant");
 			setTimeout(function(){
 				//Setting active descendant must be a bit delayed. Otherwise the screenreader does not announce it.
 				if (that.oHoveredItem === oItem) {
@@ -7126,27 +9209,34 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			}, 10);
 		}
 	};
-	
+
+	/**
+	 * Opens the submenu of the given item (if any).
+	 * 
+	 * @param {boolean} bWithKeyboard Whether the submenu is opened via keyboard 
+	 * @param {boolean} bWithHover Whether the submenu is opened on hover or not (click)
+	 * 
+	 * @private
+	 */
 	Menu.prototype.openSubmenu = function(oItem, bWithKeyboard, bWithHover){
 		var oSubMenu = oItem.getSubmenu();
 		if (!oSubMenu) {
 			return;
 		}
-	
+
 		if (this.oOpenedSubMenu && this.oOpenedSubMenu !== oSubMenu) {
 			// Another sub menu is open and has not been fixed. Close it at first.
-			this.oOpenedSubMenu.close();
-			this.oOpenedSubMenu = null;
+			this.closeSubmenu();
 		}
-		
+
 		if (this.oOpenedSubMenu) {
 			// Already open. Keep open, bring to front and fix/unfix menu...
-	
+
 			// Fix/Unfix Menu if clicked. Do not change status if just hovering over
 			this.oOpenedSubMenu._bFixed =
 				   (bWithHover && this.oOpenedSubMenu._bFixed)
 				|| (!bWithHover && !this.oOpenedSubMenu._bFixed);
-			
+
 			this.oOpenedSubMenu._bringToFront();
 		} else {
 			// Open the sub menu
@@ -7157,35 +9247,56 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 	};
 	
 	/**
+	 * Closes an open submenu (if any) of this menu.
+	 * 
+	 * @param {boolean} bIfNotFixedOnly If true, the submenu is only close if it is not fixed (opened via hover and not via click)
+	 * @param {boolean} bIgnoreOpenerDOMRef If true, the focus is not set back to the opener dom ref (item) of the submenu
+	 * 
+	 * @private
+	 */
+	Menu.prototype.closeSubmenu = function(bIfNotFixedOnly, bIgnoreOpenerDOMRef){
+		if (this.oOpenedSubMenu) {
+			if (bIfNotFixedOnly && this.oOpenedSubMenu._bFixed) {
+				return;
+			}
+			if (bIgnoreOpenerDOMRef) {
+				this.oOpenedSubMenu.bIgnoreOpenerDOMRef = true;
+			}
+			this.oOpenedSubMenu.close();
+			this.oOpenedSubMenu = null;
+		}
+	};
+
+	/**
 	 * Scrolls an item into the visual viewport.
 	 *
 	 * @private
 	 */
 	Menu.prototype.scrollToItem = function(oItem) {
-	
+
 		var oMenuRef = this.getDomRef(),
 		oItemRef = oItem ? oItem.getDomRef() : null;
-	
+
 		if (!oItemRef || !oMenuRef) {
 			return;
 		}
-	
-		var iMenuScrollTop = oMenuRef.scrollTop, 
-		iItemOffsetTop = oItemRef.offsetTop, 
-		iMenuHeight = jQuery(oMenuRef).height(), 
+
+		var iMenuScrollTop = oMenuRef.scrollTop,
+		iItemOffsetTop = oItemRef.offsetTop,
+		iMenuHeight = jQuery(oMenuRef).height(),
 		iItemHeight = jQuery(oItemRef).height();
-	
+
 		if (iMenuScrollTop > iItemOffsetTop) { // scroll up
 			oMenuRef.scrollTop = iItemOffsetTop;
 		} else if ((iItemOffsetTop + iItemHeight) > (iMenuScrollTop + iMenuHeight)) { // scroll down
 			oMenuRef.scrollTop = Math.ceil(iItemOffsetTop + iItemHeight - iMenuHeight);
 		}
 	};
-	
+
 	/**
 	 * Brings this menu to the front of the menu stack.
 	 * This simulates a mouse-event and raises the z-index which is internally tracked by the Popup.
-	 * 
+	 *
 	 * @private
 	 */
 	Menu.prototype._bringToFront = function() {
@@ -7193,16 +9304,16 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		// to the front.
 		jQuery.sap.byId(this.getPopup().getId()).mousedown();
 	};
-	
+
 	Menu.prototype.checkEnabled = function(oItem){
 		fnIe8RepaintBug(this);
 		return oItem && oItem.getEnabled() && this.getEnabled();
 	};
-	
+
 	Menu.prototype.getNextSelectableItem = function(iIdx){
 		var oItem = null;
 		var aItems = this.getItems();
-	
+
 		// At first, start with the next index
 		for (var i = iIdx + 1; i < aItems.length; i++) {
 			if (aItems[i].getVisible() && this.checkEnabled(aItems[i])) {
@@ -7210,7 +9321,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 				break;
 			}
 		}
-	
+
 		// If nothing found, start from the beginning
 		if (!oItem) {
 			for (var i = 0; i <= iIdx; i++) {
@@ -7220,14 +9331,14 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 				}
 			}
 		}
-	
+
 		return oItem;
 	};
-	
+
 	Menu.prototype.getPreviousSelectableItem = function(iIdx){
 		var oItem = null;
 		var aItems = this.getItems();
-	
+
 		// At first, start with the previous index
 		for (var i = iIdx - 1; i >= 0; i--) {
 			if (aItems[i].getVisible() && this.checkEnabled(aItems[i])) {
@@ -7235,7 +9346,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 				break;
 			}
 		}
-	
+
 		// If nothing found, start from the end
 		if (!oItem) {
 			for (var i = aItems.length - 1; i >= iIdx; i--) {
@@ -7245,16 +9356,16 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 				}
 			}
 		}
-	
+
 		return oItem;
 	};
-	
+
 	Menu.prototype.setRootMenuTopStyle = function(bUseTopStyle){
 		this.getRootMenu().bUseTopStyle = bUseTopStyle;
 		Menu.rerenderMenu(this.getRootMenu());
 	};
-	
-	
+
+
 	Menu.rerenderMenu = function(oMenu){
 		var aItems = oMenu.getItems();
 		for (var i = 0; i < aItems.length; i++) {
@@ -7263,27 +9374,33 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 				Menu.rerenderMenu(oSubMenu);
 			}
 		}
-	
+
 		oMenu.invalidate();
 		oMenu.rerender();
 	};
-	
-	
+
+	Menu.prototype.focus = function(){
+		var res = sap.ui.core.Control.prototype.focus.apply(this, arguments);
+		this._setActiveDescendant(this.oHoveredItem);
+		return res;
+	};
+
+
 	///////////////////////////////////////// Hidden Functions /////////////////////////////////////////
-	
+
 	function setItemToggleState(oMenu, bOpen){
 		var oParent = oMenu.getParent();
 		if (oParent && oParent instanceof MenuItemBase) {
 			oParent.onSubmenuToggle(bOpen);
 		}
 	}
-	
-	
+
+
 	function checkAndLimitHeight(oMenu) {
 		var iMaxVisibleItems = oMenu.getMaxVisibleItems(),
 			iMaxHeight = document.documentElement.clientHeight - 10,
 			$Menu = oMenu.$();
-		
+
 		if (iMaxVisibleItems > 0) {
 			var aItems = oMenu.getItems();
 			for (var i = 0; i < aItems.length; i++) {
@@ -7293,15 +9410,15 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 				}
 			}
 		}
-		
+
 		if ($Menu.outerHeight(true) > iMaxHeight) {
 			$Menu.css("max-height", iMaxHeight + "px").toggleClass("sapUiMnuScroll", true);
 		} else {
 			$Menu.css("max-height", "").toggleClass("sapUiMnuScroll", false);
 		}
 	}
-	
-	
+
+
 	//IE 8 repainting bug when hovering over MenuItems with IconFont
 	var fnIe8RepaintBug = function() {};
 	if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9) {
@@ -7309,8 +9426,8 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			if (iDelay === undefined) {
 				iDelay = 50;
 			}
-			
-			
+
+
 			/* In case of perdormance issues, the commented code around the delayedCall might help:
 			jQuery.sap.clearDelayedCall(oMenu.data("delayedRepaintId"));
 			var iDelayedId =  */
@@ -7324,21 +9441,21 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			/* oMenu.data("delayedRepaintId", iDelayedId); */
 		};
 	}
-	
-	
+
+
 	//**********************************************
-	
+
 	/*!
-	 * The following code is taken from 
+	 * The following code is taken from
 	 * jQuery UI 1.10.3 - 2013-11-18
 	 * jquery.ui.position.js
 	 *
 	 * http://jqueryui.com
 	 * Copyright 2013 jQuery Foundation and other contributors; Licensed MIT
 	 */
-	
-	//TODO: Get rid of this coding when jQuery UI 1.8 is no longer supported and the framework was switched to jQuery UI 1.9 ff. 
-	
+
+	//TODO: Get rid of this coding when jQuery UI 1.8 is no longer supported and the framework was switched to jQuery UI 1.9 ff.
+
 	function _migrateDataTojQueryUI110(data){
 		var withinElement = jQuery(window);
 		data.within = {
@@ -7356,7 +9473,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 		};
 		return data;
 	}
-	
+
 	var _pos_jQueryUI110 = {
 		fit: {
 			left: function( position, data ) {
@@ -7367,7 +9484,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 					overLeft = withinOffset - collisionPosLeft,
 					overRight = collisionPosLeft + data.collisionWidth - outerWidth - withinOffset,
 					newOverRight;
-	
+
 				// element is wider than within
 				if ( data.collisionWidth > outerWidth ) {
 					// element is initially over the left side of within
@@ -7404,7 +9521,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 					overTop = withinOffset - collisionPosTop,
 					overBottom = collisionPosTop + data.collisionHeight - outerHeight - withinOffset,
 					newOverBottom;
-	
+
 				// element is taller than within
 				if ( data.collisionHeight > outerHeight ) {
 					// element is initially over the top of within
@@ -7458,14 +9575,13 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 					offset = -2 * data.offset[ 0 ],
 					newOverRight,
 					newOverLeft;
-	
+
 				if ( overLeft < 0 ) {
 					newOverRight = position.left + myOffset + atOffset + offset + data.collisionWidth - outerWidth - withinOffset;
 					if ( newOverRight < 0 || newOverRight < Math.abs( overLeft ) ) {
 						position.left += myOffset + atOffset + offset;
 					}
-				}
-				else if ( overRight > 0 ) {
+				} else if ( overRight > 0 ) {
 					newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
 					if ( newOverLeft > 0 || Math.abs( newOverLeft ) < overRight ) {
 						position.left += myOffset + atOffset + offset;
@@ -7501,8 +9617,7 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 					if ( ( position.top + myOffset + atOffset + offset) > overTop && ( newOverBottom < 0 || newOverBottom < Math.abs( overTop ) ) ) {
 						position.top += myOffset + atOffset + offset;
 					}
-				}
-				else if ( overBottom > 0 ) {
+				} else if ( overBottom > 0 ) {
 					newOverTop = position.top -  data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
 					if ( ( position.top + myOffset + atOffset + offset) > overBottom && ( newOverTop > 0 || Math.abs( newOverTop ) < overBottom ) ) {
 						position.top += myOffset + atOffset + offset;
@@ -7521,37 +9636,37 @@ sap.ui.define("sap/ui/unified/Menu",['jquery.sap.global', 'sap/ui/core/Control',
 			}
 		}
 	};
-	
+
 	jQuery.ui.position._sapUiCommonsMenuFlip = {
 		left: function(position, data){
-			
+
 			if (jQuery.ui.position.flipfit) { //jQuery UI 1.9 ff.
 				jQuery.ui.position.flipfit.left.apply(this, arguments);
 				return;
 			}
-			
+
 			//jQuery UI 1.8
 			data = _migrateDataTojQueryUI110(data);
 			_pos_jQueryUI110.flipfit.left.apply(this, arguments);
 		},
 		top: function(position, data){
-			
+
 			if (jQuery.ui.position.flipfit) { //jQuery UI 1.9 ff.
 				jQuery.ui.position.flipfit.top.apply(this, arguments);
 				return;
 			}
-			
+
 			//jQuery UI 1.8
 			data = _migrateDataTojQueryUI110(data);
 			_pos_jQueryUI110.flipfit.top.apply(this, arguments);
 		}
 	};
-	
+
 	//******************** jQuery UI 1.10.3 End **************************
-	
-	
+
+
 	})(window);
-	
+
 
 	return Menu;
 
@@ -7586,7 +9701,7 @@ sap.ui.define("sap/ui/unified/MenuItem",['jquery.sap.global', 'sap/ui/core/IconP
 	 * @extends sap.ui.unified.MenuItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -7732,7 +9847,7 @@ sap.ui.define("sap/ui/unified/ShellLayout",['jquery.sap.global', 'sap/ui/Device'
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -7812,6 +9927,15 @@ sap.ui.define("sap/ui/unified/ShellLayout",['jquery.sap.global', 'sap/ui/Device'
 		
 		this._cont = new SplitContainer(this.getId() + "-container");
 		this._cont._bRootContent = true; // see e.g. sap.m.App#onAfterRendering
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			var that = this;
+			this._cont.addEventDelegate({
+				onAfterRendering : function() {
+					that._cont.$("canvas").attr("role", "main");
+					that._cont.$("pane").attr("role", "complementary");
+				}
+			});
+		}
 		this.setAggregation("canvasSplitContainer", this._cont, true);
 		
 		this._curtCont = new SplitContainer(this.getId() + "-curt-container");
@@ -8321,7 +10445,7 @@ sap.ui.define("sap/ui/unified/Shell",['jquery.sap.global', './ShellHeader', './S
 	 * @extends sap.ui.unified.ShellLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -8572,7 +10696,7 @@ sap.ui.define("sap/ui/unified/ShellOverlay",['jquery.sap.global', 'sap/ui/Device
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -8601,7 +10725,12 @@ sap.ui.define("sap/ui/unified/ShellOverlay",['jquery.sap.global', 'sap/ui/Device
 			/**
 			 * Reference to the sap.ui.unified.Shell or sap.ui.unified.ShellLayout control.
 			 */
-			shell : {type : "sap.ui.unified.ShellLayout", multiple : false}
+			shell : {type : "sap.ui.unified.ShellLayout", multiple : false},
+			
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
 	

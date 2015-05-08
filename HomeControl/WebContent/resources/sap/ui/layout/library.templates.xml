@@ -2,6 +2,7 @@
 <Library name="sap.ui.layout" xmlns="http://www.sap.com/ui5/ide/templates/xmlview">
 <Template name="sap.ui.layout.FixFlex" alias="FixFlex,Flex">
 	<jsTemplate><![CDATA[new sap.ui.layout.FixFlex({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -16,6 +17,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<FixFlex xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -31,6 +33,7 @@
 </Template>
 <Template name="sap.ui.layout.Grid" alias="Grid">
 	<jsTemplate><![CDATA[new sap.ui.layout.Grid({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -48,6 +51,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Grid xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -66,6 +70,7 @@
 </Template>
 <Template name="sap.ui.layout.GridData" alias="GridData,Data">
 	<jsTemplate><![CDATA[new sap.ui.layout.GridData({
+	id: "${id}", // sap.ui.core.ID
 	span: undefined, // sap.ui.layout.GridSpan
 	spanL: undefined, // int
 	spanM: undefined, // int
@@ -98,6 +103,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<GridData xmlns="sap.ui.layout"
+	id="${id}"
 	span=""
 	spanL=""
 	spanM=""
@@ -131,6 +137,7 @@
 </Template>
 <Template name="sap.ui.layout.HorizontalLayout" alias="HorizontalLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.layout.HorizontalLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -142,6 +149,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<HorizontalLayout xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -154,6 +162,7 @@
 </Template>
 <Template name="sap.ui.layout.ResponsiveFlowLayout" alias="ResponsiveFlowLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.layout.ResponsiveFlowLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -165,6 +174,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ResponsiveFlowLayout xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -177,6 +187,7 @@
 </Template>
 <Template name="sap.ui.layout.ResponsiveFlowLayoutData" alias="ResponsiveFlowLayoutData,Data">
 	<jsTemplate><![CDATA[new sap.ui.layout.ResponsiveFlowLayoutData({
+	id: "${id}", // sap.ui.core.ID
 	minWidth: 100, // int
 	weight: 1, // int
 	linebreak: false, // boolean
@@ -188,6 +199,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ResponsiveFlowLayoutData xmlns="sap.ui.layout"
+	id="${id}"
 	minWidth="100"
 	weight="1"
 	linebreak="false"
@@ -200,6 +212,7 @@
 </Template>
 <Template name="sap.ui.layout.Splitter" alias="Splitter">
 	<jsTemplate><![CDATA[new sap.ui.layout.Splitter({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -216,6 +229,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Splitter xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -231,6 +245,7 @@
 </Template>
 <Template name="sap.ui.layout.SplitterLayoutData" alias="SplitterLayoutData,Data">
 	<jsTemplate><![CDATA[new sap.ui.layout.SplitterLayoutData({
+	id: "${id}", // sap.ui.core.ID
 	resizable: true, // boolean
 	size: "auto", // sap.ui.core.CSSSize
 	minSize: 0, // int
@@ -240,6 +255,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<SplitterLayoutData xmlns="sap.ui.layout"
+	id="${id}"
 	resizable="true"
 	size="auto"
 	minSize="0">
@@ -250,6 +266,7 @@
 </Template>
 <Template name="sap.ui.layout.VerticalLayout" alias="VerticalLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.layout.VerticalLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -262,6 +279,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<VerticalLayout xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -275,6 +293,7 @@
 </Template>
 <Template name="sap.ui.layout.form.Form" alias="Form">
 	<jsTemplate><![CDATA[new sap.ui.layout.form.Form({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -285,15 +304,18 @@
 	dependents: [], // sap.ui.core.Control, since 1.19
 	formContainers: [], // sap.ui.layout.form.FormContainer
 	title: undefined, // sap.ui.core.Title
-	layout: undefined // sap.ui.layout.form.FormLayout
+	layout: undefined, // sap.ui.layout.form.FormLayout
+	ariaLabelledBy: [] // sap.ui.core.Control, since 1.28.0
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/Form xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
 	width=""
-	editable="">
+	editable=""
+	ariaLabelledBy="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 		<formContainers></formContainers> <!-- sap.ui.layout.form.FormContainer -->
@@ -304,6 +326,7 @@
 </Template>
 <Template name="sap.ui.layout.form.FormContainer" alias="FormContainer,Container">
 	<jsTemplate><![CDATA[new sap.ui.layout.form.FormContainer({
+	id: "${id}", // sap.ui.core.ID
 	expanded: true, // boolean
 	expandable: false, // boolean
 	visible: true, // boolean
@@ -315,6 +338,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/FormContainer xmlns="sap.ui.layout"
+	id="${id}"
 	expanded="true"
 	expandable="false"
 	visible="true">
@@ -327,6 +351,7 @@
 </Template>
 <Template name="sap.ui.layout.form.FormElement" alias="FormElement,Element">
 	<jsTemplate><![CDATA[new sap.ui.layout.form.FormElement({
+	id: "${id}", // sap.ui.core.ID
 	visible: true, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
@@ -336,6 +361,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/FormElement xmlns="sap.ui.layout"
+	id="${id}"
 	visible="true">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -346,6 +372,7 @@
 </Template>
 <Template name="sap.ui.layout.form.FormLayout" alias="FormLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.layout.form.FormLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -355,6 +382,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/FormLayout xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true">
@@ -365,6 +393,7 @@
 </Template>
 <Template name="sap.ui.layout.form.GridContainerData" alias="GridContainerData,Data">
 	<jsTemplate><![CDATA[new sap.ui.layout.form.GridContainerData({
+	id: "${id}", // sap.ui.core.ID
 	halfGrid: false, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
@@ -372,6 +401,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/GridContainerData xmlns="sap.ui.layout"
+	id="${id}"
 	halfGrid="false">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -380,6 +410,7 @@
 </Template>
 <Template name="sap.ui.layout.form.GridElementData" alias="GridElementData,Data">
 	<jsTemplate><![CDATA[new sap.ui.layout.form.GridElementData({
+	id: "${id}", // sap.ui.core.ID
 	hCells: "auto", // sap.ui.layout.form.GridElementCells
 	vCells: 1, // int
 	tooltip: undefined, // sap.ui.core.TooltipBase
@@ -388,6 +419,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/GridElementData xmlns="sap.ui.layout"
+	id="${id}"
 	hCells="auto"
 	vCells="1">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -397,6 +429,7 @@
 </Template>
 <Template name="sap.ui.layout.form.GridLayout" alias="GridLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.layout.form.GridLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -407,6 +440,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/GridLayout xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -418,6 +452,7 @@
 </Template>
 <Template name="sap.ui.layout.form.ResponsiveGridLayout" alias="ResponsiveGridLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.layout.form.ResponsiveGridLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -437,6 +472,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/ResponsiveGridLayout xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -457,6 +493,7 @@
 </Template>
 <Template name="sap.ui.layout.form.ResponsiveLayout" alias="ResponsiveLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.layout.form.ResponsiveLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -466,6 +503,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/ResponsiveLayout xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true">
@@ -476,11 +514,13 @@
 </Template>
 <Template name="sap.ui.layout.form.SimpleForm" alias="SimpleForm,Form">
 	<jsTemplate><![CDATA[new sap.ui.layout.form.SimpleForm({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
 	maxContainerCols: 2, // int
 	minWidth: -1, // int
+	width: undefined, // sap.ui.core.CSSSize, since 1.28.0
 	editable: undefined, // boolean
 	labelMinWidth: 192, // int
 	layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout, // sap.ui.layout.form.SimpleFormLayout
@@ -502,11 +542,13 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/SimpleForm xmlns="sap.ui.layout"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
 	maxContainerCols="2"
 	minWidth="-1"
+	width=""
 	editable=""
 	labelMinWidth="192"
 	layout="ResponsiveLayout"

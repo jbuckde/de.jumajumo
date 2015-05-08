@@ -10,107 +10,106 @@ if ( !jQuery.sap.isDeclared('sap.ui.layout.FixFlexRenderer') ) {
 jQuery.sap.declare('sap.ui.layout.FixFlexRenderer'); // unresolved dependency added by SAPUI5 'AllInOne' Builder
 jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 sap.ui.define("sap/ui/layout/FixFlexRenderer",['jquery.sap.global'],
-	function(jQuery) {
-	"use strict";
+	function (jQuery) {
+		"use strict";
 
+		/**
+		 * FixFlex renderer
+		 * @namespace
+		 */
+		var FixFlexRenderer = {};
 
-	/**
-	 * FixFlex renderer
-	 * @namespace
-	 */
-	var FixFlexRenderer = {};
-	
-	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 */
-	FixFlexRenderer.render = function(oRm, oControl) {
-		// Control container
-		oRm.write('<div');
-		oRm.writeControlData(oControl);
-		oRm.addClass('sapUiFixFlex');
-	
-		// Setting css class for horizontal layout
-		if (!oControl.getVertical()) {
-			oRm.addClass('sapUiFixFlexRow');
-		}
-	
-		// Setting css class for older browsers
-		if (!jQuery.support.hasFlexBoxSupport) {
-			oRm.addClass('sapUiFixFlex-Legacy');
-		}
-	
-		oRm.writeClasses();
-		oRm.write('>');
-	
-		// Defines the rendering sequence - fix/flex or flex/fix
-		if (oControl.getFixFirst()) {
-			this.renderFixChild(oRm, oControl);
-			this.renderFlexChild(oRm, oControl);
-		} else {
-			this.renderFlexChild(oRm, oControl);
-			this.renderFixChild(oRm, oControl);
-		}
-	
-		// Close the FixFlex Control container
-		oRm.write('</div>');
-	};
-	
-	/**
-	 * Render the controls in the flex container
-	 * 
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 */
-	FixFlexRenderer.renderFixChild = function(oRm, oControl) {
-		var aFixContent = oControl.getFixContent();
-	
-		oRm.write('<div id="' + oControl.getId() + '-Fixed" class="sapUiFixFlexFixed"');
-	
-		// Set specific height/width to the element depending of the orientation of the layout
-		if (oControl.getFixContentSize() !== 'auto') {
-			if (oControl.getVertical()) {
-				oRm.addStyle('height', oControl.getFixContentSize());
-			} else {
-				oRm.addStyle('width', oControl.getFixContentSize());
+		/**
+		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 */
+		FixFlexRenderer.render = function (oRm, oControl) {
+			// Control container
+			oRm.write('<div');
+			oRm.writeControlData(oControl);
+			oRm.addClass('sapUiFixFlex');
+
+			// Setting css class for horizontal layout
+			if (!oControl.getVertical()) {
+				oRm.addClass('sapUiFixFlexRow');
 			}
-			oRm.writeStyles();
-		}
-	
-		oRm.write('>');
-	
-		// Render the children
-		for (var i = 0; i < aFixContent.length; i++) {
-			oRm.renderControl(aFixContent[i]);
-		}
-	
-		oRm.write('</div>');
-	};
-	
-	/**
-	 * Render the controls in the fix container
-	 * 
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 */
-	FixFlexRenderer.renderFlexChild = function(oRm, oControl) {
-		var oFlexContent = oControl.getFlexContent();
-		
-		oRm.write('<div id="' + oControl.getId() + '-Flexible" class="sapUiFixFlexFlexible">');
-		oRm.write('<div class="sapUiFixFlexFlexibleContainer">');
-		
-		// Render the child
-		oRm.renderControl(oFlexContent);
-	
-		oRm.write('</div>');
-		oRm.write('</div>');
-	};
 
-	return FixFlexRenderer;
+			// Setting css class for older browsers
+			if (!jQuery.support.hasFlexBoxSupport) {
+				oRm.addClass('sapUiFixFlex-Legacy');
+			}
 
-}, /* bExport= */ true);
+			oRm.writeClasses();
+			oRm.write('>');
+
+			// Defines the rendering sequence - fix/flex or flex/fix
+			if (oControl.getFixFirst()) {
+				this.renderFixChild(oRm, oControl);
+				this.renderFlexChild(oRm, oControl);
+			} else {
+				this.renderFlexChild(oRm, oControl);
+				this.renderFixChild(oRm, oControl);
+			}
+
+			// Close the FixFlex Control container
+			oRm.write('</div>');
+		};
+
+		/**
+		 * Render the controls in the flex container
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 */
+		FixFlexRenderer.renderFixChild = function (oRm, oControl) {
+			var aFixContent = oControl.getFixContent();
+
+			oRm.write('<div id="' + oControl.getId() + '-Fixed" class="sapUiFixFlexFixed"');
+
+			// Set specific height/width to the element depending of the orientation of the layout
+			if (oControl.getFixContentSize() !== 'auto') {
+				if (oControl.getVertical()) {
+					oRm.addStyle('height', oControl.getFixContentSize());
+				} else {
+					oRm.addStyle('width', oControl.getFixContentSize());
+				}
+				oRm.writeStyles();
+			}
+
+			oRm.write('>');
+
+			// Render the children
+			for (var i = 0; i < aFixContent.length; i++) {
+				oRm.renderControl(aFixContent[i]);
+			}
+
+			oRm.write('</div>');
+		};
+
+		/**
+		 * Render the controls in the fix container
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 */
+		FixFlexRenderer.renderFlexChild = function (oRm, oControl) {
+			var oFlexContent = oControl.getFlexContent();
+
+			oRm.write('<div id="' + oControl.getId() + '-Flexible" class="sapUiFixFlexFlexible">');
+			oRm.write('<div class="sapUiFixFlexFlexibleContainer">');
+
+			// Render the child
+			oRm.renderControl(oFlexContent);
+
+			oRm.write('</div>');
+			oRm.write('</div>');
+		};
+
+		return FixFlexRenderer;
+
+	}, /* bExport= */ true);
 
 }; // end of sap/ui/layout/FixFlexRenderer.js
 if ( !jQuery.sap.isDeclared('sap.ui.layout.GridRenderer') ) {
@@ -129,7 +128,7 @@ sap.ui.define("sap/ui/layout/GridRenderer",['jquery.sap.global'],
 	/**
 	 * @author SAP SE
 	 * @version
-	 * 1.26.10
+	 * 1.28.5
 	 * @namespace
 	 */
 	var GridRenderer = {};
@@ -197,6 +196,15 @@ sap.ui.define("sap/ui/layout/GridRenderer",['jquery.sap.global'],
 			}
 			oRm.writeAttribute("style", sWidth);
 		}
+
+		var sRole = oControl._getAccessibleRole();
+		var mAriaProps;
+		if (sRole) {
+			mAriaProps = {role: sRole};
+		}
+
+		oRm.writeAccessibilityState(oControl, mAriaProps);
+
 		oRm.write(">");
 	
 		var aItems = oControl.getContent();
@@ -510,7 +518,7 @@ sap.ui.define("sap/ui/layout/ResponsiveFlowLayoutRenderer",['jquery.sap.global']
 	 * @namespace
 	 */
 	var ResponsiveFlowLayoutRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
@@ -528,14 +536,23 @@ sap.ui.define("sap/ui/layout/ResponsiveFlowLayoutRenderer",['jquery.sap.global']
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapUiRFL");
 			oRm.writeClasses();
+
+			var sRole = oControl._getAccessibleRole();
+			var mAriaProps;
+			if (sRole) {
+				mAriaProps = {role: sRole};
+			}
+
+			oRm.writeAccessibilityState(oControl, mAriaProps);
+
 			oRm.write(">"); // div element
-	
+
 			// rendering of content happens in oControl.fnRenderContent
-	
+
 			oRm.write("</div>");
 		};
 	}());
-	
+
 
 	return ResponsiveFlowLayoutRenderer;
 
@@ -738,15 +755,13 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";
 
-
 	/**
 	 * FormLayout renderer.
 	 * @namespace
 	 */
 	var FormLayoutRenderer = {
 	};
-	
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -756,14 +771,14 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 	FormLayoutRenderer.render = function(oRenderManager, oLayout){
 		// convenience variable
 		var rm = oRenderManager;
-	
+
 		var oForm = oLayout.getParent();
 		if (oForm && oForm instanceof sap.ui.layout.form.Form) {
 			this.renderForm(rm, oLayout, oForm);
 		}
-	
+
 	};
-	
+
 	/**
 	 * Renders the HTML for the given form content, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -772,28 +787,28 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 	 * @param {sap.ui.layout.form.Form} oForm, a form control to render its content
 	 */
 	FormLayoutRenderer.renderForm = function(rm, oLayout, oForm){
-	
+
 		rm.write("<div");
 		rm.writeControlData(oLayout);
 		rm.addClass(this.getMainClass());
 		rm.writeClasses();
 		rm.write(">");
-	
+
 		// Form header
 		var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:sapUiFormTitleSize');
 		this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
-	
+
 		this.renderContainers(rm, oLayout, oForm);
-	
+
 		rm.write("</div>");
 	};
-	
+
 	FormLayoutRenderer.getMainClass = function(){
 		return "sapUiFormLayout";
 	};
-	
+
 	FormLayoutRenderer.renderContainers = function(rm, oLayout, oForm){
-	
+
 		var aContainers = oForm.getFormContainers();
 		for (var i = 0, il = aContainers.length; i < il; i++) {
 			var oContainer = aContainers[i];
@@ -801,24 +816,27 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 				this.renderContainer(rm, oLayout, oContainer);
 			}
 		}
-	
+
 	};
-	
+
 	FormLayoutRenderer.renderContainer = function(rm, oLayout, oContainer){
-	
+
 		var bExpandable = oContainer.getExpandable();
-	
+
 		rm.write("<section");
 		rm.writeElementData(oContainer);
 		rm.addClass("sapUiFormContainer");
-	
+
 		if (oContainer.getTooltip_AsString()) {
 			rm.writeAttributeEscaped('title', oContainer.getTooltip_AsString());
 		}
 		rm.writeClasses();
+
+		this.writeAccessibilityStateContainer(rm, oContainer);
+
 		rm.write(">");
 		this.renderTitle(rm, oContainer.getTitle(), oContainer._oExpandButton, bExpandable, sap.ui.core.TitleLevel.H4, oContainer.getId());
-	
+
 		if (bExpandable) {
 			rm.write("<div id='" + oContainer.getId() + "-content'");
 			if (!oContainer.getExpanded()) {
@@ -827,37 +845,37 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 			}
 			rm.write(">");
 		}
-	
+
 		var aElements = oContainer.getFormElements();
 		for (var j = 0, jl = aElements.length; j < jl; j++) {
-	
+
 			var oElement = aElements[j];
-	
+
 			if (oElement.getVisible()) {
 				this.renderElement(rm, oLayout, oElement);
 			}
-	
+
 		}
 		if (bExpandable) {
 			rm.write("</div>");
 		}
 		rm.write("</section>");
-	
+
 	};
-	
+
 	FormLayoutRenderer.renderElement = function(rm, oLayout, oElement){
-	
+
 		rm.write("<div");
 		rm.writeElementData(oElement);
 		rm.addClass("sapUiFormElement");
 		rm.writeClasses();
 		rm.write(">");
-	
+
 		var oLabel = oElement.getLabelControl();
 		if (oLabel) {
 			rm.renderControl(oLabel);
 		}
-	
+
 		var aFields = oElement.getFields();
 		if (aFields && aFields.length > 0) {
 			for (var k = 0, kl = aFields.length; k < kl; k++) {
@@ -866,15 +884,15 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 			}
 		}
 		rm.write("</div>");
-	
+
 	};
-	
+
 	/*
 	 * Renders the title for a Form or a FormContainer
 	 * If this function is overwritten in a Layout please use the right IDs to be sure aria-describedby works fine
 	 */
 	FormLayoutRenderer.renderTitle = function(rm, oTitle, oExpandButton, bExpander, sLevelDefault, sContentId){
-	
+
 		if (oTitle) {
 			//determine title level -> if not set use H4 as default
 			var sLevel = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:sapUiFormSubTitleSize');
@@ -884,12 +902,12 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 			if (typeof oTitle !== "string" && oTitle.getLevel() != sap.ui.core.TitleLevel.Auto) {
 				sLevel = oTitle.getLevel();
 			}
-	
+
 			// just reuse TextView class because there font size & co. is already defined
 			rm.write("<" + sLevel + " ");
 			rm.addClass("sapUiFormTitle");
 			rm.addClass("sapUiFormTitle" + sLevel);
-	
+
 			if (typeof oTitle !== "string") {
 				rm.writeElementData(oTitle);
 				if (oTitle.getTooltip_AsString()) {
@@ -903,7 +921,7 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 			}
 			rm.writeClasses();
 			rm.write(">");
-	
+
 			if (bExpander && oExpandButton) {
 				rm.renderControl(oExpandButton);
 			}
@@ -913,20 +931,41 @@ sap.ui.define("sap/ui/layout/form/FormLayoutRenderer",['jquery.sap.global'],
 			} else {
 				// title control
 				var sIcon = oTitle.getIcon();
-	
+
 				if (sIcon) {
 					var aClasses = [];
 					var mAttributes = {};
-	
+
 					mAttributes["id"] = oTitle.getId() + "-ico";
 					rm.writeIcon(sIcon, aClasses, mAttributes);
 				}
 				rm.writeEscaped(oTitle.getText(), true);
 			}
-	
+
 			rm.write("</" + sLevel + ">");
 		}
-	
+
+	};
+
+	/*
+	 * Writes the accessibility attributes for FormContainers
+	 */
+	FormLayoutRenderer.writeAccessibilityStateContainer = function(rm, oContainer){
+
+		var mAriaProps = {role: "form"};
+		var oTitle = oContainer.getTitle();
+		if (oTitle) {
+			var sId = "";
+			if (typeof oTitle == "string") {
+				sId = oContainer.getId() + "--title";
+			} else {
+				sId = oTitle.getId();
+			}
+			mAriaProps["labelledby"] = sId;
+		}
+
+		rm.writeAccessibilityState(oContainer, mAriaProps);
+
 	};
 
 	return FormLayoutRenderer;
@@ -954,8 +993,7 @@ sap.ui.define("sap/ui/layout/form/FormRenderer",['jquery.sap.global'],
 	 */
 	var FormRenderer = {
 	};
-	
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
@@ -966,23 +1004,23 @@ sap.ui.define("sap/ui/layout/form/FormRenderer",['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager;
 		var oLayout = oForm.getLayout();
-	
+
 		// write only a DIV for the form and let the layout render the rest
 		rm.write("<div");
 		rm.writeControlData(oForm);
 		rm.addClass("sapUiForm");
 		rm.writeAttribute("data-sap-ui-customfastnavgroup", "true");
-	
+
 		var sClass = sap.ui.layout.form.FormHelper.addFormClass();
 		if (sClass) {
 			rm.addClass(sClass);
 		}
-	
+
 		if (oForm.getEditable()) {
 			rm.addClass("sapUiFormEdit");
 			rm.addClass("sapUiFormEdit-CTX");
 		}
-	
+
 		if (oForm.getWidth()) {
 			rm.addStyle("width", oForm.getWidth());
 		}
@@ -991,7 +1029,7 @@ sap.ui.define("sap/ui/layout/form/FormRenderer",['jquery.sap.global'],
 		}
 		rm.writeClasses();
 		rm.writeStyles();
-	
+
 		var mAriaProps = {role: "form"};
 		var oTitle = oForm.getTitle();
 		if (oTitle) {
@@ -1001,20 +1039,20 @@ sap.ui.define("sap/ui/layout/form/FormRenderer",['jquery.sap.global'],
 			} else {
 				sId = oTitle.getId();
 			}
-			mAriaProps["describedby"] = sId;
+			mAriaProps["labelledby"] = {value: sId, append: true};
 		}
-	
+
 		rm.writeAccessibilityState(oForm, mAriaProps);
-	
+
 		rm.write(">");
-	
+
 		if (oLayout) {
 			// render the layout with the content of this form control
 			rm.renderControl(oLayout);
 		} else {
 			jQuery.sap.log.warning("Form \"" + oForm.getId() + "\" - Layout missing!", "Renderer", "Form");
 		}
-	
+
 		rm.write("</div>");
 	};
 
@@ -1102,7 +1140,7 @@ sap.ui.define("sap/ui/layout/form/GridLayoutRenderer",['jquery.sap.global', 'sap
 			if (bSeparatorColumn) {
 				iTitleCells++;
 			}
-			rm.write("<tr><th colspan=" + iTitleCells + ">");
+			rm.write("<tr class=\"sapUiGridTitle\"><th colspan=" + iTitleCells + ">");
 			var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:sapUiFormTitleSize');
 			this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
 			rm.write("</th></tr>");
@@ -1675,8 +1713,8 @@ sap.ui.define("sap/ui/layout/form/SimpleFormRenderer",['jquery.sap.global'],
 	 */
 	var SimpleFormRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
@@ -1684,21 +1722,25 @@ sap.ui.define("sap/ui/layout/form/SimpleFormRenderer",['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	SimpleFormRenderer.render = function(oRm, oControl){
-	
+
 		oControl._bChangedByMe = true;
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapUiSimpleForm");
+		if (oControl.getWidth()) {
+			oRm.addStyle("width", oControl.getWidth());
+		}
+		oRm.writeStyles();
 		oRm.writeClasses();
 		oRm.write(">"); // div element
 		var oForm = oControl.getAggregation("form");
 		oRm.renderControl(oForm);
 		oRm.write("</div>");
 		oControl._bChangedByMe = false;
-	
+
 	};
-	
+
 
 	return SimpleFormRenderer;
 
@@ -1731,14 +1773,14 @@ sap.ui.define("sap/ui/layout/library",['jquery.sap.global', 'sap/ui/base/DataTyp
 	 * @namespace
 	 * @name sap.ui.layout
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @public
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.layout",
-		version: "1.26.10",
+		version: "1.28.5",
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.layout.GridIndent",
@@ -1920,137 +1962,137 @@ jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.EnabledPropagator'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.ResizeHandler'); // unlisted dependency retained
 sap.ui.define("sap/ui/layout/FixFlex",['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/ResizeHandler', './library'],
-	function(jQuery, Control, EnabledPropagator, ResizeHandler, library) {
-	"use strict";
+	function (jQuery, Control, EnabledPropagator, ResizeHandler, library) {
+		"use strict";
+
+		/**
+		 * Constructor for a new FixFlex.
+		 *
+		 * @param {string} [sId] id for the new control, generated automatically if no id is given
+		 * @param {object} [mSettings] initial settings for the new control
+		 *
+		 * @class
+		 * The FixFlex control builds the container for a layout with a fixed and a flexible part. The flexible container adapts its size to the fix container. The fix container can hold any number of controls, while the flexible container can hold only one. 
+		 *
+		 * In order for the FixFlex to stretch properly, the parent element, in which the control is placed, needs to have a specified height or needs to have an absolute position.
+		 *
+		 * Note: If the child control of the flex or the fix container has width/height bigger than the container itself, the child control will be cropped in the view.
+		 * @extends sap.ui.core.Control
+		 *
+		 * @author SAP SE
+		 * @version 1.28.5
+		 *
+		 * @constructor
+		 * @public
+		 * @since 1.25.0
+		 * @alias sap.ui.layout.FixFlex
+		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		var FixFlex = Control.extend("sap.ui.layout.FixFlex", /** @lends sap.ui.layout.FixFlex.prototype */ {
+			metadata: {
+
+				library: "sap.ui.layout",
+				properties: {
+
+					/**
+					 * Determines the direction of the layout of child elements. True for vertical and false for horizontal layout.
+					 */
+					vertical: {type: "boolean", group: "Appearance", defaultValue: true},
+
+					/**
+					 * Determines whether the fixed-size area should be on the beginning/top ( if the value is 'true') or beginning/bottom ( if the value is 'false').
+					 */
+					fixFirst: {type: "boolean", group: "Misc", defaultValue: true},
+
+					/**
+					 * Determines the height (if the vertical property is 'true') or the width (if the vertical property is 'false') of the fixed area. If left at the default value "auto", the fixed-size area will be as large as its content. In this case the content cannot use percentage sizes.
+					 */
+					fixContentSize: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: 'auto'}
+				},
+				aggregations: {
+
+					/**
+					 * Controls in the fixed part of the layout.
+					 */
+					fixContent: {type: "sap.ui.core.Control", multiple: true, singularName: "fixContent"},
+
+					/**
+					 * Control in the stretching part of the layout.
+					 */
+					flexContent: {type: "sap.ui.core.Control", multiple: false}
+				}
+			}
+		});
 
 
-	
-	/**
-	 * Constructor for a new FixFlex.
-	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
-	 *
-	 * @class
-	 * The FixFlex control builds the container for a layout with a fixed and a flexible part. The flexible container adapts its size to the fix container. The fix container can hold any number of controls, while the flexible container can hold only one. 
-	 * 
-	 * In order for the FixFlex to stretch properly, the parent element, in which the control is placed, needs to have a specified height or needs to have an absolute position.
-	 *
-	 * Note: If the child control of the flex or the fix container has width/height bigger than the container itself, the child control will be cropped in the view.
-	 * @extends sap.ui.core.Control
-	 *
-	 * @author SAP SE
-	 * @version 1.26.10
-	 *
-	 * @constructor
-	 * @public
-	 * @since 1.25.0
-	 * @alias sap.ui.layout.FixFlex
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	var FixFlex = Control.extend("sap.ui.layout.FixFlex", /** @lends sap.ui.layout.FixFlex.prototype */ { metadata : {
-	
-		library : "sap.ui.layout",
-		properties : {
-	
-			/**
-			 * Determines the direction of the layout of child elements. True for vertical and false for horizontal layout.
-			 */
-			vertical : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
-			 * Determines whether the fixed-size area should be on the beginning/top ( if the value is 'true') or beginning/bottom ( if the value is 'false').
-			 */
-			fixFirst : {type : "boolean", group : "Misc", defaultValue : true},
-	
-			/**
-			 * Determines the height (if the vertical property is 'true') or the width (if the vertical property is 'false') of the fixed area. If left at the default value "auto", the fixed-size area will be as large as its content. In this case the content cannot use percentage sizes.
-			 */
-			fixContentSize : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'}
-		},
-		aggregations : {
-	
-			/**
-			 * Controls in the fixed part of the layout.
-			 */
-			fixContent : {type : "sap.ui.core.Control", multiple : true, singularName : "fixContent"}, 
-	
-			/**
-			 * Control in the stretching part of the layout.
-			 */
-			flexContent : {type : "sap.ui.core.Control", multiple : false}
-		}
-	}});
-	
-	
-	EnabledPropagator.call(FixFlex.prototype);
-	
-	/**
-	 * Calculate height/width on the flex part when flexbox is not supported
-	 * 
-	 * @private
-	 */
-	FixFlex.prototype._handlerResizeNoFlexBoxSupport = function() {
-		var $Control = this.$(),
-			$FixChild,
-			$FlexChild;
-	
-		// Exit if the container is invisible
-		if (!$Control.is(":visible")) {
-			return;
-		}
-	
-		$FixChild = this.$("Fixed");
-		$FlexChild = this.$("Flexible");
-	
-		if (this.getVertical()) {
-			$FlexChild.height(Math.floor($Control.height() - $FixChild.height()));
-		} else {
-			$FlexChild.width(Math.floor($Control.width() - $FixChild.width()));
-			$FixChild.width(Math.floor($FixChild.width()));
-		}
-	};
-	
-	/**
-	 * Deregister the control
-	 * 
-	 * @private
-	 */
-	FixFlex.prototype._deregisterControl = function() {
-		// Deregister resize event
-		if (this.sResizeListenerNoFlexBoxSupportId) {
-			ResizeHandler.deregister(this.sResizeListenerNoFlexBoxSupportId);
-			this.sResizeListenerNoFlexBoxSupportId = null;
-		}
-		// Deregister resize event for Fixed part
-		if (this.sResizeListenerNoFlexBoxSupportFixedId) {
-			ResizeHandler.deregister(this.sResizeListenerNoFlexBoxSupportFixedId);
-			this.sResizeListenerNoFlexBoxSupportFixedId = null;
-		}
-	};
-	
-	FixFlex.prototype.exit = function() {
-		this._deregisterControl();
-	};
-	
-	FixFlex.prototype.onBeforeRendering = function() {
-		this._deregisterControl();
-	};
-	
-	FixFlex.prototype.onAfterRendering = function() {
-	
-		// Fallback for older browsers
-		if (!jQuery.support.hasFlexBoxSupport) {
-			this.sResizeListenerNoFlexBoxSupportFixedId = ResizeHandler.register(this.getDomRef("Fixed"), jQuery.proxy(this._handlerResizeNoFlexBoxSupport, this));
-			this.sResizeListenerNoFlexBoxSupportId = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handlerResizeNoFlexBoxSupport, this));
-			this._handlerResizeNoFlexBoxSupport();
-		}
-	};
-	
+		EnabledPropagator.call(FixFlex.prototype);
 
-	return FixFlex;
+		/**
+		 * Calculate height/width on the flex part when flexbox is not supported
+		 *
+		 * @private
+		 */
+		FixFlex.prototype._handlerResizeNoFlexBoxSupport = function () {
+			var $Control = this.$(),
+				$FixChild,
+				$FlexChild;
 
-}, /* bExport= */ true);
+			// Exit if the container is invisible
+			if (!$Control.is(":visible")) {
+				return;
+			}
+
+			$FixChild = this.$("Fixed");
+			$FlexChild = this.$("Flexible");
+
+			if (this.getVertical()) {
+				$FlexChild.height(Math.floor($Control.height() - $FixChild.height()));
+			} else {
+				$FlexChild.width(Math.floor($Control.width() - $FixChild.width()));
+				$FixChild.width(Math.floor($FixChild.width()));
+			}
+		};
+
+		/**
+		 * Deregister the control
+		 *
+		 * @private
+		 */
+		FixFlex.prototype._deregisterControl = function () {
+			// Deregister resize event
+			if (this.sResizeListenerNoFlexBoxSupportId) {
+				ResizeHandler.deregister(this.sResizeListenerNoFlexBoxSupportId);
+				this.sResizeListenerNoFlexBoxSupportId = null;
+			}
+			// Deregister resize event for Fixed part
+			if (this.sResizeListenerNoFlexBoxSupportFixedId) {
+				ResizeHandler.deregister(this.sResizeListenerNoFlexBoxSupportFixedId);
+				this.sResizeListenerNoFlexBoxSupportFixedId = null;
+			}
+		};
+
+		FixFlex.prototype.exit = function () {
+			this._deregisterControl();
+		};
+
+		FixFlex.prototype.onBeforeRendering = function () {
+			this._deregisterControl();
+		};
+
+		FixFlex.prototype.onAfterRendering = function () {
+
+			// Fallback for older browsers
+			if (!jQuery.support.hasFlexBoxSupport) {
+				this.sResizeListenerNoFlexBoxSupportFixedId = ResizeHandler.register(this.getDomRef("Fixed"), jQuery.proxy(this._handlerResizeNoFlexBoxSupport, this));
+				this.sResizeListenerNoFlexBoxSupportId = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handlerResizeNoFlexBoxSupport, this));
+				this._handlerResizeNoFlexBoxSupport();
+			}
+		};
+
+
+		return FixFlex;
+
+	}, /* bExport= */ true);
 
 }; // end of sap/ui/layout/FixFlex.js
 if ( !jQuery.sap.isDeclared('sap.ui.layout.Grid') ) {
@@ -2081,7 +2123,7 @@ sap.ui.define("sap/ui/layout/Grid",['jquery.sap.global', 'sap/ui/core/Control', 
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -2282,6 +2324,20 @@ sap.ui.define("sap/ui/layout/Grid",['jquery.sap.global', 'sap/ui/core/Control', 
 				this.invalidate();
 			}
 		};
+
+		/**
+		 * Gets the role used for accessibility
+		 * Set by the Form control if Grid represents a FormContainer
+		 * @return {string} sRole accessibility role
+		 * @since 1.28.0
+		 * @private
+		 */
+		Grid.prototype._getAccessibleRole = function() {
+
+			return null;
+
+		};
+
 	}());
 	
 
@@ -2318,7 +2374,7 @@ sap.ui.define("sap/ui/layout/GridData",['jquery.sap.global', 'sap/ui/core/Layout
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -2708,7 +2764,7 @@ sap.ui.define("sap/ui/layout/HorizontalLayout",['jquery.sap.global', 'sap/ui/cor
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -2771,7 +2827,7 @@ sap.ui.define("sap/ui/layout/ResponsiveFlowLayoutData",['jquery.sap.global', 'sa
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -2889,11 +2945,13 @@ sap.ui.define("sap/ui/layout/Splitter",['jquery.sap.global', 'sap/ui/core/Contro
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
 	 * @since 1.22.0
+	 * @experimental Since version 1.22.0. 
+	 * API is not yet finished and might change completely
 	 * @alias sap.ui.layout.Splitter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -4038,7 +4096,7 @@ sap.ui.define("sap/ui/layout/SplitterLayoutData",['jquery.sap.global', 'sap/ui/c
 	 * (The CSS value "auto" is used internally to recalculate the size of the content
 	 * dynamically and is not directly set as style property.)
 	 * @extends sap.ui.core.LayoutData
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -4106,7 +4164,7 @@ sap.ui.define("sap/ui/layout/VerticalLayout",['jquery.sap.global', 'sap/ui/core/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -4163,8 +4221,6 @@ sap.ui.define("sap/ui/layout/form/Form",['jquery.sap.global', 'sap/ui/core/Contr
 	function(jQuery, Control, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new form/Form.
 	 *
@@ -4178,7 +4234,7 @@ sap.ui.define("sap/ui/layout/form/Form",['jquery.sap.global', 'sap/ui/core/Contr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -4187,124 +4243,136 @@ sap.ui.define("sap/ui/layout/form/Form",['jquery.sap.global', 'sap/ui/core/Contr
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Form = Control.extend("sap.ui.layout.form.Form", /** @lends sap.ui.layout.form.Form.prototype */ { metadata : {
-	
+
 		library : "sap.ui.layout",
 		properties : {
-	
+
 			/**
 			 * Width of the form.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
+
 			/**
 			 * Applies a device and theme specific line-height to the form elements if the form has editable content.
 			 * In this case all (not only the editable) rows of the form will get the line height.
+			 * The accessibility aria-readonly attribute is set according to this property.
+			 * The setting of the property has no influence on the editable functionality of the form content.
 			 * @since 1.20.0
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : null}
 		},
 		defaultAggregation : "formContainers",
 		aggregations : {
-	
+
 			/**
 			 * FormContainers with the content of the form.
 			 */
 			formContainers : {type : "sap.ui.layout.form.FormContainer", multiple : true, singularName : "formContainer"}, 
-	
+
 			/**
 			 * Title element of the Form. Can either be a Label object, or a simple string.
 			 */
 			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false}, 
-	
+
 			/**
 			 * Layout of the form.
 			 */
 			layout : {type : "sap.ui.layout.form.FormLayout", multiple : false}
+		},
+		associations: {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.28.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		}
 	}});
-	
+
 	/**
 	 * This file defines behavior for the control,
 	 */
-	
+
 	(function() {
-	
+
 	//	sap.ui.commons.Form.prototype.init = function(){
 	//	// do something for initialization...
 	//	};
 	
 		Form.prototype.toggleContainerExpanded = function(oContainer){
-	
+
 			var oLayout = this.getLayout();
 			if (oLayout) {
 				oLayout.toggleContainerExpanded(oContainer);
 			}
-	
+
 		};
-	
+
 		/*
 		 * If onAfterRendering of a field is processed the layout might need to change it.
 		 */
 		Form.prototype.contentOnAfterRendering = function(oFormElement, oControl){
-	
+
 			// call function of the layout
 			var oLayout = this.getLayout();
 			if (oLayout && oLayout.contentOnAfterRendering) {
 				oLayout.contentOnAfterRendering( oFormElement, oControl);
 			}
-	
+
 		};
-	
+
 		/*
 		 * If LayoutData changed on control this may need changes on the layout. So bubble to the Layout
 		 */
 		Form.prototype.onLayoutDataChange = function(oEvent){
-	
+
 			// call function of the layout
 			var oLayout = this.getLayout();
 			if (oLayout && oLayout.onLayoutDataChange) {
 				oLayout.onLayoutDataChange(oEvent);
 			}
-	
+
 		};
-		
+
 		Form.prototype.onBeforeFastNavigationFocus = function(oEvent){
 			var oLayout = this.getLayout();
 			if (oLayout && oLayout.onBeforeFastNavigationFocus) {
 				oLayout.onBeforeFastNavigationFocus(oEvent);
 			}
 		};
-	
+
 		Form.prototype.setEditable = function(bEditable) {
-	
+
 			var bOldEditable = this.getEditable();
 			this.setProperty("editable", bEditable, true);
-	
+
 			if (bEditable != bOldEditable && this.getDomRef()) {
 				if (bEditable) {
 					this.$().addClass("sapUiFormEdit").addClass("sapUiFormEdit-CTX");
+					this.$().removeAttr("aria-readonly");
 				} else {
 					this.$().removeClass("sapUiFormEdit").removeClass("sapUiFormEdit-CTX");
+					this.$().attr("aria-readonly", "true");
 				}
 			}
-	
+
 			return this;
-	
+
 		};
-	
+
 		/*
 		 * Overwrite of INVALIDATE
 		 * do not invalidate Form during rendering. Because there the Layout may update the content
 		 * otherwise the Form will render twice
 		*/
 		Form.prototype.invalidate = function(oOrigin) {
-	
+
 		if (!this._bNoInvalidate) {
 			Control.prototype.invalidate.apply(this, arguments);
 		}
-	
+
 	};
-	
+
 	}());
 
 	return Form;
@@ -4342,7 +4410,7 @@ sap.ui.define("sap/ui/layout/form/FormContainer",['jquery.sap.global', 'sap/ui/c
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -4550,8 +4618,6 @@ sap.ui.define("sap/ui/layout/form/FormElement",['jquery.sap.global', 'sap/ui/cor
 	function(jQuery, Element, EnabledPropagator, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new form/FormElement.
 	 *
@@ -4563,7 +4629,7 @@ sap.ui.define("sap/ui/layout/form/FormElement",['jquery.sap.global', 'sap/ui/cor
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -4572,10 +4638,10 @@ sap.ui.define("sap/ui/layout/form/FormElement",['jquery.sap.global', 'sap/ui/cor
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FormElement = Element.extend("sap.ui.layout.form.FormElement", /** @lends sap.ui.layout.form.FormElement.prototype */ { metadata : {
-	
+
 		library : "sap.ui.layout",
 		properties : {
-	
+
 			/**
 			 * Invisible FormElements are not rendered.
 			 */
@@ -4583,68 +4649,58 @@ sap.ui.define("sap/ui/layout/form/FormElement",['jquery.sap.global', 'sap/ui/cor
 		},
 		defaultAggregation : "fields",
 		aggregations : {
-	
+
 			/**
 			 * Label of the fields. Can either be a Label object, or a simple string.
 			 */
 			label : {type : "sap.ui.core.Label", altTypes : ["string"], multiple : false}, 
-	
+
 			/**
 			 * Formular controls.
 			 */
 			fields : {type : "sap.ui.core.Control", multiple : true, singularName : "field"}
 		}
 	}});
-	
-	
-	
-	
+
 	/**
 	 * This file defines behavior for the control,
 	 */
-	
-	
+
 	// TODO deactivated until Element/Control has been clarified: sap.ui.core.EnabledPropagator.call(sap.ui.layout.form.FormElement.prototype);
-	
+
 	(function() {
-	
+
 		FormElement.prototype.init = function(){
-	
+
 			this._oFieldDelegate = {oElement: this, onAfterRendering: _fieldOnAfterRendering};
-	
+
 		};
-	
+
 		FormElement.prototype.exit = function(){
-	
+
 			if (this._oLabel) {
 				this._oLabel.destroy();
 				delete this._oLabel;
 			}
-	
+
 			this._oFieldDelegate = undefined;
-	
+
 		};
-	
+
 	/*
 	 * sets the label for the FormElement. If it's only a string an internal label is created.
 	 * overwrite the isRequired and the getLabelForRendering functions with Form specific ones.
 	 */
 		FormElement.prototype.setLabel = function(vAny) {
-	
+
 			if (!this._oLabel) {
 				var oOldLabel = this.getLabel();
-				if (oOldLabel) {
-					if (oOldLabel.isRequired) {
-						oOldLabel.isRequired = oOldLabel._sapui_isRequired;
-						oOldLabel._sapui_isRequired = undefined;
-					}
-					if (oOldLabel.getLabelForRendering) {
-						oOldLabel.getLabelForRendering = oOldLabel._sapui_getLabelForRendering;
-						oOldLabel._sapui_getLabelForRendering = undefined;
-					}
+				if (oOldLabel && oOldLabel.isRequired) {
+					oOldLabel.isRequired = oOldLabel._sapuiIsRequired;
+					oOldLabel._sapuiIsRequired = undefined;
 				}
 			}
-	
+
 			this.setAggregation("label", vAny);
 			var oLabel = vAny;
 			if (typeof oLabel === "string") {
@@ -4654,7 +4710,6 @@ sap.ui.define("sap/ui/layout/form/FormElement",['jquery.sap.global', 'sap/ui/cor
 					if (oLabel.isRequired) {
 						this._oLabel.isRequired = _labelIsRequired;
 					}
-					this._oLabel.getLabelForRendering = _getLabelForRendering;
 				} else {
 					this._oLabel.setText(oLabel);
 				}
@@ -4663,228 +4718,215 @@ sap.ui.define("sap/ui/layout/form/FormElement",['jquery.sap.global', 'sap/ui/cor
 					this._oLabel.destroy();
 					delete this._oLabel;
 				}
-				if (!oLabel) {
-					return this; //set label is called with null if label is removed by ManagedObject.removeChild
-				}
-				if (oLabel.isRequired) {
-					oLabel._sapui_isRequired = oLabel.isRequired;
+				if (oLabel && oLabel.isRequired) {
+					oLabel._sapuiIsRequired = oLabel.isRequired;
 					oLabel.isRequired = _labelIsRequired;
 				}
-				if (oLabel.getLabelForRendering) {
-					oLabel._sapui_getLabelForRendering = oLabel.getLabelForRendering;
-					oLabel.getLabelForRendering = _getLabelForRendering;
-				}
 			}
-	
+
+			_updateLabelFor(this); 
+
 			return this;
-	
+
 		};
-	
 
 		/**
 		 * Returns the Label Control, even if the Label is entered as Text.
 		 *
-		 * @type sap.ui.core.Label
+		 * @returns {sap.ui.core.Label}  <code>this</code> to allow method chaining
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+		 */
 		FormElement.prototype.getLabelControl = function() {
-	
+
 			if (this._oLabel) {
 				return this._oLabel;
 			} else {
 				return this.getLabel();
 			}
-	
+
 		};
-	
+
 		FormElement.prototype.addField = function(oField) {
-	
+
 			this.addAggregation("fields", oField);
 			oField.addDelegate(this._oFieldDelegate);
-	
+			_updateLabelFor(this);
+
 			return this;
-	
+
 		};
-	
+
 		FormElement.prototype.insertField = function(oField, iIndex) {
-	
+
 			this.insertAggregation("fields", oField, iIndex);
 			oField.addDelegate(this._oFieldDelegate);
-	
+			_updateLabelFor(this);
+
 			return this;
-	
+
 		};
-	
+
 		FormElement.prototype.removeField = function(oField) {
-	
+
 			var oRemovedField = this.removeAggregation("fields", oField);
 			oRemovedField.removeDelegate(this._oFieldDelegate);
-	
+			_updateLabelFor(this);
+
 			return oRemovedField;
-	
+
 		};
-	
+
 		FormElement.prototype.removeAllFields = function() {
-	
+
 			var aRemovedFields = this.removeAllAggregation("fields");
-	
+
 			for ( var i = 0; i < aRemovedFields.length; i++) {
 				var oRemovedField = aRemovedFields[i];
 				oRemovedField.removeDelegate(this._oFieldDelegate);
 			}
-	
+			_updateLabelFor(this);
+
 			return aRemovedFields;
-	
+
 		};
-	
+
 		FormElement.prototype.destroyFields = function() {
-	
+
 			var aFields = this.getFields();
-	
+
 			for ( var i = 0; i < aFields.length; i++) {
 				var oField = aFields[i];
 				oField.removeDelegate(this._oFieldDelegate);
 			}
-	
+
 			this.destroyAggregation("fields");
-	
+
+			_updateLabelFor(this);
+
 			return this;
-	
+
 		};
-	
+
 		FormElement.prototype.updateFields = function() {
-	
+
 			var aFields = this.getFields();
-	
-			for ( var i = 0; i < aFields.length; i++) {
-				var oField = aFields[i];
+			var oField;
+			var i = 0;
+
+			for (i = 0; i < aFields.length; i++) {
+				oField = aFields[i];
 				oField.removeDelegate(this._oFieldDelegate);
 			}
-	
+
 			this.updateAggregation("fields");
-	
+
 			aFields = this.getFields();
-	
-			for ( var i = 0; i < aFields.length; i++) {
-				var oField = aFields[i];
+
+			for (i = 0; i < aFields.length; i++) {
+				oField = aFields[i];
 				oField.addDelegate(this._oFieldDelegate);
 			}
-	
+
+			_updateLabelFor(this);
+
 			return this;
-	
+
 		};
-	
+
 		/*
 		 * Enhance Aria properties of fields to set aria-labelledby to FormElements label if not set otherwise
 		 * Set aria-describedby to the title of the container, but only for the first field in the container
 		 * This function is called during rendering.
 		 */
 		FormElement.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
-	
+
 			var oLabel = this.getLabelControl();
 			if (oLabel && oLabel != oElement) {
-				if (!mAriaProps["labelledby"]) {
-					mAriaProps["labelledby"] = oLabel.getId();
-				}
-	
-				var oContainer = this.getParent();
-				var aElements = oContainer.getFormElements();
-				if (this == aElements[0]) {
-					// it's the first Element
-					var aControls = this.getFields();
-					if (oElement == aControls[0]) {
-						//it's the first field
-						var oTitle = oContainer.getTitle();
-						if (oTitle) {
-							var sId = "";
-							if (typeof oTitle == "string") {
-								sId = oContainer.getId() + "--title";
-							} else {
-								sId = oTitle.getId();
-							}
-							var sDescribedBy = mAriaProps["describedby"];
-							if (sDescribedBy) {
-								sDescribedBy = sDescribedBy + " " + sId;
-							} else {
-								sDescribedBy = sId;
-							}
-							mAriaProps["describedby"] = sDescribedBy;
-						}
+
+				var sLabelledBy = mAriaProps["labelledby"];
+				if (!sLabelledBy) {
+					sLabelledBy = oLabel.getId();
+				} else {
+					var aLabels = sLabelledBy.split(" ");
+					if (jQuery.inArray(oLabel.getId(), aLabels) < 0) {
+						aLabels.splice(0, 0, oLabel.getId());
+						sLabelledBy = aLabels.join(" ");
 					}
 				}
+				mAriaProps["labelledby"] = sLabelledBy;
+
 			}
-	
+
 			return mAriaProps;
-	
+
 		};
-	
+
 		/*
 		 * If LayoutData changed on control this may need changes on the layout. So bubble to the form
 		 */
 		FormElement.prototype.onLayoutDataChange = function(oEvent){
-	
+
 			// call function of parent (if assigned)
 			var oParent = this.getParent();
 			if (oParent && oParent.onLayoutDataChange) {
 				oParent.onLayoutDataChange(oEvent);
 			}
-	
+
 		};
-	
+
 		// *** Private helper functions ***
-	
+
 		/*
 		 * overwrite Labels isRequired function to check if one of the fields in the element is required,
 		 * not only the one directly assigned.
 		 */
-		var _labelIsRequired = function(){
-	
+		function _labelIsRequired(){
+
 			var oFormElement = this.getParent();
 			var aFields = oFormElement.getFields();
-	
+
 			for ( var i = 0; i < aFields.length; i++) {
 				var oField = aFields[i];
 				if (oField.getRequired && oField.getRequired() === true) {
 					return true;
 				}
 			}
-	
+
 			return false;
-	
-		};
-	
+
+		}
+
 		/*
-		 * overwrite Labels getLabelForRendering function to point always to the first field.
-		 * But only if the application does not set a labelFor explicitly.
+		 * Update the for association of the related label
 		 */
-		var _getLabelForRendering = function(){
-	
-			if (this.getLabelFor()) {
-				return this.getLabelFor();
-			} else {
-				var oFormElement = this.getParent();
-				var aFields = oFormElement.getFields();
-				if (aFields[0]) {
-					return aFields[0].getId();
-				}
+		function _updateLabelFor(oFormElement){
+			var aFields = oFormElement.getFields();
+			var oField = aFields.length > 0 ? aFields[0] : null;
+
+			var oLabel = oFormElement._oLabel;
+			if (oLabel) {
+				oLabel.setAlternativeLabelFor(oField);
 			}
-	
-		};
-	
+			oLabel = oFormElement.getLabel();
+			if (oLabel instanceof sap.ui.core.Control /*might also be a string*/) {
+				oLabel.setAlternativeLabelFor(oField);
+			}
+		}
+
 		/*
 		 * If onAfterRendering of a field is processed the Form (layout) might need to change it.
 		 */
-		var _fieldOnAfterRendering = function(oEvent){
-	
+		function _fieldOnAfterRendering(oEvent){
+
 			// call function of parent (if assigned)
 			var oParent = this.oElement.getParent();
 			if (oParent && oParent.contentOnAfterRendering) {
 				oParent.contentOnAfterRendering( this.oElement, oEvent.srcControl);
 			}
-	
-		};
-	
+
+		}
+
 	}());
 
 	return FormElement;
@@ -4919,7 +4961,7 @@ sap.ui.define("sap/ui/layout/form/FormLayout",['jquery.sap.global', 'sap/ui/core
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -5782,7 +5824,7 @@ sap.ui.define("sap/ui/layout/form/GridContainerData",['jquery.sap.global', 'sap/
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -5845,7 +5887,7 @@ sap.ui.define("sap/ui/layout/form/GridElementData",['jquery.sap.global', 'sap/ui
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -5915,7 +5957,7 @@ sap.ui.define("sap/ui/layout/form/GridLayout",['jquery.sap.global', './FormLayou
 	 * @extends sap.ui.layout.form.FormLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -6133,8 +6175,6 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 	function(jQuery, Grid, GridData, FormLayout, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new form/ResponsiveGridLayout.
 	 *
@@ -6146,7 +6186,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 	 * On the FormContainers, Labels and Fields GridData can be used to change the default rendering. On FormElements GridDada are not supported.
 	 * If own GridData are used this may be much more complex than the default. So in some cases the calculation for the other content may nor bring the expected result. In this case GridData should be used at all content to disable the default behaviour.
 	 * @extends sap.ui.layout.form.FormLayout
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -6155,67 +6195,67 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveGridLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveGridLayout", /** @lends sap.ui.layout.form.ResponsiveGridLayout.prototype */ { metadata : {
-	
+
 		library : "sap.ui.layout",
 		properties : {
-	
+
 			/**
 			 * Default span for labels in large size.
 			 * This span is only used if more than 1 container is in one line, if only 1 container is in the line the labelSpanM value is used.
 			 * @since 1.16.3
 			 */
 			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
-	
+
 			/**
 			 * Default span for labels in medium size.
 			 * This property is used for full size containers. if more than one Container is in one line, labelSpanL is used.
 			 * @since 1.16.3
 			 */
 			labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
-	
+
 			/**
 			 * Default span for labels in small size.
 			 * @since 1.16.3
 			 */
 			labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
-	
+
 			/**
 			 * Number of grid cells that are empty at the end of each line on large size.
 			 * @since 1.16.3
 			 */
 			emptySpanL : {type : "int", group : "Misc", defaultValue : 0},
-	
+
 			/**
 			 * Number of grid cells that are empty at the end of each line on medium size.
 			 * @since 1.16.3
 			 */
 			emptySpanM : {type : "int", group : "Misc", defaultValue : 0},
-	
+
 			/**
 			 * Number of grid cells that are empty at the end of each line on small size.
 			 * @since 1.16.3
 			 */
 			emptySpanS : {type : "int", group : "Misc", defaultValue : 0},
-	
+
 			/**
 			 * Form columns for large size.
 			 * The number of columns for large size must not be smaller that the number of columns for medium size
 			 * @since 1.16.3
 			 */
 			columnsL : {type : "int", group : "Misc", defaultValue : 2},
-	
+
 			/**
 			 * Form columns for medium size.
 			 * @since 1.16.3
 			 */
 			columnsM : {type : "int", group : "Misc", defaultValue : 1},
-	
+
 			/**
 			 * Breakpoint between Medium size and Large size.
 			 * @since 1.16.3
 			 */
 			breakpointL : {type : "int", group : "Misc", defaultValue : 1024},
-	
+
 			/**
 			 * Breakpoint between Small size and Medium size.
 			 * @since 1.16.3
@@ -6223,12 +6263,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 			breakpointM : {type : "int", group : "Misc", defaultValue : 600}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control, 
-	// */
-	
-	
+
 	/*
 	 * The ResponsiveGridLayout uses Grid controls to render the Form
 	 * If more than one FormContainer is used there is an outer Grid (mainGrid) that holds the FormContainers
@@ -6245,9 +6280,9 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 	 * It must be made sure to hold this object up to date. So it is filled onBeforeRendering. Entries no longer used are deleted
 	 *
 	*/
-	
+
 	sap.ui.core.Control.extend("sap.ui.layout.form.ResponsiveGridLayoutPanel", {
-	
+
 		metadata : {
 			aggregations: {
 				"content"   : {type: "sap.ui.layout.Grid", multiple: false}
@@ -6257,9 +6292,9 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 				"layout"    : {type: "sap.ui.layout.form.ResponsiveLayout", multiple: false}
 			}
 		},
-	
+
 		getLayoutData :  function(){
-	
+
 			// only ResponsiveFlowLayoutData are interesting
 			var oContainer = sap.ui.getCore().byId(this.getContainer());
 			var oLayout    = sap.ui.getCore().byId(this.getLayout());
@@ -6272,20 +6307,20 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 			} else {
 				return this.getAggregation("layoutData");
 			}
-	
+
 		},
-	
+
 		getCustomData :  function(){
-	
+
 			var oContainer = sap.ui.getCore().byId(this.getContainer());
 			if (oContainer) {
 				return oContainer.getCustomData();
 			}
-	
+
 		},
-	
+
 		refreshExpanded :  function(){
-	
+
 			var oContainer = sap.ui.getCore().byId(this.getContainer());
 			if (oContainer) {
 				if (oContainer.getExpanded()) {
@@ -6295,34 +6330,37 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 				}
 			}
 		},
-	
+
 		renderer : function(oRm, oPanel) {
-	
+
 			var oContainer = sap.ui.getCore().byId(oPanel.getContainer());
 			var oLayout    = sap.ui.getCore().byId(oPanel.getLayout());
 			var oContent   = oPanel.getContent();
-	
+
 			var bExpandable = oContainer.getExpandable();
 			var sTooltip = oContainer.getTooltip_AsString();
-	
+
 			oRm.write("<div");
 			oRm.writeControlData(oPanel);
 			oRm.addClass("sapUiRGLContainer");
 			if (bExpandable && !oContainer.getExpanded()) {
 				oRm.addClass("sapUiRGLContainerColl");
 			}
-	
+
 			if (sTooltip) {
 				oRm.writeAttributeEscaped('title', sTooltip);
 			}
 			oRm.writeClasses();
+
+			oLayout.getRenderer().writeAccessibilityStateContainer(oRm, oContainer);
+
 			oRm.write(">");
-	
+
 			// container header
 			if (oContainer.getTitle()) {
 				oLayout.getRenderer().renderTitle(oRm, oContainer.getTitle(), oContainer._oExpandButton, bExpandable, false, oContainer.getId());
 			}
-	
+
 			if (oContent) {
 				oRm.write("<div");
 				oRm.addClass("sapUiRGLContainerCont");
@@ -6332,60 +6370,61 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 				oRm.renderControl(oContent);
 				oRm.write("</div>");
 			}
-	
+
 			oRm.write("</div>");
 		}
-	
+
 	});
-	
+
 	(function() {
-	
+		/* eslint-disable no-lonely-if */
+
 		ResponsiveGridLayout.prototype.init = function(){
-	
+
 			this.mContainers = {}; //association of container to panel and Grid
 			this.oDummyLayoutData = new GridData(this.getId() + "--Dummy");
 			this.SPANPATTERN = /^([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
-	
+
 		};
-	
+
 		ResponsiveGridLayout.prototype.exit = function(){
-	
+
 			var that = this;
-	
+
 			// clear panels
 			for ( var sContainerId in this.mContainers) {
 				_cleanContainer(that, sContainerId);
 			}
-	
+
 			// clear main Grid
 			if (this._mainGrid) {
 				this._mainGrid.destroy();
 				delete this._mainGrid;
 			}
-	
+
 			this.oDummyLayoutData.destroy();
 			this.oDummyLayoutData = undefined;
-	
+
 		};
-	
+
 		ResponsiveGridLayout.prototype.onBeforeRendering = function( oEvent ){
-	
+
 			var oForm = this.getParent();
 			if (!oForm || !(oForm instanceof sap.ui.layout.form.Form)) {
 				// layout not assigned to form - nothing to do
 				return;
 			}
-	
+
 			oForm._bNoInvalidate = true; // don't invalidate Form if only the Grids, Panels and LayoutData are created or changed)
 			var that = this;
 			_createPanels(that, oForm);
 			_createMainGrid(that, oForm);
 			oForm._bNoInvalidate = false;
-	
+
 		};
-	
+
 		ResponsiveGridLayout.prototype.onAfterRendering = function( oEvent ){
-	
+
 			// if main grid is used, deregister resize listeners of container grids. Because resize is triggered from main grid
 			// container grids can't resize if main grid is not resized.
 			if (this._mainGrid && this._mainGrid.__bIsUsed ) {
@@ -6396,43 +6435,43 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					}
 				}
 			}
-	
+
 		};
-	
+
 		/*
 		 * If onAfterRendering of a field is processed the width must be set to 100% (if no other width set)
 		 */
 		ResponsiveGridLayout.prototype.contentOnAfterRendering = function(oFormElement, oControl){
-	
+
 			FormLayout.prototype.contentOnAfterRendering.apply(this, arguments);
-	
+
 			if (oControl.getWidth && ( !oControl.getWidth() || oControl.getWidth() == "auto" ) && oControl.getMetadata().getName() != "sap.ui.commons.Image") {
 				oControl.$().css("width", "100%");
 			}
-	
+
 		};
-	
+
 		ResponsiveGridLayout.prototype.toggleContainerExpanded = function(oContainer){
-	
+
 			//adapt the corresponding panel
 			var sContainerId = oContainer.getId();
 			if (this.mContainers[sContainerId] && this.mContainers[sContainerId][0]) {
 				var oPanel = this.mContainers[sContainerId][0];
 				oPanel.refreshExpanded();
 			}
-	
+
 		};
-	
+
 		ResponsiveGridLayout.prototype.onLayoutDataChange = function(oEvent){
-	
+
 			var oSource = oEvent.srcControl;
-	
+
 			// if layoutData changed for a Container, Element, or Field call the
 			// onLayoutDataChange function of the parent ResponsiveFlowLayout
-	
+
 			if (oSource instanceof sap.ui.layout.form.FormContainer) {
 				if (this._mainGrid) {
-					this._mainRFGrid.onLayoutDataChange(oEvent);
+					this._mainGrid.onLayoutDataChange(oEvent);
 				}
 			} else if (!(oSource instanceof sap.ui.layout.form.FormElement)) { // LayoutData on FormElement not supported in ResponsiveGridLayout
 				var oParent = oSource.getParent();
@@ -6444,19 +6483,19 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					}
 				}
 			}
-	
+
 		};
-	
+
 		ResponsiveGridLayout.prototype.onsapup = function(oEvent){
 			this.onsapleft(oEvent);
 		};
-	
+
 		ResponsiveGridLayout.prototype.onsapdown = function(oEvent){
 			this.onsapright(oEvent);
 		};
-	
+
 		function _createPanels( oLayout, oForm ) {
-	
+
 			var aContainers = oForm.getFormContainers();
 			var iLength = aContainers.length;
 			var iVisibleContainers = 0;
@@ -6489,7 +6528,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					} else {
 						oGrid = _createGrid(oLayout, oContainer);
 					}
-	
+
 					var oTitle = oContainer.getTitle();
 					if (oTitle || oContainer.getExpandable()) {
 						// only if container has a title a panel is used
@@ -6509,11 +6548,11 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 						_changeGetLayoutDataOfGrid(oGrid, false);
 						_setLayoutDataForLinebreak(oGrid, oContainer, iVisibleContainer, oContainerNext, iVisibleContainers);
 					}
-	
+
 					oLayout.mContainers[sContainerId] = [oPanel, oGrid];
 				}
 			}
-	
+
 			var iObjectLength = _objectLength(oLayout.mContainers);
 			if (iVisibleContainers < iObjectLength) {
 				// delete old containers panels
@@ -6531,43 +6570,43 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					}
 				}
 			}
-	
+
 		}
-	
+
 		function _createPanel( oLayout, oContainer, oGrid ) {
-	
+
 			var sContainerId = oContainer.getId();
 			var oPanel = new sap.ui.layout.form.ResponsiveGridLayoutPanel(sContainerId + "---Panel", {
 				container: oContainer,
 				layout   : oLayout,
 				content : oGrid
 			});
-	
+
 			return oPanel;
-	
+
 		}
-	
+
 		/*
 		 * clear variables before delete it
 		 */
 		function _deletePanel( oPanel ) {
-	
+
 			oPanel.setContent("");
 			oPanel.setLayout("");
 			oPanel.setContainer("");
 			oPanel.destroy();
-	
+
 		}
-	
+
 		function _createGrid( oLayout, oContainer ) {
-	
+
 			var sId = oContainer.getId() + "--Grid";
-	
+
 			var oGrid = new Grid(sId, {vSpacing: 0, hSpacing: 0, containerQuery: true});
 			oGrid.__myParentLayout = oLayout;
 			oGrid.__myParentContainerId = oContainer.getId();
 			oGrid.addStyleClass("sapUiFormResGridCont");
-	
+
 			oGrid.getContent = function(){
 				var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
 				if (oContainer) {
@@ -6593,11 +6632,11 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					return false;
 				}
 			};
-	
+
 			oGrid._getLayoutDataForControl = function(oControl) {
 				var oLayout = this.__myParentLayout;
 				var oLD = oLayout.getLayoutDataForElement(oControl, "sap.ui.layout.GridData");
-	
+
 				var oElement = oControl.getParent();
 				var oLabel = oElement.getLabelControl();
 				if (oLD) {
@@ -6614,7 +6653,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					var iLabelLSpan = oLayout.getLabelSpanL();
 					var iLabelMSpan = oLayout.getLabelSpanM();
 					var iLabelSSpan = oLayout.getLabelSpanS();
-	
+
 					if (oForm.getFormContainers().length >= 1 && oLayout.getColumnsM() > 1) {
 						// More than one Container in line
 						iLabelMSpan = oLayout.getLabelSpanL();
@@ -6667,7 +6706,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 								iSSpan = iSSpan - iLabelSSpan;
 							}
 						}
-	
+
 						var aFields = oElement.getFields();
 						var iLength = aFields.length;
 						var iDefaultFields = 1; // because current field has no LayoutData
@@ -6719,31 +6758,31 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 								iMySSpan = Math.floor(iSSpan / iDefaultFields);
 							}
 						}
-	
+
 						oLayout.oDummyLayoutData.setSpan("L" + iMyLSpan + " M" + iMyMSpan + " S" + iMySSpan);
 						oLayout.oDummyLayoutData.setLinebreak(bFirstField && !oLabel);
 						oLayout.oDummyLayoutData._setStylesInternal(undefined);
 						return oLayout.oDummyLayoutData;
 					}
-	
+
 					return oLD;
 				}
 			};
-	
+
 			// change resize handler so that the container Grids always get the same Media size like the main grid
 			oGrid._onParentResizeOrig = oGrid._onParentResize;
 			oGrid._onParentResize = function() {
-	
+
 				// Prove if Dom reference exist, and if not - clean up the references.
 				if (!this.getDomRef()) {
 					this._cleanup();
 					return;
 				}
-	
+
 				if (!jQuery(this.getDomRef()).is(":visible")) {
 					return;
 				}
-	
+
 				var oLayout = this.__myParentLayout;
 				if (!oLayout._mainGrid || !oLayout._mainGrid.__bIsUsed ) {
 					// no main grid used -> only 1 container
@@ -6756,7 +6795,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					if (oLayout.mContainers[this.__myParentContainerId][0]) {
 						// panel used -> get size from panel
 						var oDomRef = oLayout.mContainers[this.__myParentContainerId][0].getDomRef();
-	
+
 						var iCntWidth = oDomRef.clientWidth;
 						if (iCntWidth <= oLayout.getBreakpointM()) {
 							this._toggleClass("Phone");
@@ -6772,7 +6811,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					}
 				} else {
 					var $DomRefMain = oLayout._mainGrid.$();
-	
+
 					if ($DomRefMain.hasClass("sapUiRespGridMedia-Std-Phone")) {
 						this._toggleClass("Phone");
 					} else if ($DomRefMain.hasClass("sapUiRespGridMedia-Std-Tablet")) {
@@ -6782,28 +6821,37 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					}
 				}
 			};
-	
+
+			oGrid._getAccessibleRole = function() {
+
+				var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+				if (!oContainer.getTitle() && !oContainer.getExpandable()) {
+					return "form";
+				}
+
+			};
+
 			return oGrid;
-	
+
 		}
-	
+
 		/*
 		 * clear variables before delete it
 		 */
 		function _deleteGrid( oGrid ) {
-	
+
 			if (oGrid.__myParentContainerId) {
 				oGrid.__myParentContainerId = undefined;
 			}
 			oGrid.__myParentLayout = undefined;
-	
+
 			oGrid.destroy();
-	
+
 		}
-	
+
 		function _changeGetLayoutDataOfGrid( oGrid, bOriginal ) {
 			// only GridData are from interest
-	
+
 			if (bOriginal) {
 				if (oGrid.__originalGetLayoutData) {
 					oGrid.getLayoutData = oGrid.__originalGetLayoutData;
@@ -6814,12 +6862,12 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 				oGrid.getLayoutData = function(){
 					var oLayout = this.__myParentLayout;
 					var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
-	
+
 					var oLD;
 					if (oContainer) {
 						oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 					}
-	
+
 					if (oLD) {
 						return oLD;
 					} else {
@@ -6827,20 +6875,20 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					}
 				};
 			}
-	
+
 		}
-	
+
 		// every second container gets a Linebreak for large screens
 		// oControl could be a Panel or a Grid( if no panel used)
 		function _setLayoutDataForLinebreak( oControl, oContainer, iVisibleContainer, oContainerNext, iVisibleContainers ) {
-	
+
 			var oLayout;
 			if (oControl instanceof sap.ui.layout.form.ResponsiveGridLayoutPanel) {
 				oLayout = sap.ui.getCore().byId(oControl.getLayout());
 			} else {
 				oLayout = oControl.__myParentLayout;
 			}
-	
+
 			var iColumnsL = oLayout.getColumnsL();
 			var iColumnsM = oLayout.getColumnsM();
 			var oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
@@ -6852,7 +6900,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 				var bLinebreakM = (iVisibleContainer % iColumnsM) == 1;
 				var bLastM = (iVisibleContainer % iColumnsM) == 0;
 				var bLastRowM = iVisibleContainer > (iVisibleContainers - iColumnsM + (iVisibleContainers % iColumnsM));
-	
+
 				if (oContainerNext) {
 					var oLDNext = oLayout.getLayoutDataForElement(oContainerNext, "sap.ui.layout.GridData");
 					if (oLDNext && ( oLDNext.getLinebreak() || oLDNext.getLinebreakL() )) {
@@ -6864,7 +6912,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 						bLastRowM = false;
 					}
 				}
-	
+
 				var sStyle = "";
 				if (bLastL) {
 					sStyle = "sapUiFormResGridLastContL";
@@ -6887,7 +6935,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					}
 					sStyle = sStyle + "sapUiFormResGridLastRowM";
 				}
-	
+
 				oLD = oControl.getLayoutData();
 				if (!oLD) {
 					oLD = new GridData(oControl.getId() + "--LD", { linebreakL: bLinebreakL, linebreakM: bLinebreakM });
@@ -6898,37 +6946,37 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 				}
 				oLD._setStylesInternal(sStyle);
 			}
-	
+
 		}
-	
+
 		function _cleanContainer( oLayout, sContainerId ) {
-	
+
 			var aContainerContent = oLayout.mContainers[sContainerId];
-	
+
 			//delete Grid
 			var oGrid = aContainerContent[1];
 			if (oGrid) {
 				_deleteGrid(oGrid);
 			}
-	
+
 			//delete panel
 			var oPanel = aContainerContent[0];
 			if (oPanel) {
 				_deletePanel(oPanel);
 			}
-	
+
 			delete oLayout.mContainers[sContainerId];
-	
+
 		}
-	
+
 		function _createMainGrid( oLayout, oForm ) {
-	
+
 			var aContainers = oForm.getFormContainers();
 			var oContainer;
 			var iLength = 0;
 			var iContentLenght = 0;
 			var i = 0;
-	
+
 			// count only visible containers
 			for ( i = 0; i < aContainers.length; i++) {
 				oContainer = aContainers[i];
@@ -6936,7 +6984,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					iLength++;
 				}
 			}
-	
+
 			// special case: only one container -> do not render an outer ResponsiveFlowLayout
 			if (iLength > 1) {
 				var iSpanL = Math.floor(12 / oLayout.getColumnsL());
@@ -6953,11 +7001,11 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 					oLayout._mainGrid._onParentResizeOrig = oLayout._mainGrid._onParentResize;
 					oLayout._mainGrid._onParentResize = function() {
 						this._onParentResizeOrig();
-	
+
 						for ( var sContainerId in oLayout.mContainers) {
 							oLayout.mContainers[sContainerId][1]._onParentResize();
 						}
-	
+
 					};
 				} else {
 					oLayout._mainGrid.setDefaultSpan("L" + iSpanL + " M" + iSpanM + " S12");
@@ -7002,7 +7050,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 				oLayout._mainGrid._setBreakPointTablet(oLayout.getBreakpointM());
 				oLayout._mainGrid._setBreakPointDesktop(oLayout.getBreakpointL());
 				oLayout._mainGrid.__bIsUsed = true;
-	
+
 				if (iContentLenght < iLength) {
 					// new containers added
 					for ( i = 0; i < aContainers.length; i++) {
@@ -7024,13 +7072,13 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 			} else if ( oLayout._mainGrid ) {
 				oLayout._mainGrid.__bIsUsed = false;
 			}
-	
+
 		}
-	
+
 		function _objectLength(oObject){
-	
+
 			var iLength = 0;
-	
+
 			if (!Object.keys) {
 				jQuery.each(oObject, function(){
 					iLength++;
@@ -7038,13 +7086,13 @@ sap.ui.define("sap/ui/layout/form/ResponsiveGridLayout",['jquery.sap.global', 's
 			} else {
 				iLength = Object.keys(oObject).length;
 			}
-	
+
 			return iLength;
-	
+
 		}
-	
+
 	}());
-	
+
 
 	return ResponsiveGridLayout;
 
@@ -7066,8 +7114,6 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 	function(jQuery, Control, ResponsiveFlowLayoutData, Form, FormContainer, FormElement, FormLayout, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new form/SimpleForm.
 	 *
@@ -7077,7 +7123,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 	 * @class
 	 * Use the SimpleForm to create a form based on title, label and fields that are stacked in the content aggregation. Add Title to start a new FormContainer(Group). Add Label to start a new row in the container. Add Input/Display controls as needed. Use LayoutData to influence the layout for special cases in the Input/Display controls.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -7086,39 +7132,45 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SimpleForm = Control.extend("sap.ui.layout.form.SimpleForm", /** @lends sap.ui.layout.form.SimpleForm.prototype */ { metadata : {
-	
+
 		library : "sap.ui.layout",
 		properties : {
-	
+
 			/**
 			 * The maximum amount of inner FormContainers per row that is used before a new row is started.
 			 * (If a ResponsiveGridLayout is used as layout this property is not used. Please use the properties ColumnsL and ColumnsM in this case.)
 			 */
 			maxContainerCols : {type : "int", group : "Appearance", defaultValue : 2},
-	
+
 			/**
 			 * The overall minimal width in pixels that is used for the SimpleForm. If the available width is below the given minWidth the SimpleForm will create a new row for the next FormContainer.
 			 * -1 value is default meaning that inner FormContainers will be stacked until maxCols is reached, irrespective if a maxWidth is reached or the available parents width is reached.
 			 * (only used if ResponsiveLayout is used as Layout)
 			 */
 			minWidth : {type : "int", group : "Appearance", defaultValue : -1},
-	
+
+			/**
+			 * Width of the form.
+			 * @since 1.28.0
+			 */
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
 			/**
 			 * Applies a device and theme specific line-height to the form elements if the form has editable content.
 			 * In this case all (not only the editable) rows of the form will get the line height.
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Specifies the min-width in pixels of the label in all form containers. (only used if ResponsiveLaout is used as Layout)
 			 */
 			labelMinWidth : {type : "int", group : "Misc", defaultValue : 192},
-	
+
 			/**
 			 * The FormLayout that is used to render the SimpleForm
 			 */
 			layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout},
-	
+
 			/**
 			 * Default span for labels in large size.
 			 * This span is only used if more than 1 container is in one line, if only 1 container is in the line the labelSpanM value is used.
@@ -7126,7 +7178,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			 * @since 1.16.3
 			 */
 			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
-	
+
 			/**
 			 * Default span for labels in medium size.
 			 * This property is used for full size containers. If more than one Container is in one line, labelSpanL is used.
@@ -7134,35 +7186,35 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			 * @since 1.16.3
 			 */
 			labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
-	
+
 			/**
 			 * Default span for labels in small size.
 			 * (This property is only used if a ResponsiveGridLayout is used as Layout.)
 			 * @since 1.16.3
 			 */
 			labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
-	
+
 			/**
 			 * Number of grid cells that are empty at the end of each line on large size.
 			 * (This property is only used if a ResponsiveGridLayout is used as Layout.)
 			 * @since 1.16.3
 			 */
 			emptySpanL : {type : "int", group : "Misc", defaultValue : 0},
-	
+
 			/**
 			 * Number of grid cells that are empty at the end of each line on medium size.
 			 * (This property is only used if a ResponsiveGridLayout is used as Layout.)
 			 * @since 1.16.3
 			 */
 			emptySpanM : {type : "int", group : "Misc", defaultValue : 0},
-	
+
 			/**
 			 * Number of grid cells that are empty at the end of each line on small size.
 			 * (This property is only used if a ResponsiveGridLayout is used as Layout.)
 			 * @since 1.16.3
 			 */
 			emptySpanS : {type : "int", group : "Misc", defaultValue : 0},
-	
+
 			/**
 			 * Form columns for large size.
 			 * The number of columns for large size must not be smaller that the number of columns for medium size.
@@ -7170,21 +7222,21 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			 * @since 1.16.3
 			 */
 			columnsL : {type : "int", group : "Misc", defaultValue : 2},
-	
+
 			/**
 			 * Form columns for medium size.
 			 * (This property is only used if a ResponsiveGridLayout is used as Layout.)
 			 * @since 1.16.3
 			 */
 			columnsM : {type : "int", group : "Misc", defaultValue : 1},
-	
+
 			/**
 			 * Breakpoint between Medium size and Large size.
 			 * (This property is only used if a ResponsiveGridLayout is used as Layout.)
 			 * @since 1.16.3
 			 */
 			breakpointL : {type : "int", group : "Misc", defaultValue : 1024},
-	
+
 			/**
 			 * Breakpoint between Small size and Medium size.
 			 * (This property is only used if a ResponsiveGridLayout is used as Layout.)
@@ -7194,7 +7246,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 		},
 		defaultAggregation : "content",
 		aggregations : {
-	
+
 			/**
 			 * The form content.
 			 * Add a Title control to start a new group (Container).
@@ -7212,12 +7264,12 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			 * layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight:1})}),
 			 */
 			content : {type : "sap.ui.core.Element", multiple : true, singularName : "content"}, 
-	
+
 			/**
 			 * Hidden, for internal use only.
 			 */
 			form : {type : "sap.ui.layout.form.Form", multiple : false, visibility : "hidden"}, 
-	
+
 			/**
 			 * Title element of the SimpleForm. Can either be a Label object, or a simple string.
 			 * @since 1.16.3
@@ -7225,17 +7277,17 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false}
 		}
 	}});
-	
+
 	///**
 	//* This file defines behavior for the control,
 	//*/
 	// because initial not known what Layout used - but all FormLayout usein this one.
 	// because ResponsiveLayout is the default and it's not known if or when setLayout is called
-	
+
 	(function() {
-	
+
 		SimpleForm.prototype.init = function() {
-	
+
 			this._iMaxWeight = 8;
 			this._iLabelWeight = 3;
 			this._iCurrentWidth = 0;
@@ -7260,14 +7312,14 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			this._aLayouts = [];
 			this._changedFormContainers = [];
 			this._changedFormElements = [];
-	
+
 		};
-	
+
 		SimpleForm.prototype.exit = function() {
-	
+
 			var oForm = this.getAggregation("form");
 			oForm.invalidate = oForm._origInvalidate;
-	
+
 			if (this._sResizeListenerId) {
 				sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
 				this._sResizeListenerId = null;
@@ -7282,14 +7334,14 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			this._aElements = null;
 			this._changedFormContainers = [];
 			this._changedFormElements = [];
-	
+
 		};
-	
+
 		/*
 		 * Update FormContaners, FormElements and LayoutData before controls are rendered
 		 */
 		SimpleForm.prototype.onBeforeRendering = function() {
-	
+
 			this._bChangedByMe = true;
 			//unregister resize
 			if (this._sResizeListenerId) {
@@ -7297,51 +7349,49 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 				this._sResizeListenerId = null;
 			}
 			var that = this;
-	
+
 			var oForm = this.getAggregation("form");
 			if (!oForm.getLayout()) {
 				_setFormLayout(that);
 			}
-	
+
 			_updateFormContainers(that);
 			this._bChangedByMe = false;
-	
+
 		};
-	
-	
-	
+
 		SimpleForm.prototype.onAfterRendering = function() {
-	
+
 			if (this.getLayout() == sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout) {
 				this._bChangedByMe = true;
 				this.$().css("visibility", "hidden"); //avoid that a wrong layouting is visible
 				this._applyLinebreaks();
-	
+
 				//attach the resize handler
 				this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._resize, this));
 				this._bChangedByMe = false;
 			}
-	
+
 		};
-	
+
 		SimpleForm.prototype.setEditable = function(bEditable) {
-	
+
 			this._bChangedByMe = true;
 			this.setProperty("editable", bEditable, true);
-	
+
 			var oForm = this.getAggregation("form");
 			oForm.setEditable(bEditable);
-	
+
 			this._bChangedByMe = false;
 			return this;
-	
+
 		};
-	
+
 		/*
 		 * overwrite generated functions to use internal array to look for aggregation
 		 */
 		SimpleForm.prototype.indexOfContent = function(oObject) {
-	
+
 			var aChildren = this._aElements;
 			if (aChildren) {
 				for (var i = 0; i < aChildren.length; i++) {
@@ -7351,18 +7401,18 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 				}
 			}
 			return -1;
-	
+
 		};
-	
+
 		SimpleForm.prototype.addContent = function(oElement) {
-	
+
 			this._bChangedByMe = true;
 			oElement = this.validateAggregation("content", oElement, /* multiple */ true);
-	
+
 			if (!this._aElements) {
 				this._aElements = [];
 			}
-	
+
 			// try to find corresponding FormElement and FormContainer to update them
 			var iLength = this._aElements.length;
 			var oLastElement;
@@ -7371,7 +7421,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			var oFormElement;
 			var oParent;
 			var oLayoutData;
-	
+
 			if (oElement instanceof sap.ui.core.Title) {
 				//start a new container with a title
 				oFormContainer = _createFormContainer(this, oElement);
@@ -7394,7 +7444,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					oForm.addFormContainer(oFormContainer);
 					this._changedFormContainers.push(oFormContainer);
 				}
-	
+
 				oFormElement = _addFormElement(this, oFormContainer, oElement);
 			} else {
 				// new Field -> add to last FormElement
@@ -7421,29 +7471,29 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					this._changedFormContainers.push(oFormContainer);
 					oFormElement = _addFormElement(this, oFormContainer);
 				}
-	
+
 				_createFieldLayoutData(this, oElement, 5, false, true);
-	
+
 				oFormElement.addField(oElement);
 				_markFormElementForUpdate(this._changedFormElements, oFormElement);
 			}
-	
+
 			this._aElements.push(oElement);
 			oElement.attachEvent("_change", _handleContentChange, this);
 			this.invalidate();
 			this._bChangedByMe = false;
 			return this;
-	
+
 		};
-	
+
 		SimpleForm.prototype.insertContent = function(oElement, iIndex) {
-	
+
 			oElement = this.validateAggregation("content", oElement, /* multiple */ true);
-	
+
 			if (!this._aElements) {
 				this._aElements = [];
 			}
-	
+
 			var iLength = this._aElements.length;
 			var iNewIndex;
 			if (iIndex < 0) {
@@ -7456,13 +7506,13 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			if (iNewIndex !== iIndex) {
 				jQuery.sap.log.warning("SimpleForm.insertContent: index '" + iIndex + "' out of range [0," + iLength + "], forced to " + iNewIndex);
 			}
-	
+
 			if (iNewIndex == iLength) {
 				// just added to the end -> use add function
 				this.addContent(oElement);
 				return this;
 			}
-	
+
 			this._bChangedByMe = true;
 			var oOldElement = this._aElements[iNewIndex];
 			var oForm = this.getAggregation("form");
@@ -7476,7 +7526,9 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			var aFields;
 			var aFormElements;
 			var aFormContainers;
-	
+			var i = 0;
+			var oField;
+
 			if (oElement instanceof sap.ui.core.Title) {
 				//start a new container with a title
 				if (iIndex == 0 && !(oOldElement instanceof sap.ui.core.Title)) {
@@ -7495,7 +7547,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 						oOldFormContainer = oOldFormElement.getParent();
 						iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer) + 1;
 						iElementIndex = oOldFormContainer.indexOfFormElement(oOldFormElement);
-	
+
 						// check if old FormElement must be splited
 						if (!oOldElement.getMetadata().isInstanceOf("sap.ui.core.Label")) {
 							iFieldIndex = oOldFormElement.indexOfField(oOldElement);
@@ -7506,8 +7558,8 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 								_markFormElementForUpdate(this._changedFormElements, oOldFormElement);
 								// move all Fields after index into new FormElement
 								aFields = oOldFormElement.getFields();
-								for ( var i = iFieldIndex; i < aFields.length; i++) {
-									var oField = aFields[i];
+								for ( i = iFieldIndex; i < aFields.length; i++) {
+									oField = aFields[i];
 									oFormElement.addField(oField);
 								}
 								iElementIndex++;
@@ -7515,7 +7567,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 						}
 						// move all FormElements after the new content into the new container
 						aFormElements = oOldFormContainer.getFormElements();
-						for ( var i = iElementIndex; i < aFormElements.length; i++) {
+						for ( i = iElementIndex; i < aFormElements.length; i++) {
 							oFormContainer.addFormElement(aFormElements[i]);
 						}
 					}
@@ -7541,7 +7593,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					oOldFormContainer = oOldFormElement.getParent();
 					iElementIndex = oOldFormContainer.indexOfFormElement(oOldFormElement) + 1;
 					iFieldIndex = oOldFormElement.indexOfField(oOldElement);
-	
+
 					if (iFieldIndex == 0 && !oOldFormElement.getLabel()) {
 						// special case: Form Element has no label and inserted before first Field
 						oFormElement = oOldFormElement;
@@ -7550,11 +7602,11 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					} else {
 						oFormElement = _insertFormElement(this, oOldFormContainer, oElement, iElementIndex);
 						_markFormElementForUpdate(this._changedFormElements, oOldFormElement);
-	
+
 						// move all Fields after index into new FormElement
 						aFields = oOldFormElement.getFields();
-						for ( var i = iFieldIndex; i < aFields.length; i++) {
-							var oField = aFields[i];
+						for ( i = iFieldIndex; i < aFields.length; i++) {
+							oField = aFields[i];
 							oFormElement.addField(oField);
 						}
 					}
@@ -7565,7 +7617,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					// add new Field to last FormElement of previous FormContainer
 					oOldFormContainer = oOldElement.getParent();
 					iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer);
-	
+
 					if (iContainerIndex == 0) {
 						// it's the first container - insert new container before
 						oFormContainer = _createFormContainer(this);
@@ -7575,7 +7627,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 						aFormContainers = oForm.getFormContainers();
 						oFormContainer = aFormContainers[iContainerIndex - 1];
 					}
-	
+
 					aFormElements = oFormContainer.getFormElements();
 					if (aFormElements.length == 0) {
 						// container has no FormElements -> create one
@@ -7583,14 +7635,14 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					} else {
 						oFormElement = aFormElements[aFormElements.length - 1];
 					}
-	
+
 					oFormElement.addField(oElement);
 				} else if (oOldElement.getMetadata().isInstanceOf("sap.ui.core.Label")) {
 					// add new field to previous FormElement
 					oOldFormElement = oOldElement.getParent();
 					oFormContainer = oOldFormElement.getParent();
 					iElementIndex = oFormContainer.indexOfFormElement(oOldFormElement);
-	
+
 					if (iElementIndex == 0) {
 						// it's already the first FormElement -> insert a new one before
 						oFormElement = _insertFormElement(this, oFormContainer, null, 0);
@@ -7606,38 +7658,39 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					oFormElement.insertField(oElement, iFieldIndex);
 				}
 				_markFormElementForUpdate(this._changedFormElements, oFormElement);
-	
+
 				_createFieldLayoutData(this, oElement, 5, false, true);
 			}
-	
+
 			this._aElements.splice(iNewIndex, 0, oElement);
 			oElement.attachEvent("_change", _handleContentChange, this);
 			this.invalidate();
 			this._bChangedByMe = false;
 			return this;
-	
+
 		};
-	
+
 		SimpleForm.prototype.removeContent = function(vElement) {
-	
+
 			var oElement = null;
 			var iIndex = -1;
-	
+			var i = 0;
+
 			if (this._aElements) {
-	
+
 				if (typeof (vElement) == "string") { // ID of the element is given
 					vElement = sap.ui.getCore().byId(vElement);
 				}
-	
+
 				if (typeof (vElement) == "object") { // the element itself is given or has just been retrieved
-					for (var i = 0; i < this._aElements.length; i++) {
+					for (i = 0; i < this._aElements.length; i++) {
 						if (this._aElements[i] == vElement) {
 							vElement = i;
 							break;
 						}
 					}
 				}
-	
+
 				if (typeof (vElement) == "number") { // "vElement" is the index now
 					if (vElement < 0 || vElement >= this._aElements.length) {
 						jQuery.sap.log.warning("Element.removeAggregation called with invalid index: Items, " + vElement);
@@ -7654,7 +7707,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 				var oFormElement;
 				var aFormElements;
 				var aFields;
-	
+
 				if (oElement instanceof sap.ui.core.Title) {
 					oFormContainer = oElement.getParent();
 					oFormContainer.setTitle(null);
@@ -7669,7 +7722,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 							var aPrevFormElements = oPrevFormContainer.getFormElements();
 							var oLastFormElement = aPrevFormElements[aPrevFormElements.length - 1];
 							aFields = aFormElements[0].getFields();
-							for ( var i = 0; i < aFields.length; i++) {
+							for (i = 0; i < aFields.length; i++) {
 								oLastFormElement.addField(aFields[i]);
 							}
 							_markFormElementForUpdate(this._changedFormElements, oLastFormElement);
@@ -7677,7 +7730,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 							aFormElements[0].destroy();
 							aFormElements.splice(0,1);
 						}
-						for ( var i = 0; i < aFormElements.length; i++) {
+						for (i = 0; i < aFormElements.length; i++) {
 							oPrevFormContainer.addFormElement(aFormElements[i]);
 						}
 						_markFormElementForUpdate(this._changedFormContainers, oPrevFormContainer);
@@ -7703,7 +7756,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 						aFormElements = oFormContainer.getFormElements();
 						var oPrevFormElement = aFormElements[iElementIndex - 1];
 						aFields = oFormElement.getFields();
-						for ( var i = 0; i < aFields.length; i++) {
+						for (i = 0; i < aFields.length; i++) {
 							oPrevFormElement.addField(aFields[i]);
 						}
 						_markFormElementForUpdate(this._changedFormElements, oPrevFormElement);
@@ -7722,27 +7775,29 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 						_markFormElementForUpdate(this._changedFormElements, oFormElement);
 					}
 				}
-	
+
 				this._aElements.splice(iIndex, 1);
 				oElement.setParent(null);
 				oElement.detachEvent("_change", _handleContentChange, this);
 				_removeLayoutData(this, oElement);
-	
+
 				this.invalidate();
 				this._bChangedByMe = false;
 				return oElement;
 			}
 			return null;
-	
+
 		};
-	
+
 		SimpleForm.prototype.removeAllContent = function() {
-	
+
+			var i = 0;
+
 			if (this._aElements) {
 				this._bChangedByMe = true;
 				var oForm = this.getAggregation("form");
 				var aFormContainers = oForm.getFormContainers();
-				for ( var i = 0; i < aFormContainers.length; i++) {
+				for (i = 0; i < aFormContainers.length; i++) {
 					var oFormContainer = aFormContainers[i];
 					oFormContainer.setTitle(null);
 					var aFormElements = oFormContainer.getFormElements();
@@ -7754,8 +7809,8 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					oFormContainer.destroyFormElements();
 				}
 				oForm.destroyFormContainers();
-	
-				for (var i = 0; i < this._aElements.length; i++) {
+
+				for (i = 0; i < this._aElements.length; i++) {
 					var oElement = this._aElements[i];
 					_removeLayoutData(this, oElement);
 					oElement.detachEvent("_change", _handleContentChange, this);
@@ -7768,13 +7823,13 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			} else {
 				return [];
 			}
-	
+
 		};
-	
+
 		SimpleForm.prototype.destroyContent = function() {
-	
+
 			var aElements = this.removeAllContent();
-	
+
 			if (aElements) {
 				this._bChangedByMe = true;
 				for (var i = 0; i < aElements.length; i++) {
@@ -7784,38 +7839,38 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 				this._bChangedByMe = false;
 			}
 			return this;
-	
+
 		};
-	
+
 		SimpleForm.prototype.getContent = function() {
-	
+
 			if (!this._aElements) {
 				this._aElements = this.getAggregation("content", []);
 			}
 			return this._aElements;
-	
+
 		};
-	
+
 	/*
 	 * set the FormLayout to the Form. If already a FormLayout is set, just set a new one.
 	 */
 		SimpleForm.prototype.setLayout = function(sLayout) {
-	
+
 			this._bChangedByMe = true;
 			var sOldLayout = this.getLayout();
 			this.setProperty("layout", sLayout);
-	
+
 			if (sLayout != sOldLayout) {
 				var that = this;
 				_setFormLayout(that);
-	
+
 				// update LayoutData for Containers, Elements and Fields
 				var oForm = this.getAggregation("form");
 				var aContainers = oForm.getFormContainers();
 				var aElements;
 				var aFields;
 				var oLayoutData;
-	
+
 				for ( var i = 0; i < aContainers.length; i++) {
 					var oContainer = aContainers[i];
 					this._changedFormContainers.push(oContainer);
@@ -7847,21 +7902,21 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					}
 				}
 			}
-	
+
 			this._bChangedByMe = false;
 			return this;
-	
+
 		};
-	
+
 		/*
 		 * overwrite the clone function because content will not be cloned in default one
 		 */
 		SimpleForm.prototype.clone = function(sIdSuffix) {
-	
+
 			this._bChangedByMe = true;
 			var oClone = Control.prototype.clone.apply(this, arguments);
 			var aContent = this.getContent();
-	
+
 			for ( var i = 0; i < aContent.length; i++) {
 				var oElement = aContent[i];
 				var oLayoutData = oElement.getLayoutData();
@@ -7881,20 +7936,20 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 				}
 				oClone.addContent(oElementClone);
 			}
-	
+
 			this._bChangedByMe = false;
 			return oClone;
-	
+
 		};
-	
-		var _setFormLayout = function(oThis) {
-	
+
+		function _setFormLayout(oThis) {
+
 				var oForm = oThis.getAggregation("form");
 				var oLayout = oForm.getLayout();
 				if (oLayout) {
 					oLayout.destroy();
 				}
-	
+
 				switch (oThis.getLayout()) {
 				case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
 					jQuery.sap.require("sap.ui.layout.form.ResponsiveLayout");
@@ -7911,23 +7966,23 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					jQuery.sap.require("sap.ui.layout.GridData");
 					oForm.setLayout(new sap.ui.layout.form.ResponsiveGridLayout(oThis.getId() + "--Layout"));
 					break;
-	
+
 				default:
 					break;
 				}
-	
-		};
-	
+
+		}
+
 		/*
 		 * Updates the FormContainers of the simple form.
 		 */
-		var _updateFormContainers = function(oThis) {
-	
+		function _updateFormContainers(oThis) {
+
 			oThis._changedFormContainers = [];
-	
+
 			var sLayout = oThis.getLayout();
-	
-	
+			var oLayout;
+
 			switch (sLayout) {
 			case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
 				// set the default values for linebreakes to avoid flickering for default case
@@ -7937,7 +7992,7 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 				_applyContainerSize(oThis);
 				break;
 			case sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout:
-				var oLayout = oThis.getAggregation("form").getLayout();
+				oLayout = oThis.getAggregation("form").getLayout();
 				oLayout.setLabelSpanL(oThis.getLabelSpanL());
 				oLayout.setLabelSpanM(oThis.getLabelSpanM());
 				oLayout.setLabelSpanS(oThis.getLabelSpanS());
@@ -7952,10 +8007,10 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			default:
 				break;
 			}
-	
+
 			for ( var i = 0; i < oThis._changedFormElements.length; i++) {
 				var oFormElement = oThis._changedFormElements[i];
-	
+
 				switch (sLayout) {
 				case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
 					_applyFieldWeight(oThis, oFormElement);
@@ -7965,27 +8020,27 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 				default:
 					break;
 				}
-	
+
 				_updateVisibility(oThis, oFormElement);
 			}
 			oThis._changedFormElements = [];
-	
-		};
-	
+
+		}
+
 		/*
 		 * Checks whether the given LayoutData is created and added by this Simple Form
 		 * @param { sap.ui.layout.ResponsiveFlowLayoutData} optional (interface) The layout data
 		 * @returns {boolean} Whether the given layout was created by this Simple Form
 		 * @private
 		 */
-		var _isMyLayoutData = function(oThis, oLayoutData) {
-	
+		function _isMyLayoutData(oThis, oLayoutData) {
+
 			var sId = oLayoutData.getId(),
 			sLayouts = " " + oThis._aLayouts.join(" ") + " ";
 			return sLayouts.indexOf(" " + sId + " ") >  -1;
-	
-		};
-	
+
+		}
+
 		/*
 		 * Creates new sap.ui.layout.ResponsiveFlowLayoutData with the given parameters
 		 * @param {int} iWeight the weight for the layout data
@@ -7994,24 +8049,24 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 		 * @returns {sap.ui.layout.ResponsiveFlowLayoutData} The newly created ResponsiveFlowLayoutData
 		 * @private
 		 */
-		var _createRFLayoutData = function(oThis, iWeight, bLinebreak, bLinebreakable, iMinWidth) {
-	
+		function _createRFLayoutData(oThis, iWeight, bLinebreak, bLinebreakable, iMinWidth) {
+
 			var oLayout = new ResponsiveFlowLayoutData({weight:iWeight,linebreak:bLinebreak === true,linebreakable: bLinebreakable === true});
 			if (iMinWidth) {
 				oLayout.setMinWidth(iMinWidth);
 			}
 			oThis._aLayouts.push(oLayout.getId());
 			return oLayout;
-	
-		};
-	
+
+		}
+
 		/*
 		 * Mabe there are VariantLayoutData used -> so get the right one for the used Layout
 		 */
-		var _getFieldLayoutData = function(oThis, oField){
-	
+		function _getFieldLayoutData(oThis, oField){
+
 			var oLayoutData;
-	
+
 			switch (oThis.getLayout()) {
 			case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
 				oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.ResponsiveFlowLayoutData");
@@ -8022,19 +8077,19 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			case sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout:
 				oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.GridData");
 				break;
-	
+
 			default:
 				break;
 			}
-	
+
 			return oLayoutData;
-	
-		};
-	
-		var _createFieldLayoutData = function(oThis, oField, iWeight, bLinebreak, bLinebreakable, iMinWidth) {
-	
+
+		}
+
+		function _createFieldLayoutData(oThis, oField, iWeight, bLinebreak, bLinebreakable, iMinWidth) {
+
 			var oLayoutData;
-	
+
 			switch (oThis.getLayout()) {
 			case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
 				oLayoutData = _getFieldLayoutData(oThis, oField);
@@ -8052,15 +8107,15 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			case sap.ui.layout.form.SimpleFormLayout.GridLayout:
 				// no default LayoutData needed"
 				break;
-	
+
 			default:
 				break;
 			}
-	
-		};
-	
-		var _createElementLayoutData = function(oThis, oElement) {
-	
+
+		}
+
+		function _createElementLayoutData(oThis, oElement) {
+
 			switch (oThis.getLayout()) {
 			case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
 				oElement.setLayoutData(new ResponsiveFlowLayoutData({linebreak:true, margin:false}));
@@ -8068,15 +8123,15 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			case sap.ui.layout.form.SimpleFormLayout.GridLayout:
 				// no default LayoutData needed"
 				break;
-	
+
 			default:
 				break;
 			}
-	
-		};
-	
-		var _createContainerLayoutData = function(oThis, oContainer) {
-	
+
+		}
+
+		function _createContainerLayoutData(oThis, oContainer) {
+
 			switch (oThis.getLayout()) {
 			case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
 				oContainer.setLayoutData(new ResponsiveFlowLayoutData({minWidth:280}));
@@ -8088,19 +8143,19 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					oContainer.setLayoutData(new sap.ui.layout.form.GridContainerData({halfGrid: false}));
 				}
 				break;
-	
+
 			default:
 				break;
 			}
-	
-		};
-	
-		var _removeLayoutData = function(oThis, oElement) {
-	
+
+		}
+
+		function _removeLayoutData(oThis, oElement) {
+
 			var oLayout = _getFieldLayoutData(oThis, oElement);
 			if (oLayout) {
 				var sLayoutId = oLayout.getId();
-	
+
 				for ( var i = 0; i < oThis._aLayouts.length; i++) {
 					var sId = oThis._aLayouts[i];
 					if (sLayoutId == sId) {
@@ -8110,9 +8165,9 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					}
 				}
 			}
-	
-		};
-	
+
+		}
+
 		/*
 		 * Adds a new form element to the given FormContainer and adds the given label to it.
 		 * @param {sap.ui.layout.form.FormContainer} The form container
@@ -8120,24 +8175,24 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 		 * @returns {sap.ui.layout.form.FormElement} The newly created FormElement
 		 * @private
 		 */
-		var _addFormElement = function(oThis, oFormContainer, oLabel) {
-	
+		function _addFormElement(oThis, oFormContainer, oLabel) {
+
 			var oElement = _createFormElement(oThis, oLabel);
 			oFormContainer.addFormElement(oElement);
 			return oElement;
-	
-		};
-	
-		var _insertFormElement = function(oThis, oFormContainer, oLabel, iIndex) {
-	
+
+		}
+
+		function _insertFormElement(oThis, oFormContainer, oLabel, iIndex) {
+
 			var oElement = _createFormElement(oThis, oLabel);
 			oFormContainer.insertFormElement(oElement, iIndex);
 			return oElement;
-	
-		};
-	
-		var _createFormElement = function(oThis, oLabel) {
-	
+
+		}
+
+		function _createFormElement(oThis, oLabel) {
+
 			var oElement = new FormElement();
 			_createElementLayoutData(oThis, oElement);
 			if (oLabel) {
@@ -8149,46 +8204,47 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			}
 			oElement.setVisible(false);
 			return oElement;
-	
-		};
-	
+
+		}
+
 		/*
 		 * creates a new form container and adds the given title to it.
 		 * @param {sap.ui.core.Title} optional The title of the container
 		 * @returns {sap.ui.layout.form.FormContainer} The newly created FormContainer
 		 * @private
 		 */
-		var _createFormContainer = function(oThis, oTitle) {
-	
+		function _createFormContainer(oThis, oTitle) {
+
 			var oContainer = new FormContainer();
 			_createContainerLayoutData(oThis, oContainer);
 			if (oTitle) {
 				oContainer.setTitle(oTitle);
 			}
 			return oContainer;
-	
-		};
-	
+
+		}
+
 		/*
 		 * Applies the weight property for the fields in the responsive layout.
 		 * @param {sap.ui.layout.form.FormElement} oElement The FormElement where the weight is applied.
 		 * @private
 		 */
-		var _applyFieldWeight = function(oThis, oElement){
-	
+		function _applyFieldWeight(oThis, oElement){
+
 			var iMaxWeight = oThis._iMaxWeight;
 			var aFields = oElement.getFields();
 			var oField;
 			var iLength = aFields.length;
 			var oLabel = oElement.getLabel();
 			var oLayoutData;
-	
+			var i = 0;
+
 			if (oLabel && _getFieldLayoutData(oThis, oLabel)) {
 				iMaxWeight = iMaxWeight - _getFieldLayoutData(oThis, oLabel).getWeight();
 			}
-	
+
 			// determine weights set from application
-			for (var i = 0; i < aFields.length; i++) {
+			for (i = 0; i < aFields.length; i++) {
 				oField = aFields[i];
 				oLayoutData = _getFieldLayoutData(oThis, oField);
 				if (oLayoutData instanceof ResponsiveFlowLayoutData && !_isMyLayoutData(oThis, oLayoutData)) {
@@ -8196,15 +8252,15 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					iLength--;
 				}
 			}
-	
+
 			var iWeight = Math.floor(iMaxWeight / iLength);
 			var iRest = iMaxWeight % iLength;
-	
-			for (var i = 0; i < aFields.length; i++) {
+
+			for (i = 0; i < aFields.length; i++) {
 				oField = aFields[i];
 				oLayoutData = _getFieldLayoutData(oThis, oField);
 				var iCurrentWeight = iWeight;
-	
+
 				if (!oLayoutData) {
 					_createFieldLayoutData(oThis, oField, iCurrentWeight, false, i == 0);
 				} else if (_isMyLayoutData(oThis, oLayoutData) && oLayoutData instanceof ResponsiveFlowLayoutData) {
@@ -8216,14 +8272,14 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					oLayoutData.setWeight(iCurrentWeight);
 				}
 			}
-	
-		};
-	
-		var _updateVisibility = function(oThis, oElement){
-	
+
+		}
+
+		function _updateVisibility(oThis, oElement){
+
 			var aFields = oElement.getFields();
 			var bVisible = false;
-	
+
 			for (var i = 0; i < aFields.length; i++) {
 				var oField = aFields[i];
 				if (!oField.getVisible || oField.getVisible()) {
@@ -8232,20 +8288,20 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					break;
 				}
 			}
-	
+
 			if (oElement.getVisible() != bVisible) {
 				// set visibility of FormElement
 				oElement.setVisible(bVisible);
 			}
-	
-		};
-	
+
+		}
+
 		/*
 		 * Applies the linebreaks of form containers according the minWidth and maxContainerCol settings of the SimpleForm
 		 * @private
 		 */
 		SimpleForm.prototype._applyLinebreaks = function(){
-	
+
 			var oForm = this.getAggregation("form"),
 			aContainers = oForm.getFormContainers();
 			// set line break on every container if Form is smaller than getMinWidth pixel
@@ -8270,33 +8326,33 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 				var that = this;
 				setTimeout(function() {
 					if (that.getDomRef()) {
-						that.$().css("visibility", "inherit");
+						that.$().css("visibility", "");
 					}
 				},10);
 			}
-	
+
 		};
-	
+
 		/*
 		 * Applies size of the containers in GridLayout: if only one container is in the last line -> make it full size
 		 * @private
 		 */
-		var _applyContainerSize = function(oThis){
-	
+		function _applyContainerSize(oThis){
+
 			var oForm = oThis.getAggregation("form");
 			var aContainers = oForm.getFormContainers();
 			var iLength = aContainers.length;
 			if (iLength % 2 > 0) {
 				aContainers[iLength - 1].getLayoutData().setHalfGrid(false);
 			}
-		};
-	
+		}
+
 		/*
 		 * Handles the resize event
 		 * @private
 		 */
 		SimpleForm.prototype._resize = function(){
-	
+
 			this._bChangedByMe = true;
 			if (this._iCurrentWidth == this.$().outerWidth()) {
 				return;
@@ -8304,11 +8360,11 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			this._iCurrentWidth = this.$().outerWidth();
 			this._applyLinebreaks();
 			this._bChangedByMe = false;
-	
+
 		};
-	
-		var _markFormElementForUpdate = function(aFormElements, oFormElement){
-	
+
+		function _markFormElementForUpdate(aFormElements, oFormElement){
+
 			var bFound = false;
 			for ( var i = 0; i < aFormElements.length; i++) {
 				var oChangedFormElement = aFormElements[i];
@@ -8320,28 +8376,28 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 			if (!bFound) {
 				aFormElements.push(oFormElement);
 			}
-	
-		};
-	
-		var _handleContentChange = function(oEvent) {
+
+		}
+
+		function _handleContentChange(oEvent) {
 			if (oEvent.getParameter("name") == "visible") {
 				var oFormElement = oEvent.oSource.getParent();
 				_updateVisibility(this, oFormElement);
 			}
-		};
-	
-		var _getFormContent = function(oForm) {
-	
+		}
+
+		function _getFormContent(oForm) {
+
 			var aElements = [];
 			var aFormContainers = oForm.getFormContainers();
-	
+
 			for ( var i = 0; i < aFormContainers.length; i++) {
 				var oFormContainer = aFormContainers[i];
 				var oTitle = oFormContainer.getTitle();
 				if (oTitle) {
 					aElements.push(oTitle);
 				}
-	
+
 				var aFormElements = oFormContainer.getFormElements();
 				for ( var j = 0; j < aFormElements.length; j++) {
 					var oFormElement = aFormElements[j];
@@ -8356,27 +8412,28 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 					}
 				}
 			}
-	
+
 			return aElements;
-	
-		};
-	
+
+		}
+
 		SimpleForm.prototype._formInvalidated = function(oOrigin){
-	
+
 			if (!this._bChangedByMe) {
 				// check if content is still the same like in array
 				// maybe ca Control was destroyed or removed without using the SimpleForm API
 				// as invalidate is fired for every single object only one object can be changed
 				var aContent = _getFormContent(this.getAggregation("form"));
+				var i = 0;
 				var j = 0;
 				var bCreateNew = false;
-	
+
 				if (aContent.length < this._aElements.length) {
 					// at least one element must be removed -> create completely new,
 					// because for deleted controls it's hard to find out the old parent.
 					bCreateNew = true;
 				} else {
-					for (var i = 0; i < aContent.length; i++) {
+					for (i = 0; i < aContent.length; i++) {
 						var oElement1 = aContent[i];
 						var oElement2 = this._aElements[j];
 						if (oElement1 === oElement2) {
@@ -8388,33 +8445,32 @@ sap.ui.define("sap/ui/layout/form/SimpleForm",['jquery.sap.global', 'sap/ui/core
 								this.insertContent(oElement1, i);
 								break;
 							}
-	
+
 							// check if Element2 is removed
-							var oElementNext = this._aElements[j + 1];
+							oElementNext = this._aElements[j + 1];
 							if (oElementNext === oElement1) {
 								// difficult to find out old Formelement or FormContainer -> create content completely new.
 								bCreateNew = true;
 								break;
 							}
-	
+
 							break;
 						}
 					}
 				}
-	
+
 				if (bCreateNew) {
 					this.removeAllContent();
-					for (var i = 0; i < aContent.length; i++) {
+					for (i = 0; i < aContent.length; i++) {
 						var oElement = aContent[i];
 						this.addContent(oElement);
 					}
 				}
 			}
-	
+
 		};
-	
+
 	}());
-	
 
 	return SimpleForm;
 
@@ -8451,7 +8507,7 @@ sap.ui.define("sap/ui/layout/ResponsiveFlowLayout",['jquery.sap.global', 'sap/ui
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -9108,6 +9164,20 @@ sap.ui.define("sap/ui/layout/ResponsiveFlowLayout",['jquery.sap.global', 'sap/ui
 			}
 			this.removeAggregation("content", oContent);
 		};
+
+		/**
+		 * Gets the role used for accessibility
+		 * Set by the Form control if Grid represents a FormContainer
+		 * @return {string} sRole accessibility role
+		 * @since 1.28.0
+		 * @private
+		 */
+		ResponsiveFlowLayout.prototype._getAccessibleRole = function() {
+
+			return null;
+
+		};
+
 	}());
 
 	return ResponsiveFlowLayout;
@@ -9129,8 +9199,6 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 	function(jQuery, ResponsiveFlowLayout, ResponsiveFlowLayoutData, FormLayout, library) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new form/ResponsiveLayout.
 	 *
@@ -9142,7 +9210,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 	 * @extends sap.ui.layout.form.FormLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -9151,15 +9219,10 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveLayout", /** @lends sap.ui.layout.form.ResponsiveLayout.prototype */ { metadata : {
-	
+
 		library : "sap.ui.layout"
 	}});
-	
-	/**
-	 * This file defines behavior for the control,
-	 */
-	
-	
+
 	/*
 	 * The ResponsiveLayout for forms inside is using ResponsiveFlowLayouts to render the form.
 	 * There is no own rendering for FormContainers or FormElements.
@@ -9192,13 +9255,13 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 	 *
 	 * In this._mainRFLayout the ResponsiveFlowLayout of the whole layout is stored. (If more than one Container.)
 	 */
-	
+
 	/*
 	 * as the panel can not be used in mobile environment a own internal control is needed to render the containers
 	 * use FormContainer as association to have access to it's content directly. So no mapping of properties and aggregations needed
 	 */
 	sap.ui.core.Control.extend("sap.ui.layout.form.ResponsiveLayoutPanel", {
-	
+
 		metadata : {
 			aggregations: {
 				"content"   : {type: "sap.ui.layout.ResponsiveFlowLayout", multiple: false}
@@ -9208,9 +9271,9 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 				"layout"    : {type: "sap.ui.layout.form.ResponsiveLayout", multiple: false}
 			}
 		},
-	
+
 		getLayoutData :  function(){
-	
+
 			// only ResponsiveFlowLayoutData are interesting
 			var oContainer = sap.ui.getCore().byId(this.getContainer());
 			var oLayout    = sap.ui.getCore().byId(this.getLayout());
@@ -9219,20 +9282,20 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 				oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.ResponsiveFlowLayoutData");
 			}
 			return oLD;
-	
+
 		},
-	
+
 		getCustomData :  function(){
-	
+
 			var oContainer = sap.ui.getCore().byId(this.getContainer());
 			if (oContainer) {
 				return oContainer.getCustomData();
 			}
-	
+
 		},
-	
+
 		refreshExpanded :  function(){
-	
+
 			var oContainer = sap.ui.getCore().byId(this.getContainer());
 			if (oContainer) {
 				if (oContainer.getExpanded()) {
@@ -9242,39 +9305,42 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 				}
 			}
 		},
-	
+
 		renderer : function(oRm, oPanel) {
-	
+
 			var oContainer = sap.ui.getCore().byId(oPanel.getContainer());
 			var oLayout    = sap.ui.getCore().byId(oPanel.getLayout());
 			var oContent   = oPanel.getContent();
-	
+
 			if (!oContainer || !oLayout) {
 				// Container might be removed, but ResponsiveFlowLayout still calls a rerendering with old content
 				return;
 			}
-	
+
 			var bExpandable = oContainer.getExpandable();
 			var sTooltip = oContainer.getTooltip_AsString();
-	
+
 			oRm.write("<div");
 			oRm.writeControlData(oPanel);
 			oRm.addClass("sapUiRLContainer");
 			if (bExpandable && !oContainer.getExpanded()) {
 				oRm.addClass("sapUiRLContainerColl");
 			}
-	
+
 			if (sTooltip) {
 				oRm.writeAttributeEscaped('title', sTooltip);
 			}
 			oRm.writeClasses();
+
+			oLayout.getRenderer().writeAccessibilityStateContainer(oRm, oContainer);
+
 			oRm.write(">");
-	
+
 			// container header
 			if (oContainer.getTitle()) {
 				oLayout.getRenderer().renderTitle(oRm, oContainer.getTitle(), oContainer._oExpandButton, bExpandable, false, oContainer.getId());
 			}
-	
+
 			if (oContent) {
 				oRm.write("<div");
 				oRm.addClass("sapUiRLContainerCont");
@@ -9284,91 +9350,92 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 				oRm.renderControl(oContent);
 				oRm.write("</div>");
 			}
-	
+
 			oRm.write("</div>");
 		}
-	
+
 	});
-	
+
 	(function() {
-	
+		/* eslint-disable no-lonely-if */
+
 		ResponsiveLayout.prototype.init = function(){
-	
+
 			this.mContainers = {}; //association of container to panel and ResponsiveFlowLayout
 			this._defaultLayoutData = new ResponsiveFlowLayoutData({margin: false});
-	
+
 		};
-	
+
 		ResponsiveLayout.prototype.exit = function(){
-	
+
 			var that = this;
-	
+
 			// clear panels
 			for ( var sContainerId in this.mContainers) {
 				_cleanContainer(that, sContainerId);
 			}
-	
+
 			// clear ResponsiveFlowLayouts
 			if (this._mainRFLayout) {
 				this._mainRFLayout.destroy();
 				delete this._mainRFLayout;
 			}
-	
+
 			this._defaultLayoutData.destroy();
 			delete this._defaultLayoutData;
-	
+
 		};
-	
+
 		ResponsiveLayout.prototype.onBeforeRendering = function( oEvent ){
-	
+
 			var oForm = this.getParent();
 			if (!oForm || !(oForm instanceof sap.ui.layout.form.Form)) {
 				// layout not assigned to form - nothing to do
 				return;
 			}
-	
+
 			oForm._bNoInvalidate = true; // don't invalidate Form if only the Grids, Panels and LayoutData are created or changed)
 			var that = this;
 			_createPanels(that, oForm);
 			_createMainResponsiveFlowLayout(that, oForm);
 			oForm._bNoInvalidate = false;
-	
+
 		};
-	
+
 		/*
 		 * If onAfterRendering of a field is processed the width must be set to 100% (if no other width set)
 		 */
 		ResponsiveLayout.prototype.contentOnAfterRendering = function(oFormElement, oControl){
-	
+
 			FormLayout.prototype.contentOnAfterRendering.apply(this, arguments);
-	
+
 			if (oControl.getWidth && ( !oControl.getWidth() || oControl.getWidth() == "auto" ) && oControl.getMetadata().getName() != "sap.ui.commons.Image") {
 				oControl.$().css("width", "100%");
 			}
-	
+
 		};
-	
+
 		ResponsiveLayout.prototype.toggleContainerExpanded = function(oContainer){
-	
+
 			//adapt the corresponding panel
 			var sContainerId = oContainer.getId();
 			if (this.mContainers[sContainerId] && this.mContainers[sContainerId][0]) {
 				var oPanel = this.mContainers[sContainerId][0];
 				oPanel.refreshExpanded();
 			}
-	
+
 		};
-	
+
 		ResponsiveLayout.prototype.onLayoutDataChange = function(oEvent){
-	
+
 			var oSource = oEvent.srcControl;
 			var oContainer;
 			var sContainerId;
 			var sElementId;
-	
+
 			// if layoutData changed for a Container, Element, or Field call the
 			// onLayoutDataChange function of the parent ResponsiveFlowLayout
-	
+
 			if (oSource instanceof sap.ui.layout.form.FormContainer) {
 				if (this._mainRFLayout) {
 					this._mainRFLayout.onLayoutDataChange(oEvent);
@@ -9385,24 +9452,24 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					sContainerId = oContainer.getId();
 					sElementId = oParent.getId();
 					if (this.mContainers[sContainerId] && this.mContainers[sContainerId][2] &&
-						this.mContainers[sContainerId][2][sElementId]) {
+					    this.mContainers[sContainerId][2][sElementId]) {
 						this.mContainers[sContainerId][2][sElementId][0].onLayoutDataChange(oEvent);
 					}
 				}
 			}
-	
+
 		};
-	
+
 		ResponsiveLayout.prototype.onsapup = function(oEvent){
 			this.onsapleft(oEvent);
 		};
-	
+
 		ResponsiveLayout.prototype.onsapdown = function(oEvent){
 			this.onsapright(oEvent);
 		};
-	
+
 		function _createPanels( oLayout, oForm ) {
-	
+
 			var aContainers = oForm.getFormContainers();
 			var oContainer;
 			var sContainerId;
@@ -9425,7 +9492,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					} else {
 						oRFLayout = _createResponsiveFlowLayout(oLayout, oContainer, undefined);
 					}
-	
+
 					var oTitle = oContainer.getTitle();
 					if (oTitle || oContainer.getExpandable()) {
 						// only if container has a title a panel is used
@@ -9443,13 +9510,13 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 							_changeGetLayoutDataOfResponsiveFlowLayout(oRFLayout, false);
 						}
 					}
-	
+
 					var mContent = _createContent(oLayout, oContainer, oRFLayout);
-	
+
 					oLayout.mContainers[sContainerId] = [oPanel, oRFLayout, mContent];
 				}
 			}
-	
+
 			var iObjectLength = _objectLength(oLayout.mContainers);
 			if (iVisibleContainers < iObjectLength) {
 				// delete old containers panels
@@ -9467,36 +9534,36 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					}
 				}
 			}
-	
+
 		}
-	
+
 		function _createPanel( oLayout, oContainer, oRFLayout ) {
-	
+
 			var sContainerId = oContainer.getId();
 			var oPanel = new sap.ui.layout.form.ResponsiveLayoutPanel(sContainerId + "--Panel", {
 				container: oContainer,
 				layout   : oLayout,
 				content : oRFLayout
 			});
-	
+
 			return oPanel;
-	
+
 		}
-	
+
 		/*
 		 * clear variables before delete it
 		 */
 		function _deletePanel( oPanel ) {
-	
+
 			oPanel.setContent("");
 			oPanel.setLayout("");
 			oPanel.setContainer("");
 			oPanel.destroy();
-	
+
 		}
-	
+
 		function _createContent( oLayout, oContainer, oContainerLayout ) {
-	
+
 			var sContainerId = oContainer.getId();
 			var aElements = oContainer.getFormElements();
 			var iLength = aElements.length;
@@ -9505,7 +9572,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 			if (oLayout.mContainers[sContainerId] && oLayout.mContainers[sContainerId][2]) {
 				mRFLayouts = oLayout.mContainers[sContainerId][2];
 			}
-	
+
 			var oRFLayout;
 			var oFieldsRFLayout;
 			var iLastIndex = -1;
@@ -9531,7 +9598,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 						iLastIndex++;
 						oContainerLayout.insertContent(oRFLayout, iLastIndex);
 					}
-	
+
 					// if more fields after a label put the fields in an additional ResponsiveFlowLayout
 					var aFields = oElement.getFields();
 					if (oElement.getLabel() && aFields.length > 1) {
@@ -9554,7 +9621,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					iVisibleElements++;
 				}
 			}
-	
+
 			var iObjectLength = _objectLength(mRFLayouts);
 			if (iVisibleElements < iObjectLength) {
 				// delete old elements RFLayouts
@@ -9580,13 +9647,13 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					}
 				}
 			}
-	
+
 			return mRFLayouts;
-	
+
 		}
-	
+
 		function _createResponsiveFlowLayout( oLayout, oContainer, oElement, bElementContent ) {
-	
+
 			var sId;
 			if (oElement && !bElementContent) {
 				sId = oElement.getId() + "--RFLayout";
@@ -9597,11 +9664,11 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 			} else {
 				return false;
 			}
-	
+
 			var oRFLayout = new ResponsiveFlowLayout(sId);
 			oRFLayout.__myParentLayout = oLayout;
 			oRFLayout.__myParentContainerId = oContainer.getId();
-	
+
 			if (oElement) {
 				oRFLayout.__myParentElementId = oElement.getId();
 				// assign Elements content -> overwrite getContent function of responsiveFlowLayout
@@ -9632,7 +9699,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 									aContent.push(oLayout.mContainers[sContainerId][2][sElementId][1]);
 								}
 							}
-	
+
 							return aContent;
 						} else {
 							return false;
@@ -9648,8 +9715,17 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 						}
 					};
 				}
+			}else if (oContainer) {
+				oRFLayout._getAccessibleRole = function() {
+
+					var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+					if (!oContainer.getTitle() && !oContainer.getExpandable()) {
+						return "form";
+					}
+
+				};
 			}
-	
+
 			if ((oElement && !bElementContent) || (!oElement && !oContainer.getTitle() && !oContainer.getExpandable())) {
 				// use LayoutData of container only if no panel is used
 				_changeGetLayoutDataOfResponsiveFlowLayout(oRFLayout, false);
@@ -9657,15 +9733,15 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 				// create LayoutData to disable margins
 				oRFLayout.setLayoutData(new ResponsiveFlowLayoutData({margin: false}));
 			}
-	
+
 			return oRFLayout;
-	
+
 		}
-	
+
 		function _changeGetLayoutDataOfResponsiveFlowLayout( oRFLayout, bOriginal ) {
 			// only ResponsiveFlowLayoutData are from interest
 			// if none maintained use default one to disable margins
-	
+
 			if (bOriginal) {
 				if (oRFLayout.__originalGetLayoutData) {
 					oRFLayout.getLayoutData = oRFLayout.__originalGetLayoutData;
@@ -9677,14 +9753,14 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					var oLayout = this.__myParentLayout;
 					var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
 					var oElement = sap.ui.getCore().byId(this.__myParentElementId);
-	
+
 					var oLD;
 					if (oElement) {
 						oLD = oLayout.getLayoutDataForElement(oElement, "sap.ui.layout.ResponsiveFlowLayoutData");
 					} else if (oContainer) {
 						oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.ResponsiveFlowLayoutData");
 					}
-	
+
 					if (oLD) {
 						return oLD;
 					} else {
@@ -9692,15 +9768,15 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					}
 				};
 			}
-	
+
 		}
-	
+
 		/*
 		 * If a ResponsiveFlowLayout for the fields of an FormElement is used it must get the weight
 		 * of all fields to have the right weight relative to the label.
 		 */
 		function _updateLayoutDataOfContentResponsiveFlowLayout( oLayout, oRFLayout, aFields ) {
-	
+
 			var oLD;
 			var iWeight = 0;
 			for ( var i = 0; i < aFields.length; i++) {
@@ -9712,7 +9788,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					iWeight++;
 				}
 			}
-	
+
 			oLD = oRFLayout.getLayoutData();
 			if (oLD) {
 				oLD.setWeight(iWeight);
@@ -9721,14 +9797,14 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 						new ResponsiveFlowLayoutData({weight: iWeight})
 				);
 			}
-	
+
 		}
-	
+
 		/*
 		 * clear variables before delete it
 		 */
 		function _deleteResponsiveFlowLayout( oRFLayout ) {
-	
+
 			if (oRFLayout.__myParentContainerId) {
 				oRFLayout.__myParentContainerId = undefined;
 			}
@@ -9736,16 +9812,16 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 				oRFLayout.__myParentElementId = undefined;
 			}
 			oRFLayout.__myParentLayout = undefined;
-	
+
 			oRFLayout.destroy();
-	
+
 		}
-	
+
 		function _cleanContainer( oLayout, sContainerId ) {
-	
+
 			var aContainerContent = oLayout.mContainers[sContainerId];
 			var oRFLayout;
-	
+
 			//delete Elements Content
 			var oElementRFLayouts = aContainerContent[2];
 			if (oElementRFLayouts) {
@@ -9759,37 +9835,37 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					delete oElementRFLayouts[sElementId];
 				}
 			}
-	
+
 			//delete ResponsiveFlowLayout
 			oRFLayout = aContainerContent[1];
 			if (oRFLayout) {
 				oRFLayout.removeAllContent();
 				_deleteResponsiveFlowLayout(oRFLayout);
 			}
-	
+
 			//delete panel
 			var oPanel = aContainerContent[0];
 			if (oPanel) {
 				_deletePanel(oPanel);
 			}
-	
+
 			delete oLayout.mContainers[sContainerId];
-	
+
 		}
-	
+
 		function _checkElementMoved(oLayout, oContainer, oElement, mRFLayouts, oContainerLayout, iIndex){
-	
+
 			// if a Element is just moved from one Container to an other this is not recognized
 			// so the ResponsiveFlowLayouts must be updated and the control object must be adjusted
 			var sElementId = oElement.getId();
 			var sId = sElementId + "--RFLayout";
 			var oRFLayout = sap.ui.getCore().byId(sId);
-	
+
 			if (!mRFLayouts[sElementId] && oRFLayout) {
 				// Element not maintained in control object of container but already has a RFLayout
 				// find old container id
 				var sOldContainerId = oRFLayout.__myParentContainerId;
-	
+
 				// move to new containers control object
 				mRFLayouts[sElementId] = oLayout.mContainers[sOldContainerId][2][sElementId];
 				oContainerLayout.insertContent(oRFLayout, iIndex);
@@ -9797,21 +9873,21 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 				if (mRFLayouts[sElementId][1]) {
 					mRFLayouts[sElementId][1].__myParentContainerId = oContainer.getId();
 				}
-	
+
 				// delete from old container in control object
 				delete oLayout.mContainers[sOldContainerId][2][sElementId];
 			}
-	
+
 		}
-	
+
 		function _createMainResponsiveFlowLayout( oLayout, oForm ) {
-	
+
 			var aContainers = oForm.getFormContainers();
 			var oContainer;
 			var iLength = 0;
 			var iContentLenght = 0;
 			var i = 0;
-	
+
 			// count only visible containers
 			for ( i = 0; i < aContainers.length; i++) {
 				oContainer = aContainers[i];
@@ -9819,7 +9895,7 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					iLength++;
 				}
 			}
-	
+
 			// special case: only one container -> do not render an outer ResponsiveFlowLayout
 			if (iLength > 1) {
 				if (!oLayout._mainRFLayout) {
@@ -9882,13 +9958,13 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 					}
 				}
 			}
-	
+
 		}
-	
+
 		function _objectLength(oObject){
-	
+
 			var iLength = 0;
-	
+
 			if (!Object.keys) {
 				jQuery.each(oObject, function(){
 					iLength++;
@@ -9896,13 +9972,12 @@ sap.ui.define("sap/ui/layout/form/ResponsiveLayout",['jquery.sap.global', 'sap/u
 			} else {
 				iLength = Object.keys(oObject).length;
 			}
-	
+
 			return iLength;
-	
+
 		}
-	
+
 	}());
-	
 
 	return ResponsiveLayout;
 

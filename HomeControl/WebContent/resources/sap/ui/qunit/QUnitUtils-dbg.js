@@ -18,7 +18,7 @@
  * The <code>sap.ui.test.qunit</code> namespace contains helper functionality for
  * QUnit tests.
  *
- * @version 1.26.10
+ * @version 1.28.5
  * @namespace
  * @name sap.ui.test.qunit
  * @public
@@ -39,9 +39,8 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 			var mParams = jQuery.sap.getUriParameters();
 			
 			// TODO: Remove deprecated code once all projects adapted
-			QUnit.equals = QUnit.assert.equal;
-			window.equals = QUnit.assert.equal;
-	
+			QUnit.equals = window.equals = window.equal;
+
 			// Set global timeout for all tests
 			var sTimeout = mParams.get("sap-ui-qunittimeout");
 			if (!sTimeout || isNaN(sTimeout)) {
@@ -51,6 +50,11 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 			
 			// Do not reorder tests, as most of the tests depend on each other
 			QUnit.config.reorder = false;
+			
+			// Set "hidepassed" option using URL Param (required in QUnit < 1.16.0)
+			if (QUnit.urlParams && QUnit.urlParams.hidepassed) {
+				QUnit.config.hidepassed = true;
+			}
 			
 			// only when instrumentation is done on server-side blanket itself doesn't
 			// take care about rendering the report - in this case we do it manually
@@ -71,6 +75,20 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global'],
 						window.blanket.report({});
 					}
 				});
+			}
+			
+			// PhantomJS patch for Focus detection via jQuery:
+			// ==> https://code.google.com/p/phantomjs/issues/detail?id=427
+			//     ==> https://github.com/ariya/phantomjs/issues/10427
+			if (sap.ui.Device.browser.phantomJS) {
+				// workaround copied from above bug report
+				var $is = jQuery.fn.is;
+				jQuery.fn.is = function(sSelector) {
+					if (sSelector === ":focus") {
+						return this.get(0) === document.activeElement;
+					}
+					return $is.apply(this, arguments);
+				};
 			}
 			
 		}

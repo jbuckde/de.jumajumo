@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	/**
 	 * Constructor for a new CalloutBase.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 * @extends sap.ui.core.TooltipBase
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -45,12 +45,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 					 */
 					parent : {type : "sap.ui.core.Control"}
 				}
-			}, 
+			},
 
 			/**
 			 * Event is fired when the Callout window is closed.
 			 */
-			close : {}, 
+			close : {},
 
 			/**
 			 * Event is fired before a Callout is displayed. Call the preventDefault method of the event object to postpone opening. Application may use this event to start asynchronous Ajax call to load the Callout content
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 					 */
 					parent : {type : "sap.ui.core.Control"}
 				}
-			}, 
+			},
 
 			/**
 			 * Is fired when the Callout has been opened
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	CalloutBase.prototype.init = function() {
 		this.oPopup = new sap.ui.core.Popup();
 		this.oPopup.setShadow(true);
-	
+
 		// resource bundle
 		this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 			sap.ui.core.Popup.prototype._applyPosition.call(this, oPosition);
 			that.setTip();
 		};
-	
+
 		// close the Callout if its opener moves away (due to scrolling e.g.)
 		this.oPopup.setFollowOf(sap.ui.core.Popup.CLOSE_ON_SCROLL);
 	};
@@ -200,12 +200,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 			myPosition = this.getMyPosition();
 
 		// right-left pointer
-		if ( tRect.r < pRect.l - tipOffset ) { dock.x = "right"; }
-		else if ( tRect.l - tipOffset > pRect.r ) { dock.x = "left"; }
+		if ( tRect.r < pRect.l - tipOffset ) {
+			dock.x = "right";
+		} else if (tRect.l - tipOffset > pRect.r ) {
+			dock.x = "left";
+		}
 
 		// top-bottom pointer
-		if ( tRect.t > pRect.b - tipOffset ) { dock.y = "top"; }
-		else if ( tRect.b < pRect.t + tipOffset ) { dock.y = "bottom"; }
+		if ( tRect.t > pRect.b - tipOffset ) {
+			dock.y = "top";
+		} else if ( tRect.b < pRect.t + tipOffset ) {
+			dock.y = "bottom";
+		}
 
 		if (dock.x) { // pointer on the left or right side
 
@@ -468,10 +474,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 			this.bDoFocus = false;
 			this.bFocused = true; // Remember to set focus to parent on close
 		}
-	
+
 		this.$().css("display:", "");
 		this.fireOpened();
-	
+
 		// - listen to mouse over events outside
 		//   do always because the Callout can lose focus to child popup controls
 		jQuery.sap.bindAnyEvent(this.fAnyEventHandlerProxy);
@@ -532,7 +538,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	};
 
 	/**
-	 * Handle the mouseout event of a Callout. Override the default TooltipBase behavior when 
+	 * Handle the mouseout event of a Callout. Override the default TooltipBase behavior when
 	 * the mouse pointer is over some other popup on the screen
 	 * @param {jQuery.EventObject} oEvent mouseout Event.
 	 * @private

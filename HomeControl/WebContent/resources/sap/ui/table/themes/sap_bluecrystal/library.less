@@ -363,9 +363,11 @@
 	background-color: transparent;
 }
 
-.sapUiTableHdrTitle {
+.sapUiTable .sapUiTableHdrTitle {
 	font-size: @sapUiFontHeader3Size;
+	font-weight: bold;
 	height: 100%;
+	color: @sapUiTextTitle;
 }
 
 .sapUiTable > .sapUiTableFtr {
@@ -533,38 +535,42 @@ div.sapUiTableRowHdr.sapUiTableFixedBottomRow {
 
 
 /* Table Row (only) Selected */
-.sapUiTableCtrl tr.sapUiTableRowSel>td { /* data cells of row */
+/* data cells of row */
+.sapUiTableCtrl tr.sapUiTableRowSel:not(.sapUiTableGroupHeader) > td { 
 	background-color: @sapUiActiveBG;
 }
 
-.sapUiTableRowHdr.sapUiTableRowSel { /* row-select-button of row */
-	background-color: @sapUiActiveBG !important;
-	border-right: 1px solid @sapUiLightBorder !important;
+/* row-select-button of row */
+.sapUiTable .sapUiTableRowHdr.sapUiTableRowSel { 
+	background-color: @sapUiActiveBG;
+	border-right: 1px solid @sapUiLightBorder;
 }
 
 /* Table Row Selected[+Hover] */
-.sapUiTableCtrl tr.sapUiTableRowSel.sapUiTableRowHvr>td {
+.sapUiTableCtrl tr.sapUiTableRowSel.sapUiTableRowHvr > td {
 	/* data cells of row */
 	background-color: @sapUiActiveBGHover;
 }
 
-.sapUiTableRowHdr.sapUiTableRowSel.sapUiTableRowHvr {
-	/* row-select-button of row */
-	background-color: @sapUiActiveBGHover !important;
+/* row-select-button of row and hover */
+.sapUiTable .sapUiTableRowHdr.sapUiTableRowSel.sapUiTableRowHvr {
+	background-color: @sapUiActiveBGHover;
 	border-right-color: @sapUiLightBorder;
 }
 
 /* Table Row (only) Hover */
-.sapUiTableCtrl tr.sapUiTableRowHvr>td { /* data cells of row */
-	background-color: contrast(@sapUiLightestBG, darken(@sapUiLightestBG, 6), lighten(@sapUiLightestBG, 6)) !important;
+.sapUiTable .sapUiTableCtrl tr.sapUiTableRowHvr>td { /* data cells of row */
+	background-color: contrast(@sapUiLightestBG, darken(@sapUiLightestBG, 6), lighten(@sapUiLightestBG, 6));
 }
 
-.sapUiTableCtrl tr.sapUiTableRowHvr,
-.sapUiTableCtrl tr.sapUiTableRowHvr .sapUiTableColHdrCnt {
-	background-color: contrast(@sapUiLightestBG, darken(@sapUiLightestBG, 6), lighten(@sapUiLightestBG, 6)) !important;
+.sapUiTable {
+	.sapUiTableCtrl tr.sapUiTableRowHvr,
+	.sapUiTableCtrl tr.sapUiTableRowHvr .sapUiTableColHdrCnt {
+		background-color: contrast(@sapUiLightestBG, darken(@sapUiLightestBG, 6), lighten(@sapUiLightestBG, 6));
+	}
 }
 
-.sapUiTableCtrl tr.sapUiTableRowSel > td {
+.sapUiTableCtrl tr.sapUiTableRowSel:not(.sapUiTableGroupHeader) > td {
 	background-color: @sapUiActiveBG;
 }
 
@@ -647,11 +653,6 @@ div.sapUiTableRowHdr.sapUiTableFixedBottomRow {
 
 .sapUiTableCell {
 	padding: 0 10px;
-}
-
-.sapUiSizeCondensed .sapUiTableCellControlPadding {
-	padding-left:0.5rem;
-	padding-right:0.5rem;
 }
 
 .sapUiTable>div.sapUiTableCnt {
@@ -811,6 +812,11 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	height: @sapUiTableCondensedRowHeight;
 }
 
+.sapUiSizeCondensed .sapUiTableCell .sapMDP>.sapUiIcon, .sapUiSizeCondensed .sapUiTableCell .sapMDP.sapMInputIE9>.sapUiIcon {
+	height: 1.5rem;
+	line-height: 1.5rem;
+}
+
 .sapUiTableTreeIcon {
 	padding-top: 3px;
 	margin-right: 6px;
@@ -836,11 +842,14 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	background-color: lighten(@sapUiExtraLightBG, 2);
 }
 
-tr.sapUiTableGroupHeader.sapUiTableRowHvr,
-.sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableRowHvr,
-.sapUiTableRowHdr.sapUiTableRowHvr .sapUiTableGroupIcon,
-.sapUiTableCtrl .sapUiTableRowHvr > td {
-	background-color: contrast(@sapUiLightestBG, darken(@sapUiLightestBG, 6), lighten(@sapUiLightestBG, 6)) !important;
+/* Hover State */
+div.sapUiTable {
+	tr.sapUiTableGroupHeader.sapUiTableRowHvr,
+	.sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableRowHvr,
+	.sapUiTableRowHdr div.sapUiTableRowHvr .sapUiTableGroupIcon,
+	.sapUiTableCtrl .sapUiTableRowHvr > td {
+		background-color: contrast(@sapUiLightestBG, darken(@sapUiLightestBG, 6), lighten(@sapUiLightestBG, 6));
+	}
 }
 
 .sapUiTableHSb,
@@ -863,5 +872,56 @@ tr.sapUiTableGroupHeader.sapUiTableRowHvr,
 	font-size: @sapUiFontSize;
 }
 
+.sapUiTableM.sapUiTableTouch {
+
+	::-webkit-scrollbar-thumb {
+		background-color: darken(@sapUiLightestBG,13);
+		border-top: 0.125rem solid darken(@sapUiLightestBG,3);
+		border-left: 0.125rem solid darken(@sapUiLightestBG,3);
+		border-right: 0.125rem solid darken(@sapUiLightestBG,3);
+		border-bottom: 0.125rem solid darken(@sapUiLightestBG,3);
+		width: 0.25rem;
+		height: 0.25rem;
+	}
+	
+	::-webkit-scrollbar {
+		background-color: darken(@sapUiLightestBG,3);
+	}
+
+	&.sapUiTableVScr {
+		.sapUiTableHSb {
+			padding-right: 0.5rem;
+			height: 0.5rem;
+		}
+
+		.sapUiTableVSb {
+			width: 0.45rem;
+		}
+
+		.sapUiTableCtrlScr, .sapUiTableColHdrScr {
+			margin-right: 0.45rem;
+		}
+	}
+}
+
+.sapUiSizeCozy .sapUiTable {
+	/* Hover */
+	.sapUiTableCol:hover,
+	.sapUiTableColRowHdr:hover,
+	tr.sapUiTableGroupHeader.sapUiTableRowHvr,
+	.sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableRowHvr,
+	.sapUiTableCtrl .sapUiTableRowHvr > td {
+		background-color: contrast(@sapUiExtraLightBG, darken(@sapUiExtraLightBG, 6), lighten(@sapUiExtraLightBG, 6));
+	}
+
+	/* Active Header */
+	.sapUiTableColRowHdr:active, .sapUiTableCol:active {
+		background-color: @sapUiHighlight;
+		
+		.sapUiLbl {
+			color: @sapUiTextInverted;
+		}
+	}
+}
 /* END "Table.less" */
 

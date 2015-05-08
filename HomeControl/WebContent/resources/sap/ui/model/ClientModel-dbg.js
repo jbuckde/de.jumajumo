@@ -4,15 +4,7 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-/**
- * client-based DataBinding
- *
- * @namespace
- * @name sap.ui.model.json
- * @public
- */
-
-// Provides the JSON object based model implementation
+// Provides client-based DataBinding implementation
 sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBinding', './ClientPropertyBinding', './ClientTreeBinding', './Model'],
 	function(jQuery, ClientContextBinding, ClientListBinding, ClientPropertyBinding, ClientTreeBinding, Model) {
 	"use strict";
@@ -26,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @param {object} oData URL where to load the data from
 	 * @constructor
@@ -64,20 +56,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	};
 	
 	/**
-	 * Private method iterating the registered bindings of this model instance and initiating their check for update
-	 *
-	 * @param {boolean} bForceupdate
-	 *
-	 * @private
-	 */
-	ClientModel.prototype.checkUpdate = function(bForceupdate) {
-		var aBindings = this.aBindings.slice(0);
-		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkUpdate(bForceupdate);
-		});
-	};
-	
-	/**
 	 * @see sap.ui.model.Model.prototype.bindElement
 	 *
 	 */
@@ -98,10 +76,13 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 		// resolve path and create context
 		var sContextPath = this.resolve(sPath, oContext),
 			oNewContext = (sContextPath == undefined) ? undefined : this.getContext(sContextPath ? sContextPath : "/");
-		  if (!oNewContext) {
-			  oNewContext = null;
-		  }
-		fnCallBack(oNewContext);
+		if (!oNewContext) {
+			oNewContext = null;
+		}
+		if (fnCallBack) {
+			fnCallBack(oNewContext);
+		}
+		return oNewContext;
 	};
 	
 	
@@ -144,7 +125,7 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 	 * @public
 	 */
 	ClientModel.prototype.destroy = function() {
-	
+		Model.prototype.destroy.apply(this, arguments);
 		// Abort pending requests
 		if (this.aPendingRequestHandles) {
 			for (var i = this.aPendingRequestHandles.length - 1; i >= 0; i--) {
@@ -156,8 +137,6 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 			}
 			delete this.aPendingRequestHandles;
 		}
-	
-		Model.prototype.destroy.apply(this, arguments);
 	};
 	
 	/**

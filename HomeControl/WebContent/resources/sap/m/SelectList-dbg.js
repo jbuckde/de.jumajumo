@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/**
 		 * Constructor for a new SelectList.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+		 * @param {string} [sId] id for the new control, generated automatically if no id is given
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.26.10
+		 * @version 1.28.5
 		 *
 		 * @constructor
 		 * @public
@@ -28,131 +28,73 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @alias sap.m.SelectList
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ { metadata : {
+		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ { metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * Determines whether the user can change the selection.
 				 */
-				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				enabled : { type: "boolean", group: "Behavior", defaultValue: true },
+
 				/**
 				 * Defines the width of the control. This value can be provided in all CSS units.
 				 */
-				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "auto"},
+				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto" },
 
 				/**
 				 * Defines the maximum width of the control. This value can be provided in all CSS units.
 				 */
-				maxWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "100%"},
+				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" },
 
 				/**
 				 * Key of the selected item. If the key has no corresponding aggregated item, no changes will apply. If duplicate keys exist, the first item matching the key is used.
 				 */
-				selectedKey : {type : "string", group : "Data", defaultValue : ""},
+				selectedKey: { type: "string", group: "Data", defaultValue: "" },
 
 				/**
 				 * Id of the selected item. If the id has no corresponding aggregated item, no changes will apply.
 				 */
-				selectedItemId : {type : "string", group : "Misc", defaultValue : ""}
+				selectedItemId: { type: "string", group: "Misc", defaultValue: "" }
 			},
-			defaultAggregation : "items",
-			aggregations : {
+			defaultAggregation: "items",
+			aggregations: {
 
 				/**
 				 * Aggregation of items to be displayed.
 				 */
-				items : {type : "sap.ui.core.Item", multiple : true, singularName : "item", bindable : "bindable"}
+				items: { type: "sap.ui.core.Item", multiple: true, singularName: "item", bindable: "bindable" }
 			},
-			associations : {
+			associations: {
 
 				/**
 				 * Sets or retrieves the selected item from the aggregation named items.
 				 */
-				selectedItem : {type : "sap.ui.core.Item", multiple : false}
+				selectedItem: { type: "sap.ui.core.Item", multiple: false },
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 			},
-			events : {
+			events: {
 
 				/**
 				 * Occurs when the user changes the selected item.
 				 */
-				selectionChange : {
-					parameters : {
+				selectionChange: {
+					parameters: {
 
 						/**
 						 * The selected item.
 						 */
-						selectedItem : {type : "sap.ui.core.Item"}
+						selectedItem: { type: "sap.ui.core.Item" }
 					}
 				}
 			}
 		}});
-
-		/**
-		 * Retrieves the item with the given key from the aggregation named items.
-		 * If duplicate keys exist, the first item matching the key is returned.
-		 *
-		 * @name sap.m.SelectList#getItemByKey
-		 * @function
-		 * @param {string} sKey
-		 *         An item key that identifies the item to retrieve.
-		 * @type sap.ui.core.Item
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Retrieves the first item from the aggregation named items.
-		 *
-		 * @name sap.m.SelectList#getFirstItem
-		 * @function
-		 * @type sap.ui.core.Item
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Retrieves the last item from the aggregation named items.
-		 *
-		 * @name sap.m.SelectList#getLastItem
-		 * @function
-		 * @type sap.ui.core.Item
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Retrieves the item from the aggregation named items at the given 0-based index.
-		 *
-		 * @name sap.m.SelectList#getItemAt
-		 * @function
-		 * @param {int} iIndex
-		 *         Index of the item to return.
-		 * @type sap.ui.core.Item
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Retrieves the enabled items from the aggregation named items.
-		 *
-		 * @name sap.m.SelectList#getEnabledItems
-		 * @function
-		 * @type sap.ui.core.Item[]
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Clear the selection.
-		 *
-		 * @name sap.m.SelectList#clearSelection
-		 * @function
-		 * @type sap.m.SelectList
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
 
 		/* =========================================================== */
 		/* Private methods and properties                              */
@@ -241,6 +183,15 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			return oDomRef ? Array.prototype.slice.call(oDomRef.querySelectorAll(CSS_CLASS + ":not(" + CSS_CLASS + "Disabled)")) : [];
 		};
 
+		SelectList.prototype._handleARIAActivedescendant = function() {
+			var oActiveDescendant = jQuery(document.activeElement).control(0),
+				oDomRef = this.getDomRef();
+
+			if (oActiveDescendant && oDomRef) {
+				oDomRef.setAttribute("aria-activedescendant", oActiveDescendant.getId());
+			}
+		};
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
@@ -260,34 +211,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @private
 		 */
 		SelectList.prototype.onAfterRendering = function() {
-
-			// item navigation breaks scrolling in iScroll
-			if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android && sap.ui.Device.os.version < 4.1) {
-				return;
-			}
-
-			var oDomRef = this.getDomRef();
-
-			// initialize the item navigation and add apply it to the control (only once)
-			if (!this._oItemNavigation) {
-				this._oItemNavigation = new ItemNavigation(null, null, !this.getEnabled() /* not in tab chain */);
-				this.addDelegate(this._oItemNavigation);
-			}
-
-			// set the root dom node that surrounds the items
-			this._oItemNavigation.setRootDomRef(oDomRef);
-
-			// set the array of DOM elements representing the items
-			this._oItemNavigation.setItemDomRefs(this._queryEnabledItemsDomRefs(oDomRef));
-
-			// turn of the cycling
-			this._oItemNavigation.setCycling(false);
-
-			// set the selected index
-			this._oItemNavigation.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
-
-			// set the page size
-			this._oItemNavigation.setPageSize(10);
+			this.createItemNavigation();
 		};
 
 		/**
@@ -395,6 +319,16 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			}
 		};
 
+		/**
+		 * Handle after an item is focused.
+		 *
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @private
+		 */
+		SelectList.prototype.onAfterFocus = function(oControlEvent) {
+			this._handleARIAActivedescendant();
+		};
+
 		/* =========================================================== */
 		/* API methods                                                 */
 		/* =========================================================== */
@@ -455,13 +389,15 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			this.setProperty("selectedKey", vItem ? vItem.getKey() : "", true);
 
 			if (oSelectedItem) {
-				oSelectedItem.$().removeClass(CSS_CLASS + "ItemSelected");
+				oSelectedItem.$().removeClass(CSS_CLASS + "ItemSelected")
+								.attr("aria-selected", "false");
 			}
 
 			oSelectedItem = this.getSelectedItem();
 
 			if (oSelectedItem) {
-				oSelectedItem.$().addClass(CSS_CLASS + "ItemSelected");
+				oSelectedItem.$().addClass(CSS_CLASS + "ItemSelected")
+								.attr("aria-selected", "true");
 			}
 		};
 
@@ -493,13 +429,11 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 
 			// the aggregation items is not bound or
 			// it is bound and the data is already available
-			} else if (!this.isBound("items") || this._bDataAvailable) {
-
-				vItem = this.getDefaultSelectedItem();
+			} else if (this.getDefaultSelectedItem() && (!this.isBound("items") || this._bDataAvailable)) {
 
 				// update and synchronize "selectedItem" association,
 				// "selectedKey" and "selectedItemId" properties
-				this.setSelection(vItem);
+				this.setSelection(this.getDefaultSelectedItem());
 			}
 		};
 
@@ -643,6 +577,38 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 */
 		SelectList.prototype.clearSelection = function() {
 			this.setSelection(null);
+		};
+
+		/*
+		 * Creates the item navigation.
+		 *
+		 */
+		SelectList.prototype.createItemNavigation = function() {
+			var oDomRef;
+
+			// initialize the item navigation and add apply it to the control (only once)
+			if (!this._oItemNavigation) {
+				this._oItemNavigation = new ItemNavigation(null, null, !this.getEnabled() /* not in tab chain */);
+				this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this.onAfterFocus, this);
+				this.addEventDelegate(this._oItemNavigation);
+			}
+
+			oDomRef = this.getDomRef();
+
+			// set the root dom node that surrounds the items
+			this._oItemNavigation.setRootDomRef(oDomRef);
+
+			// set the array of DOM elements representing the items
+			this._oItemNavigation.setItemDomRefs(this._queryEnabledItemsDomRefs(oDomRef));
+
+			// turn of the cycling
+			this._oItemNavigation.setCycling(false);
+
+			// set the selected index
+			this._oItemNavigation.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
+
+			// set the page size
+			this._oItemNavigation.setPageSize(10);
 		};
 
 		/* ----------------------------------------------------------- */

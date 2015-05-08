@@ -5,8 +5,8 @@
  */
 
 // Provides control sap.m.Label.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/LabelEnablement'],
+	function(jQuery, library, Control, LabelEnablement) {
 	"use strict";
 
 
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @implements sap.ui.core.Label,sap.ui.core.IShrinkable
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -78,17 +78,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			labelFor : {type : "sap.ui.core.Control", multiple : false}
 		}
 	}});
-
-
-	/*
-	 * As own function to make possible to overwrite it (e.G. from Form).
-	 */
-	Label.prototype.getLabelForRendering = function(){
-
-		return this.getLabelFor();
-
-	};
-
+	
 
 	Label.prototype.setText = function(sText) {
 		var sValue = this.getText();
@@ -112,6 +102,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
+	
+	//Enrich Label functionality
+	LabelEnablement.enrich(Label.prototype);
 
 	return Label;
 

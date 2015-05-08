@@ -47,6 +47,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		rm.writeAttributeEscaped("tabindex","0");
 
+		// ARIA
+		rm.writeAccessibilityState(oCarousel, {
+			role: "list"
+		});
+
 		rm.write(">");
 
 		var aPages = oCarousel.getPages();
@@ -71,7 +76,13 @@ sap.ui.define(['jquery.sap.global'],
 			if (sPageIndicatorPlacement === sap.m.PlacementType.Bottom) {
 				rm.write(" sapMCrslBottomOffset");
 			}
-			rm.write("'>");
+			rm.write("' id='" + oCarousel.sId + "-" + oPage.sId + "-slide'");
+			// ARIA
+			rm.writeAccessibilityState(oPage, {
+				role:"listitem"
+			});
+
+			rm.write(">");
 				rm.renderControl(oCarousel._createScrollContainer(oPage, iIndex));
 			rm.write("</div>");
 		};
@@ -87,11 +98,11 @@ sap.ui.define(['jquery.sap.global'],
 		if (sap.ui.Device.system.desktop && iPageCount > 1) {
 			//heads up controls for desktop browsers
 			rm.write("<div class='sapMCrslControls sapMCrslHud'>");
-				rm.write("<a class='sapMCrslPrev' href='#' data-slide='prev' tabIndex='-1'><div class='sapMCrslHudInner'>");
+				rm.write("<a class='sapMCrslPrev' href='#' data-slide='prev' tabindex='-1'><div class='sapMCrslHudInner'>");
 				rm.renderControl(oCarousel._getNavigationArrow('left'));
 				rm.write("</div></a>");
 
-				rm.write("<a class='sapMCrslNext' href='#' data-slide='next' tabIndex='-1'><div class='sapMCrslHudInner'>");
+				rm.write("<a class='sapMCrslNext' href='#' data-slide='next' tabindex='-1'><div class='sapMCrslHudInner'>");
 				rm.renderControl(oCarousel._getNavigationArrow('right'));
 				rm.write("</div></a>");
 			rm.write("</div>");
@@ -117,6 +128,8 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	CarouselRenderer._renderPageIndicator = function(rm, iPageCount, bBottom){
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+
 		//page indicator div
 		if (iPageCount > 1) {
 			rm.write("<div class='sapMCrslControls sapMCrslBulleted" +
@@ -124,7 +137,7 @@ sap.ui.define(['jquery.sap.global'],
 					"'>");
 			for ( var i = 1; i <= iPageCount; i++) {
 				//item span
-				rm.write("<span data-slide=" + i + ">" + i + "</span>");
+				rm.write("<span role='img' data-slide=" + i + " aria-label='" + oResourceBundle.getText('CAROUSEL_POSITION', [i, iPageCount]) + "'>" + i + "</span>");
 			}
 			rm.write("</div>");
 		}

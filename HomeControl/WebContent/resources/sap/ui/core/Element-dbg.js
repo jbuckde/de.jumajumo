@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -66,16 +66,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 			"abstract" : true,
 			publicMethods : [ "getId", "getMetadata", "getTooltip_AsString", "getTooltip_Text", "getModel", "setModel", "hasModel", "bindElement", "unbindElement", "getElementBinding", "prop", "getLayoutData", "setLayoutData" ],
 			library : "sap.ui.core",
-			properties : {
-				/*
-				 * TODO model id as a property as soon as write-once-during-init properties become available
-				 * can't yet declare it as a property: would show up in ControlTree and applySettings would allow to modify id
-				 * 
-				 * The unique identifier within a page, either configured or automatically generated.
-				 *
-				id : {name : "id", type : "string", group : "Identification", defaultValue : '', readOnly : true}
-				*/
-			},
 			aggregations : {
 				
 				/**
@@ -477,10 +467,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 * @param {any}     [oValue] value to set the property to
 	 * @return {any|sap.ui.core.Element} Returns <code>this</code> to allow method chaining in case of setter and the property value in case of getter
 	 * @public
+	 * @deprecated Since 1.28.0 The contract of this method is not fully defined and its write capabilities overlap with applySettings
 	 */
 	Element.prototype.prop = function(sPropertyName, oValue) {
 	
-		var oPropertyInfo = this.getMetadata().getJSONKeys()[sPropertyName];
+		var oPropertyInfo = this.getMetadata().getAllSettings()[sPropertyName];
 		if (oPropertyInfo) {
 			if (arguments.length == 1) {
 				// getter
@@ -697,17 +688,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	 * @public
 	 */
 	Element.prototype.focus = function () {
-		var oFocusDomRef = this.getFocusDomRef();
-	
-		if (oFocusDomRef) {
-			try {
-				oFocusDomRef.focus();
-			} catch (ex) { // IE8 fails on focusing certain elements; IE9+10 and all other current browsers don't fail
-				// the element does not exist or is not focusable; there is no information what to focus instead
-				var id = oFocusDomRef.id ? " (id: " + oFocusDomRef.id + ")" : " ";
-				jQuery.sap.log.warning("DOM element" + id + " in " + this.toString() + " which should be focused cannot be focused: " + ex.message);
-			}
-		}
+		jQuery.sap.focus(this.getFocusDomRef());
 	};
 	
 	/**

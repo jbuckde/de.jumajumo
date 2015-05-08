@@ -20,122 +20,102 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.26.10
+		 * @version 1.28.5
 		 *
 		 * @constructor
 		 * @public
 		 * @alias sap.m.Slider
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata : {
+		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * Defines the width of the slider, this value can be provided in %, em, px… and all possible CSS units.
 				 */
-				width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '100%'},
+				width: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%" },
 
 				/**
 				 * Determines whether the user can change the slider value.
 				 */
-				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				enabled: { type: "boolean", group: "Behavior", defaultValue: true },
 
 				/**
 				 * The name property to be used in the HTML code for the slider (e.g. for HTML forms that send data to the server via submit).
 				 */
-				name : {type : "string", group : "Misc", defaultValue : ""},
+				name: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
 				 * The minimum value of the slider.
 				 */
-				min : {type : "float", group : "Data", defaultValue : 0},
+				min: { type: "float", group: "Data", defaultValue: 0 },
 
 				/**
 				 * The maximum value of the slider.
 				 */
-				max : {type : "float", group : "Data", defaultValue : 100},
+				max: { type: "float", group: "Data", defaultValue: 100 },
 
 				/**
 				 * Define the amount of units to change the slider when adjusting by drag and drop.
 				 *
-				 * Defines the size of the slider's selection intervals. (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10, 15, 20).
+				 * Defines the size of the slider's selection intervals. (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10).
 				 *
 				 * The step must be positive, if a negative number is provided, the default value will be used instead.
 				 * If the width of the slider converted to pixels is less than the range (max – min), the value will be rounded to multiples of the step size.
 				 */
-				step : {type : "float", group : "Data", defaultValue : 1},
+				step: { type: "float", group: "Data", defaultValue: 1 },
 
 				/**
 				 * Show a progress bar indicator.
 				 */
-				progress : {type : "boolean", group : "Misc", defaultValue : true},
+				progress: { type: "boolean", group: "Misc", defaultValue: true },
 
 				/**
 				 * Define the value of the slider.
 				 *
 				 * If the value is lower/higher than the allowed minimum/maximum, the value of the properties "min"/"max" are used instead.
 				 */
-				value : {type : "float", group : "Data", defaultValue : 0}
+				value: { type: "float", group: "Data", defaultValue: 0 }
 			},
-			events : {
+			associations: {
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			},
+			events: {
 
 				/**
 				 * This event is triggered after the end user finishes interacting, if there is any change.
 				 */
-				change : {
-					parameters : {
+				change: {
+					parameters: {
 
 						/**
 						 * The current value of the slider after a change.
 						 */
-						value : {type : "float"}
+						value: { type: "float" }
 					}
 				},
 
 				/**
 				 * This event is triggered during the dragging period, each time the slider value changes.
 				 */
-				liveChange : {
-					parameters : {
+				liveChange: {
+					parameters: {
 
 						/**
 						 * The current value of the slider after a live change.
 						 */
-						value : {type : "float"}
+						value: { type: "float" }
 					}
 				}
 			}
 		}});
-
-		/**
-		 * Increments the slider value by multiplying the step with the given parameter.
-		 *
-		 * The default value for the step is 1.
-		 *
-		 * @name sap.m.Slider#stepUp
-		 * @function
-		 * @param {int} iIStep
-		 *         The number of steps the slider goes up.
-		 * @type sap.m.Slider
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
-
-		/**
-		 * Decrements the slider value by multiplying the step with the given parameter.
-		 *
-		 * The default value for the step is 1.
-		 *
-		 * @name sap.m.Slider#stepDown
-		 * @function
-		 * @param {int} iIStep
-		 *         The number of steps the slider goes down.
-		 * @type sap.m.Slider
-		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-		 */
 
 		EnabledPropagator.apply(Slider.prototype, [true]);
 
@@ -282,11 +262,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				fMax = this.getMax(),
 				fStep = this.getStep(),
 				fValue = this.getValue(),
-				sIdSelector,
-				fModStepVal,
-				sPerValue,
-				oDomRef,
-				oHandleDomRef;
+				fModStepVal;
 
 			// validate the new value before arithmetic calculations
 			if (typeof fNewValue !== "number" || !isFinite(fNewValue)) {
@@ -313,37 +289,47 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 			// update the value and suppress re-rendering
 			this.setProperty("value", fNewValue, true);
 
-			// whether the value has changed and the control is in the DOM
-			if ((fValue !== this.getValue()) && (oDomRef = this.getDomRef())) {
-
-				sIdSelector = "#" + this.getId();
-				sPerValue = this._getPercentOfValue(fNewValue) + "%";
-				oHandleDomRef = oDomRef.querySelector(sIdSelector + "-handle");
-
-				if (!!this.getName()) {
-
-					// update the input
-					oDomRef.querySelector(sIdSelector + "-input").setAttribute("value", fNewValue);
-				}
-
-				if (this.getProgress()) {
-
-					// update the progress indicator
-					oDomRef.querySelector(sIdSelector + "-progress").style.width = sPerValue;
-				}
-
-				// update the position of the handle
-				oHandleDomRef.style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = sPerValue;
-
-				// update the tooltip
-				oHandleDomRef.title = fNewValue;
-
-				// update the WAI-ARIA attribute values
-				oHandleDomRef.setAttribute("aria-valuenow", fNewValue);
-				oHandleDomRef.setAttribute("aria-valuetext", fNewValue);
+			// update the value in DOM only when it has changed
+			if (fValue !== this.getValue()) {
+				this._setDomValue(fNewValue);
 			}
 
 			return this;
+		};
+
+		Slider.prototype._setDomValue = function(fNewValue) {
+			var sIdSelector,
+				sPerValue,
+				oHandleDomRef,
+				oDomRef = this.getDomRef();
+
+			// the control is in the DOM
+			if (!oDomRef) {
+				return;
+			}
+
+			sIdSelector = "#" + this.getId();
+			sPerValue = this._getPercentOfValue(fNewValue) + "%";
+			oHandleDomRef = oDomRef.querySelector(sIdSelector + "-handle");
+
+			if (!!this.getName()) {
+				oDomRef.querySelector(sIdSelector + "-input").setAttribute("value", fNewValue);
+			}
+
+			if (this.getProgress()) {
+
+				// update the progress indicator
+				oDomRef.querySelector(sIdSelector + "-progress").style.width = sPerValue;
+			}
+
+			// update the position of the handle
+			oHandleDomRef.style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = sPerValue;
+
+			// update the tooltip
+			oHandleDomRef.title = fNewValue;
+
+			// update the ARIA attribute value
+			oHandleDomRef.setAttribute("aria-valuenow", fNewValue);
 		};
 
 		/**
@@ -877,6 +863,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @type sap.m.Slider
 		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Slider.prototype.stepUp = function(iStep) {
 			return this.setValue(this.getValue() + (this._validateStep(iStep) * this.getStep()));
@@ -889,6 +876,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @type sap.m.Slider
 		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Slider.prototype.stepDown = function(iStep) {
 			return this.setValue(this.getValue() - (this._validateStep(iStep) * this.getStep()));

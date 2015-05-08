@@ -13,14 +13,14 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	/**
 	 * Constructor for a new DropdownBox.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * The control provides a field that allows end users to an entry out of a list of pre-defined items. The choosable items can be provided in the form of complete list boxes or single list items.
 	 * Binding (see DataBinding) is also supported for list items.
 	 * @extends sap.ui.commons.ComboBox
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -86,10 +86,10 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		this._oValueBeforeOpen = null;
 		this.__aItems = null;
 		this._iCursorPosBeforeBackspace = null;
-		/** 
-		 * Array of ListItems containing SearchHelp followed by Separator 
-		 * @type {sap.ui.core.ListItem[]} 
-		 * @private 
+		/**
+		 * Array of ListItems containing SearchHelp followed by Separator
+		 * @type {sap.ui.core.ListItem[]}
+		 * @private
 		 */
 		this._searchHelpItem = null;
 		this._iItemsForHistory = 10; // UX defined history shall appear if there are more than 10 items
@@ -535,6 +535,11 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 
 	DropdownBox.prototype.oninput = function(oEvent) {
 
+		if (this.mobile) {
+			// as no real input is possible on mobile devices
+			return;
+		}
+
 		if (!this._realOninput(oEvent)) {
 			return;
 		}
@@ -600,9 +605,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			} // 'normalize' cursor position for upcoming handling... especially IE8
 			this._iCursorPosBeforeBackspace = null; // forget being called by backspace handling
 			bValid = this._doTypeAhead($Ref.val().substr(0, iCursorPos - 1), "");
-		}
-		// this must happen to check for valid entry after paste and if required -> rollback
-		else if (!(bValid = this._doTypeAhead("", $Ref.val()))) {
+		} else if (!(bValid = this._doTypeAhead("", $Ref.val()))) {
+			// this must happen to check for valid entry after paste and if required -> rollback
 			$Ref.val(this._oValueBeforePaste);
 		}
 		// Ensure visibility as well as filtering and new height is applied
@@ -1627,7 +1631,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				oListBox.removeItem(this.__oSeparator);
 			}
 		}
-		// new items are added automatically by opening listbox (no support to change property while 
+		// new items are added automatically by opening listbox (no support to change property while
 		// listbox is open)
 
 	};

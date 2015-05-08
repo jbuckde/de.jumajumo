@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public

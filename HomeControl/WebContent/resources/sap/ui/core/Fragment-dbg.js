@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 	 * @class
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @public
 	 * @alias sap.ui.core.Fragment
 	 */
@@ -46,6 +46,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 		metadata: {
 			properties: {
 				type: "string"
+			},
+			specialSettings: {
+				/*
+				 * Name of the fragment to load 
+				 */
+				fragmentName : true,
+				/*
+				 * Content of the fragment
+				 */
+				fragmentContent : true,
+				/*
+				 * An enclosing view that contains this instance of the fragment (optional)
+				 */
+				containingView : true,
+				/*
+				 * A controller of a containing View that should be used by this fragment (optional)
+				 */
+				oController : true,
+				/*
+				 * The ID of this fragment (optional)
+				 */
+				sId : true
 			}
 		},
 		
@@ -536,9 +558,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 				
 				this._oContainingView = mSettings.containingView || this;
 				
-				var sHTML = mSettings.fragmentContent || _getHTMLTemplate(mSettings.fragmentName);
+				var vHTML = mSettings.fragmentContent || _getHTMLTemplate(mSettings.fragmentName);
 				this._oTemplate = document.createElement("div");
-				var vHTML = sap.ui.core.RenderManager.prepareHTML5(sHTML);
 	
 				if (typeof vHTML === "string") {
 					this._oTemplate.innerHTML = vHTML;

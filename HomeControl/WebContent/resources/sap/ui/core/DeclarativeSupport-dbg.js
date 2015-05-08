@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @class Static class for enabling declarative UI support.  
 	 *
 	 * @author Peter Muessig, Tino Butz
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @since 1.7.0
 	 * @public
 	 * @alias sap.ui.core.DeclarativeSupport
@@ -34,6 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 */
 	DeclarativeSupport.attributes = {
 		"data-sap-ui-type" : true,
+		"data-sap-ui-id" : true,
 		"data-sap-ui-aggregation" : true,
 		"data-sap-ui-default-aggregation" : true,
 		"data-sap-ui-binding" : function(sValue, mSettings) {
@@ -286,6 +287,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 						} else {
 							throw new Error('Control "' + mSettings.id + '": The function "' + sValue + '" for the event "' + sName + '" is not defined');
 						}
+					} else {
+						jQuery.sap.assert((sName === "id"), "DeclarativeSupport encountered unknown setting '" + sName + "' for class '" + fnClass.getMetadata().getName() + "' (value:'" + sValue + "')");
 					}
 				} else if (typeof oSpecialAttributes[sName] === "function") {
 					oSpecialAttributes[sName](sValue, mSettings, fnClass);
@@ -429,7 +432,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @private
 	 */
 	DeclarativeSupport._getProperty = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllProperties()[sName];
+		return fnClass.getMetadata().getProperty(sName);
 	};
 
 
@@ -499,7 +502,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @private
 	 */
 	DeclarativeSupport._getAssociation = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllAssociations()[sName];
+		return fnClass.getMetadata().getAssociation(sName);
 	};
 
 	/**
@@ -511,7 +514,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @private
 	 */
 	DeclarativeSupport._getAggregation = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllAggregations()[sName];
+		return fnClass.getMetadata().getAggregation(sName);
 	};
 
 
@@ -524,7 +527,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 	 * @private
 	 */
 	DeclarativeSupport._getEvent = function(fnClass, sName) {
-		return fnClass.getMetadata().getAllEvents()[sName];
+		return fnClass.getMetadata().getEvent(sName);
 	};
 
 

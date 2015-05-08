@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -33,22 +33,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	
 		library : "sap.m",
 		properties : {
-	
+
 			/**
-			 * The name of the parameter.
+			 * Specifies the name of the parameter.
 			 * @since 1.12.2
 			 */
 			name : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
-			 * The value of the parameter.
+			 * Specifies the value of the parameter.
 			 * @since 1.12.2
 			 */
 			value : {type : "string", group : "Data", defaultValue : null}
 		}
 	}});
-	
-	
 
 	return UploadCollectionParameter;
 

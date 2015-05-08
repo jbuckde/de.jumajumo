@@ -1,5 +1,5 @@
 /*!
- * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+# * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @implements sap.ui.core.Toolbar
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -81,6 +81,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oInnerRef = null;
 		this.oOverflowDomRef = null;
 		this.bHasRightItems = false;
+		this._bRendering = false;
 	
 		this.bRtl = sap.ui.getCore().getConfiguration().getRTL();
 	
@@ -103,6 +104,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.$("mn").unbind("keydown", this._handleKeyDown);
 	
 		this.bFirstTime = true;
+		this._bRendering = true;
 	};
 	
 	/**
@@ -111,7 +113,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Toolbar.prototype.onAfterRendering = function() {
-	
+		this._bRendering = false;
 		this.oDomRef = this.getDomRef();
 		this.oInnerRef = this.oDomRef.firstChild.firstChild;
 		jQuery(this.oInnerRef).css("visibility", "visible");
@@ -191,6 +193,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Toolbar.prototype.updateAfterResize = function(bClearTabStops) {
+		if (this._bRendering) {
+			return;
+		}
+		
 		var visibleItemInfo = this.getVisibleItemInfo();
 	
 		// store to detect next change of visible items caused by resizing

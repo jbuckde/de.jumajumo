@@ -391,7 +391,7 @@ sap.ui.define("sap/ui/commons/ButtonRenderer",['jquery.sap.global'],
 
 	/**
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @namespace
 	 */
 	var ButtonRenderer = {
@@ -2019,23 +2019,14 @@ sap.ui.define("sap/ui/commons/LabelRenderer",['jquery.sap.global', 'sap/ui/core/
 		rm.write("<label");
 		rm.writeControlData(oLabel);
 	
+		sap.ui.core.LabelEnablement.writeLabelForAttribute(oRenderManager, oLabel);
+		
+		var oFor = oLabel._getLabeledControl();
 		var sTooltip = oLabel.getTooltip_AsString();
-	
-		if (oLabel.getLabelForRendering()) {
-			var oFor = sap.ui.getCore().byId(oLabel.getLabelForRendering());
-			rm.write(" for=\"");
-			// for some controls the label must point to an special HTML element, not the outer one.
-			if ( oFor && oFor.getIdForLabel) {
-				rm.write(oFor.getIdForLabel());
-			} else {
-				rm.write(oLabel.getLabelForRendering());
-			}
-			rm.write("\"");
-	
-			if ((!sTooltip || sTooltip == "") && oFor && oFor.getTooltip_AsString() && oFor.getTooltip_AsString() != "") {
-				// If label has no own tooltip use tooltip of the labeled control
-				sTooltip = oFor.getTooltip_AsString();
-			}
+		
+		if ((!sTooltip || sTooltip == "") && oFor && oFor.getTooltip_AsString() && oFor.getTooltip_AsString() != "") {
+			// If label has no own tooltip use tooltip of the labeled control
+			sTooltip = oFor.getTooltip_AsString();
 		}
 	
 		// check whether a 'required' marker is needed
@@ -2243,12 +2234,12 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 	 * ListBox Renderer
 	 *
 	 * @author d046011
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @namespace
 	 */
 	var ListBoxRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the ListBox, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -2257,7 +2248,7 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 	 */
 	ListBoxRenderer.render = function(rm, oListBox) {
 		var r = ListBoxRenderer;
-	
+
 		// TODO: this is a prototype experimenting with an alternative to onAfterRendering for size calculations and corrections
 		// Do not copy this approach for now!
 		// Main problem: renderers are supposed to create a string, not DOM elements, e.g. so they could also run on the server. At least that was the idea in former times.
@@ -2291,13 +2282,13 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 		if (bStd) {
 			rm.addClass("sapUiLbxStd"); // neither readonly nor disabled - this helps the CSS
 		}
-	
+
 		// Open the containing <div> tag
 		rm.write("<div");
-	
+
 		rm.writeControlData(oListBox);
 		rm.writeAttribute("tabindex", "-1");
-	
+
 		var sWidth = oListBox.getWidth();
 		if (sWidth) {
 			rm.addStyle("width", sWidth);
@@ -2309,13 +2300,13 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 				rm.addClass("sapUiLbxFixed");
 			}
 		}
-	
+
 		if (!sWidth || (sWidth == "auto") || (sWidth == "inherit")) {
 			rm.addClass("sapUiLbxFlexWidth");
 		}
-	
+
 		rm.writeClasses();
-	
+
 		// min/max-widths need fixes in IE
 		var sMinWidth = oListBox.getMinWidth();
 		var sMaxWidth = oListBox.getMaxWidth();
@@ -2329,7 +2320,7 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 		if (sMaxWidth) {
 			rm.addStyle("max-width", sMaxWidth);
 		}
-	
+
 		if (oListBox._bHeightInItems) {
 			if (oListBox._sTotalHeight != null) {
 				rm.addStyle("height", oListBox._sTotalHeight); // calculated height available
@@ -2341,56 +2332,55 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 			}
 		}
 		rm.writeStyles();
-	
+
 		var tooltip = oListBox.getTooltip_AsString();
 		if (tooltip) {
 			rm.writeAttributeEscaped("title", tooltip);
 		}
 		rm.write(">");
-	
+
 		this.renderItemList(oListBox, rm);
-	
+
 		rm.write("</div>");
 	};
-	
+
 	/**
 	 * Renders all items
 	 */
 	ListBoxRenderer.renderItemList = function (oListBox, rm) {
-	
+
 		// Write the start tag
 		rm.write("<ul id='" + oListBox.getId() + "-list'");
-	
+
 		rm.writeAttribute("tabindex", this.getTabIndex(oListBox));
-	
+
 		// add ARIA stuff
 		rm.writeAccessibilityState(oListBox, {
 			role: "listbox",
 			multiselectable: oListBox.getAllowMultiSelect()
 		});
 		rm.write(">");
-	
+
 		var items = oListBox.getItems(),
 			iRealItemIndex = 0, // to not count separators
 			iRealItemCount = 0;
-	
+
 		for (var i = 0; i < items.length; i++) { // TODO: required only for ARIA setsize
 			if (!(items[i] instanceof sap.ui.core.SeparatorItem)) {
 				iRealItemCount++;
 			}
 		}
-	
-		var bMarkLastChild = (!!sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version == 8)); // IE8 workaround for "last-child"
+
 		var bDisplaySecondaryValues = oListBox.getDisplaySecondaryValues();
-	
+
 		// Write the rows with the items
 		for (var i = 0; i < items.length; i++) {
 			var item = items[i];
-	
+
 			if (item instanceof sap.ui.core.SeparatorItem) {
 				// draw a separator
 				rm.write("<div id='", item.getId(), "' class='sapUiLbxSep' role='separator'><hr/>");
-	
+
 				// colspan is not available, so add more separator cells
 				if (oListBox.getDisplayIcons()) {
 					rm.write("<hr/>");
@@ -2399,13 +2389,13 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 					rm.write("<hr/>");
 				}
 				rm.write("</div>");
-	
+
 			} else {
 				// regular ListItem or just a plain Item
 				rm.write("<li");
 				rm.writeElementData(item);
 				rm.writeAttribute("data-sap-ui-lbx-index", i);
-	
+
 				rm.addClass("sapUiLbxI");
 				if (!item.getEnabled()) {
 					rm.addClass("sapUiLbxIDis");
@@ -2415,18 +2405,18 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 					rm.addClass("sapUiLbxISel");
 				}
 				rm.writeClasses();
-	
+
 				// get the text values
 				var sText = item.getText();
 				var sSecondaryValue = item.getAdditionalText ? item.getAdditionalText() : ""; // allow usage of sap.ui.core.Item
-	
+
 				// tooltip
 				if (item.getTooltip_AsString()) {
 					rm.writeAttributeEscaped("title", item.getTooltip_AsString());
 				} else {
 					rm.writeAttributeEscaped("title", sText + ((bDisplaySecondaryValues && sSecondaryValue) ? "  --  " + sSecondaryValue : ""));
 				}
-	
+
 				// ARIA
 				rm.writeAccessibilityState(item, {
 					role: "option",
@@ -2434,10 +2424,10 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 					setsize: iRealItemCount,
 					posinset: iRealItemIndex + 1
 				});
-	
+
 				rm.write(">");
-	
-	
+
+
 				// write icon column if required
 				if (oListBox.getDisplayIcons()) {
 					var sIcon;
@@ -2469,12 +2459,9 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 					}
 					rm.write("</span>");
 				}
-	
+
 				// write the main text
 				rm.write("<span class='sapUiLbxITxt");
-				if (bMarkLastChild && !bDisplaySecondaryValues) {
-					rm.write(" sapUiLbxILastChild");
-				}
 				rm.write("'");
 				rm.writeAttribute("id", item.getId() + "-txt");
 				var sTextAlign = ListBoxRenderer.getTextAlign(oListBox.getValueTextAlign(), null);
@@ -2487,13 +2474,10 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 				} else {
 					rm.writeEscaped(sText);
 				}
-	
+
 				// Potentially display second column
 				if (bDisplaySecondaryValues) {
 					rm.write("</span><span class='sapUiLbxISec");
-					if (bMarkLastChild) {
-						rm.write(" sapUiLbxILastChild");
-					}
 					rm.write("'");
 					var sTextAlign = ListBoxRenderer.getTextAlign(oListBox.getSecondaryValueTextAlign(), null);
 					if (sTextAlign) {
@@ -2502,17 +2486,17 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 					rm.write(">");
 					rm.writeEscaped(sSecondaryValue);
 				}
-	
+
 				rm.write("</span></li>");
 				iRealItemIndex++;
 			}
 		}
-	
+
 		// Close the surrounding element
 		rm.write("</ul>");
 	};
-	
-	
+
+
 	/**
 	 * If the given width is set in pixels, this method reduces the pixel width by the known total width of the borders.
 	 * Needed for IE which doesn't handle the combination of border-box and min/max-width correctly.
@@ -2530,7 +2514,7 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 		}
 		return sCssWidth;
 	};
-	
+
 	/**
 	 * The default TabIndex that should be set for the ListBox as well as for the selected element.
 	 * Can be overwritten in extending sub-classes.
@@ -2544,7 +2528,7 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 			return -1;
 		}
 	};
-	
+
 	/**
 	 * Adapts the item CSS classes after a selection change
 	 * @private
@@ -2561,7 +2545,7 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 			}
 		}
 	};
-	
+
 	/**
 	 * Set the active descendant of the ListBox to get correct announcements
 	 * @private
@@ -2573,14 +2557,14 @@ sap.ui.define("sap/ui/commons/ListBoxRenderer",['jquery.sap.global', 'sap/ui/cor
 			$list.attr("aria-activedescendant", $selectedChild.attr("id"));
 		}
 	};
-	
+
 	/**
 	 * Dummy inheritance of static methods/functions.
 	 * @see sap.ui.core.Renderer.getTextAlign
 	 * @private
 	 */
 	ListBoxRenderer.getTextAlign = Renderer.getTextAlign;
-	
+
 
 	return ListBoxRenderer;
 
@@ -5469,6 +5453,11 @@ sap.ui.define("sap/ui/commons/SegmentedButtonRenderer",['jquery.sap.global'],
 			role: "radiogroup",
 			disabled: !oControl.getEnabled()
 		});
+		if (oControl.getEnabled()) {
+			rm.writeAttribute("tabIndex","0");
+		} else {
+			rm.writeAttribute("tabIndex","-1");
+		}
 		rm.write(">"); // SPAN element
 		this.renderButtons(rm,oControl);
 	    rm.write("</span>");
@@ -6068,7 +6057,7 @@ sap.ui.define("sap/ui/commons/TextFieldRenderer",['jquery.sap.global', 'sap/ui/c
 	 * TextField Renderer
 	 * @namespace
 	 * @author SAP
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @since 0.9.0
 	 */
 	var TextFieldRenderer = {};
@@ -7017,8 +7006,8 @@ sap.ui.define("sap/ui/commons/TreeRenderer",['jquery.sap.global'],
 	 */
 	var TreeRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -7028,14 +7017,14 @@ sap.ui.define("sap/ui/commons/TreeRenderer",['jquery.sap.global'],
 	TreeRenderer.render = function(oRenderManager, oTree){
 		// convenience variable
 		var rm = oRenderManager;
-	
+
 		//First node get is focusable.
 		TreeRenderer.bFirstNodeRendered = false;
-	
+
 		rm.write("<div");
 		rm.writeControlData(oTree);
 		rm.addClass("sapUiTree");
-	
+
 		if (oTree.getHeight() != "" && oTree.getHeight() != "auto") {
 			rm.addClass("sapUiTreeFixedHeight");
 		}
@@ -7043,51 +7032,51 @@ sap.ui.define("sap/ui/commons/TreeRenderer",['jquery.sap.global'],
 			rm.addClass("sapUiTreeTransparent");
 		}
 		rm.writeClasses();
-	
+
 		rm.addStyle("width", oTree.getWidth() || "auto");
 		rm.addStyle("height", oTree.getHeight());
 		rm.addStyle("min-width", oTree.getMinWidth());
-	
+
 		rm.writeStyles();
-	
+
 		//ARIA
 		rm.writeAttribute('role', 'tree');
 		rm.write(">");
-	
+
 		if (oTree.getShowHeader()) {
-	
+
 			rm.write("<div id=\"" + oTree.getId() + "-Header\" class=\"sapUiTreeHeader\""); //Header
 			rm.writeAttribute('role', 'heading');
 			rm.write(">");
-	
+
 			//Title
 			rm.write("<div class='sapUiTreeTitle'");
-	
+
 			if (oTree.getTooltip_AsString()) {
 				rm.writeAttributeEscaped( "title", oTree.getTooltip_AsString());//Tree tooltip
 			}
 			rm.write(">");
 			rm.writeEscaped(oTree.getTitle());
 			rm.write("</div>");
-	
-	
+
+
 			if (oTree.getShowHeaderIcons()) {
 				rm.write("<div id='" + oTree.getId() + "-TBCont' class='sapUiTreeTbCont'"); //ToolbarContainer
 				rm.writeAttribute('role', 'toolbar');
 				rm.write(">");
 				rm.renderControl(oTree.oCollapseAllButton);
 				rm.renderControl(oTree.oExpandAllButton );
-	
+
 				rm.write("</div>");
 			}
-	
-	
+
+
 			rm.write("</div>");//End of Header
 		}
-	
+
 		rm.write("<div id=\"" + oTree.getId() + "-TreeCont\""); //tree container
-	
-	
+
+
 		rm.addClass("sapUiTreeCont");
 		var showScroll = oTree.getShowHorizontalScrollbar();
 		if (showScroll) {
@@ -7096,22 +7085,22 @@ sap.ui.define("sap/ui/commons/TreeRenderer",['jquery.sap.global'],
 			rm.addClass("sapUiTreeContNoScroll");
 		}
 		rm.writeClasses();
-	
+
 		rm.write(">");
-	
+
 		// write the HTML into the render manager
 		rm.write("<ul class=\"sapUiTreeList\">");
-	
+
 		var aNodes = oTree.getNodes();
 		 for (var i = 0;i < aNodes.length;i++) {
 		   TreeRenderer.renderNode(rm, aNodes[i], 1, aNodes.length, i + 1);
 		}
-	
+
 		rm.write("</ul>");
 		rm.write("</div>");//Tree Container
 		rm.write("</div>");//Tree
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -7123,37 +7112,36 @@ sap.ui.define("sap/ui/commons/TreeRenderer",['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager;
 		var bExpanded;
-	
+
 		// write the HTML into the render manager
 		rm.write("<li");
 		rm.writeElementData(oNode);
 		rm.addClass("sapUiTreeNode");
-	
+
 		if (oNode.getExpanded() && (oNode.getHasExpander() || oNode.hasChildren() )) {
 			rm.addClass("sapUiTreeNodeExpanded");
 			bExpanded = true;
-		}
-		else if (!oNode.getExpanded() && (oNode.getHasExpander() || oNode.hasChildren() )) {
-	
+		} else if (!oNode.getExpanded() && (oNode.getHasExpander() || oNode.hasChildren() )) {
+
 			rm.addClass("sapUiTreeNodeCollapsed");
 			bExpanded = false;
 		}
-	
+
 		if (oNode.getSelectable() && oNode.getIsSelected()) {
 			rm.addClass("sapUiTreeNodeSelected");
 			rm.writeAttribute('aria-selected', 'true');
 		}
-	
-		if (! bExpanded && oNode.hasSelectedHiddenChild()) {
+
+		if (!bExpanded && oNode.hasSelectedHiddenChild()) {
 			rm.addClass("sapUiTreeNodeSelectedParent");
 			rm.writeAttribute('aria-selected', 'true');
 		}
-	
+
 		rm.writeClasses(oNode);
-	
+
 		//ARIA
 		var mProps = {role: 'treeitem', level: iLevel, setsize: iSize, posinset: iPos};
-	
+
 		if (bExpanded) {
 			mProps["expanded"] = true;
 		} else {
@@ -7163,46 +7151,46 @@ sap.ui.define("sap/ui/commons/TreeRenderer",['jquery.sap.global'],
 				mProps["expanded"] = false;
 			}
 		}
-	
+
 		rm.writeAccessibilityState(oNode, mProps);
-	
+
 		//Tooltip
 		rm.writeAttributeEscaped( "title", oNode.getTooltip_AsString());
-	
+
 		if (!TreeRenderer.bFirstNodeRendered) {
 			rm.write("tabindex='0'");
 			TreeRenderer.bFirstNodeRendered = true;
 		}
 		rm.write(">");
-	
-	
+
+
 		rm.write("<span");  //Node Content
-	
+
 		rm.addClass("sapUiTreeNodeContent");
 		if (!oNode.getSelectable()) {
 			rm.addClass("sapUiTreeNodeNotSelectable");
 		}
 		rm.writeClasses();
-	
+
 		rm.write(">");  //Node Content
-	
+
 		if (oNode.getIcon()) {
 			rm.writeIcon(oNode.getIcon(), "sapUiTreeIcon");
 		}
-	
+
 		rm.writeEscaped( oNode.getText());
-	
-	
+
+
 		rm.write("</span>"); //Node Content
-	
+
 		rm.write("</li>");
-	
+
 		if (oNode.getNodes()) {
 			var aSubNodes = oNode.getNodes();
 			rm.write("<ul");
-	
+
 			rm.writeAttribute("id", oNode.getId() + "-children");
-	
+
 			rm.addClass("sapUiTreeChildrenNodes");
 			if (!bExpanded) {
 				rm.addClass("sapUiTreeHiddenChildrenNodes");
@@ -7210,16 +7198,16 @@ sap.ui.define("sap/ui/commons/TreeRenderer",['jquery.sap.global'],
 				rm.writeAttribute("style", "display: block;");//For animation sake
 			}
 			rm.writeClasses();
-	
+
 			rm.write(">");
-			iLevel ++;
+			iLevel++;
 			for (var i = 0;i < aSubNodes.length;i++) {
 				TreeRenderer.renderNode(rm, aSubNodes[i], iLevel, aSubNodes.length, i + 1);
 			}
 			rm.write("</ul>");
 		}
 	};
-	
+
 
 	return TreeRenderer;
 
@@ -7247,7 +7235,7 @@ sap.ui.define("sap/ui/commons/TriStateCheckBoxRenderer",['jquery.sap.global', 's
 	 * @namespace
 	 */
 	var TriStateCheckBoxRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -7257,7 +7245,7 @@ sap.ui.define("sap/ui/commons/TriStateCheckBoxRenderer",['jquery.sap.global', 's
 	TriStateCheckBoxRenderer.render = function(oRm, oControl) {
 		var myTabIndex = 0;
 		var bReadOnly = false;
-	
+
 		// Collect state information
 		var enabled = !!oControl.getEnabled();
 		var editable = !!oControl.getEditable();
@@ -7267,8 +7255,7 @@ sap.ui.define("sap/ui/commons/TriStateCheckBoxRenderer",['jquery.sap.global', 's
 		var ariaState = selectedState.toLowerCase();
 		if (ariaState == "checked") {
 			ariaState = true;
-		}
-		else if (ariaState == "unchecked") {
+		} else if (ariaState == "unchecked") {
 			ariaState = false;
 		}
 		var tooltip = ValueStateSupport.enrichTooltip(oControl, oControl.getTooltip_AsString());
@@ -7277,14 +7264,14 @@ sap.ui.define("sap/ui/commons/TriStateCheckBoxRenderer",['jquery.sap.global', 's
 			inErrorState = sap.ui.core.ValueState.Error == oControl.getValueState();
 			inWarningState = sap.ui.core.ValueState.Warning == oControl.getValueState();
 		}
-	
+
 		// write the HTML into the render manager
 		//outer span containing aria information, tabindex, text and tooltip etc.
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
-	
+
 		oRm.addClass("sapUiTriCb");
-	
+
 		if (!!oControl.getWidth()) {
 			oRm.writeAttribute("style", "width:" + oControl.getWidth() + ";");
 		}
@@ -7298,67 +7285,65 @@ sap.ui.define("sap/ui/commons/TriStateCheckBoxRenderer",['jquery.sap.global', 's
 		}
 		oRm.writeAttribute("tabIndex", myTabIndex);
 		oRm.write(">");
-	
+
 		// inner span carrying metadata and style according to the current state
 		oRm.write("<span");
-	
+
 		oRm.writeAccessibilityState(oControl, {"labelledby": ariaLabelId});
-	
+
 		if (tooltip) {
 			oRm.writeAttributeEscaped("title", tooltip);
 		}
-	
+
 		if (!enabled) {
 			bReadOnly = true;
 			myTabIndex = -1;
 			oRm.write(" disabled='disabled'");
 		}
-	
+
 		if (!editable) {
 			bReadOnly = true;
 		}
-	
+
 		if (bReadOnly) {
 			oRm.write(" readOnly='readOnly'");
 		}
-	
+
 		oRm.addClass("sapUiTriCbInner");
-	
+
 		if (!enabled) {
 			oRm.addClass("sapUiTriCbDis");
 		}
-	
+
 		if (!editable) {
 			oRm.addClass("sapUiTriCbRo");
 		}
-	
+
 		if (inErrorState) {
 			oRm.addClass("sapUiTriCbErr");
-		}
-		else if (inWarningState) {
+		} else if (inWarningState) {
 			oRm.addClass("sapUiTriCbWarn");
 		}
-	
+
 		// Add classes and properties depending on the state
 		if (selectedState === "Checked") {
 			oRm.addClass("sapUiTriCbCheck");
-		}
-		else if (selectedState === "Mixed") {
+		} else if (selectedState === "Mixed") {
 			oRm.addClass("sapUiTriCbMix");
 		}
-	
+
 		oRm.writeClasses();
 		oRm.write(">"); // span element
 		oRm.write("</span>");
-	
+
 	// render text into the outer span
 		if (oControl.getText()) {
 			this.renderText(ariaLabelId, oRm, oControl.getText(), oControl.getTextDirection());
 		}
 		oRm.write("</span>");
-	
+
 	};
-	
+
 	/**
 	 * Write the descriptive span for the CheckBox along with an explicit "dir" in case the text direction is different from the environment.
 	 * Add sLabelId as id for aria-labelledby support
@@ -8287,13 +8272,13 @@ sap.ui.define("sap/ui/commons/layout/MatrixLayoutRenderer",['jquery.sap.global']
 						//rm.addStyle("text-overflow", "ellipsis");
 					}
 	
-					var sHAlign = r.getHAlign(oMatrixLayoutCell.getHAlign(), bRTL);
+					var sHAlign = r.getHAlignClass(oMatrixLayoutCell.getHAlign(), bRTL);
 					if (sHAlign) {
-						rm.writeAttribute("align", sHAlign);
+						rm.addClass(sHAlign);
 					}
 					var sVAlign = r.getVAlign(oMatrixLayoutCell.getVAlign());
-					if (sVAlign && sVAlign != "middle") { //middle is default, not needed
-						rm.writeAttribute("valign", sVAlign);
+					if (sVAlign) {
+						rm.addStyle("vertical-align", sVAlign);
 					}
 					if (oMatrixLayoutCell.getColSpan() > 1) {
 						rm.writeAttribute("colspan", oMatrixLayoutCell.getColSpan());
@@ -8513,33 +8498,38 @@ sap.ui.define("sap/ui/commons/layout/MatrixLayoutRenderer",['jquery.sap.global']
 	};
 	
 	/**
-	 * Returns the value for the HTML "align" attribute according to the given
-	 * horizontal alignment and RTL mode, or NULL if the HTML default is fine.
+	 * Returns the a classname according to the given
+	 * horizontal alignment and RTL mode or null if an invalid value.
+	 * was given.
 	 *
 	 * @param {sap.ui.commons.layout.HAlign} oHAlign
 	 * @param {boolean} bRTL
 	 * @type string
 	 */
-	MatrixLayoutRenderer.getHAlign = function(oHAlign, bRTL) {
-	  switch (oHAlign) {
+	MatrixLayoutRenderer.getHAlignClass = function(oHAlign, bRTL) {
+		var sClassPrefix = "sapUiMltCellHAlign";
+
+		switch (oHAlign) {
 		case sap.ui.commons.layout.HAlign.Begin:
-		  return null; // this is the HTML default
-	
+			return null; // CSS default in both directions
+
 		case sap.ui.commons.layout.HAlign.Center:
-		  return "center";
-	
+			return sClassPrefix + "Center";
+
 		case sap.ui.commons.layout.HAlign.End:
-		  return bRTL ? "left" : "right";
-	
+			return sClassPrefix + (bRTL ? "Left" : "Right");
+
 		case sap.ui.commons.layout.HAlign.Left:
-		  return bRTL ? "left" : null;
-	
+			return bRTL ? sClassPrefix + "Left" : null; // CSS default in ltr
+
 		case sap.ui.commons.layout.HAlign.Right:
-		  return bRTL ? null : "right";
-	  }
-	
-	  jQuery.sap.assert(false, "MatrixLayoutRenderer.getHAlign: oHAlign must be a known value");
-	  return null;
+			return bRTL ? null : sClassPrefix + "Right"; // CSS default in rtl
+
+		default:
+			jQuery.sap.assert(false, "MatrixLayoutRenderer.getHAlign: oHAlign must be a known value");
+			return null;
+		}
+
 	};
 	
 	/**
@@ -8810,14 +8800,14 @@ sap.ui.define("sap/ui/commons/library",['jquery.sap.global', 'sap/ui/base/DataTy
 	 * @namespace
 	 * @name sap.ui.commons
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @public
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.commons",
-		version: "1.26.10",
+		version: "1.28.5",
 		dependencies : ["sap.ui.core","sap.ui.layout"],
 		types: [
 			"sap.ui.commons.ButtonStyle",
@@ -10009,6 +9999,9 @@ sap.ui.define("sap/ui/commons/library",['jquery.sap.global', 'sap/ui/base/DataTy
 			return new sap.ui.commons.Label(mConfig);
 		},
 		createTextView: function(mConfig){
+			if (mConfig && !mConfig.wrapping) {
+				mConfig.wrapping = false;
+			}
 			return new sap.ui.commons.TextView(mConfig);
 		},
 		createTextField: function(mConfig){
@@ -10017,6 +10010,7 @@ sap.ui.define("sap/ui/commons/library",['jquery.sap.global', 'sap/ui/base/DataTy
 		createImage: function(mConfig){
 			return new sap.ui.commons.Image(mConfig);
 		},
+		addTableClass: function() { return "sapUiTableCommons"; },
 		bFinal: false /* to allow mobile to overwrite  */
 	});
 
@@ -10046,11 +10040,11 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Accordion.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -10058,7 +10052,7 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -10066,15 +10060,15 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Accordion = Control.extend("sap.ui.commons.Accordion", /** @lends sap.ui.commons.Accordion.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * When the width specified is smaller than a section content, a horizontal scroll bar is provided.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : '200px'},
-	
+
 			/**
 			 * Section IDs that shall be opened by default at application start.
 			 */
@@ -10082,56 +10076,56 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 		},
 		defaultAggregation : "sections",
 		aggregations : {
-	
+
 			/**
 			 * Empty container used to display any library controls.
 			 */
 			sections : {type : "sap.ui.commons.AccordionSection", multiple : true, singularName : "section"}
 		},
 		events : {
-	
+
 			/**
 			 * Event is triggered when the user opens a section.
 			 */
 			sectionOpen : {
 				parameters : {
-	
+
 					/**
 					 * ID of the opened section
 					 */
-					openSectionId : {type : "string"}, 
-	
+					openSectionId : {type : "string"},
+
 					/**
 					 * IDs of the sections that shall be closed. Can be initial in the case of no previously opened section.
 					 */
 					closeSectionIds : {type : "string[]"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Event is triggered when the user closes a section.
 			 */
 			sectionClose : {
 				parameters : {
-	
+
 					/**
 					 * ID of the closed section
 					 */
 					closeSectionId : {type : "string"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Triggered when the user changes the position of a section.
 			 */
 			sectionsReorder : {
 				parameters : {
-	
+
 					/**
 					 * ID of the moved section.
 					 */
-					movedSectionId : {type : "string"}, 
-	
+					movedSectionId : {type : "string"},
+
 					/**
 					 * New index of the moved section.
 					 */
@@ -10140,8 +10134,8 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 			}
 		}
 	}});
-	
-	
+
+
 	/***************************************************
 	* ACCORDION CONTROL - JAVASCRIPT FUNCTIONS
 	*
@@ -10152,7 +10146,7 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	* does not provide a default section to be opened,
 	* the first enabled section is opened by default.
 	****************************************************/
-	
+
 	//*"*************************************************
 	//* CONSTANTS DECLARATION - CLASS ATTRIBUTES
 	//***************************************************
@@ -10161,10 +10155,10 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	Accordion.CARD_0_N = 3;
 	Accordion.CARD_1_N = 4;
 	Accordion.KEY_TIMEOUT = 500;
-	
+
 	Accordion.aAccordionsToReplace = [];
 	Accordion.aAccordions = [];
-	
+
 	//***************************************************
 	//* INITIALIZATION
 	//***************************************************
@@ -10173,22 +10167,22 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	* @private
 	*/
 	Accordion.prototype.init = function(){
-	
+
 	   this.bInitialRendering = true;
-	
+
 	   // By default, only one section is opened
 	   this.activationMode = Accordion.CARD_1;
-	
+
 	   // Get messagebundle.properties for sap.ui.commons
 	   this.rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
-	
+
 	   // Array used to store all section titles
 	   this.aSectionTitles = [];
-	
+
 	   Accordion.aAccordions.push(this);
-	
+
 	};
-	
+
 	/***********************************************************************************
 	* KEYBOARD NAVIGATION
 	* Note that we rely on 2 mechanisms to support all keyboard shortcuts needed.
@@ -10198,7 +10192,7 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	* Note that to enter the section's content, one needs to use the TAB key which
 	* will take the browser's default behavior.
 	***********************************************************************************/
-	
+
 	/**
 	 * SPACE key behavior
 	 * Opens the section or activates the UI element on SPACE key
@@ -10206,11 +10200,11 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Accordion.prototype.onsapspace = function(oEvent){
-	
+
 		this.onclick(oEvent);
-	
+
 	};
-	
+
 	/**
 	 * PAGE DOWN key behavior
 	 * Beware that these shortcuts are used by FF3.6 to navigate between opened tabs in the browsers.
@@ -10220,35 +10214,35 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Accordion.prototype.onsappagedownmodifiers = function(oEvent){
-	
+
 		// Get all the sections
 		var target = jQuery(oEvent.target);
 		var aParents = target.parentsUntil('.sapUiAcd');
-	
+
 		// Get the next section
 		var oDOMSection = aParents[aParents.length - 1];
 		var oNextSection = jQuery(oDOMSection).next();
-	
+
 		// Skip all disabled sections
 		while (!this.getCorrespondingSection(oNextSection[0]).getEnabled()) {
 			oNextSection = oNextSection.next();
 		}
 		oNextSection = oNextSection[0];
-	
-	
+
+
 		// Open the next enabled section
 		this.openSection(oNextSection.id);
-	
+
 		// Ensure the focus is on the right section
 		var aSections = this.getSections();
 		aSections[this.__idxOfSec(oNextSection.id)].focus();
-	
+
 		// Stop the event
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 	};
-	
+
 	/**
 	 * PAGE UP key behavior
 	 * Beware that these shortcuts are used by FF3.6 to navigate between opened TABS in the browsers.
@@ -10258,105 +10252,105 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Accordion.prototype.onsappageupmodifiers = function(oEvent){
-	
+
 		// Get all the sections
 		var target = jQuery(oEvent.target);
 		var aParents = target.parentsUntil('.sapUiAcd');
-	
+
 		// Get the previous section
 		var oSection = aParents[aParents.length - 1];
 		var oNextSection = jQuery(oSection).prev();
-	
+
 		// Skip all disabled sections
 		while (!this.getCorrespondingSection(oNextSection[0]).getEnabled()) {
 			oNextSection = oNextSection.prev();
 		}
 		oNextSection = oNextSection[0];
-	
+
 		// Open the previously enabled section
 		this.openSection(oNextSection.id);
-	
+
 		// Ensure the focus is on the right section
 		var aSections = this.getSections();
 		aSections[this.__idxOfSec(oNextSection.id)].focus();
-	
+
 		// Stop the event
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 	};
-	
+
 	Accordion.prototype.onsapupmodifiers = function(oEvent){
-	
+
 		// Stop the event
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 		// Get the section to move
 		var aParents	= jQuery(oEvent.target).parentsUntil('.sapUiAcd');
 		var oDomSection = aParents[aParents.length - 1];
-	
+
 		// Is the section if the first one. if so, no up possible!
 		if (this.__idxOfSec(oDomSection.id) == 0) {
 			return;
 		}
-	
+
 		var oDomTargetSection = jQuery(oDomSection).prev().first()[0];
 		var bInsertFirst = false;
 		if (this.__idxOfSec(oDomTargetSection.id) == 0) {
 			bInsertFirst = true;
 		}
-	
+
 		this.dropSection(oDomSection,oDomTargetSection,bInsertFirst);
-	
+
 		// Ensure the focus is on the right section
 		var aSections = this.getSections();
 		aSections[this.__idxOfSec(oDomSection.id)].focus();
-	
+
 	};
-	
+
 	Accordion.prototype.onsapdownmodifiers = function(oEvent){
-	
+
 		// Stop the event
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 		//Get the section to move
 		var aParents	= jQuery(oEvent.target).parentsUntil('.sapUiAcd');
 		var oDomSection = aParents[aParents.length - 1];
-	
+
 		//Is the section if the first one. if so, no up possible!
 		if (this.__idxOfSec(oDomSection.id) == this.getSections().length - 1) {
 			return;
 		}
-	
+
 		var oDomTargetSection = jQuery(oDomSection).next().first()[0];
 		this.dropSection(oDomSection,oDomTargetSection,false);
-	
+
 		//Ensure the focus is on the right section
 		var aSections = this.getSections();
 		aSections[this.__idxOfSec(oDomSection.id)].focus();
-	
+
 	};
-	
+
 	/**
 	 * Called when the user presses the UP arrow key
 	 * @param oEvent The event triggered by the user
 	 * @private
 	 */
 	Accordion.prototype.onsapprevious = function(oEvent){
-	
+
 		if (oEvent.srcControl.getMetadata().getName() != "sap.ui.commons.AccordionSection" ) {
 			return;
 		}
-	
+
 		// Stop the event
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 		//Get the current section
 		var oCurrentSection = this.getCurrentSection(oEvent.target);
-	
+
 		//Extra check to see of we are on the first section, if yes, set the focus on this one
 		if (oCurrentSection.id == this.getSections()[0].getId()) {
 			var oNextFocusableElement = jQuery(oCurrentSection).find("div.sapUiAcdSectionHdr");
@@ -10364,10 +10358,10 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 				oNextFocusableElement.focus();
 			}
 		}
-	
+
 		//Simply set the focus on the next section if any
 		if (oCurrentSection) {
-	
+
 			//Get the previous section that is enabled, disregard disabled sections
 			var oPreviousSection = jQuery(oCurrentSection).prev();
 			while (oPreviousSection && jQuery(oPreviousSection).hasClass("sapUiAcdSectionDis")) {
@@ -10380,30 +10374,30 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 				}
 			}
 		}
-	
+
 	};
-	
+
 	/**
 	 * Called when the user presses the down arrow key
 	 * @param {jQuery.Event} oEvent The event triggered by the user
 	 * @private
 	 */
 	Accordion.prototype.onsapnext = function(oEvent){
-	
+
 		if (oEvent.srcControl.getMetadata().getName() != "sap.ui.commons.AccordionSection" ) {
 			return;
 		}
-	
+
 		// Stop the event
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 		//Get the current section
 		var oCurrentSection = this.getCurrentSection(oEvent.target);
-	
+
 		//Simply set the focus on the next section if any
 		if (oCurrentSection) {
-	
+
 			//Get the next section that is enabled, disregard disabled sections
 			var oNextSection = jQuery(oCurrentSection).next();
 			while (oNextSection && jQuery(oNextSection).hasClass("sapUiAcdSectionDis")) {
@@ -10416,23 +10410,23 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 				}
 			}
 		}
-	
+
 	};
-	
+
 	/**
 	 * Called when the user presses the home key
 	 * @param oEvent The event triggered by the user
 	 * @private
 	 */
 	Accordion.prototype.onsaphome = function(oEvent){
-	
+
 		// Stop the event
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 		//Get the current first section id
 		var oFocusableSection = this.getSections()[0].getDomRef();
-	
+
 		//If the section is disabled, get the next section that is enabled, disregard disabled sections
 		if (jQuery(oFocusableSection).hasClass("sapUiAcdSectionDis")) {
 			oFocusableSection = jQuery(oFocusableSection).next();
@@ -10440,7 +10434,7 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 				oFocusableSection = jQuery(oFocusableSection).next();
 			}
 		}
-	
+
 		//We found one focusable section
 		if (oFocusableSection) {
 			var oNextFocusableElement = jQuery(oFocusableSection).find("div.sapUiAcdSectionHdr");
@@ -10448,24 +10442,24 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 				oNextFocusableElement.focus();
 			}
 		}
-	
+
 	};
-	
+
 	/**
 	 * Called when the user presses the end key
 	 * @param oEvent The event triggered by the user
 	 * @private
 	 */
 	Accordion.prototype.onsapend = function(oEvent){
-	
+
 		// Stop the event
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 		//Get the last section
 		var iNbSections = this.getSections().length;
 		var oFocusableSection = this.getSections()[iNbSections - 1].getDomRef();
-	
+
 		//If the section is disabled, get the previous section that is enabled, disregard disabled sections
 		if (jQuery(oFocusableSection).hasClass("sapUiAcdSectionDis")) {
 			oFocusableSection = jQuery(oFocusableSection).prev();
@@ -10473,7 +10467,7 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 				oFocusableSection = jQuery(oFocusableSection).prev();
 			}
 		}
-	
+
 		//We found one focusable section
 		if (oFocusableSection) {
 			var oNextFocusableElement = jQuery(oFocusableSection).find("div.sapUiAcdSectionHdr");
@@ -10481,25 +10475,25 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 				oNextFocusableElement.focus();
 			}
 		}
-	
+
 	};
-	
+
 	/**
 	 * Utility to get the current section
 	 * @param {Element} oDomElement The current DOM element from which an event is triggered
 	 * @private
 	 */
 	Accordion.prototype.getCurrentSection = function(oDomElement){
-	
+
 		//Use jQuery to get the parent section
 		var oCurrentSection = oDomElement;
 		while (!jQuery(oCurrentSection).hasClass("sapUiAcdSection")) {
 			oCurrentSection = jQuery(oCurrentSection).parent();
 		}
 		return oCurrentSection[0];
-	
+
 	};
-	
+
 	/***********************************************************************************
 	 * DRAG AND DROP
 	 * Drag and drop is used to move a single section at once up/down in the accordion
@@ -10514,23 +10508,23 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Accordion.prototype.dropSection = function(oDomSection, oDomTargetSection, bDropFirst){
-	
+
 		//Get accordion DOM object
 		var oDomAccordion = jQuery(oDomSection).parent()[0];
-	
+
 		//We substract 1 as the first child is the drop target and the should not be considered
 		var aChildren = jQuery(oDomAccordion).children(".sapUiAcdSection").toArray();
 		var iIndexToInsert = jQuery.inArray(oDomTargetSection, aChildren);
-	
+
 		if (bDropFirst) {
 			iIndexToInsert -= 1;
 		}
-	
+
 		//Update accordion with the change
 		this.moveSection(oDomSection.id,iIndexToInsert);
-	
+
 	};
-	
+
 	/**
 	 * Moves one section to a given new index by adjusting all internal information
 	 * @param {string} sSectionId The current section ID being moved
@@ -10538,68 +10532,68 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Accordion.prototype.moveSection = function(sSectionId, iTargetIndex){
-	
+
 		//Get previous index
 		var iOldIndex = this.__idxOfSec(sSectionId);
-	
-	
+
+
 		if (iTargetIndex == iOldIndex) {
 			 //Nothing to do
 			 return;
 		}
-	
-	
+
+
 		/****Remove section from arrays*********************************/
-	
+
 		//Remove title for the list
 		var sSectionTitle = this.aSectionTitles[iOldIndex];
 		this.aSectionTitles.splice(iOldIndex,1);
-	
+
 		//Remove section aggregation
 		var aSections = this.getSections();
 		var oSection = aSections[iOldIndex];
 		this.removeSection(iOldIndex, true);
-	
-	
+
+
 		/****Add section to new index*********************************/
 		if (iTargetIndex != -1) {
 			this.aSectionTitles.splice(iTargetIndex,0,sSectionTitle);
 		} else {
 			this.aSectionTitles.splice(0,0,sSectionTitle);
 		}
-	
+
 		//Update aggregation
 		this.insertSection(oSection,iTargetIndex, true);
-	
+
 		//Trigger event for application to react
 		this.fireSectionsReorder({movedSectionId:sSectionId, newIndex:iTargetIndex});
-	
+
 	};
-	
+
 	Accordion.prototype._onSortChange = function(oEvent, oUi){
-	
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 		var oDomSection = oUi.item[0];
 		var SectionId = oUi.item[0].getAttribute("Id");
-	
+
 		//Get accordion DOM object
 		var oDomAccordion = jQuery(oDomSection).parent()[0];
-	
+
 		var aChildren = jQuery(oDomAccordion).children(".sapUiAcdSection").toArray();
 		var iIndexToInsert = jQuery.inArray(oDomSection, aChildren);
-	
+
 		this.moveSection(SectionId,iIndexToInsert);
 	};
-	
+
 	/***********************************************************************************
 	 * FUNCTIONALITIES
 	 * Available functionalities in the Accordion are the following:
 	 * - Open a section
 	 * - Close a section
 	 ***********************************************************************************/
-	
+
 	/**
 	 * Activation of the section - Opens or closes a section.
 	 * If the focus is on a collapsed section, it will close the currently opened section, and open this one.
@@ -10609,32 +10603,32 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Accordion.prototype.onclick = function(oEvent){
-	
+
 		//Click on the accordion itself are not considered
 		if (oEvent.srcControl.getId() ==  this.getId()) {
 			return;
 		}
-	
+
 		//Move up in the DOM to get the section (click occurs on the arrow which is an inner html element)
 		var target = jQuery(oEvent.target);
-	
+
 		//Disable the possibility to click on the content to open/close a section
 		if (target.hasClass("sapUiAcdSectionCont")) {
 			return;
 		}
-	
+
 		if ( !(jQuery(oEvent.target).control(0) instanceof sap.ui.commons.AccordionSection) ) {
 			return;
 		}
-	
+
 		var oDomSection = oEvent.srcControl.getDomRef();
-	
+
 		//If the section is disabled, we cannot open/close it.
 		var oSection = this.getCorrespondingSection(oDomSection);
 		if (oSection && !oSection.getEnabled()) {
 			return;
 		}
-	
+
 		//If the section is closed, open it
 		if (oEvent.srcControl && oEvent.srcControl.getCollapsed() == true) {
 			this.openSection(oDomSection.id);
@@ -10643,17 +10637,17 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 				this.closeSection(oDomSection.id);
 			}
 		}
-	
+
 		//Stop the event here
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 		//Ensure the focus is on the right section
 		var aSections = this.getSections();
 		aSections[this.__idxOfSec(oDomSection.id)].focus();
-	
+
 	};
-	
+
 	/**
 	 * Opens a section.
 	 *
@@ -10664,26 +10658,26 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Accordion.prototype.openSection = function(sSectionId){
-	
+
 		//Map the section ID to its internal index
 		var iIndex = this.__idxOfSec(sSectionId);
-	
+
 		//Get all accordion's sections
 		var aSections = this.getSections();
-	
+
 		//Close all sections currently opened
 		if (this.activationMode == Accordion.CARD_0_1 || this.activationMode == Accordion.CARD_1) {
 		  var aClosedSections = this.closeOpenedSections();
 		}
-	
+
 		//Open the section with the index retrieved from the importing section ID
 		aSections[iIndex]._setCollapsed(false);
-	
+
 		//Trigger event for application to react
 		this.fireSectionOpen({openSectionId:sSectionId, closeSectionIds:aClosedSections});
-	
+
 	};
-	
+
 	/**
 	 * Closes a section, and opens the default one
 	 *
@@ -10694,34 +10688,34 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Accordion.prototype.closeSection = function(sSectionId){
-	
+
 		//Get the corresponding mapping index
 		var iIndex = this.__idxOfSec(sSectionId);
-	
+
 		//Get all accordion's sections
 		var aSections = this.getSections();
-	
+
 		//Close the given section
 		aSections[iIndex]._setCollapsed(true);
 		//If there is no section opened and at least one is required to be, we open the default one to respect activationMode
 		//if ((this.activationMode == sap.ui.commons.Accordion.CARD_1_N || this.activationMode == sap.ui.commons.Accordion.CARD_1) && this.getNumberOfOpenedSections() == 0){
 		//this.openDefaultSections();
 		//}
-	
+
 		//Trigger event for application to react
 		this.fireSectionClose({closeSectionId:sSectionId});
-	
+
 	};
-	
+
 	/**
 	 * Closes all opened sections
 	 * @private
 	 */
 	Accordion.prototype.closeOpenedSections = function(){
-	
+
 		var aClosedSections = [];
 		var aSections = this.getSections();
-	
+
 		//Simply loop and close the sections already opened
 		for (var i = 0;i < aSections.length;i++) {
 			if ( aSections[i].getCollapsed() == false ) {
@@ -10729,21 +10723,21 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 				aClosedSections.push(aSections[i].getId());
 			}
 		}
-	
+
 		//Return all sections that were closed
 		return aClosedSections;
-	
+
 	};
-	
+
 	/**
 	 * Opens the default section; consider activationMode
 	 * @private
 	 */
 	Accordion.prototype.openDefaultSections = function(){
-	
+
 		//Get all accordion's sections
 		var aSections = this.getSections();
-	
+
 		//Loop trough all defaulted opened section and open them
 		var aDefaultSections = this.getOpenedSectionsId().split(",");
 		for (var i = 0 ; i < aDefaultSections.length ; i++) {
@@ -10751,22 +10745,22 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 		  var oActiveSection = aSections[this.__idxOfSec(aDefaultSections[i])];
 		  oActiveSection._setCollapsed(false);
 		}
-	
+
 	};
-	
+
 	/**
 	 * Returns the number of currently opened sections
 	 * @return The number of currently opened sections
 	 * @private
 	 */
 	Accordion.prototype.getNumberOfOpenedSections = function(){
-	
+
 		//Initialize the return parameter
 		var openedSections  = 0;
-	
+
 		//Get all accordion's sections
 		var aSections		= this.getSections();
-	
+
 		//Loop and sum up all opened sections
 		for (var i = 0;i < aSections.length;i++) {
 			if ( aSections[i].getCollapsed() == false ) {
@@ -10775,26 +10769,26 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 		}
 		return openedSections;
 	};
-	
-	
+
+
 	//*************************************************************************************
 	// * UTILITIES FUNCTIONS
 	// * List of all Javascript utilities functions needed to achieve the required behavior
 	// ************************************************************************************
-	
+
 	Accordion.prototype.addSection = function(oSection) {
-	
+
 		this.addAggregation("sections", oSection);
-	
+
 		//Add a default opened section id
 		if ( (this.getOpenedSectionsId() == null || this.getOpenedSectionsId() == "" ) && oSection.getEnabled()) {
 			this.setOpenedSectionsId(oSection.getId());
 		}
-	
+
 		this.aSectionTitles.push(oSection.getTitle());
-	
+
 	};
-	
+
 	/**
 	 * Returns the index of the given section or Id of a section.
 	 * @private
@@ -10805,7 +10799,7 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 		}
 		return this.indexOfSection(oSection);
 	};
-	
+
 	/**
 	 * Redefinition of the method to add additional handling
 	 *
@@ -10814,12 +10808,12 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @public
 	 */
 	Accordion.prototype.setOpenedSectionsId = function(sOpenedSectionsId) {
-	
+
 		var aSections = this.getSections();
-	
+
 		var aDefaultSections = sOpenedSectionsId.split(",");
-	
-	
+
+
 		if (aDefaultSections.length == 1) {
 			//it can be that the method is called from method AddSection. We don't want to intefere with those
 			// call.
@@ -10827,12 +10821,12 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 				this.setProperty("openedSectionsId", sOpenedSectionsId);
 				return this;
 			}
-	
+
 			if (aSections[this.__idxOfSec(sOpenedSectionsId)].getEnabled()) {
 				//If the provided section is enabled
 				this.setProperty("openedSectionsId", sOpenedSectionsId);
 			} else {
-	
+
 				//If the provided section is disabled, the open section will be the first enable section starting for the top
 				for (var i = 0;i < aSections.length;i++) {
 					if (aSections[i].getEnabled()) {
@@ -10841,44 +10835,43 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 					}
 				}
 			}
-	
-	
-		}
-		else if (aDefaultSections.length == 0) {
+
+
+		} else if (aDefaultSections.length == 0) {
 			//If the empty string is provided, we keep the automatically selected section(as selected in method AddSection).
 			return this;
-	
+
 		} else { //Several sections were provided, but some can be disabled. Check each of them
 			var sCheckIndices;
-	
+
 			for (var i = 0;i < aDefaultSections.length;i++) {
 				if (aSections[this.__idxOfSec(aDefaultSections[i])].getEnabled()) {
-	
+
 					if (sCheckIndices) {
 						sCheckIndices += "," + aDefaultSections[i];
-	
+
 						//only one section should be opened at once, so return after the first is set
 						return;
 					} else {
 						sCheckIndices = aDefaultSections[i];
 					}
-	
+
 				}
 			}
-	
+
 			if (sCheckIndices) {
 				//If at least one section remains
 				this.setProperty("openedSectionsId", sCheckIndices);
 			}
-	
-	
+
+
 		}
-	
+
 		return this;
-	
+
 	};
-	
-	
+
+
 	/**
 	 * Returns AccordionSection Object corresponding to a given Section DOM Object
 	 * @param oDomSection The section in a DOM representation object
@@ -10886,7 +10879,7 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Accordion.prototype.getCorrespondingSection = function (oDomSection) {
-	
+
 		//Look for section index within accordion
 		if (jQuery(oDomSection).hasClass("sapUiAcdSection") ) {
 			var aAccordion	= jQuery(oDomSection).parent();
@@ -10897,9 +10890,9 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 			//Remove 1 as we have the target div as first child
 			return aoSections[iIndex - 1];
 		}
-	
+
 	};
-	
+
 	/**
 	 * Returns true if the current section being processed is the last one of the Accordion
 	 * @param oSection The current section being processed
@@ -10907,10 +10900,10 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Accordion.prototype.isLastSection = function(oSection) {
-	
+
 		//Get all accordion's sections
 		var aSections = this.getSections();
-	
+
 		//Simply check in our internal array containing all titles
 		/*if(aSections.indexOf(oSection) == aSections.length-1 ){*/
 		if (jQuery.inArray(oSection,aSections) == aSections.length - 1 ) {
@@ -10918,16 +10911,16 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 		} else {
 			return false;
 		}
-	
+
 	};
-	
+
 	/**
 	 * Once the Accordion is rendered, build the list of active controls that will be included
 	 * in the item navigation object. This support arrow keys navigation.
 	 * @private
 	 */
 	Accordion.prototype.onAfterRendering = function() {
-	
+
 		// Collect the dom references of the items
 		var accordion = this.getDomRef();
 		var leftBorder = "0px";
@@ -10941,13 +10934,13 @@ sap.ui.define("sap/ui/commons/Accordion",['jquery.sap.global', './library', 'sap
 		}
 		var borderTotal = parseFloat(leftBorder.substring(0, leftBorder.indexOf("px"))) + parseFloat(rightBorder.substring(0, rightBorder.indexOf("px")));
 		accordion.style.height = accordion.offsetHeight - borderTotal - 7 + "px";
-	
+
 		this.$().sortable({
 			handle: "> div.sapUiAcdSectionHdr > div",
 			stop: jQuery.proxy(this._onSortChange, this)
 		});
 	};
-	
+
 
 	return Accordion;
 
@@ -10982,7 +10975,7 @@ sap.ui.define("sap/ui/commons/AccordionSection",['jquery.sap.global', './library
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -11347,7 +11340,7 @@ sap.ui.define("sap/ui/commons/ApplicationHeader",['jquery.sap.global', './librar
 	 * @class
 	 * The application header control stands on the top of any application page. It consists basically of 4 areas. Logo area/Function area provided by application/Search area/Logout area
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -11514,7 +11507,7 @@ sap.ui.define("sap/ui/commons/Area",['jquery.sap.global', './library', 'sap/ui/c
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -11606,7 +11599,7 @@ sap.ui.define("sap/ui/commons/Button",['jquery.sap.global', './library', 'sap/ui
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -11935,7 +11928,7 @@ sap.ui.define("sap/ui/commons/CalloutBase",['jquery.sap.global', './library', 's
 	/**
 	 * Constructor for a new CalloutBase.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -11943,7 +11936,7 @@ sap.ui.define("sap/ui/commons/CalloutBase",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.TooltipBase
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -11966,12 +11959,12 @@ sap.ui.define("sap/ui/commons/CalloutBase",['jquery.sap.global', './library', 's
 					 */
 					parent : {type : "sap.ui.core.Control"}
 				}
-			}, 
+			},
 
 			/**
 			 * Event is fired when the Callout window is closed.
 			 */
-			close : {}, 
+			close : {},
 
 			/**
 			 * Event is fired before a Callout is displayed. Call the preventDefault method of the event object to postpone opening. Application may use this event to start asynchronous Ajax call to load the Callout content
@@ -11984,7 +11977,7 @@ sap.ui.define("sap/ui/commons/CalloutBase",['jquery.sap.global', './library', 's
 					 */
 					parent : {type : "sap.ui.core.Control"}
 				}
-			}, 
+			},
 
 			/**
 			 * Is fired when the Callout has been opened
@@ -12004,7 +11997,7 @@ sap.ui.define("sap/ui/commons/CalloutBase",['jquery.sap.global', './library', 's
 	CalloutBase.prototype.init = function() {
 		this.oPopup = new sap.ui.core.Popup();
 		this.oPopup.setShadow(true);
-	
+
 		// resource bundle
 		this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
@@ -12020,7 +12013,7 @@ sap.ui.define("sap/ui/commons/CalloutBase",['jquery.sap.global', './library', 's
 			sap.ui.core.Popup.prototype._applyPosition.call(this, oPosition);
 			that.setTip();
 		};
-	
+
 		// close the Callout if its opener moves away (due to scrolling e.g.)
 		this.oPopup.setFollowOf(sap.ui.core.Popup.CLOSE_ON_SCROLL);
 	};
@@ -12121,12 +12114,18 @@ sap.ui.define("sap/ui/commons/CalloutBase",['jquery.sap.global', './library', 's
 			myPosition = this.getMyPosition();
 
 		// right-left pointer
-		if ( tRect.r < pRect.l - tipOffset ) { dock.x = "right"; }
-		else if ( tRect.l - tipOffset > pRect.r ) { dock.x = "left"; }
+		if ( tRect.r < pRect.l - tipOffset ) {
+			dock.x = "right";
+		} else if (tRect.l - tipOffset > pRect.r ) {
+			dock.x = "left";
+		}
 
 		// top-bottom pointer
-		if ( tRect.t > pRect.b - tipOffset ) { dock.y = "top"; }
-		else if ( tRect.b < pRect.t + tipOffset ) { dock.y = "bottom"; }
+		if ( tRect.t > pRect.b - tipOffset ) {
+			dock.y = "top";
+		} else if ( tRect.b < pRect.t + tipOffset ) {
+			dock.y = "bottom";
+		}
 
 		if (dock.x) { // pointer on the left or right side
 
@@ -12389,10 +12388,10 @@ sap.ui.define("sap/ui/commons/CalloutBase",['jquery.sap.global', './library', 's
 			this.bDoFocus = false;
 			this.bFocused = true; // Remember to set focus to parent on close
 		}
-	
+
 		this.$().css("display:", "");
 		this.fireOpened();
-	
+
 		// - listen to mouse over events outside
 		//   do always because the Callout can lose focus to child popup controls
 		jQuery.sap.bindAnyEvent(this.fAnyEventHandlerProxy);
@@ -12453,7 +12452,7 @@ sap.ui.define("sap/ui/commons/CalloutBase",['jquery.sap.global', './library', 's
 	};
 
 	/**
-	 * Handle the mouseout event of a Callout. Override the default TooltipBase behavior when 
+	 * Handle the mouseout event of a Callout. Override the default TooltipBase behavior when
 	 * the mouse pointer is over some other popup on the screen
 	 * @param {jQuery.EventObject} oEvent mouseout Event.
 	 * @private
@@ -12586,7 +12585,7 @@ sap.ui.define("sap/ui/commons/Carousel",['jquery.sap.global', './library', 'sap/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -13346,7 +13345,7 @@ sap.ui.define("sap/ui/commons/CheckBox",['jquery.sap.global', './library', 'sap/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -13547,7 +13546,7 @@ sap.ui.define("sap/ui/commons/ColorPicker",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -14619,14 +14618,11 @@ sap.ui.define("sap/ui/commons/ColorPicker",['jquery.sap.global', './library', 's
 		var hueValue = 0;
 		if (satValue == 0) {
 			hueValue = 0;
-		}
-		else if (red == max)   {
+		} else if (red == max)   {
 			hueValue = 60.0 * (green - blue) / delta;
-		}
-		else if (green == max) {
+		} else if (green == max) {
 			hueValue = 120.0 + 60.0 * (blue - red) / delta;
-		}
-		else if (blue == max)  {
+		} else if (blue == max)  {
 			hueValue = 240.0 + 60.0 * (red - green) / delta;
 		}
 		if (hueValue < 0.0) {
@@ -15247,7 +15243,7 @@ sap.ui.define("sap/ui/commons/Dialog",['jquery.sap.global', './library', 'sap/ui
      * @implements sap.ui.core.PopupInterface
      *
      * @author SAP SE
-     * @version 1.26.10
+     * @version 1.28.5
      *
      * @constructor
      * @public
@@ -16346,7 +16342,7 @@ sap.ui.define("sap/ui/commons/FileUploader",['jquery.sap.global', './library', '
 	 * @extends sap.ui.unified.FileUploader
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -16399,7 +16395,7 @@ sap.ui.define("sap/ui/commons/FileUploaderParameter",['jquery.sap.global', './li
 	 * @extends sap.ui.unified.FileUploaderParameter
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -16453,7 +16449,7 @@ sap.ui.define("sap/ui/commons/FormattedTextView",['jquery.sap.global', './librar
 	 * @class
 	 * Allows to use a limited set of HTML tags for display
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -16572,8 +16568,7 @@ sap.ui.define("sap/ui/commons/FormattedTextView",['jquery.sap.global', './librar
 		 * @private
 		 * @param {string}
 		 *            tagName An HTML tag name in lowercase.
-		 * @param {Array.
-		 *            <?string>} attribs An array of alternating names and values.
+		 * @param {Array.<?string>} attribs An array of alternating names and values.
 		 * @return {Array.<?string>} The sanitized attributes as a list of
 		 *         alternating names and values, where a null value means to omit
 		 *         the attribute.
@@ -16712,7 +16707,7 @@ sap.ui.define("sap/ui/commons/HorizontalDivider",['jquery.sap.global', './librar
 	 * @class
 	 * Divides the screen in visual areas.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -16777,7 +16772,7 @@ sap.ui.define("sap/ui/commons/Image",['jquery.sap.global', './library', 'sap/ui/
 	 * @implements sap.ui.commons.ToolbarItem,sap.ui.commons.FormattedTextViewControl
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -16886,7 +16881,7 @@ sap.ui.define("sap/ui/commons/ImageMap",['jquery.sap.global', './library', 'sap/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -17048,8 +17043,9 @@ jQuery.sap.declare('sap.ui.commons.Label'); // unresolved dependency added by SA
 jQuery.sap.require('jquery.sap.global'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Control'); // unlisted dependency retained
 jQuery.sap.require('sap.ui.core.Popup'); // unlisted dependency retained
-sap.ui.define("sap/ui/commons/Label",['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup'],
-	function(jQuery, library, Control, Popup) {
+jQuery.sap.require('sap.ui.core.LabelEnablement'); // unlisted dependency retained
+sap.ui.define("sap/ui/commons/Label",['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/LabelEnablement'],
+	function(jQuery, library, Control, Popup, LabelEnablement) {
 	"use strict";
 
 
@@ -17067,7 +17063,7 @@ sap.ui.define("sap/ui/commons/Label",['jquery.sap.global', './library', 'sap/ui/
 	 * @implements sap.ui.commons.ToolbarItem,sap.ui.core.Label
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -17147,27 +17143,22 @@ sap.ui.define("sap/ui/commons/Label",['jquery.sap.global', './library', 'sap/ui/
 		}
 	}});
 	
-	
 	Label.prototype.onAfterRendering = function () {
 	
-		var sFor = this.getLabelForRendering();
-	
-		if (sFor) {
-			var oFor = sap.ui.getCore().byId(sFor);
-	
-			if (oFor) {
-				if (this.getTooltip_AsString() == "" || !(this.getTooltip() instanceof sap.ui.core.TooltipBase)) {
-					// no own tooltip use RichTooltip of labeled control if available
-					if (oFor.getTooltip() instanceof sap.ui.core.TooltipBase) {
-						this.oForTooltip = oFor.getTooltip();
-						this.addDelegate(this.oForTooltip);
-					}
+		var oFor = this._getLabeledControl();
+		
+		if (oFor) {
+			if (this.getTooltip_AsString() == "" || !(this.getTooltip() instanceof sap.ui.core.TooltipBase)) {
+				// no own tooltip use RichTooltip of labeled control if available
+				if (oFor.getTooltip() instanceof sap.ui.core.TooltipBase) {
+					this.oForTooltip = oFor.getTooltip();
+					this.addDelegate(this.oForTooltip);
 				}
-	
-				// attach to change of required flag of labeled control
-				oFor.attachEvent("requiredChanged",this._handleRequiredChanged, this);
-				this._oFor = oFor;
 			}
+
+			// attach to change of required flag of labeled control
+			oFor.attachEvent("requiredChanged",this._handleRequiredChanged, this);
+			this._oFor = oFor;
 		}
 	
 	};
@@ -17218,7 +17209,7 @@ sap.ui.define("sap/ui/commons/Label",['jquery.sap.global', './library', 'sap/ui/
 		// the value of the local required flag is ORed with the result of a "getRequired" 
 		// method of the associated "labelFor" control. If the associated control doesn't 
 		// have a getRequired method, this is treated like a return value of "false".
-		var oFor = sap.ui.getCore().byId(this.getLabelForRendering());
+		var oFor = this._getLabeledControl();
 		return this.getRequired() || (oFor && oFor.getRequired && oFor.getRequired() === true);
 	
 	};
@@ -17233,16 +17224,6 @@ sap.ui.define("sap/ui/commons/Label",['jquery.sap.global', './library', 'sap/ui/
 	
 	};
 	
-	/*
-	 * As own function to make possible to overwrite it (e.G. from Form).
-	 */
-	Label.prototype.getLabelForRendering = function(){
-	
-		return this.getLabelFor();
-	
-	};
-	
-	
 	/**
 	 * @deprecated
 	 */
@@ -17256,6 +17237,21 @@ sap.ui.define("sap/ui/commons/Label",['jquery.sap.global', './library', 'sap/ui/
 	Label.prototype.getReqiuredAtBegin = function(){
 		return this.getRequiredAtBegin();
 	};
+	
+	/**
+	 * Returns the labeled control instance, if exists.
+	 * @return {sap.ui.core.Control} the labeled control instance, if exists
+	 * @private
+	 */
+	Label.prototype._getLabeledControl = function() {
+		var sId = this.getLabelForRendering();
+		if (!sId) {
+			return null;
+		}
+		return sap.ui.getCore().byId(sId);
+	};
+	
+	
 	/*
 	sap.ui.commons.Label.prototype.onmouseover = function(oEvent) {
 		var oRef = this.getDomRef();
@@ -17293,6 +17289,9 @@ sap.ui.define("sap/ui/commons/Label",['jquery.sap.global', './library', 'sap/ui/
 			that._oPopup.close();
 		});
 	};*/
+	
+	//Enrich Label functionality
+	LabelEnablement.enrich(Label.prototype);
 
 	return Label;
 
@@ -17331,7 +17330,7 @@ sap.ui.define("sap/ui/commons/Link",['jquery.sap.global', './library', 'sap/ui/c
 	 * @implements sap.ui.commons.ToolbarItem,sap.ui.commons.FormattedTextViewControl
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -17490,7 +17489,7 @@ sap.ui.define("sap/ui/commons/ListBox",['jquery.sap.global', './library', 'sap/u
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -17712,7 +17711,11 @@ sap.ui.define("sap/ui/commons/ListBox",['jquery.sap.global', './library', 'sap/u
 			var div = document.createElement("div");
 			div.id = "sap-ui-commons-ListBox-sizeDummy";
 			div.innerHTML = '<div class="sapUiLbx sapUiLbxFlexWidth sapUiLbxStd"><ul><li class="sapUiLbxI"><span class="sapUiLbxITxt">&nbsp;</span></li></ul></div>';
-			oStaticArea.insertBefore(div, oStaticArea.firstChild);
+			if (sap.ui.Device.browser.safari) {
+				oStaticArea.insertBefore(div, oStaticArea.firstChild);
+			} else {
+				oStaticArea.appendChild(div);
+			}
 			var oItemDomRef = div.firstChild.firstChild.firstChild;
 			ListBox._fItemHeight = oItemDomRef.offsetHeight;
 
@@ -18049,16 +18052,6 @@ sap.ui.define("sap/ui/commons/ListBox",['jquery.sap.global', './library', 'sap/u
 
 
 	/* --- user interaction handling methods --- */
-
-	ListBox.prototype.onfocusin = function (oEvent) {
-		if (!!sap.ui.Device.browser.internet_explorer && ((sap.ui.Device.browser.version == 7) || (sap.ui.Device.browser.version == 8)) /* =IE8! */ && (oEvent.target != this.getDomRef()) && (oEvent.target.className != "sapUiLbxI")) {
-			var parent = oEvent.target.parentNode;
-
-			if (jQuery(parent).hasClass("sapUiLbxI")) {
-				parent.focus();
-			}
-		}
-	};
 
 	ListBox.prototype.onmousedown = function(oEvent) {
 		if (!!sap.ui.Device.browser.webkit && oEvent.target && oEvent.target.id === this.getId()) { // ListBox scrollbar has been clicked; webkit completely removes the focus, which breaks autoclose popups
@@ -18854,7 +18847,7 @@ sap.ui.define("sap/ui/commons/Menu",['jquery.sap.global', './MenuItemBase', './l
 	 * @extends sap.ui.unified.Menu
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -18900,7 +18893,7 @@ sap.ui.define("sap/ui/commons/MenuButton",['jquery.sap.global', './Button', './M
 	 * Common button control that opens a menu when clicked by the user. The control provides an API for configuring the docking position
 	 * of the menu.
 	 * @extends sap.ui.commons.Button
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -19098,15 +19091,13 @@ sap.ui.define("sap/ui/commons/MenuButton",['jquery.sap.global', './Button', './M
 		this.firePress({itemId: oItem.getId(), item: oItem});
 	};
 	
-	// to overwrite JS doc for inherited press event
+	// Overwrite JSDoc for inherited press event to make clear that 'press' === 'itemSelected'
 	
 	/**
 	 * Fired when an item from the menu was selected.
 	 *
 	 * @see sap.ui.commons.MenuButton#itemSelected
 	 *
-	 * @name sap.ui.commons.MenuButton#press
-	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
@@ -19114,6 +19105,8 @@ sap.ui.define("sap/ui/commons/MenuButton",['jquery.sap.global', './Button', './M
 	 * @param {string} oControlEvent.getParameters.itemId The id of the selected item
 	 * @param {sap.ui.commons.MenuItemBase} oControlEvent.getParameters.item The selected item
 	 * @public
+	 * @name sap.ui.commons.MenuButton#press
+	 * @event
 	 */
 	
 	/**
@@ -19133,6 +19126,8 @@ sap.ui.define("sap/ui/commons/MenuButton",['jquery.sap.global', './Button', './M
 	 *
 	 * @return {sap.ui.commons.MenuButton} <code>this</code> to allow method chaining
 	 * @public
+	 * @name sap.ui.commons.MenuButton#attachPress
+	 * @function
 	 */
 	
 	/**
@@ -19148,6 +19143,8 @@ sap.ui.define("sap/ui/commons/MenuButton",['jquery.sap.global', './Button', './M
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.commons.MenuButton} <code>this</code> to allow method chaining
 	 * @public
+	 * @name sap.ui.commons.MenuButton#detachPress
+	 * @function
 	 */
 	
 	/**
@@ -19158,6 +19155,8 @@ sap.ui.define("sap/ui/commons/MenuButton",['jquery.sap.global', './Button', './M
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @return {sap.ui.commons.MenuButton} <code>this</code> to allow method chaining
 	 * @protected
+	 * @name sap.ui.commons.MenuButton#firePress
+	 * @function
 	 */
 
 	return MenuButton;
@@ -19193,7 +19192,7 @@ sap.ui.define("sap/ui/commons/MenuItem",['jquery.sap.global', './MenuItemBase', 
 	 * @extends sap.ui.unified.MenuItem
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -19244,7 +19243,7 @@ sap.ui.define("sap/ui/commons/MenuTextFieldItem",['jquery.sap.global', './MenuIt
 	 * @extends sap.ui.unified.MenuTextFieldItem
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -19292,7 +19291,7 @@ sap.ui.define("sap/ui/commons/Message",['jquery.sap.global', './Dialog', './libr
 	 * @class
 	 * Creates the "Message"s to be supplied to the "MessageBar" Control.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -19589,7 +19588,7 @@ sap.ui.define("sap/ui/commons/MessageBar",['jquery.sap.global', './library', 'sa
 	 * Creates an instance of a "MessageBar" Control, for displaying "Message"s.
 	 * There is no imposed limit on the number of "MessageBar"s that can be created, but using only 1 makes sense, specially if accessing it (via Ctl-m) becomes a necessity.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -20427,7 +20426,7 @@ sap.ui.define("sap/ui/commons/MessageList",['jquery.sap.global', './library', 's
 	 * @class
 	 * Instantiated by the "MessageBar" Control if the user ever requests to generate the corresponding "MessageList".
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -20637,7 +20636,7 @@ sap.ui.define("sap/ui/commons/MessageToast",['jquery.sap.global', './library', '
 	 * @class
 	 * Responsible for displaying the new incoming messages, one at the time, on top of the MessageBar.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -20882,17 +20881,17 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Paginator.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Provides navigation between pages within a list of numbered pages.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -20900,40 +20899,40 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Paginator = Control.extend("sap.ui.commons.Paginator", /** @lends sap.ui.commons.Paginator.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Represents the current page (first page has index 1, not 0, to match the visual number)
 			 */
 			currentPage : {type : "int", group : "Misc", defaultValue : 1},
-	
+
 			/**
 			 * Represents the overall number of pages that are embedded into the parent control
 			 */
 			numberOfPages : {type : "int", group : "Misc", defaultValue : null}
 		},
 		events : {
-	
+
 			/**
 			 * Event is fired when the user navigates to another page by selecting it directly, or by jumping forward/backward.
 			 */
 			page : {
 				parameters : {
-	
+
 					/**
 					 * The page which is the current one before the page event is fired (and another page is displayed)
 					 */
-					srcPage : {type : "int"}, 
-	
+					srcPage : {type : "int"},
+
 					/**
 					 * The page that shall be displayed next after the page event is fired.
-					 * 
+					 *
 					 * The page number is 1-based: the first page has index 1, not 0, to match the number visible in the UI.
 					 */
-					targetPage : {type : "int"}, 
-	
+					targetPage : {type : "int"},
+
 					/**
 					 * Provides the values 'First', 'Last', 'Next', 'Previous', 'Goto'. The event parameter informs the application
 					 * how the user navigated to the new page: Whether the 'Next' button was used, or another button, or whether the page was directly
@@ -20944,16 +20943,16 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 			}
 		}
 	}});
-	
+
 	/*
 	 * All animations of the Paginator control can be centrally switched
 	 * off by setting the <code>bShowAnimation</code> flag to <code>false</code>.
 	 * @private
 	 */
-	
+
 	// Constants declaration
 	Paginator.MAX_NUMBER_PAGES = 5;
-	
+
 	/**
 	 * Init function
 	 * @private
@@ -20962,8 +20961,8 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 		//Animations are set to true by default, then on control initialization, check the number of pages
 		this.bShowAnimation = true;
 	};
-	
-	
+
+
 	/**
 	 * When the user clicks on a page link, we navigae to that page, either with animation or with rerendering
 	 * @param {jQuery.Event} oEvent The current event
@@ -20971,55 +20970,55 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 	 */
 	Paginator.prototype.onclick = function(oEvent){
 		if (oEvent && oEvent.target) {
-	
+
 			// Supress triggering beforeunload in IE
 			oEvent.preventDefault();
-	
+
 			// go up one node if unnamed element is the source
 			var target = oEvent.target;
 			if (!target.id) {
 				target = target.parentNode;
 			}
-	
+
 			if (target.id && target.id != this.getId() + "-pages") {
-	
+
 				// Retrieve from where the event originated
 				var aArray = target.id.split("--");
-	
+
 				// only do something if relevant item has been clicked
 				if (aArray.length > 1) {
 					var lastPart = aArray[aArray.length - 1];
-	
+
 					// What type of event will be sent
 					var sEventType = null;
-	
+
 					// Buffer the current page as the sourcePage
 					var iSrcPage = this.getCurrentPage();
 					var iTargetPage = iSrcPage; // will be changed below
-	
+
 					// we have a number - a page has been clicked
 					if (lastPart.match(/^\d+$/)) {
 						sEventType = sap.ui.commons.PaginatorEvent.Goto;
 						iTargetPage = parseInt(lastPart, 10);
-	
+
 					} else if (lastPart == "firstPageLink") {
 						sEventType = sap.ui.commons.PaginatorEvent.First;
 						iTargetPage = 1;
-	
+
 					} else if (lastPart == "backLink") {
 						sEventType = sap.ui.commons.PaginatorEvent.Previous;
 						iTargetPage = Math.max(iSrcPage - 1, 1);
-	
+
 					} else if (lastPart == "forwardLink") {
 						sEventType = sap.ui.commons.PaginatorEvent.Next;
 						iTargetPage = Math.min(iSrcPage + 1, this.getNumberOfPages());
-	
+
 					} else if (lastPart == "lastPageLink") {
 						sEventType = sap.ui.commons.PaginatorEvent.Last;
 						iTargetPage = this.getNumberOfPages();
-	
+
 					} // else should not happen
-	
+
 					if (iTargetPage != iSrcPage) {
 						if (this.bShowAnimation) {
 							this.setCurrentPage(iTargetPage, true); // update current page without re-rendering...
@@ -21027,7 +21026,7 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 						} else {
 							this.setCurrentPage(iTargetPage); // includes re-rendering
 						}
-	
+
 						// fire the "page" event
 						this.firePage({srcPage:iSrcPage,targetPage:iTargetPage,type:sEventType});
 					}
@@ -21035,14 +21034,14 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 			}
 		}
 	};
-	
+
 	Paginator.prototype.setCurrentPage = function(iTargetPage, bSuppressRerendering) {
 		this.setProperty("currentPage", iTargetPage, bSuppressRerendering);
 		if (this.getDomRef()) {
 			sap.ui.commons.PaginatorRenderer.updateBackAndForward(this);
 		}
 	};
-	
+
 	/**
 	 * When animation is set to true, this function will use jQuery to animate the paginator
 	 * as if the page numbers were sliding left/right.
@@ -21053,7 +21052,7 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 		var aIndicesToShow = [];
 		var paginatorId = this.getId();
 		var aChildren = jQuery.sap.byId(paginatorId + "-pages").children();
-	
+
 		// Get the ranges we need to display before and after the animation
 		var oNewRange = this._calculatePagesRange();
 		var oOldRange;
@@ -21066,7 +21065,7 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 			aParts = aChildren[aChildren.length - 1].id.split("--");
 			oOldRange.lastPage = parseInt(aParts[aParts.length - 1], 10);
 		}
-	
+
 		// the pages to be shown only after the animation are those to be rendered invisible, initially
 		for (var i = oNewRange.firstPage; i <= oNewRange.lastPage; i++) {
 			if (i < oOldRange.firstPage || i > oOldRange.lastPage) {
@@ -21077,14 +21076,14 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 				firstPage:aIndicesToShow[0],
 				lastPage:aIndicesToShow[aIndicesToShow.length - 1]
 		};
-	
+
 		// the pages to be shown initially, but NOT after the animation, are those to fade out
 		for (var i = oOldRange.firstPage; i <= oOldRange.lastPage; i++) {
 			if (i < oNewRange.firstPage || i > oNewRange.lastPage) {
 				aIndicesToHide.push(i);
 			}
 		}
-	
+
 		// build the html for both the initially visible and still invisible pages
 		var oldHtml = sap.ui.commons.PaginatorRenderer.getPagesHtml(this.getId(), oOldRange, this.getCurrentPage(), true);
 		var newHtml = sap.ui.commons.PaginatorRenderer.getPagesHtml(this.getId(), oInvisibleRange, this.getCurrentPage(), false);
@@ -21093,14 +21092,14 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 		} else {
 			newHtml = newHtml + oldHtml;
 		}
-		
-		
+
+
 		// remember focus
 		var focElem = document.activeElement;
 		var focId = focElem ? focElem.id : undefined; // remember ID of focused element - it should still be focused after rendering
-		
+
 		this.getDomRef("pages").innerHTML = newHtml;
-		
+
 		// restore focus
 		if (focId) {
 			// Set focus on the previously focused element.
@@ -21111,33 +21110,33 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 			// Set focus to active page link if no other element was active before
 			focElem = jQuery.sap.domById("testPaginator-a--" + this.getCurrentPage());
 		}
-	
+
 		jQuery.sap.focus(focElem);
-		
-		
+
+
 		// Use jQuery hide/show to animate the paging
 		var prefix = this.getId() + "-li--";
-	
+
 		this._oOldRange = oNewRange;
-		
+
 		function removeAfterAnimation(){ // remove the DOM elements after the animation
 			var elem = jQuery.sap.domById(this.id);
 			if (elem) {
 				elem.parentNode.removeChild(elem);
 			}
 		}
-		
+
 		for (var i = 0 ; i < aIndicesToHide.length; i++) {
 			var id = prefix + aIndicesToHide[i];
 			jQuery.sap.byId(id).hide(400, removeAfterAnimation);
 		}
-	
+
 		for (var i = 0 ; i < aIndicesToShow.length; i++) {
 			jQuery.sap.byId(prefix + aIndicesToShow[i]).show(400);
 		}
 	};
-	
-	
+
+
 	/**
 	 * Calculates what is the first page and last page to display (The current range).
 	 * Ensure that when we go over 5 pages, the current page will always be rendered centered
@@ -21146,25 +21145,25 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Paginator.prototype._calculatePagesRange = function(){
-	
+
 		//Setting default values
 		var iFirstPage = 1;
 		var iLastPage = this.getNumberOfPages();
 		var iCurrentPage = this.getCurrentPage();
 		var iNbPages = this.getNumberOfPages();
-	
+
 		//From page 1 to page 5, we display 1 to 10 or less
 		if ( iCurrentPage < 4 ) {
-	
+
 			iFirstPage = 1;
-	
+
 			//Check if last page does not go over 5 --> iLastPage is already set with nbPages above
 			if (iLastPage > Paginator.MAX_NUMBER_PAGES) {
 				iLastPage = Paginator.MAX_NUMBER_PAGES;
 			}
-	
+
 		} else { //Now, the current page is more than 3, so we need to shift the range
-	
+
 			//Reached the last page
 			if (iCurrentPage == iLastPage) {
 				//How many pages exist, if less than 5, simply substract the nb of pages from the last one (range is in this case 1 to max 5)
@@ -21173,50 +21172,45 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 				} else { //More than 5 pages, substract 4 pages to have the 5 pages range
 					iFirstPage = iLastPage - 4;
 				}
-			}
-	
-			//Last page - current page is below 3, substract 4 to always see the right range for the last 2 pages
-			else if ( iLastPage - iCurrentPage < 3 ) {
+			} else if ( iLastPage - iCurrentPage < 3 ) {
+				//Last page - current page is below 3, substract 4 to always see the right range for the last 2 pages
 				iFirstPage = iLastPage - 4;
 			} else { //All other case, create the range from the current page +-2
 				iFirstPage = iCurrentPage - 2;
 				iLastPage = iCurrentPage + 2;
 			}
 		}
-	
+
 		return { firstPage : iFirstPage, lastPage : iLastPage };
 	};
-	
-	
+
+
 	/**
 	 * @param {jQuery.Event} oEvent the browser event
 	 * @private
 	 */
 	Paginator.prototype.onkeydown = function(oEvent){
-	
+
 		//Get the event type and dispatch to the keyboard navigation manager
 		var aEvents = oEvent.getPseudoTypes();
-	
+
 		//Tab
 		if (jQuery.inArray("saptabnext", aEvents) != -1) {
 			this.triggerTabbingNavigation(oEvent,false);
-		}
-		//Shift/tab
-		else if (jQuery.inArray("saptabprevious", aEvents) != -1) {
+		} else if (jQuery.inArray("saptabprevious", aEvents) != -1) {
+			//Shift/tab
 			this.triggerTabbingNavigation(oEvent,true);
-		}
-		//Moves focus to the right (Right arrow key)
-		else if (jQuery.inArray("sapincrease", aEvents) != -1 ) {
+		} else if (jQuery.inArray("sapincrease", aEvents) != -1) {
+			//Moves focus to the right (Right arrow key)
 			this.triggerInternalNavigation(oEvent,"next");
-		}
-		//Moves focus to the left (Left arrow key)
-		else if (jQuery.inArray("sapdecrease", aEvents) != -1 ) {
+		} else if (jQuery.inArray("sapdecrease", aEvents) != -1) {
+			//Moves focus to the left (Left arrow key)
 			this.triggerInternalNavigation(oEvent,"previous");
 		}
-	
+
 	};
-	
-	
+
+
 	/**
 	 * This function will navigate left and right in the paginator, skipping non tabbable elements
 	 * @param {jQuery.Event} oEvent the browser event
@@ -21224,10 +21218,10 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Paginator.prototype.triggerInternalNavigation = function(oEvent,sDirection){
-	
+
 		var aFocusableElements = jQuery(this.getDomRef()).find(":sapFocusable");
 		var iCurrentIndex = jQuery(aFocusableElements).index(oEvent.target);
-	
+
 		//Right key pressed
 		if (sDirection == "next") {
 			var iNextIndex = iCurrentIndex + 1;
@@ -21240,9 +21234,8 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 			}
-		}
-		//Left key pressed
-		else if (sDirection == "previous" && aFocusableElements[iCurrentIndex - 1]) {
+		} else if (sDirection == "previous" && aFocusableElements[iCurrentIndex - 1]) {
+			//Left key pressed
 			var iNextIndex = iCurrentIndex - 1;
 			var oNextElement = aFocusableElements[iNextIndex];
 			if (oNextElement && jQuery(oNextElement).hasClass("sapUiPagCurrentPage")) {
@@ -21254,9 +21247,9 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 				oEvent.stopPropagation();
 			}
 		}
-	
+
 	};
-	
+
 	/**
 	 * This function will handle the TAB key in the paginator (simple group)
 	 * @param {jQuery.Event} oEvent the browser event
@@ -21264,25 +21257,25 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 	 * @private
 	 */
 	Paginator.prototype.triggerTabbingNavigation = function(oEvent,shiftKeyPressed){
-	
+
 		//Get all focusable elements
 		var aFocusableElements = jQuery(this.getDomRef()).find(":sapFocusable");
-	
+
 		//Tabbing --> Focus the last active element then let the browser focus the next active element
 		if (!shiftKeyPressed) {
 			jQuery(aFocusableElements[aFocusableElements.length - 1]).focus();
 		} else { //Shift/Tab keys pressed --> Focus the 2nd active element then let the browser focus the first active element
-	
+
 			//Which element triggered the event
 			var iCurrentIndex = jQuery(aFocusableElements).index(oEvent.target);
-	
+
 			//If the focus is already on the first active element, let the browser move the focus
 			if (iCurrentIndex != 0) {
 				jQuery(aFocusableElements[0]).focus();
 			}
 		}
 	};
-	
+
 	Paginator.prototype.getFocusInfo = function() {
 		var sId = this.$().find(":focus").attr("id");
 		if (sId) {
@@ -21291,7 +21284,7 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 			return sap.ui.core.Element.prototype.getFocusInfo.apply(this, arguments);
 		}
 	};
-	
+
 	Paginator.prototype.applyFocusInfo = function(mFocusInfo) {
 		if (mFocusInfo && mFocusInfo.customId) {
 			this.$().find("#" + mFocusInfo.customId).focus();
@@ -21300,9 +21293,9 @@ sap.ui.define("sap/ui/commons/Paginator",['jquery.sap.global', './library', 'sap
 		}
 		return this;
 	};
-	
-	
-	
+
+
+
 
 	return Paginator;
 
@@ -21337,7 +21330,7 @@ sap.ui.define("sap/ui/commons/Panel",['jquery.sap.global', './library', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -22167,11 +22160,11 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ProgressIndicator.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -22180,7 +22173,7 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -22188,7 +22181,7 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ProgressIndicator = Control.extend("sap.ui.commons.ProgressIndicator", /** @lends sap.ui.commons.ProgressIndicator.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
 
@@ -22196,34 +22189,34 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 			 * Switches enabled state of the control. Disabled fields have different colors, and can not be focused.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * The color of the bar. Enumeration sap.ui.core.BarColor provides CRITICAL (yellow), NEGATIVE (red), POSITIVE (green), NEUTRAL (blue) (default value).
 			 */
 			barColor : {type : "sap.ui.core.BarColor", group : "Appearance", defaultValue : sap.ui.core.BarColor.NEUTRAL},
-	
+
 			/**
 			 * The text value to be displayed in the bar.
 			 */
 			displayValue : {type : "string", group : "Appearance", defaultValue : '0%'},
-	
+
 			/**
 			 * The numerical value for the displayed length of the progress bar.
 			 */
 			percentValue : {type : "int", group : "Data", defaultValue : 0},
-	
+
 			/**
 			 * Specifies whether the current value shall be rendered inside the bar.
 			 */
 			showValue : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * The width of the control.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'}
 		}
 	}});
-	
+
 	/**
 	 * Function is called when ProgressIndicator is clicked.
 	 *
@@ -22231,25 +22224,25 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 	 * @private
 	 */
 	ProgressIndicator.prototype.onclick = function(oEvent) {
-	
+
 		// Set focus to whole ProgressIndicator control
 		this.focus();
-	
+
 	};
-	
+
 	ProgressIndicator.prototype.setEndBar = function () {
-	
+
 		var widthBar = this.getPercentValue();
 		var widthBorder;
 		var sBarColor = this.getBarColor();
 		var time;
-	
+
 		this.oBar  = this.getDomRef("bar");
 		this.oEnd  = this.getDomRef("end");
 		this.oBox  = this.getDomRef("box");
-	
+
 		jQuery(this.oEnd).removeClass('sapUiProgIndEndHidden');
-	
+
 		switch (sBarColor) {
 			case "POSITIVE":
 				jQuery(this.oEnd).addClass('sapUiProgIndPosEnd');
@@ -22267,52 +22260,52 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 				jQuery(this.oEnd).addClass('sapUiProgIndEnd');
 				break;
 		}
-	
+
 		if (widthBar > 100) {
 			widthBorder = (10000 / widthBar) + '%';
 		} else {
 			widthBorder = '100%';
 		}
-	
+
 		if (widthBar > 100) {
 			time = (widthBar - 100) * 20;
 		} else {
 			time = (100 - widthBar) * 20;
 		}
-	
+
 		jQuery(this.oBox).animate({width: widthBorder}, 0, 'linear');
-	
+
 		if (this.bRtl) {
 			jQuery(this.oEnd).animate({right: widthBorder}, time, 'linear');
 		} else {
 			jQuery(this.oEnd).animate({left: widthBorder}, time, 'linear');
 		}
-	
+
 		jQuery(this.oBar).animate({width: widthBar + '%'}, time, 'linear');
 		if (!this.oThis) {
 			this.oThis = this.$();
 		}
 		this.oThis.attr('aria-valuenow', widthBar + '%');
-	
+
 	};
-	
+
 	ProgressIndicator.prototype.setEndBarGoesBack = function (iPercentValue) {
-	
+
 		var widthBar = this.getPercentValue();
 		var widthBorder;
 		var sBarColor = this.getBarColor();
 		var time;
-	
+
 		this.oBar  = this.getDomRef("bar");
 		this.oEnd  = this.getDomRef("end");
 		this.oBox  = this.getDomRef("box");
-	
+
 		if (iPercentValue > 100) {
 			widthBorder = (10000 / iPercentValue) + '%';
 		} else {
 			widthBorder = '100%';
 		}
-	
+
 		switch (sBarColor) {
 			case "POSITIVE":
 				jQuery(this.oEnd).removeClass('sapUiProgIndPosEnd');
@@ -22330,31 +22323,31 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 				jQuery(this.oEnd).removeClass('sapUiProgIndEnd');
 				break;
 		}
-	
+
 		jQuery(this.oEnd).addClass('sapUiProgIndEndHidden');
-	
+
 		if (widthBar > 100) {
 			time = (widthBar - 100) * 20;
 		} else {
 			time = (100 - widthBar) * 20;
 		}
-	
+
 		jQuery(this.oBox).animate({width: widthBorder}, 0, 'linear');
-	
+
 		if (this.bRtl) {
 			jQuery(this.oEnd).animate({right: widthBorder}, time, 'linear');
 		} else {
 			jQuery(this.oEnd).animate({left: widthBorder}, time, 'linear');
 		}
-	
+
 		jQuery(this.oBar).animate({width: widthBar + '%'}, time, 'linear');
 		if (!this.oThis) {
 			this.oThis = this.$();
 		}
 		this.oThis.attr('aria-valuenow', widthBar + '%');
-	
+
 	};
-	
+
 	/**
 	 * Property setter for the PercentValue
 	 * A new rendering is not necessary, only the bar has to be moved.
@@ -22364,27 +22357,27 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 	 * @public
 	 */
 	ProgressIndicator.prototype.setPercentValue = function(iPercentValue) {
-	
+
 		var widthBar = this.getPercentValue();
 		var widthBorder;
-	
+
 		this.oBar  = this.getDomRef("bar");
 		this.oEnd  = this.getDomRef("end");
 		this.oBox  = this.getDomRef("box");
-	
+
 		var that = this;
 		var time;
-	
+
 		if (iPercentValue < 0) {
 			iPercentValue = 0;
 		}
-	
+
 		if (iPercentValue > 100) {
 			widthBorder = (10000 / iPercentValue) + '%';
 		} else {
 			widthBorder = '100%';
 		}
-	
+
 		if (!this.oBar) {
 			// Not already rendered -> return and render
 			time = iPercentValue * 20;
@@ -22392,22 +22385,20 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 			jQuery(this.oBar).animate({width: iPercentValue + '%'}, time, 'linear');
 			return this;
 		}
-	
+
 		if (iPercentValue > 100 && widthBar <= 100) {
 			time = (100 - widthBar) * 20;
 			this.setProperty( 'percentValue', iPercentValue, true ); // Do not render complete control again
 			jQuery(this.oBar).animate({width: '100%'}, time, 'linear', function() {
 			that.setEndBar();
 			});
-		}
-		else if (iPercentValue <= 100 && widthBar > 100) {
+		} else if (iPercentValue <= 100 && widthBar > 100) {
 			time = (widthBar - 100) * 20;
 			this.setProperty( 'percentValue', iPercentValue, true ); // Do not render complete control again
 			jQuery(this.oBar).animate({width: '100%'}, time, 'linear', function() {
 			that.setEndBarGoesBack();
 			});
-		}
-		else if (iPercentValue > 100 && widthBar > 100) {
+		} else if (iPercentValue > 100 && widthBar > 100) {
 			if (iPercentValue > widthBar) {
 				time = (iPercentValue - widthBar) * 20;
 			} else {
@@ -22416,13 +22407,13 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 			widthBorder = (10000 / iPercentValue) + '%';
 			this.setProperty( 'percentValue', iPercentValue, true ); // Do not render complete control again
 			jQuery(this.oBox).animate({width: widthBorder}, 0, 'linear');
-	
+
 			if (this.bRtl) {
 				jQuery(this.oEnd).animate({right: widthBorder}, time, 'linear');
 			} else {
 				jQuery(this.oEnd).animate({left: widthBorder}, time, 'linear');
 			}
-	
+
 			jQuery(this.oBar).animate({width: iPercentValue + '%'}, time, 'linear', function() {
 			});
 			if (!this.oThis) {
@@ -22442,10 +22433,10 @@ sap.ui.define("sap/ui/commons/ProgressIndicator",['jquery.sap.global', './librar
 			}
 			this.oThis.attr('aria-valuenow', iPercentValue + '%');
 		}
-	
+
 		return this;
 	};
-	
+
 
 	return ProgressIndicator;
 
@@ -22482,7 +22473,7 @@ sap.ui.define("sap/ui/commons/RadioButton",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -22761,7 +22752,7 @@ sap.ui.define("sap/ui/commons/RadioButtonGroup",['jquery.sap.global', './library
 	 * @class
 	 * a group of RadioButtons to hande as one UI element.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -23467,7 +23458,7 @@ sap.ui.define("sap/ui/commons/RatingIndicator",['jquery.sap.global', './library'
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -23956,7 +23947,7 @@ sap.ui.define("sap/ui/commons/ResponsiveContainer",['jquery.sap.global', './libr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -24162,7 +24153,7 @@ sap.ui.define("sap/ui/commons/ResponsiveContainerRange",['jquery.sap.global', '.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -24234,7 +24225,7 @@ sap.ui.define("sap/ui/commons/RichTooltip",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.TooltipBase
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -24453,7 +24444,7 @@ sap.ui.define("sap/ui/commons/RoadMap",['jquery.sap.global', './library', 'sap/u
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -24986,7 +24977,7 @@ sap.ui.define("sap/ui/commons/RoadMapStep",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -25255,7 +25246,7 @@ sap.ui.define("sap/ui/commons/RowRepeater",['jquery.sap.global', './library', 's
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -25417,17 +25408,6 @@ sap.ui.define("sap/ui/commons/RowRepeater",['jquery.sap.global', './library', 's
 	
 	
 	/**
-	 * Increments the number of rows. This method will only trigger a showMore if the property showMoreSteps is set.
-	 *
-	 * @name sap.ui.commons.RowRepeater#triggerShowMore
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
 	 * This value of the paging mode boolean is true if the showMoreSteps
 	 * property is not set. This value is updated whenever the value
 	 * of showMoreSteps is changed.
@@ -25492,13 +25472,15 @@ sap.ui.define("sap/ui/commons/RowRepeater",['jquery.sap.global', './library', 's
 	/*
 	 * PUBLIC API METHODS
 	 */
-	// TODO: check where to document: here or in API definition
 	/**
 	 * The <code>triggerShowMore</code> function increments the number of rows by the
 	 * value of <code>showMoreSteps</code>.
+	 * 
+	 * This method will only trigger a showMore if the property showMoreSteps is set.
 	 *
 	 * @return {sap.ui.commons.RowRepeater} <code>this</code> to allow method chaining
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.triggerShowMore = function() {
 	
@@ -26801,7 +26783,7 @@ sap.ui.define("sap/ui/commons/RowRepeaterFilter",['jquery.sap.global', './librar
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -26870,7 +26852,7 @@ sap.ui.define("sap/ui/commons/RowRepeaterSorter",['jquery.sap.global', './librar
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -26937,7 +26919,7 @@ sap.ui.define("sap/ui/commons/SearchProvider",['jquery.sap.global', './library',
 	 * @class
 	 * A SearchProvider which can be attached to a Search Field.
 	 * @extends sap.ui.core.search.OpenSearchProvider
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -27000,7 +26982,7 @@ sap.ui.define("sap/ui/commons/SegmentedButton",['jquery.sap.global', './library'
 	 * The SegmentedButton provides a group of multiple buttons. Only one button can be active. The behaviour is more ore less like a radio button group.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.commons.ToolbarItem
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -27106,7 +27088,9 @@ sap.ui.define("sap/ui/commons/SegmentedButton",['jquery.sap.global', './library'
 		var oButton,
 			aButtons,
 			aItemDomRefs = [];
-	
+		if (!this.getEnabled()) {
+			return;
+		}
 		if (this.getDomRef()) {
 			this._oItemNavigation.setRootDomRef(this.getDomRef("radiogroup"));
 			aButtons = this.getButtons();
@@ -27307,7 +27291,7 @@ sap.ui.define("sap/ui/commons/Slider",['jquery.sap.global', './library', 'sap/ui
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -28942,17 +28926,17 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Splitter.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Allows to split the screen into two areas. Make sure that the container for the splitter has an absolute height or set an absolute height for the splitter using the height property. Otherwise the height of the splitter is calculated by the height of its contents.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -28960,67 +28944,67 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Splitter = Control.extend("sap.ui.commons.Splitter", /** @lends sap.ui.commons.Splitter.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * The splitter can have horizontal or vertical orientation.
 			 */
 			splitterOrientation : {type : "sap.ui.core.Orientation", group : "Behavior", defaultValue : sap.ui.core.Orientation.Vertical},
-	
+
 			/**
 			 * Position of splitter bar in percentage.
 			 * The default value means that the splitter is positioned in the middle of the area that is available for the splitter.
 			 */
 			splitterPosition : {type : "sap.ui.core.Percentage", group : "Behavior", defaultValue : '50%'},
-	
+
 			/**
 			 * The minimum size (width for vertical splitter or height for horizontal splitter) of the first Pane
 			 */
 			minSizeFirstPane : {type : "sap.ui.core.Percentage", group : "Behavior", defaultValue : '0%'},
-	
+
 			/**
 			 * The minimum size (width for vertical splitter or height for horizontal splitter) of the second Pane
 			 */
 			minSizeSecondPane : {type : "sap.ui.core.Percentage", group : "Behavior", defaultValue : '0%'},
-	
+
 			/**
 			 * The width of the split area in px or in %
 			 */
 			width : {type : "sap.ui.commons.SplitterSize", group : "Behavior", defaultValue : '100%'},
-	
+
 			/**
 			 * The height of the split area in px or in %
 			 */
 			height : {type : "sap.ui.commons.SplitterSize", group : "Behavior", defaultValue : '100%'},
-	
+
 			/**
 			 * Specifies if the browser should display scroll bars or simply cut the content of a splitter pane when the content does not fit into its pane.
 			 */
 			showScrollBars : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * set the splitter bar to be visible or not.
 			 */
 			splitterBarVisible : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Controls inside the first pane. These are the left ones in case of defining a vertical splitter, and the top ones in case of using the horizontal splitter.
 			 */
-			firstPaneContent : {type : "sap.ui.core.Control", multiple : true, singularName : "firstPaneContent"}, 
-	
+			firstPaneContent : {type : "sap.ui.core.Control", multiple : true, singularName : "firstPaneContent"},
+
 			/**
 			 * Controls inside the second pane. These are the right ones in case of defining a vertical splitter, and the bottom ones in case of using the horizontal splitter.
 			 */
 			secondPaneContent : {type : "sap.ui.core.Control", multiple : true, singularName : "secondPaneContent"}
 		}
 	}});
-	
-	
-	
+
+
+
 	Splitter.prototype.onBeforeRendering = function() {
 		// cleanup resize event registration before re-rendering
 		if (this.sResizeListenerId) {
@@ -29032,35 +29016,35 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			this.sSpecialResizeListenerId = null;
 		}
 	};
-	
+
 	Splitter.prototype.onAfterRendering = function() {
 		this._recalculateInternals();
 		this.sResizeListenerId = ResizeHandler.register(this.splitterDIV, jQuery.proxy(this.onresize, this));
 	};
-	
-	
+
+
 	Splitter.prototype._recalculateInternals = function() {
-	
+
 		this.splitterDIV = this.getDomRef();
 		this.splitterBar = jQuery.sap.domById(this.getId() + '_SB');
 		this.firstPane = jQuery.sap.domById(this.getId() + '_firstPane');
 		this.secondPane = jQuery.sap.domById(this.getId() + '_secondPane');
-	
+
 		this.minSizeFP = this.getMinSizeFirstPane();
 		this.minSizeSP = this.getMinSizeSecondPane();
-	
+
 		this.minSizeFP = this.minSizeFP.substring(0, (this.minSizeFP).length - 1);
 		this.minSizeFP = parseFloat(this.minSizeFP);
-	
+
 		this.minSizeSP = this.minSizeSP.substring(0, (this.minSizeSP).length - 1);
 		this.minSizeSP = parseFloat(this.minSizeSP);
-	
+
 		this.spOrientation =  this.getSplitterOrientation();
-	
+
 		this.sBarPosition = this.getSplitterPosition();
 		this.sBarPosition = this.sBarPosition.substring(0, this.sBarPosition.length - 1);
 		this.sBarPosition = parseFloat(this.sBarPosition);
-	
+
 		// in hcb mode set splitter bar width to 6 px
 		if (sap.ui.getCore().getConfiguration().getTheme() == "sap_hcb") {
 			this.sbSize = 6;
@@ -29068,7 +29052,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			this.sbSize = 4;
 		}
 		this.resizeSplitterElements();
-	
+
 		// if no splitter parent height is specified and the splitter height is specified in % the splitter won't be displayed
 		// and the splitterbar height will be
 		// FF: 0 in vertical and horizontal splitters
@@ -29084,32 +29068,32 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 				this.fixHeight();
 			}
 		}
-	
+
 	};
-	
-	
+
+
 	Splitter.prototype.onresize = function(oEvent) {
-	
+
 		this.resizeSplitterElements();
-	
+
 	};
-	
+
 	Splitter.prototype.resizeSplitterElements = function() {
-	
+
 		var sbW, sbH, width, height, widthSP, heightSP;
-	
+
 		/**
 		 * Calculate the equivalent percentage of the 4px : the width/height of the splitter bar
 		 */
-	
+
 		if (this.spOrientation == sap.ui.core.Orientation.Vertical) {
-	
+
 			width = jQuery(this.splitterDIV).width();
 			if (width == 0) {
 				width = 100; //px so it would show something at least
 			}
 			sbW = (this.sbSize * 100) / width;
-	
+
 			// check if bar is in the far right
 			if (this.sBarPosition >= 100 || this.sBarPosition + sbW > 100) {
 				this.sBarPosition = 100 - sbW;
@@ -29120,15 +29104,15 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			jQuery(this.firstPane).css("width", this.sBarPosition + "%");
 			jQuery(this.splitterBar).css("width", sbW + "%");
 			jQuery(this.secondPane).css("width", widthSP + "%");
-	
+
 		} else {
-	
+
 			height = jQuery(this.splitterDIV).height();
 			if (height == 0 ) {
 				height = 100; //px so it would show something at least
 			}
 			sbH = (this.sbSize * 100) / height;
-	
+
 			// check if bar is in the far bottom
 			if (this.sBarPosition >= 100 || this.sBarPosition + sbH > 100) {
 				this.sBarPosition = 100 - sbH;
@@ -29139,21 +29123,21 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			jQuery(this.firstPane).css("height", this.sBarPosition + "%");
 			jQuery(this.splitterBar).css("height", sbH + "%");
 			jQuery(this.secondPane).css("height", heightSP + "%");
-	
+
 		}
-	
+
 		// update splitterpos value...suppress rerendering
 		this.setProperty("splitterPosition", this.sBarPosition + "%", true);
-	
+
 		// fix height if splitterdiv height is 0 we set it to 100 px to show something at least
 		// further resizing should then work correctly
 		if (jQuery(this.splitterDIV).height() == 0 && !this.splitterDIV.style.height) {
 			jQuery(this.splitterDIV).css("height", "100px");
 			jQuery(this.splitterBar).css("height", "100px");
 		}
-	
+
 	};
-	
+
 	Splitter.prototype.setSplitterPosition = function(sPos){
 		if (this.getDomRef()) {
 			this.setProperty("splitterPosition", sPos, true);
@@ -29162,7 +29146,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			this.setProperty("splitterPosition", sPos);
 		}
 	};
-	
+
 	Splitter.prototype.setSplitterBarVisible = function(bVisible){
 		if (this.getDomRef()) {
 			this.setProperty("splitterBarVisible", bVisible, true);
@@ -29176,8 +29160,8 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			this.setProperty("splitterBarVisible", bVisible);
 		}
 	};
-	
-	
+
+
 	/**
 	 * set height to a fixed height if there is no absolute height specified
 	 */
@@ -29186,9 +29170,9 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 		var parentHeight = jQuery(this.splitterDIV.parentNode).height();
 		var splitterHeight = jQuery(this.splitterDIV).height();
 		if (parentHeight > splitterHeight) {
-			
+
 			splitterHeight = parentHeight;
-			
+
 			// check if there was a custom max height set...then we use it regardless
 			// of container height but only for px values
 			var customMaxHeight = this.getHeight();
@@ -29203,13 +29187,13 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 					splitterHeight = jQuery(this.splitterDIV).height();
 				}
 			}
-			
+
 			// if splitterheight is 0 which shouldn't be the case we set the parent height again.
 			if (splitterHeight <= 0) {
 				splitterHeight = parentHeight;
 			}
 		}
-		
+
 		// reset the splitter div height so that its contents fit inside...
 		jQuery(this.splitterDIV).css("height", splitterHeight + "px");
 		if (this.spOrientation == sap.ui.core.Orientation.Vertical) {
@@ -29222,7 +29206,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			//fHandler({target: oParent});
 		}
 	};
-	
+
 	/**
 	 *	cleanup resize event registration before re-rendering
 	 */
@@ -29236,8 +29220,8 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			this.sSpecialResizeListenerId = null;
 		}
 	};
-	
-	
+
+
 	/**
 	 * resize event handler to handle the special case when no splitter parent height is specified and the splitter height is specified in %.
 	 * Then the splitter won't be displayed. In this case when the parent gets resized, get the parents height and use it to adapt the current fixed splitter height in px
@@ -29252,7 +29236,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			// force browser to apply CSS so that the height is 0 and can then be calculated from new
 			window.getComputedStyle(oDom);
 		}
-	
+
 		// perhaps this is event handler is not needed. depends on if current child elements should be resized or not
 		var parentHeight = jQuery(oEvent.target).height();
 		var currentHeight = $Splitter.height();
@@ -29271,57 +29255,57 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			}
 		}
 	};
-	
+
 	/**
 	 * mousedown event handler: create a ghost bar for the splitter bar and starts dragging it
 	 */
 	Splitter.prototype.onmousedown = function(oEvent) {
-	
+
 		if (oEvent.target != this.splitterBar) {
 			return;
 		}
-	
+
 		var oJBody = jQuery(document.body);
 			// Fix for IE text selection while dragging
 		oJBody.bind("selectstart",jQuery.proxy(this.splitterSelectStart,this));
-	
+
 		var offset = jQuery(this.splitterBar).offset();
 		var height = jQuery(this.splitterBar).height();
 		var width = jQuery(this.splitterBar).width();
 		var cssClass;
-	
+
 		if (this.spOrientation == sap.ui.core.Orientation.Vertical) {
 			cssClass = "sapUiVSBGhost";
 		} else {
 			cssClass = "sapUiHSBGhost";
 		}
-		
+
 		var iZIndex = Popup.getLastZIndex() + 5;
 		if (iZIndex < 20) {
 			iZIndex = 20;
 		}
-	
+
 		jQuery(document.body).append(
 				"<div id=\"" + this.getId() + "_ghost\" class=\"" + cssClass + "\" style =\" height:" + height + "px; width:"
 				+ width + "px; left:" + offset.left + "px; top:" + offset.top + "px;z-index:" + iZIndex + "\"></div>");
-	
+
 		// append overlay over splitter to enable correct functionality of moving the splitter
 		jQuery(document.body).append(
 				"<div id=\"" + this.getId() + "_overlay\" style =\"left: 0px;" +
 						" right: 0px; bottom: 0px; top: 0px; position:fixed; z-index:" + iZIndex + "\" ></div>");
-	
+
 		jQuery(document).bind("mouseup", jQuery.proxy(this.onGhostMouseRelease, this));
 		jQuery(document).bind("mousemove", jQuery.proxy(this.onGhostMouseMove, this));
-		
+
 		// focus splitter bar
 		jQuery(this.splitterBar).focus();
-		
+
 		// cancel the event
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 	};
-	
+
 	/**
 	 * The selectstart event triggered in IE to select the text.
 	 * @private
@@ -29333,19 +29317,19 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 		oEvent.stopPropagation();
 		return false;
 	};
-	
+
 	/**
 	 * drops the splitter bar
 	 */
-	
+
 	Splitter.prototype.onGhostMouseRelease = function(oEvent) {
-	
+
 		var newSbPosition, spHeight, spWidth;
 		var splitterBarGhost = jQuery.sap.domById(this.getId() + "_ghost");
 		var rtl = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 		if ( this.spOrientation == sap.ui.core.Orientation.Vertical) {
-	
+
 			if (!rtl) {
 				newSbPosition = oEvent.pageX - jQuery(this.firstPane).offset().left;
 				spWidth = jQuery(this.splitterDIV).width();
@@ -29360,68 +29344,66 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			spHeight = jQuery(this.splitterDIV).height();
 			newSbPosition = (newSbPosition * 100) / spHeight;
 		}
-	
+
 		if (newSbPosition < this.minSizeFP) {
 			newSbPosition = this.minSizeFP;
+		} else if ((100 - newSbPosition) < this.minSizeSP) {
+			newSbPosition = 100 - this.minSizeSP;
 		}
-		else
-			if ((100 - newSbPosition) < this.minSizeSP) {
-				newSbPosition = 100 - this.minSizeSP;
-			}
-	
+
 		this.sBarPosition =  newSbPosition;
-	
+
 		this.resizeSplitterElements();
-	
+
 		jQuery(splitterBarGhost).remove();
 		jQuery.sap.byId(this.getId() + "_overlay").remove();
-	
+
 		var oJBody = jQuery(document.body);
 		oJBody.unbind("selectstart", this.splitterSelectStart);
-	
+
 		jQuery(document).unbind("mouseup", this.onGhostMouseRelease);
 		jQuery(document).unbind("mousemove", this.onGhostMouseMove);
-	
+
 	};
-	
+
 	Splitter.prototype.onGhostMouseMove = function(oEvent) {
-	
+
 		var splitterBarGhost = jQuery.sap.domById(this.getId() + "_ghost");
 		var max;
 		var min;
 		var rtl = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 		var leftFirstPane = jQuery(this.firstPane).offset().left;
 		var w = jQuery(this.splitterDIV).width();
 		var leftSecondPane = jQuery(this.secondPane).offset().left;
-	
+
 		if (this.getSplitterOrientation() == sap.ui.core.Orientation.Vertical) {
-	
+
 			if (!rtl) {
-	
+
 				min = leftFirstPane + (w * this.minSizeFP) / 100;
 				max = leftFirstPane + (w * (100 - this.minSizeSP)) / 100;
-	
+
 				if (oEvent.pageX > min && oEvent.pageX < max) {
 					jQuery(splitterBarGhost).css("left", oEvent.pageX + "px");
 				}
 			} else {
-	
-	
+
+
 				min = leftSecondPane + (w * this.minSizeSP) / 100;
 				max = leftSecondPane + (w * (100 - this.minSizeFP)) / 100;
-	
+
 				if (oEvent.pageX > min && oEvent.pageX < max) {
 					jQuery(splitterBarGhost).css("left", oEvent.pageX + "px");
 				}
-	
-	
+
+
 			}
-	
+
 		} else {
-	
+
 			var h = jQuery(this.splitterDIV).height();
-	
+
 			min = jQuery(this.firstPane).offset().top + (h * this.minSizeFP) / 100;
 			max = jQuery(this.secondPane).offset().top + jQuery(this.secondPane).height() - (h * this.minSizeSP) / 100;
 			if (oEvent.pageY > min && oEvent.pageY < max) {
@@ -29429,7 +29411,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			}
 		}
 	};
-	
+
 	/**
 	 * Convenience method for handling of Ctrl key, meta key etc.
 	 *
@@ -29438,7 +29420,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 	Splitter.prototype.getCtrlKey = function(oEvent) {
 		return !!(oEvent.ctrlKey || oEvent.metaKey); // double negation doesn't have effect on boolean but ensures null and undefined are equivalent to false.
 	};
-	
+
 	/**
 	 * Convenience method to check an event for a certain combination of modifier keys
 	 *
@@ -29447,7 +29429,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 	Splitter.prototype.checkModifierKey = function(oEvent, bCtrlKey, bAltKey, bShiftKey) {
 		return oEvent.shiftKey == bShiftKey && oEvent.altKey == bAltKey && this.getCtrlKey(oEvent) == bCtrlKey;
 	};
-	
+
 	/**
 	 * Home key minimizes the first pane to the last possible position
 	 */
@@ -29459,7 +29441,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			oEvent.stopPropagation();
 		}
 	};
-	
+
 	/**
 	 * End key maximizes the first pane to the last possible position
 	 */
@@ -29471,10 +29453,10 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			oEvent.stopPropagation();
 		}
 	};
-	
+
 	Splitter.prototype.onArrowKeys = function(oEvent,oInc) {
 		var width, height, sbSize, sbPosition, newSbPosition;
-	
+
 		if (this.spOrientation == sap.ui.core.Orientation.Vertical) {
 			width = jQuery(this.splitterDIV).width();
 			sbPosition = jQuery(this.firstPane).width();
@@ -29488,25 +29470,23 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			// move 10 pixels
 			sbSize = (10 * 100) / height;
 		}
-	
+
 		if (oInc == "false") {
 			newSbPosition = sbPosition - sbSize;
-		}
-		else if (oInc == "true") {
+		} else if (oInc == "true") {
 			newSbPosition = sbPosition + sbSize;
 		}
-	
+
 		if (newSbPosition < this.minSizeFP)	{
 			newSbPosition = this.minSizeFP;
-		}
-		else if ((100 - newSbPosition) < this.minSizeSP) {
+		} else if ((100 - newSbPosition) < this.minSizeSP) {
 			newSbPosition = 100 - this.minSizeSP;
 		}
-	
+
 		this.sBarPosition = newSbPosition;
 		this.resizeSplitterElements();
 	};
-	
+
 	/**
 	 * If the Shift and Up keys are pressed and if the focus is the onsplitterBar moves the horizontal sash bar up by one step
 	 * and the vertical sash bar left one step
@@ -29514,22 +29494,22 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 	Splitter.prototype.onsapupmodifiers = function(oEvent) {
 		if (this.checkModifierKey(oEvent, false, false, true)) {
 			if (oEvent.target == this.splitterBar) {
-				
+
 				if (this.spOrientation == sap.ui.core.Orientation.Horizontal) {
 					this.onArrowKeys(oEvent,"false");
 				} else {
 					// move vertical splitter left
 					this.onsapleftmodifiers(oEvent);
 				}
-				
+
 			}
 			// cancel the event
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
 	};
-	
-	
+
+
 	/**
 	 * If the Shift and Up keys are pressed and if the focus is on the splitterBar moves the horizontal sash bar down by one step
 	 * and the vertical sash bar right one step
@@ -29549,7 +29529,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			oEvent.stopPropagation();
 		}
 	};
-	
+
 	/**
 	 * If the Shift and Left keys are pressed and if the focus is on splitterBar moves the vertical sash bar left by one step or
 	 * the horizontal sash bar up one step
@@ -29574,7 +29554,7 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			oEvent.stopPropagation();
 		}
 	};
-	
+
 	/**
 	 * If the Shift and Right keys are pressed and if the focus is on the splitterBar moves the vertical sash bar right by one step
 	 * and the horizontal sash bar down one step
@@ -29599,26 +29579,26 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 			oEvent.stopPropagation();
 		}
 	};
-	
+
 	/**
 	 * only drag events are fired; mouse events such as mousemove are not fired during drag operation
 	 */
 	/**
 	 * event dragstart fired when the user starts dragging the sash bar
 	 */
-	
+
 	Splitter.prototype.ondragstart = function(oEvent) {
-		
+
 		if (oEvent.target != this.splitterBar) {
 			return;
 		}
-	
+
 		// cancel the event
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-		
-	
+
+
 	Splitter.prototype.getText = function(sKey, aArgs) {
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 		if (rb) {
@@ -29626,8 +29606,8 @@ sap.ui.define("sap/ui/commons/Splitter",['jquery.sap.global', './library', 'sap/
 		}
 		return sKey;
 	};
-	
-	
+
+
 
 	return Splitter;
 
@@ -29661,7 +29641,7 @@ sap.ui.define("sap/ui/commons/Tab",['jquery.sap.global', './Panel', './library']
 	 * @extends sap.ui.commons.Panel
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -29890,20 +29870,20 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new TabStrip.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * 
+	 *
 	 * A container for tab controls which contain the content and generally other controls. The user switches between the tabs then to display the content.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -29911,20 +29891,20 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TabStrip = Control.extend("sap.ui.commons.TabStrip", /** @lends sap.ui.commons.TabStrip.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Height includes tab bar and content area.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
+
 			/**
 			 * Width includes tab bar and content area.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
+
 			/**
 			 * Index of the currently selected tab.
 			 */
@@ -29932,33 +29912,33 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		},
 		defaultAggregation : "tabs",
 		aggregations : {
-	
+
 			/**
 			 * Aggregating tabs contained in the tab strip.
 			 */
 			tabs : {type : "sap.ui.commons.Tab", multiple : true, singularName : "tab"}
 		},
 		events : {
-	
+
 			/**
 			 * Event is fired when the user selects a tab.
 			 */
 			select : {
 				parameters : {
-	
+
 					/**
 					 * Index of the selected tab.
 					 */
 					index : {type : "int"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Event is fired when the user closes a tab.
 			 */
 			close : {
 				parameters : {
-	
+
 					/**
 					 * Index of the closed tab.
 					 */
@@ -29967,18 +29947,18 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 			}
 		}
 	}});
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
 	TabStrip.prototype.init = function() {
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
-	
+
 	TabStrip.prototype.onAfterRendering = function() {
 		// find a collection of all tabs
 		var oFocusRef = this.getFocusDomRef(),
@@ -30001,14 +29981,14 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		this.oItemNavigation.setRootDomRef(oFocusRef);
 		this.oItemNavigation.setItemDomRefs(aTabDomRefs);
 		this.oItemNavigation.setSelectedIndex(iSelectedDomIndex);
-	
+
 		//Notify the tabs
 		var aTabs = this.getTabs();
 		for (var i = 0;i < aTabs.length;i++) {
 			aTabs[i].onAfterRendering();
 		}
 	};
-	
+
 	/**
 	 * Convenient method to add a tab with a text as title and a root control as content.
 	 *
@@ -30029,7 +30009,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		this.addTab(oTab);
 		return oTab;
 	};
-	
+
 	/*
 	 * Finds and fires the select event of a tab of a given Dom Reference
 	 * if it is a Dom ref of a tab title.
@@ -30042,16 +30022,16 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 			if ((iIdx != this.getSelectedIndex()) && (this.getTabs()[iIdx].getEnabled())) {
 				var iOldIndex = this.getSelectedIndex();
 				this.setProperty( 'selectedIndex', iIdx, true ); // no complete rerendering required
-	
+
 				this.rerenderPanel(iOldIndex);
-	
+
 				this.oItemNavigation.setSelectedIndex(this.oItemNavigation.getFocusedIndex());
-	
+
 				this.fireSelect({index:iIdx});
 			}
 		}
 	};
-	
+
 	/*
 	 * Handles the SPACEBAR press
 	 * @private
@@ -30060,27 +30040,27 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		var oSource = oEvent.target;
 		this.selectTabByDomRef(oSource);
 	};
-	
+
 	// ENTER and SPACE with modifiers is the same like SPACE
 	TabStrip.prototype.onsapspacemodifiers = TabStrip.prototype.onsapspace;
 	TabStrip.prototype.onsapenter = TabStrip.prototype.onsapspace;
 	TabStrip.prototype.onsapentermodifiers = TabStrip.prototype.onsapspace;
-	
+
 	/*
 	 * Handles the DELETE press
 	 * @private
 	 */
 	TabStrip.prototype.onsapdelete = function(oEvent) {
-	
+
 		var oSource = oEvent.target;
 		var iIdx = this.getItemIndex(oSource);
 		if (iIdx > -1 && this.getTabs()[iIdx].getClosable()) {
 			//item is closable
 			this.fireClose({index:iIdx});
 		}
-	
+
 	};
-	
+
 	/*
 	 * Handles the click event.
 	 * @private
@@ -30097,7 +30077,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		}
 		this.selectTabByDomRef(oSource);
 	};
-	
+
 	/*
 	 * Overrides getFocusDomRef of base element class.
 	 * @public
@@ -30105,7 +30085,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 	TabStrip.prototype.getFocusDomRef = function() {
 		return this.getDomRef().firstChild;
 	};
-	
+
 	/*
 	 * Does all the cleanup when the TabStrip is to be destroyed.
 	 * Called from Element's destroy() method.
@@ -30117,12 +30097,12 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 			this.oItemNavigation.destroy();
 			delete this.oItemNavigation;
 		}
-	
+
 		// no super.exit() to call
 	};
-	
+
 	TabStrip.prototype.getItemIndex = function(oDomRef) {
-	
+
 		var sId;
 		if (!oDomRef.id || oDomRef.id.search("-close") != -1) {
 			// icon or close button
@@ -30131,7 +30111,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		} else {
 			sId = oDomRef.id;
 		}
-	
+
 		for (var idx = 0, aTabs = this.getTabs(); idx < aTabs.length; idx++) {
 			if (sId == aTabs[idx].getId()) {
 				return idx;
@@ -30139,9 +30119,9 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		}
 		return -1;
 	};
-	
+
 	// Override aggregation methods if something needs to be taken care of
-	
+
 	/*
 	 * Overwrite of default method
 	 * Removes an tab from the aggregation named <code>tabs</code>.
@@ -30158,7 +30138,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		if (typeof (vElement) == "object") { // the element itself is given or has just been retrieved
 			iIndex = this.indexOfTab(vElement);
 		}
-	
+
 		var oTab = this.getTabs()[iIndex];
 		if (oTab.getVisible()) {
 			// set tab invisible during hiding it for changing classes of tabs
@@ -30166,13 +30146,13 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 			this.hideTab(iIndex);
 			oTab.setProperty("visible",true,true); // no rerendering
 		}
-	
+
 		if (this.getSelectedIndex() > iIndex) {
 			this.setProperty( 'selectedIndex', this.getSelectedIndex() - 1, true ); // no complete rerendering required
 		}
 		return this.removeAggregation("tabs", iIndex, true); // no complete rerendering required
 	};
-	
+
 	/*
 	 * Overwite of defaultSetter for property <code>selectedIndex</code>.
 	 *
@@ -30183,21 +30163,21 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 	 * @public
 	 */
 	TabStrip.prototype.setSelectedIndex = function(iSelectedIndex) {
-	
+
 		var iOldIndex = this.getSelectedIndex();
-	
+
 		if (iSelectedIndex == iOldIndex) {
 			return this;
 		}
-	
+
 		var aTabs = this.getTabs();
 		var oTab = aTabs[iSelectedIndex];
-	
+
 		if (!oTab && !this.getDomRef()) {
 			// tab don't exist but not rendered. In initial setup index might be set before tab is added
 			// But if already rendered this is not allowed, tab must exist
 			this.setProperty( 'selectedIndex', iSelectedIndex, false ); // rendering needed
-	
+
 		} else if (oTab && oTab.getEnabled() && oTab.getVisible()) {
 			this.setProperty( 'selectedIndex', iSelectedIndex, true ); // no complete rerendering required
 			if (this.getDomRef() && !this.invalidated) {
@@ -30224,13 +30204,13 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		} else {
 			this._warningInvalidSelectedIndex(iSelectedIndex, oTab);
 		}
-	
+
 		return this;
 	};
-	
+
 	/**
 	 * Close a tab. If the tab is selected, the next one will be selected. (If it's the last the previous one will be selected).
-	 * 
+	 *
 	 * This method should be called if the close event is fired. It can not be called automatically because the consumer might need to run some logic before the tab is closed.
 	 *
 	 * @param {int} iIndex
@@ -30240,19 +30220,19 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TabStrip.prototype.closeTab = function(iIndex) {
-	
+
 		var oTab = this.getTabs()[iIndex];
-	
+
 		if (!oTab || !oTab.getClosable() || !oTab.getVisible()) {
 			return;
 		}
-	
+
 		// close tab -> set to invisible
 		oTab.setProperty("visible",false,true); // no rerendering
-	
+
 		this.hideTab(iIndex);
 	};
-	
+
 	/*
 	 * removes a tab from output
 	 *
@@ -30261,50 +30241,50 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 	 */
 	TabStrip.prototype.hideTab = function(iIndex) {
 		var oTab = this.getTabs()[iIndex];
-	
+
 		if (!this.getDomRef()) {
 			return; //if not already rendered selected index should be provided by caller
 		}
-	
+
 		// get focused index and visible index of tab
 		var iFocusedIndex = this.oItemNavigation.getFocusedIndex();
 		var iVisibleIndex = parseInt(oTab.$().attr("aria-posinset"), 10) - 1;
 		var sFocusedControlId = sap.ui.getCore().getCurrentFocusedControlId();
-	
+
 		// delete only tab from DOM ->no rerendering of other tabs necessary
 		oTab.$().remove();
-	
+
 		if (this.iVisibleTabs == 1) {
 			// last visible tab is closed -> no new selected tab and no content
 			this.setProperty( 'selectedIndex', -1, true ); // no complete rerendering required
 			oTab.$("panel").remove();
 		} else if (iIndex == this.getSelectedIndex()) {
 			// selected tab should be closed -> select other one
-	
+
 			var iNewIndex = iIndex + 1;
-	
+
 			while (iNewIndex < this.getTabs().length && (!this.getTabs()[iNewIndex].getEnabled() || !this.getTabs()[iNewIndex].getVisible())) {
 				//select next one
-				iNewIndex ++;
+				iNewIndex++;
 			}
-	
+
 			if (iNewIndex == this.getTabs().length) {
 				// no next active tab - search for previous
 				iNewIndex = iIndex - 1;
 				while (iNewIndex >= 0 && (!this.getTabs()[iNewIndex].getEnabled() || !this.getTabs()[iNewIndex].getVisible())) {
 					//select previous one
-					iNewIndex --;
+					iNewIndex--;
 				}
 			}
 			// if no selectable tab exists the index is set to -1
 			this.setProperty( 'selectedIndex', iNewIndex, true ); // no complete rerendering required
-	
+
 			this.rerenderPanel(iIndex);
 		} else {
 			// set classes new to set before and after classes right
 			this.toggleTabClasses(this.getSelectedIndex(), this.getSelectedIndex());
 		}
-	
+
 		// update ARIA information
 		this.iVisibleTabs--;
 		var iVisibleIndex = 0;
@@ -30313,12 +30293,12 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		var bTabFocused = false;
 		for (var i = 0;i < this.getTabs().length;i++) {
 			var oTab = this.getTabs()[i];
-	
+
 			// check if a tab has the focus
 			if (sFocusedControlId == oTab.getId()) {
 				bTabFocused = true;
 			}
-	
+
 			if (oTab.getVisible() === false) {
 				continue;
 			}
@@ -30332,7 +30312,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 			}
 			aTabDomRefs.push(oTab.getDomRef());
 		}
-	
+
 		// focused item should be the same
 		if (iVisibleIndex <= iFocusedIndex) {
 			// tab before or equal focused one is hidden
@@ -30342,16 +30322,16 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		this.oItemNavigation.setItemDomRefs(aTabDomRefs);
 		this.oItemNavigation.setSelectedIndex(iSelectedDomIndex);
 		this.oItemNavigation.setFocusedIndex(iFocusedIndex);
-	
+
 		// check if a tab has the focus
 		// if yes focus again
 		// if no set only focused index.
 		if (bTabFocused) {
 			this.oItemNavigation.focusItem(iFocusedIndex);
 		}
-	
+
 	};
-	
+
 	/*
 	 * if the selected index is changed, only the panel must be rerendered
 	 * for the tabs only some classes must be exchanged
@@ -30359,7 +30339,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 	 * @private
 	 */
 	TabStrip.prototype.rerenderPanel = function(iOldIndex) {
-	
+
 		var iNewIndex = this.getSelectedIndex();
 		var $panel = this.getTabs()[iOldIndex].$("panel");
 		if ($panel.length > 0) {
@@ -30368,24 +30348,24 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 			rm.flush($panel[0]);
 			rm.destroy();
 		}
-	
+
 		var sNewId = this.getTabs()[iNewIndex].getId();
 		//change the ID and Label of the panel to the current tab
 		$panel.attr("id",sNewId + "-panel").attr("aria-labelledby", sNewId);
-	
+
 		// call after rendering method of tab to set scroll functions
 		this.getTabs()[iNewIndex].onAfterRendering();
-	
+
 		this.toggleTabClasses(iOldIndex, iNewIndex);
 	};
-	
+
 	/*
 	 * Sets the classes of the tabs to display the new selection
 	 *
 	 * @private
 	 */
 	TabStrip.prototype.toggleTabClasses = function(iOldIndex, iNewIndex) {
-	
+
 		// change visualization of selected tab and old tab
 		this.getTabs()[iOldIndex].$().toggleClass("sapUiTabSel sapUiTab").attr("aria-selected",false);
 		var iBeforeIndex = iOldIndex - 1;
@@ -30395,7 +30375,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		if (iBeforeIndex >= 0) {
 			this.getTabs()[iBeforeIndex].$().removeClass("sapUiTabBeforeSel");
 		}
-	
+
 		var iAfterIndex = iOldIndex + 1;
 		while (iAfterIndex < this.getTabs().length && !this.getTabs()[iAfterIndex].getVisible()) {
 			iAfterIndex++;
@@ -30403,7 +30383,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		if (iAfterIndex < this.getTabs().length) {
 			this.getTabs()[iAfterIndex].$().removeClass("sapUiTabAfterSel");
 		}
-	
+
 		this.getTabs()[iNewIndex].$().toggleClass("sapUiTabSel sapUiTab").attr("aria-selected",true);
 		iBeforeIndex = iNewIndex - 1;
 		while (iBeforeIndex >= 0 && !this.getTabs()[iBeforeIndex].getVisible()) {
@@ -30412,7 +30392,7 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		if (iBeforeIndex >= 0) {
 			this.getTabs()[iBeforeIndex].$().addClass("sapUiTabBeforeSel");
 		}
-	
+
 		iAfterIndex = iNewIndex + 1;
 		while (iAfterIndex < this.getTabs().length && !this.getTabs()[iAfterIndex].getVisible()) {
 			iAfterIndex++;
@@ -30420,23 +30400,23 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 		if (iAfterIndex < this.getTabs().length) {
 			this.getTabs()[iAfterIndex].$().addClass("sapUiTabAfterSel");
 		}
-	
+
 	};
-	
+
 	/*
 	 * Overwrite Invalidate function to set invalidate flag
 	 */
 	TabStrip.prototype._originalInvalidate = TabStrip.prototype.invalidate;
-	
+
 	TabStrip.prototype.invalidate = function() {
-	
+
 		this.invalidated = true;
 		TabStrip.prototype._originalInvalidate.apply(this,arguments);
-	
+
 	};
-	
+
 	TabStrip.prototype._warningInvalidSelectedIndex = function(iSelectedIndex, oTab){
-	
+
 		var sDetails = "";
 		if (!oTab) {
 			sDetails = "Tab not exists";
@@ -30446,9 +30426,9 @@ sap.ui.define("sap/ui/commons/TabStrip",['jquery.sap.global', './library', 'sap/
 			sDetails = "Tab not visible";
 		}
 		jQuery.sap.log.warning("SelectedIndex " + iSelectedIndex + " can not be set", sDetails, "sap.ui.commons.TabStrip");
-	
+
 	};
-	
+
 
 	return TabStrip;
 
@@ -30606,7 +30586,7 @@ sap.ui.define("sap/ui/commons/TextField",['jquery.sap.global', './library', 'sap
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -31439,7 +31419,7 @@ sap.ui.define("sap/ui/commons/TextView",['jquery.sap.global', './library', 'sap/
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -31526,15 +31506,12 @@ sap.ui.define("sap/ui/commons/TextView",['jquery.sap.global', './library', 'sap/
 		this.setProperty("text", sText, true); // no re-rendering!
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
-			var aLines = this.getText().split("\n");
-			for (var i = 0; i < aLines.length; i++) {
-				aLines[i] = jQuery.sap.encodeHTML(aLines[i]);
-			}
-			sText = aLines.join("<br>");
-			oDomRef.innerHTML = sText;
+			// in case of 
+			sText = this.getText(); // the default value '' ensures valid text string
+			oDomRef.innerHTML = jQuery.sap.encodeHTML(sText).replace(/&#xa;/g, "<br>");
 			// when no tooltip is applied use the text as tooltip
-			if (!this.getTooltip_AsString() && sText) {
-				oDomRef.title = this.getText(); // IE8 doesn't like HTML encoded attribute values
+			if (!this.getTooltip_AsString()) {
+				oDomRef.title = sText; // IE8 doesn't like HTML encoded attribute values
 			}
 		}
 		if (this._oPopup) {
@@ -31628,7 +31605,7 @@ sap.ui.define("sap/ui/commons/Title",['jquery.sap.global', './library', 'sap/ui/
 	 * @extends sap.ui.core.Title
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -31704,7 +31681,7 @@ sap.ui.define("sap/ui/commons/ToggleButton",['jquery.sap.global', './Button', '.
 	 * @extends sap.ui.commons.Button
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -31771,7 +31748,7 @@ sap.ui.define("sap/ui/commons/ToggleButton",['jquery.sap.global', './Button', '.
 }; // end of sap/ui/commons/ToggleButton.js
 if ( !jQuery.sap.isDeclared('sap.ui.commons.Toolbar') ) {
 /*!
- * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+# * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
@@ -31799,7 +31776,7 @@ sap.ui.define("sap/ui/commons/Toolbar",['jquery.sap.global', './library', 'sap/u
 	 * @implements sap.ui.core.Toolbar
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -31858,6 +31835,7 @@ sap.ui.define("sap/ui/commons/Toolbar",['jquery.sap.global', './library', 'sap/u
 		this.oInnerRef = null;
 		this.oOverflowDomRef = null;
 		this.bHasRightItems = false;
+		this._bRendering = false;
 	
 		this.bRtl = sap.ui.getCore().getConfiguration().getRTL();
 	
@@ -31880,6 +31858,7 @@ sap.ui.define("sap/ui/commons/Toolbar",['jquery.sap.global', './library', 'sap/u
 		this.$("mn").unbind("keydown", this._handleKeyDown);
 	
 		this.bFirstTime = true;
+		this._bRendering = true;
 	};
 	
 	/**
@@ -31888,7 +31867,7 @@ sap.ui.define("sap/ui/commons/Toolbar",['jquery.sap.global', './library', 'sap/u
 	 * @private
 	 */
 	Toolbar.prototype.onAfterRendering = function() {
-	
+		this._bRendering = false;
 		this.oDomRef = this.getDomRef();
 		this.oInnerRef = this.oDomRef.firstChild.firstChild;
 		jQuery(this.oInnerRef).css("visibility", "visible");
@@ -31968,6 +31947,10 @@ sap.ui.define("sap/ui/commons/Toolbar",['jquery.sap.global', './library', 'sap/u
 	 * @private
 	 */
 	Toolbar.prototype.updateAfterResize = function(bClearTabStops) {
+		if (this._bRendering) {
+			return;
+		}
+		
 		var visibleItemInfo = this.getVisibleItemInfo();
 	
 		// store to detect next change of visible items caused by resizing
@@ -32756,7 +32739,7 @@ sap.ui.define("sap/ui/commons/ToolbarSeparator",['jquery.sap.global', './library
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -32808,17 +32791,17 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Tree.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Simple tree to display item in a hierarchical way
-	 * @extends sap.ui.core.Control§
-	 * @version 1.26.10
+	 * @extends sap.ui.core.Control
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -32826,45 +32809,45 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tree = Control.extend("sap.ui.commons.Tree", /** @lends sap.ui.commons.Tree.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Tree title
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Tree width
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : 'auto'},
-	
+
 			/**
 			 * Tree height
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : 'auto'},
-	
+
 			/**
 			 * Tree Header is display. If false, the tree will be in a transparent mode
 			 */
 			showHeader : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Show Header icons (e.g. Expand/Collapse all). Only consider if showHeader is true
 			 */
 			showHeaderIcons : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Display horizontal scrollbar. If false, the overflow content will be hidden
 			 */
 			showHorizontalScrollbar : {type : "boolean", group : "Misc", defaultValue : false},
-	
+
 			/**
 			 * Minimal width for the Tree. Can be useful when, for example, the width is specified in percentage, to avoid the tree to become too narrow when container is resize
 			 */
 			minWidth : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Selection mode of the Tree.
 			 */
@@ -32872,43 +32855,43 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		},
 		defaultAggregation : "nodes",
 		aggregations : {
-	
+
 			/**
 			 * First level nodes
 			 */
 			nodes : {type : "sap.ui.commons.TreeNode", multiple : true, singularName : "node", bindable : "bindable"}
 		},
 		events : {
-	
+
 			/**
 			 * Event is fired when a tree node is selected.
 			 */
 			select : {allowPreventDefault : true,
 				parameters : {
-	
+
 					/**
 					 * The node which has been selected.
 					 */
-					node : {type : "sap.ui.commons.TreeNode"}, 
-	
+					node : {type : "sap.ui.commons.TreeNode"},
+
 					/**
 					 * The binding context of the selected node.
 					 */
 					nodeContext : {type : "object"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * fired when the selection of the tree has been changed
 			 */
 			selectionChange : {
 				parameters : {
-	
+
 					/**
 					 * The nodes which has been selected.
 					 */
-					nodes : {type : "sap.ui.commons.TreeNode[]"}, 
-	
+					nodes : {type : "sap.ui.commons.TreeNode[]"},
+
 					/**
 					 * The binding context of the selected nodes.
 					 */
@@ -32917,23 +32900,22 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			}
 		}
 	}});
-	
-	
+
+
 	Tree.prototype.resizeListenerId;
-	
+
 	Tree.prototype.init = function(){
 		this.bAllCollapsed = false;
 		this.allowTextSelection(false);
-	
+
 		this.iOldScrollTop = null;
 
 		this.mSelectedNodes = {};
 		this.mSelectedContexts = {};
 		this.aLeadSelection = null;
-		this.bDelFlag = null;
-	
+
 		//Create Buttons for Header
-	
+
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 		this.oCollapseAllButton = new sap.ui.commons.Button(this.getId() + "-CollapseAll", { icon: this.getIconPrefix() + "CollapseAll.png", tooltip: oResourceBundle.getText("TREE_COLLAPSE_ALL"), lite: true });
 		this.oExpandAllButton	= new sap.ui.commons.Button(this.getId() + "-ExpandAll", { icon: this.getIconPrefix() + "ExpandAll.png", tooltip: oResourceBundle.getText("TREE_EXPAND_ALL"), lite: true });
@@ -32942,7 +32924,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		this.oCollapseAllButton.addStyleClass("sapUiTreeCol");
 		this.oExpandAllButton.addStyleClass("sapUiTreeExp");
 	};
-	
+
 	/**
 	 * Does all the cleanup when the Tree is to be destroyed.
 	 * Called from the element's destroy() method.
@@ -32958,7 +32940,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			this.oExpandAllButton = null;
 		}
 	};
-	
+
 	// Enumeration for different types of selection in the tree
 	Tree.SelectionType = {
 		Select: "Select",
@@ -32968,29 +32950,31 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	/***********************************************************************************
 	* EVENTS HANDLING
 	***********************************************************************************/
-	
+
 	/** Handler for "Theme Changed" event.
 	 * @private
 	 */
 	Tree.prototype.onThemeChanged = function(){
-		this.oCollapseAllButton.setIcon(this.getIconPrefix() + "CollapseAll.png");
-		this.oExpandAllButton.setIcon(this.getIconPrefix() + "ExpandAll.png");
+		if (this.oCollapseAllButton && this.oExpandAllButton) {
+			this.oCollapseAllButton.setIcon(this.getIconPrefix() + "CollapseAll.png");
+			this.oExpandAllButton.setIcon(this.getIconPrefix() + "ExpandAll.png");
+		}
 	};
-	
+
 	/** Handler for "Expand All" button.
 	 * @private
 	 */
 	Tree.prototype.onExpandAll = function(){
 		this.expandAll();
 	};
-	
+
 	/**Handler for "Collapse All" button.
 	 * @private
 	 */
 	Tree.prototype.onCollapseAll = function(){
 		this.collapseAll();
 	};
-	
+
 	/*"*********************************************************************************
 	* PUBLIC METHODS
 	***********************************************************************************/
@@ -33008,7 +32992,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			aNodes[i].expand(true);
 		}
 	};
-	
+
 
 	/**
 	 * Collapses all nodes in the tree
@@ -33023,7 +33007,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			aNodes[i].collapse(true);
 		}
 	};
-	
+
 	/***********************************************************************************
 	* KEYBOARD NAVIGATION
 	***********************************************************************************/
@@ -33037,7 +33021,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		this.moveFocus(false);
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	* UP key behavior
 	* Opens the section or activates the UI element on UP key
@@ -33048,7 +33032,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		this.moveFocus(true);
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	 * The general HOME key event of the tree
 	 * @private
@@ -33058,7 +33042,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		this.placeFocus(this.getFirstSibling(oEvent.target));
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	 * The general CTRL+HOME key event of the tree
 	 * @private
@@ -33068,7 +33052,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		this.placeFocus(this.getFirst());
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	 * The general END key event of the tree
 	 * @private
@@ -33078,7 +33062,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		this.placeFocus(this.getLastSibling(oEvent.target));
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	 * The general CTRL+END key event of the tree
 	 * @private
@@ -33088,34 +33072,34 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		this.placeFocus(this.getLast());
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	 * The numpad STAR(*) key event of the tree
 	 * @private
 	 * @param {event} oEvent The sapcollapseall event object
 	 */
 	Tree.prototype.onsapcollapseall = function(oEvent) {
-	
+
 		if (this.bAllCollapsed ) {
 			this.expandAll();
 		} else {
 			this.collapseAll();
 		}
-	
+
 		this.bAllCollapsed = !this.bAllCollapsed;
 	};
-	
+
 	/***********************************************************************************
 	* HELPER METHODS - DOM NAVIGATION
 	***********************************************************************************/
-	
+
 	/**
 	 * Determine the icon prefix for the embedded button icons
 	 * @private
 	 */
 	Tree.prototype.getIconPrefix = function() {
 		var sIconPrefix = "themes/" + sap.ui.getCore().getConfiguration().getTheme() + "/";
-		
+
 		if (!sap.ui.getCore().getConfiguration().getRTL()) {
 			sIconPrefix		+= "img/tree/";
 		} else {
@@ -33123,7 +33107,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		}
 		return sap.ui.resource("sap.ui.commons", sIconPrefix);
 	};
-	
+
 	/**Returns the first Sibling tree node based on DOM Tree node provided
 	 * @param oDomNode The DOM Tree node from which calculate the first sibling
 	 * @returns The first sibling tree node
@@ -33131,13 +33115,13 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	*/
 	Tree.prototype.getFirstSibling = function(oDomNode) {
 		var aDomFirstSiblingNode	= jQuery(oDomNode).siblings(".sapUiTreeNode:visible").first();
-	
+
 		if (aDomFirstSiblingNode.length) {
 			return aDomFirstSiblingNode[0];
 		}
 		return null;
 	};
-	
+
 	/**Returns the last Sibling tree node based on DOM Tree node provided
 	 * @param oDomNode The DOM Tree node from which calculate the last sibling
 	 * @returns The last sibling tree node
@@ -33145,44 +33129,44 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	*/
 	Tree.prototype.getLastSibling = function(oDomNode) {
 		var aDomLastSiblingNode	= jQuery(oDomNode).siblings(".sapUiTreeNode:visible").last();
-	
+
 		if (aDomLastSiblingNode.length) {
 			return aDomLastSiblingNode[0];
 		}
 		return null;
 	};
-	
+
 	/**Returns the first tree node of the tree. Children of collapsed nodes (hidden) are not considered.
 	 * @returns The first tree node
 	 * @private
 	*/
 	Tree.prototype.getFirst = function() {
 		var aDomFirstNode		= this.$().find(".sapUiTreeNode:visible").first();
-	
+
 		if (aDomFirstNode.length) {
 			return aDomFirstNode[0];
 		}
 		return null;
 	};
-	
+
 	/**Returns the last tree node of the tree. Children of collapsed nodes (hidden) are not considered.
 	 * @returns The last tree node
 	 * @private
 	*/
 	Tree.prototype.getLast = function() {
 		var aDomLastNode		= this.$().find(".sapUiTreeNode:visible").last();
-	
+
 		if (aDomLastNode.length) {
 			return aDomLastNode[0];
 		}
 		return null;
-	
+
 	};
-	
+
 	/***********************************************************************************
 	* HELPER METHODS - FOCUS MANAGEMENT
 	***********************************************************************************/
-	
+
 	/**
 	 * Move the focus by one position, either UP or DOWN depending of "bMoveUp"
 	 * @param bMoveUp When true the focus is move up. Otherwise, it's moved down
@@ -33191,18 +33175,18 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	Tree.prototype.moveFocus = function(bMoveUp){
 	   var afocusedNodeDom	= jQuery(".sapUiTreeNode:focus");
 	   if (afocusedNodeDom.length) {
-	
+
 		   var oCurrNode = sap.ui.getCore().getControl(afocusedNodeDom[0].id);
 		   var aDomAllNodes = this.$().find(".sapUiTreeNode:visible");
 		   var currIndex	= aDomAllNodes.index(afocusedNodeDom[0]);
-	
+
 		   var nextIndex = currIndex;
 		   if (bMoveUp) {
 			   nextIndex--;
 		   } else {
 			   nextIndex++;
 		   }
-	
+
 		   if (nextIndex >= 0 && nextIndex < aDomAllNodes.length) {
 				var oDomNextNode	= aDomAllNodes.eq( nextIndex );
 				var oNextNode = sap.ui.getCore().getControl(oDomNextNode[0].id);
@@ -33210,9 +33194,9 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 				oNextNode.focus();
 		   }
 		}
-	
+
 	};
-	
+
 	/**Adjusts the focus after a node is collapsed. This is necessary as the currently focused node can then be hidden,
 	 * leading the tree not being focusable anymore.
 	 *
@@ -33221,50 +33205,50 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	 * @private
 	 */
 	Tree.prototype.adjustFocus = function(){
-	
+
 		var oFocusableNode = this.$().find('.sapUiTreeNode[tabIndex="0"]');
-	
+
 		if (!oFocusableNode.is(':visible')) {
-	
-	
+
+
 			var aDomAllNodes		= this.$().find(".sapUiTreeNode");
 			var focusIndex			= aDomAllNodes.index(oFocusableNode[0]);
 			var aDomPrecedingNodes	= aDomAllNodes.filter(":lt(" + focusIndex + ")");
 			var aDomVisiblePrecedingNodes = aDomPrecedingNodes.filter(":visible");
 			var oNewFocusNode		= aDomVisiblePrecedingNodes[aDomVisiblePrecedingNodes.length - 1];
-	
+
 			if (oNewFocusNode) {
 				oNewFocusNode.setAttribute("tabindex", "0");
-	
+
 				if ( jQuery(".sapUiTreeNode:focus").is(":not(:visible)")) {
 					oNewFocusNode.focus();
 				}
 			}
-	
+
 		}
-	
+
 	};
-	
+
 	/**Places the focus on the node corresponding to given DOM Tree Node
 	 * @param oDomTargetNode The DOM Tree Node corresponding to the node to focus
 	 * @private
 	 */
 	Tree.prototype.placeFocus = function(oDomTargetNode){
-	
+
 		if (!oDomTargetNode) {
 			return; //No Target node provided!
 		}
-	
+
 		var oDomfocusedNode	= this.$().find(".sapUiTreeNode[tabIndex='0']");
 		if (oDomfocusedNode.length) {
 			oDomfocusedNode[0].setAttribute("tabindex", "-1");
 		}
-	
+
 		oDomTargetNode.setAttribute("tabindex", "0");
 		var oTargetNode = sap.ui.getCore().getControl(oDomTargetNode.id);
 		oTargetNode.focus();
 	};
-	
+
 	/***********************************************************************************
 	* HELPER METHODS - SELECTION MANAGEMENT
 	***********************************************************************************/
@@ -33274,34 +33258,34 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	 * @private
 	 */
 	Tree.prototype.adjustSelectionOnExpanding = function(oExpandingDomNode) {
-	
+
 		var $Tree = this.$(),
 			$ExpandingDomNode = jQuery(oExpandingDomNode),
 			$DomSelectedNode,
 			$DomParent;
-	
+
 		//Current node is a fake selection, remove it. A child will be either another fake selection or an actual one.
 		if ($ExpandingDomNode.hasClass("sapUiTreeNodeSelectedParent")) {
 			$ExpandingDomNode.removeClass("sapUiTreeNodeSelectedParent");
 		}
-	
+
 		//If the actual selection now visible, remove all fake ones
 		var $DomActualSelection = $Tree.find(".sapUiTreeNodeSelected:visible");
 		if ($DomActualSelection.length) {
 			$Tree.find(".sapUiTreeNodeSelectedParent").removeClass("sapUiTreeNodeSelectedParent");
 		} else {
 			$DomSelectedNode = $Tree.find(".sapUiTreeNodeSelected");
-	
+
 			//Find first visible parent node
 			$DomParent = $DomSelectedNode.parent(".sapUiTreeChildrenNodes").prev(".sapUiTreeNode");
-	
+
 			while ($DomParent.length && !$DomParent.is(":visible")) {
 				$DomParent = $DomParent.parent(".sapUiTreeChildrenNodes").prev(".sapUiTreeNode");
 			}
 			$DomParent.addClass("sapUiTreeNodeSelectedParent");
 		}
 	};
-	
+
 	/**Adjusts the selection, when collapsing, selecting a parent when the actual selected node is
 	 * not visible.
 	 * @param oDomCollapsingNode The Node being expanded
@@ -33314,10 +33298,10 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			sChildrenId = "#" + $DomCollapsingNode.attr("id") + "-children",
 			$DomActualSelSubNode = $DomCollapsingNode.siblings(sChildrenId).find(".sapUiTreeNodeSelected"),
 			$DomParentSelSubNode = $DomCollapsingNode.siblings(sChildrenId).find(".sapUiTreeNodeSelectedParent");
-	
+
 			if ($DomActualSelSubNode.length || $DomParentSelSubNode.length) {
 				$DomCollapsingNode.addClass("sapUiTreeNodeSelectedParent");
-	
+
 				if ($DomParentSelSubNode.length) {
 					$DomParentSelSubNode.removeClass("sapUiTreeNodeSelectedParent");
 				}
@@ -33336,7 +33320,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			}
 		}
 	};
-	
+
 	/**
 	 * override this method on Element.js and return true if tree binding
 	 * @private
@@ -33344,7 +33328,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 	Tree.prototype.isTreeBinding = function(sName) {
 		return (sName == "nodes");
 	};
-	
+
 	/**
 	 * override element updateAggregation method with this one and update the tree node bindings
 	 * @private
@@ -33360,10 +33344,10 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			}
 		});
 	};
-	
+
 	/**
 	 * Returns the node with the given context, or null if no such node currently exists
-	 * 
+	 *
 	 * @param {sap.ui.model.Context} oContext the context of the node to be retrieved
 	 * @public
 	 * @since 1.19
@@ -33373,11 +33357,11 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			return oNode.getBindingContext() == oContext;
 		});
 	};
-	
+
 	/**
 	 * Search through all existing nodes and return the first node which matches using
 	 * the given matching function
-	 * 
+	 *
 	 * @param {function} fnMatch the matching function
 	 * @param {sap.ui.commons.Tree|sap.ui.commons.TreeNode} oNode the node to check
 	 * @returns The found node
@@ -33397,7 +33381,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		});
 		return oFoundNode;
 	};
-	
+
 	Tree.prototype.setSelectionMode = function(oMode){
 		oMode = this.validateProperty("selectionMode", oMode);
 		if (this.getSelectionMode() != oMode) {
@@ -33406,7 +33390,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			this._delSelection();
 		}
 	};
-	
+
 	/**Returns the selected node in the tree. If not selection, returns false.
 	 * @returns The selected node
 	 * @private
@@ -33417,7 +33401,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		}
 		return null;
 	};
-	
+
 	/**Sets the selected node reference of the Tree
 	 * @private
 	 */
@@ -33447,7 +33431,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			}
 		}
 	};
-	
+
 	/**Rerendering handling. Sets the scroll position so that the selected node stays on the position it
 	 * was before rerendering, for example after the expand and adding the nodes dynamically.
 	 * @private
@@ -33457,9 +33441,9 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			this.$("TreeCont").scrollTop(this.iOldScrollTop);
 		}
 	};
-	
+
 	/**
-	 * Whenever nodes are added ore removed from the tree, the selection needs to be adapted, 
+	 * Whenever nodes are added ore removed from the tree, the selection needs to be adapted,
 	 * so that the selected node map is in sync with the isSelected properties of the contained
 	 * nodes
 	 * @private
@@ -33477,7 +33461,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			that.iSelectionUpdateTimer = null;
 		}, 0);
 	};
-	
+
 	/**
 	 * Loop through all tree nodes and collect the selected state
 	 * @private
@@ -33517,14 +33501,14 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			that.updateSelection(oNode, bExpanded && oNode.getExpanded());
 		});
 	};
-	
+
 	/**Rerendering handling. Remembers the scroll position of the selected node.
 	 * @private
 	 */
 	Tree.prototype.onBeforeRendering = function() {
 		this.iOldScrollTop = this.$("TreeCont").scrollTop();
 	};
-	
+
 	Tree.prototype._setSelectedNode = function(oNode, bSuppressEvent) {
 		var that = this;
 
@@ -33540,14 +33524,14 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			this.fireSelectionChange({nodes: [oNode], nodeContexts: [oNode && oNode.getBindingContext()]});
 		}
 	};
-	
+
 	Tree.prototype._setSelectedNodeMapToggle = function(oNode, bSuppressEvent) {
 		this._setNodeSelection(oNode, !oNode.getIsSelected(), bSuppressEvent);
 	};
-	
+
 	Tree.prototype._setSelectedNodeMapRange = function(oNode, bSuppressEvent) {
 		var aSelectableNodes,
-			aSelectedNodes = [], 
+			aSelectedNodes = [],
 			aSelectedNodeContexts = [],
 			iStartIndex, iEndIndex, iFrom, iTo;
 
@@ -33565,14 +33549,14 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 				}
 			}
 		}
-	
+
 		if (!bSuppressEvent) {
 			jQuery.map(this.mSelectedNodes, function(oNode) {aSelectedNodes.push(oNode);});
 			jQuery.map(this.mSelectedContexts, function(oContext) {aSelectedNodeContexts.push(oContext);});
 			this.fireSelectionChange({nodes: aSelectedNodes, nodeContexts: aSelectedNodeContexts});
 		}
 	};
-	
+
 	Tree.prototype._getSelectableNodes = function(aNodes) {
 		var aSelectableNodes = [];
 		function collectSelectableNodes(aNodes) {
@@ -33588,18 +33572,34 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		collectSelectableNodes(this._getNodes());
 		return aSelectableNodes;
 	};
-	
+
 	Tree.prototype._setNodeSelection = function(oNode, bIsSelected, bSuppressEvent) {
-		var aSelectedNodes = [], 
+		var aSelectedNodes = [],
 			aSelectedNodeContexts = [];
-		
-		if (bIsSelected && this.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Single) {
-			this._setSelectedNode(oNode, bSuppressEvent);
-			return;
+		var oVisibleDomNode;
+
+		if (this.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Single) {
+			if (bIsSelected) {
+				var oSelectedNode = this.getSelection();
+				this._setSelectedNode(oNode, bSuppressEvent);
+				if (!oNode.isVisible()) {
+					oVisibleDomNode = this._getVisibleNode(oNode).getDomRef();
+					this.adjustSelectionOnCollapsing(oVisibleDomNode);
+				}
+				if (oSelectedNode && !oSelectedNode.isVisible()) {
+					oVisibleDomNode = this._getVisibleNode(oSelectedNode).getDomRef();
+					this.adjustSelectionOnExpanding(oVisibleDomNode);
+				}
+				return;
+			} else {
+				this._delMultiSelection(oNode, bSuppressEvent);
+				if (!oNode.isVisible()) {
+					oVisibleDomNode = this._getVisibleNode(oNode).getDomRef();
+					this.adjustSelectionOnExpanding(oVisibleDomNode);
+				}
+			}
 		}
-		
-		this.bDelFlag = true;
-	
+
 		if (bIsSelected) {
 			this._setMultiSelection(oNode, bSuppressEvent);
 			this.oLeadSelection = oNode;
@@ -33613,7 +33613,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			this.fireSelectionChange({nodes: aSelectedNodes, nodeContexts: aSelectedNodeContexts});
 		}
 	};
-	
+
 	Tree.prototype._setMultiSelection = function(oSelNode, bSuppressEvent) {
 		if (!oSelNode) {
 			return;
@@ -33622,7 +33622,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		this.mSelectedNodes[oSelNode.getId()] = oSelNode;
 		this.mSelectedContexts[oSelNode.getId()] = oSelNode.getBindingContext();
 	};
-	
+
 	Tree.prototype._delMultiSelection = function(oSelNode, bSuppressEvent) {
 		if (!oSelNode) {
 			return;
@@ -33631,7 +33631,7 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 		delete this.mSelectedNodes[oSelNode.getId()];
 		delete this.mSelectedContexts[oSelNode.getId()];
 	};
-	
+
 	Tree.prototype._delSelection = function() {
 		var that = this;
 		if (this.oSelectedNode) {
@@ -33643,9 +33643,19 @@ sap.ui.define("sap/ui/commons/Tree",['jquery.sap.global', './library', 'sap/ui/c
 			});
 		}
 	};
-	
+
 	Tree.prototype._getNodes = function() {
 		return this.mAggregations.nodes || [];
+	};
+
+	Tree.prototype._getVisibleNode = function(oNode) {
+		var oParentNode = oNode.getParent();
+		if (oParentNode.isVisible()) {
+			var oVisibleNode = oParentNode;
+		} else {
+			oVisibleNode = this._getVisibleNode(oParentNode);
+		}
+		return oVisibleNode;
 	};
 
 	return Tree;
@@ -33673,13 +33683,13 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	/**
 	 * Constructor for a new TreeNode.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Tree node element
 	 * @extends sap.ui.core.Element
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -33687,35 +33697,35 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TreeNode = Element.extend("sap.ui.commons.TreeNode", /** @lends sap.ui.commons.TreeNode.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Node text
 			 */
 			text : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Node is expanded
 			 */
 			expanded : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Should the node has an expander.
 			 */
 			hasExpander : {type : "boolean", group : "Misc", defaultValue : false},
-	
+
 			/**
 			 * Icon to display in front of the node
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Node is selected
 			 */
 			isSelected : {type : "boolean", group : "Misc", defaultValue : false},
-	
+
 			/**
 			 * The node is selectable. If true, clicking on the node text triggers "selected" event
 			 */
@@ -33723,55 +33733,55 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 		},
 		defaultAggregation : "nodes",
 		aggregations : {
-	
+
 			/**
 			 * Subnodes for the current node
 			 */
 			nodes : {type : "sap.ui.commons.TreeNode", multiple : true, singularName : "node"}
 		},
 		associations : {
-	
+
 			/**
 			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
-	
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
 			/**
 			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
-	
+
 			/**
 			 * Node state has changed.
 			 */
 			toggleOpenState : {
 				parameters : {
-	
+
 					/**
 					 * Node has been opened if true
 					 */
 					opened : {type : "boolean"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Node is selected
 			 */
 			selected : {}
 		}
 	}});
-	
-	
+
+
 	TreeNode.ANIMATION_DURATION	 = 600;
-	
+
 	CustomStyleClassSupport.apply(TreeNode.prototype);
-	
+
 	//***********************************************************************************
 	//* PUBLIC METHODS
 	//***********************************************************************************
-	
+
 	/**
 	 * Expands the node
 	 * @param {boolean} bExpandChildren
@@ -33779,13 +33789,13 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeNode.prototype.expand = function(bExpandChildren){
-	
+
 		var oDomNode = this.$();
 		if (oDomNode.hasClass("sapUiTreeNodeCollapsed")) {
 			//If not, not an expandable node
 			oDomNode.toggleClass("sapUiTreeNodeCollapsed");
 			oDomNode.toggleClass("sapUiTreeNodeExpanded");
-	
+
 			var oDomChildrenNodes = this.$("children");
 			if (oDomChildrenNodes) {
 				oDomChildrenNodes.stop(true, true);
@@ -33793,20 +33803,20 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 			}
 			oDomNode.attr("aria-expanded", "true");
 			this.fireToggleOpenState({opened:true});
-	
+
 		}
 		//Change property anyway. (Even if node has no expander)
 		this.setProperty("expanded", true, true); //Suppress Re-rendering
-	
+
 		if (bExpandChildren) {
 			var aNodes = this._getNodes();
 			for (var i = 0;i < aNodes.length;i++) {
 				aNodes[i].expand(bExpandChildren);
 			}
 		}
-	
+
 	};
-	
+
 	/**
 	 * Collapses the node
 	 * @param {boolean} bCollapseChildren
@@ -33814,15 +33824,15 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeNode.prototype.collapse = function(bCollapseChildren){
-	
+
 		var oDomNode = this.$();
-	
+
 		if (oDomNode.hasClass("sapUiTreeNodeExpanded")) {
 			//If not, not a collapsable node
-	
+
 			oDomNode.toggleClass("sapUiTreeNodeCollapsed");
 			oDomNode.toggleClass("sapUiTreeNodeExpanded");
-	
+
 			var oDomChildrenNodes = this.$("children");
 			if (oDomChildrenNodes) {
 				oDomChildrenNodes.stop(true, true);
@@ -33830,20 +33840,20 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 			}
 			oDomNode.attr("aria-expanded", "false");
 			this.fireToggleOpenState({opened:false});
-	
+
 		}
 		//Change property anyway. (Even if node has no expander)
 		this.setProperty("expanded", false, true); //Suppress Re-rendering
-	
+
 		if (bCollapseChildren) {
 			var aNodes = this._getNodes();
 			for (var i = 0;i < aNodes.length;i++) {
 				aNodes[i].collapse(bCollapseChildren);
 			}
 		}
-	
+
 	};
-	
+
 	/**
 	 * Select the node, and if any, deselects the previously selected node
 	 * @param {boolean} bSuppressEvent
@@ -33853,43 +33863,43 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	 */
 	TreeNode.prototype.select = function(bSuppressEvent) {
 		var oTree = this.getTree();
-	
+
 		// If connected to a tree call setSelection, otherwise call _select directly
 		if (oTree) {
 			oTree.setSelection(this, bSuppressEvent);
 		} else {
 			this._select();
 		}
-		
+
 	};
-	
+
 	//***********************************************************************************
 	//* SELECTION PRIVATE METHODS
 	//***********************************************************************************
-	
+
 	/**Select the node
 	 * @private
 	 */
 	TreeNode.prototype._select = function(bSuppressEvent) {
 		this.setProperty("isSelected", true, true);
-	
+
 		if (!bSuppressEvent) {
 			this.fireSelected();
 		}
-	
+
 		// If node is already rendered, then update the DOM and scroll into view
 		if (this.getDomRef()) {
 			this.$().closest(".sapUiTreeNode").addClass("sapUiTreeNodeSelected").attr("aria-selected", "true");
 			this.scrollIntoView();
 		}
 	};
-	
+
 	/**Deselect the node
 	 * @private
 	 */
 	TreeNode.prototype._deselect = function(bSuppressEvent) {
 		this.setProperty("isSelected", false, true);
-	
+
 		// If node is already rendered, then update the DOM
 		if (this.getDomRef()) {
 			this.$().removeClass("sapUiTreeNodeSelected").removeAttr("aria-selected");
@@ -33902,7 +33912,7 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	TreeNode.prototype._getNodes = function() {
 		return this.mAggregations.nodes || [];
 	};
-	
+
 	/**Returns true if the node has a selected child node, which is not visible
 	 * @returns True if the node has such child node
 	 * @private
@@ -33910,14 +33920,14 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	TreeNode.prototype.hasSelectedHiddenChild = function(){
 		var aNodes = this._getNodes();
 		for (var i = 0;i < aNodes.length;i++) {
-	
+
 			if ((!aNodes[i].isVisible() && aNodes[i].getIsSelected()) || aNodes[i].hasSelectedHiddenChild()) {
 				return true;
 			}
 		}
 		return false;
 	};
-	
+
 	/**
 	 * Redefinition of Setter for property <code>isSelected</code> for validation purpose
 	 *
@@ -33929,24 +33939,24 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	 */
 	TreeNode.prototype.setIsSelected = function(bIsSelected) {
 		var oTree = this.getTree();
-		
+
 		if (!this.getSelectable()) {
 			//Node is not selectable.
 			return this;
 		}
-	
+
 		if (bIsSelected == this.getProperty("isSelected")) {
 			return this;
 		}
-		
+
 		if (oTree) {
 			oTree._setNodeSelection(this, bIsSelected, true);
 		} else {
 			this.setProperty("isSelected", bIsSelected, true);
-		}	
+		}
 		return this;
 	};
-	
+
 	/**
 	 * Redefinition of Setter for property <code>selectable</code> for validation purpose.
 	 *
@@ -33957,23 +33967,23 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	 * @public
 	 */
 	TreeNode.prototype.setSelectable = function(bSelectable) {
-	
+
 		if (!bSelectable && this.getIsSelected()) {
 			//Setting the node to not selectable: remove selection
 			this.setIsSelected(false);
 		}
-	
+
 		this.setProperty("selectable", bSelectable);
 		return this;
 	};
-	
-	
-	
-	
+
+
+
+
 	//***********************************************************************************
 	//* EVENTS HANDLING
 	//***********************************************************************************
-	
+
 	/** The mouse click event, which will expand/collapse the node
 	 * @param {event} oEvent The click event object
 	 * @private
@@ -33981,7 +33991,7 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	TreeNode.prototype.onclick = function(oEvent){
 		var oDomClicked = oEvent.target,
 		oTree = this.getTree();
-	
+
 		if (jQuery(oDomClicked).is(".sapUiTreeNode") || jQuery(oDomClicked).is(".sapUiTreeNodeNotSelectable") ) {
 			//When user click a Not-Selectable node text, it behaves as clicking on the node itself
 			if (jQuery(oDomClicked).is(".sapUiTreeNodeNotSelectable")) {
@@ -33994,12 +34004,11 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 			} else {
 				this.expand();
 			}
-	
+
 			oTree.placeFocus(oDomClicked);
 			oDomClicked.focus();
-	
-		}
-		else if (jQuery(oDomClicked).is(".sapUiTreeNodeContent") || jQuery(oDomClicked).is(".sapUiTreeIcon")) {
+
+		} else if (jQuery(oDomClicked).is(".sapUiTreeNodeContent") || jQuery(oDomClicked).is(".sapUiTreeIcon")) {
 			var sSelectionType = sap.ui.commons.Tree.SelectionType.Select;
 			if (oTree.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Multi) {
 				if (oEvent.shiftKey) {
@@ -34010,15 +34019,15 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 				}
 			}
 			oTree.setSelection(this, false, sSelectionType);
-	
+
 			//Set focus
 			oDomClicked = jQuery(oDomClicked).closest(".sapUiTreeNode")[0];
 			oTree.placeFocus(oDomClicked);
 			oDomClicked.focus();
 		}
 	};
-	
-	
+
+
 	//***********************************************************************************
 	//* KEYBOARD NAVIGATION
 	//***********************************************************************************
@@ -34027,19 +34036,18 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	 * @private
 	 */
 	TreeNode.prototype.onsapselect = function(oEvent){
-	
+
 		if (this.getSelectable()) {
 			this.getTree().setSelection(this);
-		}
-		else if (this.getExpanded()) {
+		} else if (this.getExpanded()) {
 			this.collapse();
 		} else {
 			this.expand();
 		}
-	
-	
+
+
 	};
-	
+
 	/**
 	 * The numpad + key event, which will expand the current node
 	 * @param {event} oEvent The sapexpand event object
@@ -34048,7 +34056,7 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	TreeNode.prototype.onsapexpand = function(oEvent) {
 		this.expand();
 	};
-	
+
 	/**
 	 * The numpad - key event, which will expand the current node
 	 * @private
@@ -34056,9 +34064,9 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 	 */
 	TreeNode.prototype.onsapcollapse = function(oEvent) {
 		this.collapse();
-	
+
 	};
-	
+
 	/**
 	* LEFT key behavior
 	* Opens the section or activates the UI element on LEFT key
@@ -34073,7 +34081,7 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 		}
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	* RIGHT key behavior
 	* Opens the section or activates the UI element on RIGHT key
@@ -34088,11 +34096,11 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 		}
 		oEvent.preventDefault();
 	};
-	
+
 	//***********************************************************************************
 	//* FOCUS HANDLING
 	//***********************************************************************************
-	
+
 	/**Focuses the node
 	 * @private
 	 */
@@ -34103,7 +34111,7 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 			domFocus.focus();
 		}
 	};
-	
+
 	/**Removes focus from the node
 	 * @private
 	 */
@@ -34113,24 +34121,24 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 			domFocus.setAttribute("tabindex", "-1");
 		}
 	};
-	
+
 	//***********************************************************************************
 	//* HELPER METHODS
 	//***********************************************************************************
-	
+
 	/** Returns the parent tree control. Not necessarily the direct parent if the node is a subnode.
 	 * @returns The parent tree control
 	 * @private
 	 */
 	TreeNode.prototype.getTree = function() {
 		var parent = this.getParent();
-	
+
 		while (parent instanceof TreeNode) {
 			parent = parent.getParent();
 		}
 		return parent;
 	};
-	
+
 	/** Returns true if the node has any subnodes.
 	 * @returns True if the node has any subnode
 	 * @private
@@ -34142,7 +34150,7 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 		}
 		return false;
 	};
-	
+
 	/** Returns true if the node is visible(parent and all grand parent expanded).
 	 * @returns True if the node is visible
 	 * @private
@@ -34153,13 +34161,13 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 			if (!parent.getExpanded()) {
 				return false;
 			}
-	
+
 			parent = parent.getParent();
 		}
 		return true;
 	};
-	
-	
+
+
 	/**
 	* Used for Javascript closure.
 	* @private
@@ -34178,7 +34186,7 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 			};
 		}
 	};
-	
+
 	/**
 	 * In case the selected node is not visible, change the scroll position of the
 	 * tree to get it into view.
@@ -34198,17 +34206,17 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 			iScrollLeft = $TreeCont.scrollLeft(),
 			iWidth = $TreeCont.width(),
 			iNewScrollLeft;
-	
+
 		if (iOffsetTop > iScrollTop + iHeight || iOffsetTop < iScrollTop) {
 			iNewScrollTop = iOffsetTop - Math.floor(iHeight * 0.5);
 			iNewScrollTop = Math.max(iNewScrollTop, 0);
 		}
-	
+
 		if (iOffsetLeft > iScrollLeft + iWidth || iOffsetLeft < iScrollLeft) {
 			iNewScrollLeft = iOffsetLeft - Math.floor(iWidth * 0.5);
 			iNewScrollLeft = Math.max(iNewScrollLeft, 0);
 		}
-	
+
 		if (iNewScrollTop !== undefined || iNewScrollLeft !== undefined) {
 			var mScrollPos = {};
 			if (iNewScrollTop !== undefined) {
@@ -34220,11 +34228,11 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 			$TreeCont.animate(mScrollPos);
 		}
 	};
-	
+
 	//***********************************************************************************
 	//* REDEFINITIONS
 	//***********************************************************************************
-	
+
 	/**
 	 * Returns the regular tooltip. If empty, returns the text
 	* @private
@@ -34236,13 +34244,13 @@ sap.ui.define("sap/ui/commons/TreeNode",['jquery.sap.global', './library', 'sap/
 		if (typeof oTooltip === "string" || oTooltip instanceof String ) {
 			sTooltip = oTooltip;
 		}
-	
+
 		if (!sTooltip) {
 			sTooltip = this.getText();
 		}
 		return sTooltip;
 	};
-	
+
 
 	return TreeNode;
 
@@ -34264,8 +34272,6 @@ sap.ui.define("sap/ui/commons/TriStateCheckBox",['jquery.sap.global', './library
 	function(jQuery, library, Control) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new TriStateCheckBox.
 	 *
@@ -34276,7 +34282,7 @@ sap.ui.define("sap/ui/commons/TriStateCheckBox",['jquery.sap.global', './library
 	 * TriStateCheckBox to reflect mixed state for checkboxes. The control can display three states, namely checked, unchecked and mixed. However, mixed state cannot be directly reached by user interaction on the particular control.
 	 * It can be only set by the control's public toggle function, to make a behaviour possible which is e.g. required in checkbox trees.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -34343,20 +34349,6 @@ sap.ui.define("sap/ui/commons/TriStateCheckBox",['jquery.sap.global', './library
 		}
 	}});
 	
-	
-	/**
-	 * 
-	 * Changes the current value of the control.
-	 *
-	 * @name sap.ui.commons.TriStateCheckBox#toggle
-	 * @function
-	 * @param {string} sDestState
-	 * 
-	 *         destined selection state of checkbox
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	/**
 	 * Event handler called when the check box is clicked.
@@ -34426,7 +34418,9 @@ sap.ui.define("sap/ui/commons/TriStateCheckBox",['jquery.sap.global', './library
 	 * Method called whenever a user clicks on a tri-state checkbox
 	 *
 	 * @param {sap.ui.commons.TriStateCheckBoxState} destState 
+	 *         destined selection state of checkbox
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TriStateCheckBox.prototype.toggle = function(destState) {
 		if (destState in sap.ui.commons.TriStateCheckBoxState) {
@@ -34468,7 +34462,7 @@ sap.ui.define("sap/ui/commons/ValueHelpField",['jquery.sap.global', './TextField
 	 * @extends sap.ui.commons.TextField
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -34665,7 +34659,7 @@ sap.ui.define("sap/ui/commons/form/Form",['jquery.sap.global', 'sap/ui/commons/l
 	 * @extends sap.ui.layout.form.Form
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -34746,7 +34740,7 @@ sap.ui.define("sap/ui/commons/form/FormContainer",['jquery.sap.global', 'sap/ui/
 	 * @extends sap.ui.layout.form.FormContainer
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -34827,7 +34821,7 @@ sap.ui.define("sap/ui/commons/form/FormElement",['jquery.sap.global', 'sap/ui/co
 	 * @extends sap.ui.layout.form.FormElement
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -34908,7 +34902,7 @@ sap.ui.define("sap/ui/commons/form/FormLayout",['jquery.sap.global', 'sap/ui/com
 	 * @extends sap.ui.layout.form.FormLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -34963,7 +34957,7 @@ sap.ui.define("sap/ui/commons/form/GridContainerData",['jquery.sap.global', 'sap
 	 * @extends sap.ui.layout.form.GridContainerData
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -35021,7 +35015,7 @@ sap.ui.define("sap/ui/commons/form/GridElementData",['jquery.sap.global', 'sap/u
 	 * @extends sap.ui.layout.form.GridElementData
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -35080,7 +35074,7 @@ sap.ui.define("sap/ui/commons/form/GridLayout",['jquery.sap.global', 'sap/ui/com
 	 * @extends sap.ui.layout.form.GridLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -35133,7 +35127,7 @@ sap.ui.define("sap/ui/commons/form/ResponsiveLayout",['jquery.sap.global', 'sap/
 	 * @extends sap.ui.layout.form.ResponsiveLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -35184,7 +35178,7 @@ sap.ui.define("sap/ui/commons/form/SimpleForm",['jquery.sap.global', 'sap/ui/com
 	 * @class
 	 * Use the SimpleForm to create a form based on title, label and fields that are stacked in the content aggregation. Add Title to start a new FormContainer(Group). Add Label to start a new row in the container. Add Input/Display controls as needed. Use LayoutData to influence the layout for special cases in the Input/Display controls.
 	 * @extends sap.ui.layout.form.SimpleForm
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -35265,7 +35259,7 @@ sap.ui.define("sap/ui/commons/layout/BorderLayout",['jquery.sap.global', 'sap/ui
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -35636,7 +35630,7 @@ sap.ui.define("sap/ui/commons/layout/BorderLayoutArea",['jquery.sap.global', 'sa
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -35749,7 +35743,7 @@ sap.ui.define("sap/ui/commons/layout/HorizontalLayout",['jquery.sap.global', 'sa
 	 * @extends sap.ui.layout.HorizontalLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -35798,7 +35792,7 @@ sap.ui.define("sap/ui/commons/layout/MatrixLayoutCell",['jquery.sap.global', 'sa
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -35977,7 +35971,7 @@ sap.ui.define("sap/ui/commons/layout/MatrixLayoutRow",['jquery.sap.global', 'sap
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -36110,7 +36104,7 @@ sap.ui.define("sap/ui/commons/layout/PositionContainer",['jquery.sap.global', 's
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -36487,10 +36481,8 @@ sap.ui.define("sap/ui/commons/layout/PositionContainer",['jquery.sap.global', 's
 	 * @private
 	 */
 	var getPropertyInfo = function(oControl, sPropertyName) {
-		var oMetadata = oControl.getMetadata();
-		oMetadata._enrichChildInfos();
-		var oPropertyInfo = oMetadata.getAllProperties()[sPropertyName];
-		if (oPropertyInfo && sap.ui.base.DataType.getType(oPropertyInfo.type) == sap.ui.base.DataType.getType("sap.ui.core.CSSSize")) {
+		var oPropertyInfo = oControl.getMetadata().getProperty(sPropertyName);
+		if (oPropertyInfo && oPropertyInfo.type === 'sap.ui.core.CSSSize') {
 			return oPropertyInfo;
 		}
 		return null;
@@ -36564,7 +36556,7 @@ sap.ui.define("sap/ui/commons/layout/ResponsiveFlowLayout",['jquery.sap.global',
 	 * @extends sap.ui.layout.ResponsiveFlowLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -36615,7 +36607,7 @@ sap.ui.define("sap/ui/commons/layout/ResponsiveFlowLayoutData",['jquery.sap.glob
 	 * @extends sap.ui.layout.ResponsiveFlowLayoutData
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -36692,7 +36684,7 @@ sap.ui.define("sap/ui/commons/layout/VerticalLayout",['jquery.sap.global', 'sap/
 	 * @extends sap.ui.layout.VerticalLayout
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -36815,7 +36807,7 @@ sap.ui.define("sap/ui/commons/Callout",['jquery.sap.global', './CalloutBase', '.
 	 * @extends sap.ui.commons.CalloutBase
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -36873,7 +36865,7 @@ sap.ui.define("sap/ui/commons/ComboBox",['jquery.sap.global', './TextField', './
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -36950,7 +36942,7 @@ sap.ui.define("sap/ui/commons/ComboBox",['jquery.sap.global', './TextField', './
 		this._sCloseId = null;
 		this.setAccessibleRole(sap.ui.core.AccessibleRole.Combobox);
 
-		if (sap.ui.Device.browser.mobile) {
+		if (!sap.ui.Device.system.desktop) {
 			this.mobile = true;
 		}
 	};
@@ -38654,7 +38646,7 @@ sap.ui.define("sap/ui/commons/DatePicker",['jquery.sap.global', './TextField', '
 	 * @extends sap.ui.commons.TextField
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -38687,7 +38679,7 @@ sap.ui.define("sap/ui/commons/DatePicker",['jquery.sap.global', './TextField', '
 
 			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", strictParsing: true});
 
-			if (sap.ui.Device.browser.mobile) {
+			if (!sap.ui.Device.system.desktop) {
 				this._bMobile = true;
 				this._oFormatMobile = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", strictParsing: true});
 			}
@@ -39001,6 +38993,25 @@ sap.ui.define("sap/ui/commons/DatePicker",['jquery.sap.global', './TextField', '
 			}
 
 			return this;
+
+		};
+
+		DatePicker.prototype.oninput = function(oEvent) {
+
+			if (this._bMobile) {
+				// fire change event i changed via native DatePicker
+				// but check if valid, because we don't know if on some devices maybe an keyboard input is possible
+				var oInput = this.getInputDomRef();
+				var sNewValue = oInput && oInput.value;
+				if (sNewValue) {
+					var oDate = this._oFormatMobile.parse(sNewValue);
+				}
+				if (!sNewValue || oDate) {
+					this._checkChange(oEvent);
+				}
+			} else {
+				TextField.prototype.oninput.apply(this, arguments);
+			}
 
 		};
 
@@ -39400,7 +39411,7 @@ sap.ui.define("sap/ui/commons/DatePickerRenderer",['jquery.sap.global', './DateP
 		rm.addClass("sapUiTfCombo");
 		this.renderDatePickerARIAInfo(rm, oControl);
 	};
-	
+
 	/**
 	 * Renders additional HTML for the DatePicker to the TextField (sets the icon)
 	 *
@@ -39410,7 +39421,7 @@ sap.ui.define("sap/ui/commons/DatePickerRenderer",['jquery.sap.global', './DateP
 	 *                                     be rendered.
 	 */
 	DatePickerRenderer.renderOuterContentBefore = function(rm, oControl){
-	
+
 		rm.write("<div");
 		rm.writeAttribute('id', oControl.getId() + '-icon');
 		rm.writeAttribute('tabindex', '-1'); // to do not close popup by click on it
@@ -39421,25 +39432,23 @@ sap.ui.define("sap/ui/commons/DatePickerRenderer",['jquery.sap.global', './DateP
 		rm.addClass("sapUiTfDateIcon");
 		rm.writeClasses();
 		rm.write("></div>"); //No Symbol for HCB Theme, as done by ComboBox.
-	
+
 		// invisible span with description for keyboard navigation
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 			// ResourceBundle always returns the key if the text is not found
-		var sText = rb.getText("DATEPICKER_KEYBOARD");
-		var sDateType = rb.getText("DATEPICKER_DATE_TYPE");
-	
+		var sText = rb.getText("DATEPICKER_DATE_TYPE");
+
 		var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(oControl, oControl.getTooltip_AsString());
 		if (sTooltip) {
 			// add tooltip to description because it is not read by JAWS from title-attribute if a label is assigned
-			sText = sTooltip + ". " + sText;
+			sText = sText + ". " + sTooltip;
 		}
-		sText = sDateType + ". " + sText;
 		rm.write('<SPAN id="' + oControl.getId() + '-Descr" style="visibility: hidden; display: none;">');
 		rm.writeEscaped(sText);
 		rm.write('</SPAN>');
-	
+
 	};
-	
+
 	/*
 	 * Renders the inner attributes for the input element of the DatePicker
 	 *
@@ -39447,14 +39456,14 @@ sap.ui.define("sap/ui/commons/DatePickerRenderer",['jquery.sap.global', './DateP
 	 * @param {sap.ui.fw.Control} oDatePicker an object representation of the control that should be rendered
 	 */
 	DatePickerRenderer.renderInnerAttributes = function(rm, oDatePicker) {
-	
+
 		if (oDatePicker._bMobile) {
 			rm.writeAttribute('type', 'date');
 			rm.addStyle('position', 'absolute'); // to lay input field over expander icon
 		}
-	
+
 	};
-	
+
 	/*
 	 * Renders ARIA information for the outer DIV
 	 *
@@ -39464,48 +39473,48 @@ sap.ui.define("sap/ui/commons/DatePickerRenderer",['jquery.sap.global', './DateP
 	 *                                     be rendered
 	 */
 	DatePickerRenderer.renderDatePickerARIAInfo = function(rm, oControl) {
-	
+
 		// no ARIA on outer DIV because focus is only on the input field
 		// so no ARIA necessary here -> if there it brings some conufing reading by JAWS
-	
+
 		// IMPORTANT: According to jQuery forums, DatePicker Accessibility is to be delivered in a
 		//            future release. No release mentionned.
 		// So there is not much point about doing more about this at the moment.
-	
+
 	};
-	
+
 	DatePickerRenderer.renderARIAInfo = function(rm, oDatePicker) {
-	
+
 		var mProps = {
 			role: oDatePicker.getAccessibleRole().toLowerCase(),
 			multiline: false,
 			autocomplete: "none",
 			haspopup: true,
 			describedby: {value: oDatePicker.getId() + "-Descr", append: true}};
-	
+
 		if (oDatePicker.getValueState() == sap.ui.core.ValueState.Error) {
 			mProps["invalid"] = true;
 		}
-	
+
 		rm.writeAccessibilityState(oDatePicker, mProps);
-	
+
 	};
-	
+
 	DatePickerRenderer.convertPlaceholder = function(oDatePicker) {
-	
+
 		var sPlaceholder = oDatePicker.getPlaceholder();
-	
+
 		if (sPlaceholder.length == 8 && !isNaN(sPlaceholder)) {
 			var oDate = oDatePicker._oFormatYyyymmdd.parse(sPlaceholder);
 			if (oDate) {
 				sPlaceholder = oDatePicker._formatValue(oDate);
 			}
 		}
-	
+
 		return sPlaceholder;
-	
+
 	};
-	
+
 
 	return DatePickerRenderer;
 
@@ -39532,14 +39541,14 @@ sap.ui.define("sap/ui/commons/DropdownBox",['jquery.sap.global', './ComboBox', '
 	/**
 	 * Constructor for a new DropdownBox.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * The control provides a field that allows end users to an entry out of a list of pre-defined items. The choosable items can be provided in the form of complete list boxes or single list items.
 	 * Binding (see DataBinding) is also supported for list items.
 	 * @extends sap.ui.commons.ComboBox
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -39605,10 +39614,10 @@ sap.ui.define("sap/ui/commons/DropdownBox",['jquery.sap.global', './ComboBox', '
 		this._oValueBeforeOpen = null;
 		this.__aItems = null;
 		this._iCursorPosBeforeBackspace = null;
-		/** 
-		 * Array of ListItems containing SearchHelp followed by Separator 
-		 * @type {sap.ui.core.ListItem[]} 
-		 * @private 
+		/**
+		 * Array of ListItems containing SearchHelp followed by Separator
+		 * @type {sap.ui.core.ListItem[]}
+		 * @private
 		 */
 		this._searchHelpItem = null;
 		this._iItemsForHistory = 10; // UX defined history shall appear if there are more than 10 items
@@ -40054,6 +40063,11 @@ sap.ui.define("sap/ui/commons/DropdownBox",['jquery.sap.global', './ComboBox', '
 
 	DropdownBox.prototype.oninput = function(oEvent) {
 
+		if (this.mobile) {
+			// as no real input is possible on mobile devices
+			return;
+		}
+
 		if (!this._realOninput(oEvent)) {
 			return;
 		}
@@ -40119,9 +40133,8 @@ sap.ui.define("sap/ui/commons/DropdownBox",['jquery.sap.global', './ComboBox', '
 			} // 'normalize' cursor position for upcoming handling... especially IE8
 			this._iCursorPosBeforeBackspace = null; // forget being called by backspace handling
 			bValid = this._doTypeAhead($Ref.val().substr(0, iCursorPos - 1), "");
-		}
-		// this must happen to check for valid entry after paste and if required -> rollback
-		else if (!(bValid = this._doTypeAhead("", $Ref.val()))) {
+		} else if (!(bValid = this._doTypeAhead("", $Ref.val()))) {
+			// this must happen to check for valid entry after paste and if required -> rollback
 			$Ref.val(this._oValueBeforePaste);
 		}
 		// Ensure visibility as well as filtering and new height is applied
@@ -41146,7 +41159,7 @@ sap.ui.define("sap/ui/commons/DropdownBox",['jquery.sap.global', './ComboBox', '
 				oListBox.removeItem(this.__oSeparator);
 			}
 		}
-		// new items are added automatically by opening listbox (no support to change property while 
+		// new items are added automatically by opening listbox (no support to change property while
 		// listbox is open)
 
 	};
@@ -41229,7 +41242,7 @@ sap.ui.define("sap/ui/commons/InPlaceEdit",['jquery.sap.global', './TextField', 
 	 * @class
 	 * The InPlaceEdit is a functionality to have text in display mode that can be changed in place.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -42222,7 +42235,7 @@ sap.ui.define("sap/ui/commons/MenuBar",['jquery.sap.global', './Menu', './MenuIt
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -42435,7 +42448,7 @@ sap.ui.define("sap/ui/commons/MenuBar",['jquery.sap.global', './Menu', './MenuIt
 	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
-	sap.ui.commons.MenuButton.prototype.onmouseout = function(oEvent) {
+	MenuBar.prototype.onmouseout = function(oEvent) {
 		var oMenuItem = _getMenuItem(this, oEvent);
 		if (oMenuItem === "ovrflw") {
 			var jRef = get$Item(this, oEvent);
@@ -42786,7 +42799,7 @@ sap.ui.define("sap/ui/commons/PasswordField",['jquery.sap.global', './TextField'
 	 * @extends sap.ui.commons.TextField
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -42855,7 +42868,7 @@ sap.ui.define("sap/ui/commons/RangeSlider",['jquery.sap.global', './Slider', './
 	 * @extends sap.ui.commons.Slider
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -43889,7 +43902,7 @@ sap.ui.define("sap/ui/commons/SearchField",['jquery.sap.global', './ComboBox', '
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -44840,7 +44853,7 @@ sap.ui.define("sap/ui/commons/TextArea",['jquery.sap.global', './TextField', './
 	 * @class
 	 * Control to enter or display multible row text.
 	 * @extends sap.ui.commons.TextField
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -45216,7 +45229,7 @@ sap.ui.define("sap/ui/commons/layout/AbsoluteLayout",['jquery.sap.global', './Po
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -45771,7 +45784,7 @@ sap.ui.define("sap/ui/commons/layout/MatrixLayout",['jquery.sap.global', './Matr
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -45824,30 +45837,19 @@ sap.ui.define("sap/ui/commons/layout/MatrixLayout",['jquery.sap.global', './Matr
 	}});
 	
 	
-	/**
-	 * Creates a new matrix layout row and appends it to this matrix layout.
-	 *
-	 * @name sap.ui.commons.layout.MatrixLayout#createRow
-	 * @function
-	 * @param {sap.ui.core.Control} oControls
-	 *         Each argument must be either a matrix layout cell, which is added to the row "as is", or an arbitrary content control, which is wrapped with a new (default) matrix layout cell first and then added to the row.
-	 *         Supports a variable number of arguments!
-	 * @type sap.ui.commons.layout.MatrixLayout
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
 	EnabledPropagator.call(MatrixLayout.prototype, true, /* legacy mode */ true);
 	
 	/**
 	 * Creates a new matrix layout row and appends it to this matrix layout.
+	 * 
 	 * Each argument must be either a matrix layout cell, which is added to the row
 	 * "as is", or an arbitrary content control, which is wrapped with a new
 	 * (default) matrix layout cell first and then added to the row.
-	 * @param {sap.ui.commons.layout.MatrixLayoutCell|sap.ui.core.Control|string} rowContent to add
+	 * 
+	 * @param {sap.ui.core.Control|sap.ui.commons.layout.MatrixLayoutCell|string} rowContent to add
 	 * @return {sap.ui.commons.layout.MatrixLayout} <code>this</code> to allow method chaining
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MatrixLayout.prototype.createRow = function() {
 		var oRow = new MatrixLayoutRow();
@@ -45940,7 +45942,7 @@ sap.ui.define("sap/ui/commons/AutoComplete",['jquery.sap.global', './ComboBox', 
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public

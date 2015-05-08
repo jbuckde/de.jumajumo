@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -72,7 +72,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 *
 			 * If only one version of image is provided, set this value to false to avoid the attempt of fetching density perfect image.
 			 */
-			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true}
+			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		},
 		associations : {
 
@@ -350,7 +356,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oImage.removeStyleClass("sapMBtnBackIconLeft");
 		}
 
-		if (this.getText()) {
+		if (this._getText()) {
 			// check and set absolute position depending on icon and icon position
 			if (this.getIconFirst()) {
 				if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
@@ -387,7 +393,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// add style classes to the object
 		oIcon.addStyleClass("sapMBtnIcon");
-		if (this.getText()) {
+		if (this._getText()) {
 			oIcon.addStyleClass("sapMBtnIconLeft");
 		}
 
@@ -542,7 +548,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this.$("content").removeClass("sapMBtnBackContentRight");
 				}
 
-				if (this.getText()) {
+				if (this._getText()) {
 					// check and set absolute position depending on icon and icon position
 					if (bIconFirst) {
 						if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
@@ -566,7 +572,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._removeTextPadding();
 
 				// Add the text padding classes
-				if (this.getText().length > 0) {
+				if (this._getText().length > 0) {
 					this._addTextPadding(bIconFirst);
 				}
 			}
@@ -590,7 +596,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		// Search and remove padding between icon and text
-		if (!this.getText()) {
+		if (!this._getText()) {
 			if (this.$("content").hasClass("sapMBtnContentLeft")) {
 				this.$("content").removeClass("sapMBtnContentLeft");
 			}
@@ -620,7 +626,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		// Add text padding classes between icon and text
-		if (this.getText()) {
+		if (this._getText()) {
 			if (this.getIcon()) {
 				if (this.getIconFirst()) {
 					if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
@@ -648,6 +654,52 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Button.prototype.getPopupAnchorDomRef = function() {
 		return this.getDomRef("inner");
+	};
+	
+	// A hook to be used by controls that extend sap.m.Button and want to display the text in a different way
+	Button.prototype._getText = function() {
+		return this.getText();
+	};
+
+	Button.prototype.setType = function(sType) {
+
+		this.setProperty("type", sType);
+
+		// Aria desciption for type
+		var sTypeText = "";
+		var oRb;
+
+		switch (sType) {
+		case sap.m.ButtonType.Accept:
+			if (!sap.m.Button._oStaticAcceptText) {
+				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_ACCEPT");
+				sap.m.Button._oStaticAcceptText = new sap.ui.core.InvisibleText({text: sTypeText});
+				sap.m.Button._oStaticAcceptText.toStatic(); //Put to Static UiArea
+			}
+			break;
+		case sap.m.ButtonType.Reject:
+			if (!sap.m.Button._oStaticRejectText) {
+				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_REJECT");
+				sap.m.Button._oStaticRejectText = new sap.ui.core.InvisibleText({text: sTypeText});
+				sap.m.Button._oStaticRejectText.toStatic(); //Put to Static UiArea
+			}
+			break;
+		case sap.m.ButtonType.Emphasized:
+			if (!sap.m.Button._oStaticEmphasizedText) {
+				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				sTypeText = oRb.getText("BUTTON_ARIA_TYPE_EMPHASIZED");
+				sap.m.Button._oStaticEmphasizedText = new sap.ui.core.InvisibleText({text: sTypeText});
+				sap.m.Button._oStaticEmphasizedText.toStatic(); //Put to Static UiArea
+			}
+			break;
+		default: // No need to do anything for other button types
+			break;
+		}
+
+		return this;
+
 	};
 
 	return Button;

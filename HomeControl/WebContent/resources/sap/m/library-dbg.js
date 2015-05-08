@@ -1,4 +1,4 @@
-/*!
+﻿﻿/*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
  * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
@@ -22,14 +22,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @namespace
 	 * @name sap.m
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @public
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.m",
-		version: "1.26.10",
+		version: "1.28.5",
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.m.BackgroundDesign",
@@ -64,7 +64,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.StandardTileType",
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
-			"sap.m.ToolbarDesign"
+			"sap.m.ToolbarDesign",
+			"sap.m.VerticalPlacementType"
 		],
 		interfaces: [
 			"sap.m.IBar",
@@ -112,6 +113,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.List",
 			"sap.m.ListBase",
 			"sap.m.ListItemBase",
+			"sap.m.MessagePage",
+			"sap.m.MessagePopover",
 			"sap.m.MultiComboBox",
 			"sap.m.MultiInput",
 			"sap.m.NavContainer",
@@ -121,6 +124,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ObjectListItem",
 			"sap.m.ObjectNumber",
 			"sap.m.ObjectStatus",
+			"sap.m.OverflowToolbar",
+			"sap.m.OverflowToolbarButton",
 			"sap.m.P13nColumnsItem",
 			"sap.m.P13nColumnsPanel",
 			"sap.m.P13nConditionPanel",
@@ -156,6 +161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.TextArea",
 			"sap.m.Tile",
 			"sap.m.TileContainer",
+			"sap.m.Title",
 			"sap.m.ToggleButton",
 			"sap.m.Token",
 			"sap.m.Tokenizer",
@@ -170,10 +176,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Column",
 			"sap.m.FlexItemData",
 			"sap.m.IconTabFilter",
-			"sap.m.IconTabSeparator",			
+			"sap.m.IconTabSeparator",
+			"sap.m.OverflowToolbarLayoutData",
+			"sap.m.MessagePopoverItem",
 			"sap.m.P13nFilterItem",
 			"sap.m.P13nItem",
 			"sap.m.P13nSortItem",
+			"sap.m.SegmentedButtonItem",
 			"sap.m.ToolbarLayoutData",
 			"sap.m.UploadCollectionItem",
 			"sap.m.UploadCollectionParameter",
@@ -1070,7 +1079,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	
 	
 	/**
-	 * tbd
+	 * Type of Panels used on the Personalization Dialog
 	 *
 	 * @enum {string}
 	 * @public
@@ -1079,25 +1088,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.P13nPanelType = {
 	
 		/**
-		 * Color: blue (#b8d0e8)
+		 * Panel type for sorting
 		 * @public
 		 */
 		sort : "sort",
 	
 		/**
-		 * Color: blue (#b8d0e8)
+		 * Panel type for filtering
 		 * @public
 		 */
 		filter : "filter",
 	
 		/**
-		 * Color: blue (#b8d0e8)
+		 * Panel type for grouping
 		 * @public
 		 */
 		group : "group",
 	
 		/**
-		 * Color: blue (#b8d0e8)
+		 * Panel type for columns setting
 		 * @public
 		 */
 		columns : "columns"
@@ -1139,8 +1148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Transparent : "Transparent"
 	
 	};
-	
-	
+
 	/**
 	 * Types for the placement of popover control.
 	 *
@@ -1194,6 +1202,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	
 	};
 	
+	/**
+	* Types for the placement of message popover control.
+	*
+	* @enum {string}
+	* @public
+	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	sap.m.VerticalPlacementType = {
+
+		/**
+		* Popover will be placed at the top of the reference control.
+		* @public
+		*/
+		Top : "Top",
+
+		/**
+		* Popover will be placed at the bottom of the reference control.
+		* @public
+		*/
+		Bottom : "Bottom",
+
+		/**
+		* Popover will be placed at the top or bottom of the reference control.
+		* @public
+		*/
+		Vertical : "Vertical"
+	};
 	
 	/**
 	 * Defines the display of table pop-ins
@@ -1206,17 +1241,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.PopinDisplay = {
 	
 		/**
-		 * Inside the table popin, header is displayed in first line and value field is displayed in next line.
+		 * Inside the table popin, header is displayed at the first line and cell content is displayed at the next line.
 		 * @public
 		 */
 		Block : "Block",
 	
 		/**
-		 * Inside the table popin, value field is displayed next to the header in the same line. Note: If there is no enough space for the value field then goes to next line.
+		 * Inside the table popin, cell content is displayed next to the header in the same line. Note: If there is not enough space for the cell content then it jumps to the next line.
 		 * @public
 		 */
-		Inline : "Inline"
-	
+		Inline : "Inline",
+		
+
+		/**
+		 * Inside the table popin, only the cell content will be visible.
+		 * @public
+		 * @since 1.28
+		 */
+		WithoutHeader : "WithoutHeader"
 	};
 	
 	
@@ -1502,7 +1544,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	
 	//lazy imports for MessageToast
 	sap.ui.lazyRequire("sap.m.MessageToast", "show");
-	
+
+	// requires for routing
+	sap.ui.lazyRequire("sap.m.routing.RouteMatchedHandler");
+	sap.ui.lazyRequire("sap.m.routing.Router");
+	sap.ui.lazyRequire("sap.m.routing.Target");
+	sap.ui.lazyRequire("sap.m.routing.TargetHandler");
+	sap.ui.lazyRequire("sap.m.routing.Targets");
+
 	//enable ios7 support
 	if (Device.os.ios && Device.os.version >= 7 && Device.os.version < 8 && Device.browser.name === "sf") {
 		jQuery.sap.require("sap.m.ios7");
@@ -1695,6 +1744,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	
 	}(sap.m));
 	
+	
 	/**
 	 * Touch helper.
 	 *
@@ -1702,8 +1752,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @name sap.m.touch
 	 * @public
 	 **/
-	
+
 	if (sap.m && !sap.m.touch) {
+
 		sap.m.touch = {};
 	}
 	
@@ -1763,7 +1814,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			$TouchTarget;
 	
 		if (!oTouchList) {
-			return;
+			return 0;
 		}
 	
 		if (vElement instanceof Element) {
@@ -1772,7 +1823,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			vElement = jQuery.sap.byId(vElement);
 		} else if (!(vElement instanceof jQuery)) {
 			jQuery.sap.assert(false, 'sap.m.touch.countContained(): vElement must be a jQuery object or Element reference or a string');
-			return;
+			return 0;
 		}
 	
 		iElementChildrenL = vElement.children().length;
@@ -2521,6 +2572,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oImage.setDensityAware(false); // by default we do not have density aware images in the Table
 			return oImage;
 		},
+		addTableClass: function() { return "sapUiTableM"; },
 		bFinal: true
 	});
 	

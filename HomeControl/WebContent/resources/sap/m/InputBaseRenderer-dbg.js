@@ -24,18 +24,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 */
 	InputBaseRenderer.render = function(oRm, oControl) {
 		var sValueState = oControl.getValueState();
-		var sTextAlign = Renderer.getTextAlign(oControl.getTextAlign());
+		var sTextDir = oControl.getTextDirection();
+		var sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir);
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
-	
+
 		// outer styles
 		this.addOuterStyles(oRm, oControl);
 
 		if (oControl.getWidth()) {
 			oRm.addStyle("width", oControl.getWidth());
 		}
-	
+
 		oRm.writeStyles();
 
 		// outer classes
@@ -116,7 +117,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.addClass("sapMInputBaseReadonlyInner");
 		}
 
+		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
+		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+			oRm.writeAttribute("dir", sTextDir.toLowerCase());
+		}
+
 		this.writeInnerValue(oRm, oControl);
+		this.writeAccessibilityState(oRm, oControl);
 		this.writeInnerAttributes(oRm, oControl);
 
 		// inner classes
@@ -145,7 +152,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		// finish outer
 		oRm.write("</div>");
 	};
-	
+
+	/**
+	 * Writes the accessibility state.
+	 * To be overwritten by subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.writeAccessibilityState = function(oRm, oControl) {
+		oRm.writeAccessibilityState(oControl);
+	};
+
 	/**
 	 * This method is reserved for derived classes to add extra attributes to the Input.
 	 *

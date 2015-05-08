@@ -41,7 +41,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.write("</div>");
 		}
 	};
-	
 
 	return ActionListItemRenderer;
 

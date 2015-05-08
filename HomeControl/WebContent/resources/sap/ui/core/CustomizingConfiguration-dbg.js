@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 		 * @param {function} fnCheck check function
 		 */
 		function findConfig(sType, vObject, fnCheck) {
-			var sComponentId = vObject && typeof vObject === "string" ? vObject : Component.getOwnerIdFor(vObject);
+			var sComponentId = vObject && typeof vObject === "string" ? vObject : (vObject && Component.getOwnerIdFor(vObject));
 			if (sComponentId) {
 				// if a component name is given only the component customizing
 				// configuration is checked - the customizing configuration is
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 		 * gets removed again.
 		 *
 		 * @author SAP SE
-		 * @version 1.26.10
+		 * @version 1.28.5
 		 * @constructor
 		 * @private
 		 * @since 1.15.1

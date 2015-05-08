@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -184,17 +184,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	
 	/**
-	 * Increments the number of rows. This method will only trigger a showMore if the property showMoreSteps is set.
-	 *
-	 * @name sap.ui.commons.RowRepeater#triggerShowMore
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
 	 * This value of the paging mode boolean is true if the showMoreSteps
 	 * property is not set. This value is updated whenever the value
 	 * of showMoreSteps is changed.
@@ -259,13 +248,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/*
 	 * PUBLIC API METHODS
 	 */
-	// TODO: check where to document: here or in API definition
 	/**
 	 * The <code>triggerShowMore</code> function increments the number of rows by the
 	 * value of <code>showMoreSteps</code>.
+	 * 
+	 * This method will only trigger a showMore if the property showMoreSteps is set.
 	 *
 	 * @return {sap.ui.commons.RowRepeater} <code>this</code> to allow method chaining
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.triggerShowMore = function() {
 	

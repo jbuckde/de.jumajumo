@@ -1,5 +1,5 @@
 /*
- * @copyright@
+ * ${copyright}
  */
 
 // Provides class sap.ui.app.MockServer for mocking a server
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/MockServer'],
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version @version@
+	 * @version ${version}
 	 * @public
 	 * @name sap.ui.app.MockServer
 	 * @experimental Since 1.13.0. The mock server is still under construction, so some implementation details can be changed in future.

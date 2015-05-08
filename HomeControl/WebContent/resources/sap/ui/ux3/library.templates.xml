@@ -2,6 +2,7 @@
 <Library name="sap.ui.ux3" xmlns="http://www.sap.com/ui5/ide/templates/xmlview">
 <Template name="sap.ui.ux3.ActionBar" alias="ActionBar,Bar">
 	<jsTemplate><![CDATA[new sap.ui.ux3.ActionBar({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -30,6 +31,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ActionBar xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -55,6 +57,7 @@
 </Template>
 <Template name="sap.ui.ux3.Collection" alias="Collection">
 	<jsTemplate><![CDATA[new sap.ui.ux3.Collection({
+	id: "${id}", // sap.ui.core.ID
 	title: undefined, // string
 	editable: false, // boolean
 	multiSelection: false, // boolean
@@ -72,6 +75,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Collection xmlns="sap.ui.ux3"
+	id="${id}"
 	title=""
 	editable="false"
 	multiSelection="false"
@@ -86,6 +90,7 @@
 </Template>
 <Template name="sap.ui.ux3.CollectionInspector" alias="CollectionInspector,Inspector">
 	<jsTemplate><![CDATA[new sap.ui.ux3.CollectionInspector({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -109,6 +114,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<CollectionInspector xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -127,6 +133,7 @@
 </Template>
 <Template name="sap.ui.ux3.DataSet" alias="DataSet,Set">
 	<jsTemplate><![CDATA[new sap.ui.ux3.DataSet({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -150,6 +157,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<DataSet xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -170,6 +178,7 @@
 </Template>
 <Template name="sap.ui.ux3.DataSetItem" alias="DataSetItem,Item">
 	<jsTemplate><![CDATA[new sap.ui.ux3.DataSetItem({
+	id: "${id}", // sap.ui.core.ID
 	iconSrc: undefined, // sap.ui.core.URI
 	title: "Title", // string
 	checkable: true, // boolean
@@ -183,6 +192,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<DataSetItem xmlns="sap.ui.ux3"
+	id="${id}"
 	iconSrc=""
 	title="Title"
 	checkable="true"
@@ -195,6 +205,7 @@
 </Template>
 <Template name="sap.ui.ux3.DataSetSimpleView" alias="DataSetSimpleView,View">
 	<jsTemplate><![CDATA[new sap.ui.ux3.DataSetSimpleView({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -216,6 +227,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<DataSetSimpleView xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -238,6 +250,7 @@
 </Template>
 <Template name="sap.ui.ux3.Exact" alias="Exact">
 	<jsTemplate><![CDATA[new sap.ui.ux3.Exact({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -256,6 +269,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Exact xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -271,6 +285,7 @@
 </Template>
 <Template name="sap.ui.ux3.ExactArea" alias="ExactArea,Area">
 	<jsTemplate><![CDATA[new sap.ui.ux3.ExactArea({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -283,6 +298,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ExactArea xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -296,6 +312,7 @@
 </Template>
 <Template name="sap.ui.ux3.ExactAttribute" alias="ExactAttribute,Attribute">
 	<jsTemplate><![CDATA[new sap.ui.ux3.ExactAttribute({
+	id: "${id}", // sap.ui.core.ID
 	text: undefined, // string
 	selected: undefined, // boolean
 	width: 168, // int, since 1.7.0
@@ -314,6 +331,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ExactAttribute xmlns="sap.ui.ux3"
+	id="${id}"
 	text=""
 	selected=""
 	width="168"
@@ -331,6 +349,7 @@
 </Template>
 <Template name="sap.ui.ux3.ExactBrowser" alias="ExactBrowser,Browser">
 	<jsTemplate><![CDATA[new sap.ui.ux3.ExactBrowser({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -359,6 +378,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ExactBrowser xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -384,6 +404,7 @@
 </Template>
 <Template name="sap.ui.ux3.ExactList" alias="ExactList,List">
 	<jsTemplate><![CDATA[new sap.ui.ux3.ExactList({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -401,6 +422,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ExactList xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -417,6 +439,7 @@
 </Template>
 <Template name="sap.ui.ux3.FacetFilter" alias="FacetFilter,Filter">
 	<jsTemplate><![CDATA[new sap.ui.ux3.FacetFilter({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -428,6 +451,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<FacetFilter xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -440,6 +464,7 @@
 </Template>
 <Template name="sap.ui.ux3.FacetFilterList" alias="FacetFilterList,List">
 	<jsTemplate><![CDATA[new sap.ui.ux3.FacetFilterList({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -458,6 +483,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<FacetFilterList xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -475,6 +501,7 @@
 </Template>
 <Template name="sap.ui.ux3.Feed" alias="Feed">
 	<jsTemplate><![CDATA[new sap.ui.ux3.Feed({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -506,6 +533,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Feed xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -528,6 +556,7 @@
 </Template>
 <Template name="sap.ui.ux3.FeedChunk" alias="FeedChunk,Chunk">
 	<jsTemplate><![CDATA[new sap.ui.ux3.FeedChunk({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -582,6 +611,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<FeedChunk xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -619,6 +649,7 @@
 </Template>
 <Template name="sap.ui.ux3.Feeder" alias="Feeder">
 	<jsTemplate><![CDATA[new sap.ui.ux3.Feeder({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -635,6 +666,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Feeder xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -650,6 +682,7 @@
 </Template>
 <Template name="sap.ui.ux3.NavigationBar" alias="NavigationBar,Bar">
 	<jsTemplate><![CDATA[new sap.ui.ux3.NavigationBar({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -666,6 +699,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<NavigationBar xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -681,6 +715,7 @@
 </Template>
 <Template name="sap.ui.ux3.NavigationItem" alias="NavigationItem,Item">
 	<jsTemplate><![CDATA[new sap.ui.ux3.NavigationItem({
+	id: "${id}", // sap.ui.core.ID
 	text: "", // string
 	enabled: true, // boolean
 	textDirection: sap.ui.core.TextDirection.Inherit, // sap.ui.core.TextDirection
@@ -694,6 +729,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<NavigationItem xmlns="sap.ui.ux3"
+	id="${id}"
 	text=""
 	enabled="true"
 	textDirection="Inherit"
@@ -708,6 +744,7 @@
 </Template>
 <Template name="sap.ui.ux3.NotificationBar" alias="NotificationBar,Bar">
 	<jsTemplate><![CDATA[new sap.ui.ux3.NotificationBar({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -728,6 +765,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<NotificationBar xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -745,6 +783,7 @@
 </Template>
 <Template name="sap.ui.ux3.Notifier" alias="Notifier">
 	<jsTemplate><![CDATA[new sap.ui.ux3.Notifier({
+	id: "${id}", // sap.ui.core.ID
 	icon: undefined, // sap.ui.core.URI
 	title: undefined, // string
 	tooltip: undefined, // sap.ui.core.TooltipBase
@@ -757,6 +796,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Notifier xmlns="sap.ui.ux3"
+	id="${id}"
 	icon=""
 	title=""
 	messageSelected="">
@@ -768,6 +808,7 @@
 </Template>
 <Template name="sap.ui.ux3.Overlay" alias="Overlay">
 	<jsTemplate><![CDATA[new sap.ui.ux3.Overlay({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -791,6 +832,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Overlay xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -807,6 +849,7 @@
 </Template>
 <Template name="sap.ui.ux3.OverlayContainer" alias="OverlayContainer,Container">
 	<jsTemplate><![CDATA[new sap.ui.ux3.OverlayContainer({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -831,6 +874,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<OverlayContainer xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -848,6 +892,7 @@
 </Template>
 <Template name="sap.ui.ux3.OverlayDialog" alias="OverlayDialog,Dialog">
 	<jsTemplate><![CDATA[new sap.ui.ux3.OverlayDialog({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -874,6 +919,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<OverlayDialog xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -893,6 +939,7 @@
 </Template>
 <Template name="sap.ui.ux3.QuickView" alias="QuickView,View">
 	<jsTemplate><![CDATA[new sap.ui.ux3.QuickView({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -953,6 +1000,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<QuickView xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -998,6 +1046,7 @@
 </Template>
 <Template name="sap.ui.ux3.Shell" alias="Shell">
 	<jsTemplate><![CDATA[new sap.ui.ux3.Shell({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1049,6 +1098,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Shell xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1089,6 +1139,7 @@
 </Template>
 <Template name="sap.ui.ux3.ThingAction" alias="ThingAction,Action">
 	<jsTemplate><![CDATA[new sap.ui.ux3.ThingAction({
+	id: "${id}", // sap.ui.core.ID
 	text: undefined, // string
 	enabled: true, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
@@ -1100,6 +1151,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ThingAction xmlns="sap.ui.ux3"
+	id="${id}"
 	text=""
 	enabled="true"
 	select="">
@@ -1110,6 +1162,7 @@
 </Template>
 <Template name="sap.ui.ux3.ThingGroup" alias="ThingGroup,Group">
 	<jsTemplate><![CDATA[new sap.ui.ux3.ThingGroup({
+	id: "${id}", // sap.ui.core.ID
 	title: undefined, // string
 	colspan: false, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
@@ -1120,6 +1173,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ThingGroup xmlns="sap.ui.ux3"
+	id="${id}"
 	title=""
 	colspan="false">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -1131,6 +1185,7 @@
 </Template>
 <Template name="sap.ui.ux3.ThingInspector" alias="ThingInspector,Inspector">
 	<jsTemplate><![CDATA[new sap.ui.ux3.ThingInspector({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1181,6 +1236,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ThingInspector xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1218,6 +1274,7 @@
 </Template>
 <Template name="sap.ui.ux3.ThingViewer" alias="ThingViewer,Viewer">
 	<jsTemplate><![CDATA[new sap.ui.ux3.ThingViewer({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1242,6 +1299,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ThingViewer xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1265,6 +1323,7 @@
 </Template>
 <Template name="sap.ui.ux3.ToolPopup" alias="ToolPopup,Popup">
 	<jsTemplate><![CDATA[new sap.ui.ux3.ToolPopup({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1308,6 +1367,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ToolPopup xmlns="sap.ui.ux3"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @extends sap.m.ComboBoxBase
 	 *
 	 * @author SAP SE 
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -1027,18 +1027,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		return aSelectedItems;
 	};
 
-	MultiComboBox.prototype.setPlaceholder = function(sPlaceholder) {
-		this._sPlaceholder = sPlaceholder;
 
-		var sTargetPlaceholder = sPlaceholder;
-		if (this._hasTokens()) {
-			sTargetPlaceholder = "";
-		}
-
-		ComboBoxBase.prototype.setPlaceholder.apply(this, [sTargetPlaceholder]);
-		return this;
-	};
-	
 	/**
 	 * @private
 	 */
@@ -1378,13 +1367,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 				this.fireChangeEvent('');
 			}
 		}
-
-		var sTargetPlaceholder = this._sPlaceholder;
-		// Remove Placeholder when MCB has tokens.
-		if (this._hasTokens()) {
-			sTargetPlaceholder = "";
-		}
-		ComboBoxBase.prototype.setPlaceholder.apply(this, [sTargetPlaceholder]);
 	};
 	
 	/* =========================================================== */
@@ -2017,12 +1999,30 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (!aItems) {
 			return null;
 		}
-	
+		
+		if (!this._oListItemEnterEventDelegate) {
+			this._oListItemEnterEventDelegate = {
+				onsapenter: function(oEvent) {
+					// If ListItem is already selected, 
+					// prevent its de-selection, according to Keyboard Handling Specification.
+					if (oEvent.srcControl.isSelected()) {
+						oEvent.setMarked();
+					}
+				}
+			};
+		}
+
 		for ( var i = 0, oListItem, aItemsLength = aItems.length; i < aItemsLength; i++) {
 			// add a private property to the added item containing a reference
 			// to the corresponding mapped item
 			oListItem = this._mapItemToListItem(aItems[i]);
-	
+
+			// remove the previous event delegate
+			oListItem.removeEventDelegate(this._oListItemEnterEventDelegate);
+
+			// add the sap enter event delegate
+			oListItem.addDelegate(this._oListItemEnterEventDelegate, true, this, true);
+			
 			// add the mapped item type of sap.m.StandardListItem to the list
 			this.getList().addAggregation("items", oListItem, true);
 	
@@ -2032,6 +2032,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			}
 		}
 	};
+	
 	
 	/**
 	 * Initialization.
@@ -2138,10 +2139,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (this._oTokenizer) {
 			this._oTokenizer.destroy();
 			this._oTokenizer = null;
-		}
-		
-		if (this._sPlaceholder) {
-			this._sPlaceholder = null;
 		}
 	};
 	

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 	 * @extends sap.m.Button
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -60,10 +60,9 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 	
 	ToggleButton.prototype.setPressed = function(bPressed) {
 		if (bPressed != this.getPressed()) {
-			var $Inner = this.$("inner");
 			this.setProperty("pressed", bPressed, true);
-			$Inner.toggleClass("sapMToggleBtnPressed",bPressed);
-			$Inner.attr("pressed", bPressed);
+			this.$().attr("aria-pressed", bPressed);
+			this.$("inner").toggleClass("sapMToggleBtnPressed",bPressed);
 		}
 		return this;
 	};

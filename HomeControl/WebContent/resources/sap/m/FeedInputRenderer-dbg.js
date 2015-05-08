@@ -31,7 +31,7 @@ var FeedInputRenderer = {
 		if (!!oControl.getShowIcon()) {
 			this._addImage(oRm, oControl, sMyId);
 		}
-		oRm.write("<div");
+		oRm.write('<div id="' + sMyId + '-container"');
 		oRm.addClass("sapMFeedInContainer");
 		oRm.writeClasses();
 		oRm.write(">");
@@ -41,7 +41,7 @@ var FeedInputRenderer = {
 		oRm.write("</div>");
 		oRm.write("</div>");
 	};
-	
+
 	FeedInputRenderer._addImage = function (oRm, oControl, sMyId) {
 		oRm.write('<figure id="' + sMyId + '-figure" class ="sapMFeedInFigure');
 		if (!!oControl.getIcon()) {

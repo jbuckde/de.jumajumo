@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @alias sap.ui.core.tmpl.HandlebarsTemplate
 	 * @experimental Since 1.15.0. The Template concept is still under construction, so some implementation details can be changed in future.
 	 */
@@ -234,7 +234,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				if (sPath) {
 					// bind and return the text
 					var oValue = oRootControl.bindProp(sPath);
-					return oValue && new Handlebars.SafeString(oValue);
+					return oValue && new Handlebars.SafeString(jQuery.sap.encodeHTML(oValue));
 				} else {
 					throw new Error("The expression \"text\" requires the option \"path\"!");
 				}
@@ -396,7 +396,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 				var oRootControl = options.data.rootControl,
 					oMetadata = oRootControl.getMetadata(),
 					sPropertyName = options.hash.name,
-					sGetter = oMetadata.getAllProperties()[sPropertyName]._sGetter;
+					sGetter = oMetadata.getProperty(sPropertyName)._sGetter;
 				return oRootControl[sGetter]();
 				
 			},
@@ -438,7 +438,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 						oRootControl = options.data.rootControl,
 						oMetadata = oRootControl.getMetadata(),
 						sAggregationName = options.hash.name,
-						sGetter = oMetadata.getAllAggregations()[sAggregationName]._sGetter,
+						sGetter = oMetadata.getAggregation(sAggregationName)._sGetter,
 						aHTML = [];
 					
 					// retrieve the child elements via the specific getter
@@ -501,7 +501,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './Template', '
 		// identify the control metadata: properties, aggregations, ... 
 		// the template will be executed with specific options
 		var oMetadata = {},
-			mJSONKeys = sap.ui.core.tmpl.TemplateControl.getMetadata().getJSONKeys(),
+			mJSONKeys = sap.ui.core.tmpl.TemplateControl.getMetadata().getAllSettings(),
 			mPrivateAggregations = sap.ui.core.tmpl.TemplateControl.getMetadata().getAllPrivateAggregations();
 		
 		// the options to identify the properties, aggregations, events, ...

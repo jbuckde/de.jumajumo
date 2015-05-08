@@ -34,6 +34,12 @@
 	height: 0;
 }
 
+.sapMListTblCellDup > .sapMListTblCellDupCnt {
+	/* hide content visually but have it available for screen readers */
+	position: absolute;
+	clip: rect(0, 0, 0, 0);
+}
+
 tr.sapMListTblHeaderNone > th {
 	border: 0;
 	margin-top: 0;
@@ -142,3 +148,6 @@ tr.sapMListTblHeaderNone > th {
 		display: none;
 	}
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMListTbl");

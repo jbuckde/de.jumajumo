@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 	 * @extends sap.ui.commons.TextField
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 
 			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", strictParsing: true});
 
-			if (sap.ui.Device.browser.mobile) {
+			if (!sap.ui.Device.system.desktop) {
 				this._bMobile = true;
 				this._oFormatMobile = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", strictParsing: true});
 			}
@@ -371,6 +371,25 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 			}
 
 			return this;
+
+		};
+
+		DatePicker.prototype.oninput = function(oEvent) {
+
+			if (this._bMobile) {
+				// fire change event i changed via native DatePicker
+				// but check if valid, because we don't know if on some devices maybe an keyboard input is possible
+				var oInput = this.getInputDomRef();
+				var sNewValue = oInput && oInput.value;
+				if (sNewValue) {
+					var oDate = this._oFormatMobile.parse(sNewValue);
+				}
+				if (!sNewValue || oDate) {
+					this._checkChange(oEvent);
+				}
+			} else {
+				TextField.prototype.oninput.apply(this, arguments);
+			}
 
 		};
 

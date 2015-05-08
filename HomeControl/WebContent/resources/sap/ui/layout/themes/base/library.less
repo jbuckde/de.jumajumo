@@ -12,39 +12,35 @@
 
 /* START "FixFlex.less" */
 /* ==========================================================================
-   CSS for control sap.m/FlexBox.control 
+   CSS for control sap.m/FlexBox.control
    ========================================================================== */
 
-/* Class for vertical (default) layout 
+/* Class for vertical (default) layout
    ========================================================================== */
 .sapUiFixFlex {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-    
+
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: -ms-flexbox;
 	display: flex;
-	
+
 	-webkit-box-direction: normal;
 	-webkit-box-orient: vertical;
 	-webkit-flex-direction: column;
 	-ms-flex-direction: column;
 	flex-direction: column;
-    
+
 	-webkit-box-align: start;
 	-webkit-align-items: flex-start;
 	-ms-flex-align: start;
 	align-items: flex-start;
-	
+
 	height: 100%;
 }
-	
+
 /* Flexible child */
 .sapUiFixFlexFlexible {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 
 	display: -webkit-box;
@@ -56,7 +52,7 @@
 	-webkit-flex-grow: 1;
 	-ms-flex: 1 1;
 	flex-grow: 1;
-	
+
 	-webkit-box-align: start;
 	-webkit-align-items: flex-start;
 	-ms-flex-align: start;
@@ -66,7 +62,7 @@
 	position: relative;
 	width: 100%;
 }
-	
+
 .sapUiFixFlexFlexibleContainer {
 	position: absolute;
 	top: 0;
@@ -74,7 +70,7 @@
 	bottom: 0;
 	left: 0;
 
-	&>.sapUiFixFlex {
+	& > .sapUiFixFlex {
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -83,11 +79,8 @@
 	}
 }
 
-
 /* Fixed child */
 .sapUiFixFlexFixed {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 
 	position: relative;
@@ -95,9 +88,9 @@
 	width: 100%;
 }
 
-/* Class for horizontal layout 
+/* Class for horizontal layout
    ========================================================================== */
-   
+
 .sapUiFixFlexRow {
 	-webkit-box-direction: normal;
 	-webkit-box-orient: horizontal;
@@ -105,8 +98,8 @@
 	-ms-flex-direction: row;
 	flex-direction: row;
 
-	&>.sapUiFixFlexFlexible,	
-	&>.sapUiFixFlexFixed {
+	& > .sapUiFixFlexFlexible,
+	& > .sapUiFixFlexFixed {
 		width: auto;
 		height: 100%;
 	}
@@ -114,18 +107,19 @@
 
 /* Legacy browser support
    ========================================================================== */
-   
+
 .sapUiFixFlexRow {
 	&.sapUiFixFlex-Legacy {
 		position: relative;
 
-		&>.sapUiFixFlexFixed, 
-		&>.sapUiFixFlexFlexible {
+		& > .sapUiFixFlexFixed,
+		& > .sapUiFixFlexFlexible {
 			position: relative;
 			float: left;
 		}
 	}
 }
+
 /* END "FixFlex.less" */
 
 /* START "Form.less" */
@@ -2094,6 +2088,9 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapUiGrid td > .sapUiFormTitle{
 	display: inline-block;
 	vertical-align: top;
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapUiHLayout");
 /* END "HorizontalLayout.less" */
 
 /* START "ResponsiveFlowLayout.less" */
@@ -2310,9 +2307,9 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRLElementWithLabel > .sapUiRFLRow:f
 	box-sizing: border-box;
 }
 
-/* SimpleForm placed directly in a body of a Fiori page */
-.sap-tablet .sapUiFioriObjectPage > section > div > .sapUiSimpleForm,
-.sap-desktop .sapUiFioriObjectPage > section > div > .sapUiSimpleForm {
+.sap-tablet .sapUiFioriObjectPage > section > .sapUiSimpleForm,
+.sap-desktop .sapUiFioriObjectPage > section > .sapUiSimpleForm {
+	margin: 1rem 0;
 	padding: 0 1rem;
 }
 /* END "SimpleForm.less" */
@@ -2597,5 +2594,8 @@ html[data-sap-ui-browser^=ie].sap-phone .sapUiLoSplitterV > .sapUiLoSplitterBar:
 	display: inline-block;
 	overflow: hidden;
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapUiVlt");
 /* END "VerticalLayout.less" */
 

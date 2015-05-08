@@ -204,17 +204,17 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * This function escapes the reserved letters in Regular Expression
-   * @param {string} sString string to escape
-   * @return The escaped string
-   * @type {string}
-   * @since 1.9.3
-   * @public
-   * @SecPassthrough {0|return}
+	 * @param {string} sString string to escape
+	 * @return The escaped string
+	 * @type {string}
+	 * @since 1.9.3
+	 * @public
+	 * @SecPassthrough {0|return}
 	 */
 	jQuery.sap.escapeRegExp = function escapeRegExp(sString) {
 		return sString.replace(rEscapeRegExp, "\\$&");
 	};
-	
+
 	/**
 	 * Creates a string from a pattern by replacing placeholders with concrete values.
 	 *
@@ -305,7 +305,6 @@ sap.ui.define(['jquery.sap.global'],
 	return jQuery;
 
 }, /* bExport= */ false);
-
 },
 	"sap/ui/debug/Highlighter.js":function(){/*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
@@ -398,10 +397,9 @@ sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.dom'
 	return Highlighter;
 
 }, /* bExport= */ true);
-
 },
 	"sap/ui/test/ControlTree.js":function(){/*!
- * @copyright@
+ * ${copyright}
  */
 
 // Provides a control tree to be used in the Eclipse preview editor
@@ -419,7 +417,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'jquery.sap.strings']
 	 *
 	 * @class Control Tree used for the Test Environment
 	 * @author SAPUI5 Designtime
-	 * @version @version@
+	 * @version ${version}
 	 *
 	 * @param {sap.ui.core.Core}
 	 *            oCore the core instance to use for analysis
@@ -552,10 +550,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'jquery.sap.strings']
 	return ControlTree;
 
 }, /* bExport= */ true);
-
 },
 	"sap/ui/test/TestEnv.js":function(){/*!
- * @copyright@
+ * ${copyright}
  */
 
 // Provides a bridge between the SAPUI5 runtime and the SAPUI5 Eclipse Tooling.
@@ -572,7 +569,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/debug/Highlighter', './ControlTree']
 	 * @class Central Class for the Test Environment
 	 *
 	 * @author SAPUI5 Designtime
-	 * @version @version@
+	 * @version ${version}
 	 * @constructor
 	 * @private
 	 * @name sap.ui.test.TestEnv
@@ -662,7 +659,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/debug/Highlighter', './ControlTree']
 	return TestEnv;
 
 }, /* bExport= */ true);
-
 }
 }});
 jQuery.sap.require("sap.ui.test.TestEnv");

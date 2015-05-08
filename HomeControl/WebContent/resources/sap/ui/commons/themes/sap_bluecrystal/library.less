@@ -456,7 +456,7 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph{
 	background-color: @sapUiButtonEmphasizedBackground;
 	color: @sapUiButtonEmphasizedTextColor;
-	/*text-shadow: 0px 1px fade(#000, 50);*/
+	text-shadow: 0 1px 0 @sapUiBtnTextShadowEmphasized;
 }
 
 /*.sapUiBtnNoGradient.sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph{
@@ -475,7 +475,7 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph.sapUiBtnStd:hover{
 	background-image: none;
 	color: @sapUiButtonEmphasizedTextColor;
-	/*text-shadow: 0px 1px fade(#000, 50);*/
+	text-shadow: 0 1px 0 @sapUiBtnTextShadowEmphasized;
 }
 
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph.sapUiBtnAct,
@@ -484,12 +484,12 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph.sapUiBtnStd:active{
 	background-image: none;
 	color: @sapUiButtonEmphasizedTextColor;
-	/*text-shadow: 0px 1px fade(#000, 50);*/
+	text-shadow: 0 1px 0 @sapUiBtnTextShadowEmphasized;
 }
 
 .sapUiBtnS.sapUiBtnNorm.sapUiBtnEmph.sapUiBtnDsbl{
 	color: @sapUiButtonEmphasizedTextColor;
-	/*text-shadow: 0px 1px fade(#000, 50);*/
+	text-shadow: 0 1px 0 @sapUiBtnTextShadowEmphasized;
 	opacity: 0.25;
 }
 
@@ -1054,24 +1054,24 @@ html[data-sap-ui-browser^="cr"] .sapUiGrid td > .sapUiCb{
 /* CSS for control sap.ui.commons/ColorPicker.control */
 /* BlueCrystal Theme                                  */
 /* ================================================== */
-.sapUiColorPicker-ColorPickerSlider.sapUiSliHori .sapUiSliBar, 
+.sapUiColorPicker-ColorPickerSlider.sapUiSliHori .sapUiSliBar,
 .sapUiColorPicker-ColorPickerSlider.sapUiSliHori .sapUiSliBar .sapUiSliHiLi
 	{
 	border: none;
 	background-color: transparent;
 }
 
-.sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar, 
+.sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar,
 .sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar .sapUiSliHiLi
 	{
 	border: none;
 	background-color: transparent;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar,
 html[data-sap-ui-browser="ie9"] .sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar {
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='img/ColorPicker/Alphaslider_BG.png') progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#FF000000',GradientType=1 );
 }
+
 /* END "ColorPicker.less" */
 
 /* START "ComboBox.less" */
@@ -1582,18 +1582,12 @@ html[data-sap-ui-browser="ie8"] .sapUiGrid td > .sapUiLnk{
 	padding-right: 3px;
 }
 
-.sapUiLbxI > .sapUiLbxILastChild { /* IE8 workaround; must be a separate rule, as the unknown "last-child" selector confuses IE8 */
-	border-right-width: 2px;
-	padding-right: 3px;
-}
-
 .sapUiLbxI:hover:not(.sapUiLbxIDis),
 .sapUiLbxRo:not(.sapUiLbxIDis) > ul > .sapUiLbxI.sapUiLbxISel:hover,
 .sapUiLbxStd > ul > .sapUiLbxISel:hover > span,
 .sapUiLbxStd > ul > .sapUiLbxISel:hover,
 .sapUiLbx:not(.sapUiLbxDis) > ul > .sapUiLbxI:hover:not(.sapUiLbxISel):not(.sapUiLbxIDis) > span {  /* Fix for IE10 :hover bug - need to set the color on children as well */
 	background-color: @sapUiListHoverBackground;
-	color: @sapUiHighlightTextColor;
 }
 
 /*
@@ -1630,16 +1624,8 @@ no special style for focus!
 	padding-right: 16px; /* when width is not set, a scrollbar may cover the last part of the text which is not nice because no width means "adapted to content" */
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
-	padding-right: 14px;
-}
-
 html[data-sap-ui-browser="ie9"] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
 	padding-right: 0; /* above mentioned problem does not appear in IE9 */
-}
-
-html[dir=rtl][data-sap-ui-browser=ff3] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
-	padding-right: 18px; /* in FF3.6 in RTL the scrollbar is still on the right, so increase the padding a bit because clipping looks more unlogical */
 }
 
 .sapUiLbxStd > ul > .sapUiLbxISel > span, /* Fix for IE10 bug - need to set the color on children as well */
@@ -1652,6 +1638,7 @@ html[dir=rtl][data-sap-ui-browser=ff3] .sapUiLbx.sapUiLbxFlexWidth > ul > li > s
 	font-size: 16px;
 	line-height: 16px;
 }
+
 /* END "ListBox.less" */
 
 /* START "MenuBar.less" */
@@ -3884,8 +3871,7 @@ html[data-sap-ui-browser='ie8'] .sapUiBtnS.sapUiBtnLite.sapUiBtnIconOnly.sapUiTo
 
 .sapUiTreeNode:hover{
 	background-color: @sapUiListHoverBackground;
-	color: @sapUiTextSelection;
-	background-image: url(img/tree/TreeNode-white.gif);
+	background-image: url(img/tree/TreeNode.gif);
 }
 
 .sapUiTreeNode:focus {
@@ -3894,7 +3880,6 @@ html[data-sap-ui-browser='ie8'] .sapUiBtnS.sapUiBtnLite.sapUiBtnIconOnly.sapUiTo
 
 .sapUiTreeNodeSelectedParent:Hover, .sapUiTreeNodeSelected:Hover {
 	background-color: @sapUiListHoverBackground;
-	color: @sapUiTextSelection;
 }
 
 .sapUiTreeNodeSelectedParent, .sapUiTreeNodeSelected {
@@ -3911,8 +3896,7 @@ html[data-sap-ui-browser='ie8'] .sapUiBtnS.sapUiBtnLite.sapUiBtnIconOnly.sapUiTo
 .sapUiTreeNodeExpanded.sapUiTreeNodeSelected:Hover,
 .sapUiTreeNodeExpanded.sapUiTreeNode:Hover{
 	background-color: @sapUiListHoverBackground;
-	color: @sapUiTextSelection;
-	background-image: url(img/tree/TreeNode_Exp-white.gif);
+	background-image: url(img/tree/TreeNode_Exp.gif);
 }
 
 .sapUiTreeNodeCollapsed.sapUiTreeNodeSelectedParent,
@@ -3924,8 +3908,7 @@ html[data-sap-ui-browser='ie8'] .sapUiBtnS.sapUiBtnLite.sapUiBtnIconOnly.sapUiTo
 .sapUiTreeNodeCollapsed.sapUiTreeNodeSelected:Hover,
 .sapUiTreeNodeCollapsed.sapUiTreeNode:Hover{
 	background-color: @sapUiListHoverBackground;
-	color: @sapUiTextSelection;
-	background-image: url(img/tree/TreeNode_Coll-white.gif);
+	background-image: url(img/tree/TreeNode_Coll.gif);
 }
 
 .sapUiTreeTbCont > .sapUiBtn.sapUiBtnS.sapUiBtnLite{

@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @class
 	 * ObjectIdentifier is a display control that enables the user to easily identify a specific object. The object identifier title is the key identifier of the object and additional text and icons can be used to further distinguish it from other objects.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -73,7 +73,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Indicates if the object identifier's title is clickable.
 			 * @since 1.26
 			 */
-			titleActive : {type : "boolean", group : "Misc", defaultValue : false}
+			titleActive : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		},
 		aggregations : {
 	
@@ -258,6 +264,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setAggregation("_textControl", oTextControl);
 		}
 
+		oTextControl.setTextDirection(this.getTextDirection());
 		oTextControl.setVisible(!!this.getText());
 		
 		return oTextControl;

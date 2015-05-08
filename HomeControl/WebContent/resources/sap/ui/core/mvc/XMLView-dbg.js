@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 	 * @class
 	 * A View defined using (P)XML and HTML markup.
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -29,7 +29,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 	 */
 	var XMLView = View.extend("sap.ui.core.mvc.XMLView", /** @lends sap.ui.core.mvc.XMLView.prototype */ { metadata : {
 	
-		library : "sap.ui.core"
+		library : "sap.ui.core",
+		specialSettings : {
+			/**
+			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
+			 * then that other XMLView is provided with this setting to be able to delegate
+			 * View functionality (createId, getController) to that 'real' view.
+			 */
+			containingView : true,
+			/**
+			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
+			 * that subtree is provided with this setting.
+			 */
+			xmlNode : true
+		}
 	}});
 	
 	
@@ -105,7 +118,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			} else if (mSettings.xmlNode) {
 				this._xContent = mSettings.xmlNode;
 			} // else does not happen, already checked
-	
+
+			this._xContent = this.runPreprocessor("xml", this._xContent);
+
 			this._oContainingView = mSettings.containingView || this;
 	
 			// extract the properties of the view from the XML element
@@ -192,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			jQuery(oElement).replaceWith('<div id="' + sap.ui.core.RenderPrefixes.Dummy + oControl.getId() + '" class="sapUiHidden"/>');
 			return true; // indicates that we have taken care
 		};
-		
+
 		/**
 		 * Dummy control for after rendering notification before onAfterRendering of
 		 * child controls of the XMLView is called

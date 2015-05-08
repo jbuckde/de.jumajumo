@@ -9,8 +9,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	function(jQuery, library, Control) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new TriStateCheckBox.
 	 *
@@ -21,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * TriStateCheckBox to reflect mixed state for checkboxes. The control can display three states, namely checked, unchecked and mixed. However, mixed state cannot be directly reached by user interaction on the particular control.
 	 * It can be only set by the control's public toggle function, to make a behaviour possible which is e.g. required in checkbox trees.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -88,20 +86,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 	
-	
-	/**
-	 * 
-	 * Changes the current value of the control.
-	 *
-	 * @name sap.ui.commons.TriStateCheckBox#toggle
-	 * @function
-	 * @param {string} sDestState
-	 * 
-	 *         destined selection state of checkbox
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	/**
 	 * Event handler called when the check box is clicked.
@@ -171,7 +155,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Method called whenever a user clicks on a tri-state checkbox
 	 *
 	 * @param {sap.ui.commons.TriStateCheckBoxState} destState 
+	 *         destined selection state of checkbox
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TriStateCheckBox.prototype.toggle = function(destState) {
 		if (destState in sap.ui.commons.TriStateCheckBoxState) {

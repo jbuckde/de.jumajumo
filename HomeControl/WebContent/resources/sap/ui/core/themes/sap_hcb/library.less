@@ -14,16 +14,8 @@
 :focus {
 	outline-width: 3px;
 	outline-style: solid;
-	outline-color: invert;
-}
-
-html[data-sap-ui-browser^="ff"] :focus {
 	outline-color: #ffffff;
 }
-
-html[data-sap-ui-browser^="cr"] :focus {
-	outline-color: #ffffff;
-} 
 
 .sapUiBody {
 	width: 100%;
@@ -83,6 +75,45 @@ html[data-sap-ui-browser^="cr"] :focus {
 	content: url(img/Busy.gif);
 }
 /* END "BusyIndicator.less" */
+
+/* START "Icon.less" */
+.sapUiIcon:focus {
+	outline: 1px dashed @sapHCStandardFG;
+}
+
+.sapUiIconColorNeutral {
+	color: @sapHCNeutral;
+}
+
+.sapUiIconColorCritical {
+	color: @sapHCCritical;
+}
+
+.sapUiIconColorPositive {
+	color: @sapHCPositive;
+}
+
+.sapUiIconColorNegative {
+	color: @sapHCNegative;
+}
+
+.sapUiIconBGColorNeutral {
+	background-color: @sapHCNeutral;
+}
+
+.sapUiIconBGColorCritical {
+	background-color: @sapHCCritical;
+}
+
+.sapUiIconBGColorPositive {
+	background-color: @sapHCPositive;
+}
+
+.sapUiIconBGColorNegative {
+	background-color: @sapHCNegative;
+}
+
+/* END "Icon.less" */
 
 /* START "LocalBusyIndicator.less" */
 @sapUiLocalBusyIndicatorBG: fade(@sapHCStandardBG, 30%);

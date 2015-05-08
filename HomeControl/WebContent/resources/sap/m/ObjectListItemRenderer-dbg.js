@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	
 		rm.write("</div>"); // Start attribute row container
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
@@ -105,7 +105,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	};
 	
 	ObjectListItemRenderer.renderLIContent = function(rm, oLI) {
-		
+		var sTitleDir = oLI.getTitleTextDirection(),
+			sIntroDir = oLI.getIntroTextDirection(),
+			sNumberDir = oLI.getNumberTextDirection();
+
 		rm.write("<div"); // Start Main container
 		rm.writeControlData(oLI);
 		rm.write(">");
@@ -117,7 +120,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.writeClasses();
 			rm.writeAttribute("id", oLI.getId() + "-intro");
 			rm.write(">");
-			rm.write("<span>");
+			rm.write("<span");
+			//sets the dir attribute to "rtl" or "ltr" if a direction
+			//for the intro text is provided explicitly
+			if (sIntroDir !== sap.ui.core.TextDirection.Inherit) {
+				rm.writeAttribute("dir", sIntroDir.toLowerCase());
+			}
+			rm.write(">");
 			rm.writeEscaped(oLI.getIntro());
 			rm.write("</span>");
 			rm.write("</div>");
@@ -152,7 +161,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.addClass("sapMObjLNumber");
 			rm.addClass("sapMObjLNumberState" + oLI.getNumberState());
 			rm.writeClasses();
-			
+			//sets the dir attribute to "rtl" or "ltr" if a direction
+			//for the number text is provided explicitly
+			if (sNumberDir !== sap.ui.core.TextDirection.Inherit) {
+				rm.writeAttribute("dir", sNumberDir.toLowerCase());
+			}
 			rm.write(">");
 			rm.writeEscaped(oLI.getNumber());
 			rm.write("</div>");
@@ -179,6 +192,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		rm.write(">");
 		var oTitleText = oLI._getTitleText();
 		if (oTitleText) {
+			//sets the text direction of the title,
+			//by delegating the RTL support to sap.m.Text
+			oTitleText.setTextDirection(sTitleDir);
 			oTitleText.setText(oLI.getTitle());
 			oTitleText.addStyleClass("sapMObjLTitle");
 			rm.renderControl(oTitleText);
@@ -200,23 +216,35 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			var aAttribs = oLI._getVisibleAttributes();
 			var statuses = [];
 			var markers = null;
-			
-			if (oLI.getShowMarkers()) {
+
+			if (oLI.getShowMarkers() || oLI.getMarkLocked()) {
 				var placeholderIcon = oLI._getPlaceholderIcon();
-				var favIcon = oLI._getFavoriteIcon();
-				var flagIcon = oLI._getFlagIcon();
-				favIcon.setVisible(oLI.getMarkFavorite());
-				flagIcon.setVisible(oLI.getMarkFlagged());
-				
-				//Markers will be rendered LTR in the order they're added to the array
-				markers = [placeholderIcon, favIcon, flagIcon];
-				statuses.push(markers);
-				
+				markers = [placeholderIcon];
+
 				markers._isEmpty = function() {
 					return false;
 				};
+
+				if (oLI.getMarkLocked()) {
+					var lockIcon = oLI._getLockIcon();
+					lockIcon.setVisible(oLI.getMarkLocked());
+					markers.push(lockIcon);
+				}
+
+				if (oLI.getShowMarkers()) {
+					var favIcon = oLI._getFavoriteIcon();
+					var flagIcon = oLI._getFlagIcon();
+
+					favIcon.setVisible(oLI.getMarkFavorite());
+					flagIcon.setVisible(oLI.getMarkFlagged());
+
+					markers.push(favIcon);
+					markers.push(flagIcon);
+				}
+
+				statuses.push(markers);
 			}
-			
+
 			statuses.push(oLI.getFirstStatus());
 			statuses.push(oLI.getSecondStatus());
 			
@@ -227,7 +255,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			while (statuses.length > 0) {
 				this.renderAttributeStatus(rm, oLI, null, statuses.shift());
 			}
-	
+
 			rm.write("</div>"); // End Bottom row container
 		}
 		rm.write("</div>"); // End Main container

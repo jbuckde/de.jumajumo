@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -257,9 +257,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			bIsContentTheSame = true;
 		}
 
-
 		if (this.oSelectedItem && this.oSelectedItem.getVisible() && (this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpandable() || this.oSelectedItem !== oItem )) {
-			this.oSelectedItem.$().removeClass("sapMITBSelected");
+			this.oSelectedItem.$()
+					.removeClass("sapMITBSelected")
+					.removeAttr('aria-selected')
+					.removeAttr('aria-expanded');
 		}
 
 		if (oItem.getVisible()) {
@@ -271,6 +273,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			//click on other item leads to showing the right content of this item
 			} else {
+				//change the content aria-labaled by the newly selected tab;
+				if (this.getParent() instanceof sap.m.IconTabBar) {
+					this.getParent().$("content").attr('aria-labelledby', oItem.sId);
+				}
+
 				// set new item
 				this.oSelectedItem = oItem;
 				this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
@@ -279,7 +286,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				//to visualize the selection and we do not need to render the content
 				if (this.getParent() instanceof sap.m.IconTabBar && (this.getParent().getExpandable() || this.getParent().getExpanded())) {
 					// add selected styles
-					this.oSelectedItem.$().addClass("sapMITBSelected");
+					this.oSelectedItem.$()
+							.addClass("sapMITBSelected")
+							.attr({ 'aria-selected': true });
 
 					//if item has own content, this content is shown
 					var oSelectedItemContent = this.oSelectedItem.getContent();
@@ -310,6 +319,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sSelectedKey = this.oSelectedItem._getNonEmptyKey();
 		this.oSelectedItem = oItem;
 		this.setProperty("selectedKey", sSelectedKey, true);
+		if (this.getParent() instanceof sap.m.IconTabBar) {
+			this.getParent().setProperty("selectedKey", sSelectedKey, true);
+		}
 
 		if (!bAPIchange) {
 			// fire event on iconTabBar
@@ -359,7 +371,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (this.oSelectedItem && this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpanded()) {
-			this.oSelectedItem.$().addClass("sapMITBSelected");
+			this.oSelectedItem.$()
+					.addClass("sapMITBSelected")
+					.attr({ 'aria-selected': true });
 		}
 
 		if (this._bDoScroll) {
@@ -732,9 +746,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof sap.m.IconTabSeparator)) {
 							this.setSelectedItem(oControl);
 						}
-					}
-					// select item if it is an iconTab but not a separator
-					else if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof sap.m.IconTabSeparator)) {
+					} else if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof sap.m.IconTabSeparator)) {
+						// select item if it is an iconTab but not a separator
+
 						this.setSelectedItem(oControl);
 					}
 				}
@@ -938,7 +952,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//if the browser is IE prevent click events on dom elements in the tab, because the IE will focus them, not the tab itself.
 		if (sap.ui.Device.browser.internet_explorer) {
 			var $target = jQuery(oEvent.target);
-			if ($target.hasClass('sapMITBFilterIcon') || $target.hasClass('sapMITBCount') || $target.hasClass('sapMITBText') || $target.hasClass('sapMITBTab') || $target.hasClass('sapMITBContentArrow')) {
+			if ($target.hasClass('sapMITBFilterIcon') || $target.hasClass('sapMITBCount') || $target.hasClass('sapMITBText') || $target.hasClass('sapMITBTab') || $target.hasClass('sapMITBContentArrow') || $target.hasClass('sapMITBSep') || $target.hasClass('sapMITBSepIcon')) {
 				oEvent.preventDefault();
 			}
 		}

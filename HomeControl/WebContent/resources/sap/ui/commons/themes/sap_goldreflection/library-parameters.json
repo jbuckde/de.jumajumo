@@ -270,6 +270,7 @@
     "sapUiMarginSmall": "1rem",
     "sapUiMarginMedium": "2rem",
     "sapUiMarginLarge": "3rem",
+    "sapUiEscapedEmptyString": "",
     "sapUiButtonHeight": "18px",
     "sapUiDlgHeaderHeight": "19px",
     "sapUiDlgFooterHeight": "44px",

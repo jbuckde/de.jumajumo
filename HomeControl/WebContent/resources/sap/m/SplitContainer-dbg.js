@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * 
 	 * This control must be rendered as a full screen control in order to make the show/hide master area work properly.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -135,6 +135,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * This event can be aborted by the application with preventDefault(), which means that there will be no navigation.
 			 */
 			masterNavigate : {
+				allowPreventDefault : true,
 				parameters : {
 	
 					/**
@@ -178,13 +179,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					isBackToTop : {type : "boolean"}, 
 	
 					/**
-					 * Whether this was a navigation to the root page, triggered by "backToTop()".
+					 * Whether this was a navigation to a specific page, triggered by "backToPage()".
 					 * @since 1.7.2
 					 */
 					isBackToPage : {type : "boolean"}, 
 	
 					/**
-					 * How the navigation was triggered, possible values are "to", "back", and "backToTop".
+					 * * How the navigation was triggered, possible values are "to", "back", "backToPage", and "backToTop".
 					 */
 					direction : {type : "string"}
 				}
@@ -237,13 +238,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					isBackToTop : {type : "boolean"}, 
 	
 					/**
-					 * Whether this was a navigation to the root page, triggered by "backToTop()".
+					 * Whether this was a navigation to a specific page, triggered by "backToPage()".
 					 * @since 1.7.2
 					 */
 					isBackToPage : {type : "boolean"}, 
 	
 					/**
-					 * How the navigation was triggered, possible values are "to", "back", and "backToTop".
+					 * * How the navigation was triggered, possible values are "to", "back", "backToPage", and "backToTop".
 					 */
 					direction : {type : "string"}
 				}
@@ -279,6 +280,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * This event can be aborted by the application with preventDefault(), which means that there will be no navigation.
 			 */
 			detailNavigate : {
+				allowPreventDefault : true,
 				parameters : {
 	
 					/**
@@ -322,13 +324,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					isBackToTop : {type : "boolean"}, 
 	
 					/**
-					 * Whether this was a navigation to the root page, triggered by "backToTop()".
+					 * Whether this was a navigation to a specific page, triggered by "backToPage()".
 					 * @since 1.7.2
 					 */
 					isBackToPage : {type : "boolean"}, 
 	
 					/**
-					 * How the navigation was triggered, possible values are "to", "back", and "backToTop".
+					 * How the navigation was triggered, possible values are "to", "back", "backToPage", and "backToTop".
 					 */
 					direction : {type : "string"}
 				}
@@ -381,13 +383,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					isBackToTop : {type : "boolean"}, 
 	
 					/**
-					 * Whether this was a navigation to the root page, triggered by "backToTop()".
+					 * Whether this was a navigation to a specific page, triggered by "backToPage()".
 					 * @since 1.7.2
 					 */
 					isBackToPage : {type : "boolean"}, 
 	
 					/**
-					 * How the navigation was triggered, possible values are "to", "back", and "backToTop".
+					 * How the navigation was triggered, possible values are "to", "back", "backToPage", and "backToTop".
 					 */
 					direction : {type : "string"}
 				}
@@ -945,7 +947,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						// 2. iOS: show title if there is
 						// 3: Android: Icon isn't shown directly in header, the icon is added to the showMasterButton.
 						// 4: Android: show title in portrait mode, hide title in landscape
-						if ((that._portraitHide() || that._hideMode() || that._portraitPopover()) && (!that._bMasterisOpen || that._bMasterClosing)) {
+						if (that._needShowMasterButton()) {
 							that._setMasterButton(oRealPage);
 						}
 					}
@@ -961,11 +963,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					// If the rerendering occurs after the page navigation, it's not needed to maintain the master button anymore.
 					// This check is needed otherwise it may cause endless rerendering of the last page and the current page.
 					if (!sap.ui.Device.system.phone && (that._oDetailNav.getCurrentPage() === oRealPage)) {
-						if (that._portraitHide() || that._hideMode()) {
-							if (!that._bMasterisOpen || that._bMasterClosing) {
-								that._setMasterButton(oRealPage, true);
-							}
-						} else if (that._portraitPopover()) {
+						if (!oRealPage.getShowNavButton() && that._needShowMasterButton()) {
 							that._setMasterButton(oRealPage, true);
 						} else {
 							that._removeMasterButton(oRealPage);
@@ -974,15 +972,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			});
 
-			// Setting custom header to the page replaces the internal header completely, therefore the button which shows the master area has to be inserted to the custom header when it's set.
-			oRealPage.setCustomHeader = function(oHeader) {
-				sap.m.Page.prototype.setCustomHeader.apply(this, arguments);
-				if (oHeader && (that._portraitHide() || that._hideMode() || that._portraitPopover()) && (!that._bMasterisOpen || that._bMasterClosing)) {
-					that._setMasterButton(oRealPage);
-				}
-			};
+			if (!sap.ui.Device.system.phone) {
+				// Setting custom header to the page replaces the internal header completely, therefore the button which shows the master area has to be inserted to the custom header when it's set.
+				oRealPage._setCustomHeaderInSC = oRealPage.setCustomHeader;
+				oRealPage.setCustomHeader = function(oHeader) {
+					this._setCustomHeaderInSC.apply(this, arguments);
+					if (oHeader && that._needShowMasterButton()) {
+						that._setMasterButton(oRealPage);
+					}
+					return this;
+				};
+
+				oRealPage._setShowNavButtonInSC = oRealPage.setShowNavButton;
+				oRealPage.setShowNavButton = function(bShow) {
+					this._setShowNavButtonInSC.apply(this, arguments);
+					if (!bShow && that._needShowMasterButton()) {
+						that._setMasterButton(oRealPage);
+					} else {
+						that._removeMasterButton(oRealPage, true);
+					}
+					return this;
+				};
+			}
 		}
-	
+
 		// When the same NavContainer is used for both aggregations, calling "addPage()" will not do anything in case the oPage is already
 		// aggregated by this NavContainer, but in the other "virtual" aggregation of this SplitContainer (i.e. moved from masterPages to detailPages).
 		// This would lead to the page being added to the "detail" array, but not removed from the "master" array because the patched method
@@ -1028,29 +1041,37 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SplitContainer.prototype.insertDetailPage = function(oPage, iIndex, bSuppressInvalidate) {
 		return this._insertPage(this._aDetailPages, "detailPages", oPage, iIndex, bSuppressInvalidate);
 	};
-	
-	SplitContainer.prototype.removeDetailPage = function(oPage, bSuppressInvalidate) {
-		var oRealPage = this._getRealPage(oPage);
-		if (oRealPage) {
-			// Since page is removed from SplitContainer, the patched version setCustomHeader needs to be deleted.
-			delete oRealPage.setCustomHeader;
+
+	SplitContainer.prototype._restoreMethodsInPage = function(oPage) {
+		if (sap.ui.Device.system.phone) {
+			// no need to restore the functions on phone
+			return;
 		}
+
+		var oRealPage = this._getRealPage(oPage);
+
+		if (oRealPage) {
+			// Since page is removed from SplitContainer, the patched version setCustomHeader and setShowNavButton needs to be deleted.
+			oRealPage.setCustomHeader = oRealPage._setCustomHeaderInSC;
+			delete oRealPage._setCustomHeaderInSC;
+
+			oRealPage.setShowNavButton = oRealPage._setShowNavButtonInSC;
+			delete oRealPage._setShowNavButtonInSC;
+		}
+	};
+
+	SplitContainer.prototype.removeDetailPage = function(oPage, bSuppressInvalidate) {
+		this._restoreMethodsInPage(oPage);
 
 		return this._removePage(this._aDetailPages, "detailPages", oPage, bSuppressInvalidate);
 	};
 	
 	SplitContainer.prototype.removeAllDetailPages = function(bSuppressInvalidate) {
-		var aPages = this.getDetailPages(),
-				oRealPage;
+		var aPages = this.getDetailPages();
 
 		// restore the original setCustomHeader function
 		for (var i = 0 ; i < aPages.length ; i++) {
-			oRealPage = this._getRealPage(aPages[i]);
-			if (!oRealPage) {
-				continue;
-			}
-			// Since page is removed from SplitContainer, the patched version setCustomHeader needs to be deleted.
-			delete oRealPage.setCustomHeader;
+			this._restoreMethodsInPage(aPages[i]);
 		}
 
 		this._aDetailPages = [];
@@ -1468,6 +1489,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.$().toggleClass("sapMSplitContainerStretchCompress", false);
 				this.$().toggleClass("sapMSplitContainerShowHide", false);
 				this.$().toggleClass("sapMSplitContainerHideMode", true);
+				this.$().toggleClass("sapMSplitContainerMasterHidden", true);
 				this._setMasterButton(this._oDetailNav.getCurrentPage());
 				if (this._isMie9) {
 					this._oMasterNav.$().css({
@@ -1556,10 +1578,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	SplitContainer.prototype._handleNavigationEvent = function(oEvent, bAfter, bMaster){
-		var sEventName = (bAfter ? "After" : "") + (bMaster ? "Master" : "Detail") + "Navigate";
+		var sEventName = (bAfter ? "After" : "") + (bMaster ? "Master" : "Detail") + "Navigate",
+			bContinue;
 		sEventName = sEventName.charAt(0).toLowerCase() + sEventName.slice(1);
 		
-		this.fireEvent(sEventName, oEvent.mParameters);
+		bContinue = this.fireEvent(sEventName, oEvent.mParameters, true);
+		if (!bContinue) {
+			oEvent.preventDefault();
+		}
 	};
 	
 	SplitContainer.prototype._handleResize = function() {
@@ -1658,6 +1684,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oReturn instanceof sap.m.Page) {
 				return oReturn;
 			}
+			if (oReturn instanceof sap.m.MessagePage) {
+				return oReturn;
+			}
 			if (oReturn instanceof sap.ui.core.mvc.View) {
 				aContent = oReturn.getContent();
 				if (aContent.length === 1) {
@@ -1733,7 +1762,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SplitContainer.prototype._hideMode = function() {
 		return this.getMode() === "HideMode" && !sap.ui.Device.system.phone;
 	};
-	
+
+	SplitContainer.prototype._needShowMasterButton = function() {
+		return (this._portraitHide() || this._hideMode() || this._portraitPopover()) && (!this._bMasterisOpen || this._bMasterClosing);
+	};
+
 	SplitContainer.prototype._createShowMasterButton = function() {
 		if (this._oShowMasterBtn && !this._oShowMasterBtn.bIsDestroyed) {
 			return;
@@ -1745,7 +1778,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			press: jQuery.proxy(this._onMasterButtonTap, this)
 		}).addStyleClass("sapMSplitContainerMasterBtn");
 	};
-	
+
 	SplitContainer.prototype._setMasterButton = function(oPage, fnCallBack, bSuppressRerendering) {
 		if (!oPage) {
 			return;
@@ -1830,14 +1863,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 	};
 
-	SplitContainer.prototype._removeMasterButton = function(oPage, fnCallBack) {
+	SplitContainer.prototype._removeMasterButton = function(oPage, fnCallBack, bNoAnim) {
 		if (!oPage) {
 			return;
 		}
 	
-		var that = this, oHeader;
-	
-		if (!this._oShowMasterBtn.$().is(":hidden")) {
+		var that = this,
+			bHidden = this._oShowMasterBtn.$().is(":hidden"),
+			oHeader;
+
+		if (typeof fnCallBack === "boolean") {
+			bNoAnim = fnCallBack;
+			fnCallBack = undefined;
+		}
+
+		if (!bHidden && !bNoAnim) {
 			oPage = this._getRealPage(oPage);
 			oHeader = oPage._getAnyHeader();
 			if (oHeader /*&& !this._checkCustomHeader(oPage)*/) {
@@ -1872,6 +1912,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oShowMasterBtn.addStyleClass("sapMSplitContainerMasterBtnHidden");
 			if (fnCallBack) {
 				fnCallBack(oPage);
+			}
+			if (!bHidden) {
+				this.fireMasterButton({show: false});
 			}
 		}
 	};

@@ -15,10 +15,12 @@
 	background-clip: padding-box;
 	-webkit-animation-duration: 0.1s;
 	-webkit-animation-timing-function: ease-in;
+	-webkit-animation-fill-mode: forwards;
 	-moz-animation-duration: 0.1s;
 	-moz-animation-timing-function: ease-in;
 	animation-duration: 0.1s;
 	animation-timing-function: ease-in;
+	animation-fill-mode: forwards;
 	max-width: 100%;
 	max-height: 100%;
 	overflow: hidden;
@@ -43,7 +45,7 @@
 .sapMDialogScroll {
 	display: inline-block; /*this is for horizontal scrolling enablement*/
 	min-height: 100%;
-	width: 100%;
+  	width: 100%;
 	vertical-align: middle;
 }
 
@@ -229,3 +231,6 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog-CTX .sapMDialogActions > .sapMDialo
 	-moz-transition: opacity 0.2s linear;
 	transition: opacity 0.2s linear;
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMDialog", ~"> section > .sapMDialogScroll > .sapMDialogScrollCont");

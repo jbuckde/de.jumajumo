@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './Date'],
 	 * @extends sap.ui.model.type.Date
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -40,17 +40,15 @@ sap.ui.define(['jquery.sap.global', './Date'],
 	});
 	
 	/**
-	 * Called by the framework when any localization setting changed
-	 * @see sap.ui.model.SimpleType.prototype._handleLocalizationChange
+	 * Create formats used by this type
 	 * @private
 	 */
-	Time.prototype._handleLocalizationChange = function() {
+	Time.prototype._createFormats = function() {
 		this.oOutputFormat = sap.ui.core.format.DateFormat.getTimeInstance(this.oFormatOptions);
 		if (this.oFormatOptions.source) {
 			this.oInputFormat = sap.ui.core.format.DateFormat.getTimeInstance(this.oFormatOptions.source);
 		}
 	};
-	
 
 	return Time;
 

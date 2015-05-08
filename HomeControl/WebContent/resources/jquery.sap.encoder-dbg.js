@@ -152,8 +152,7 @@ sap.ui.define(['jquery.sap.global'],
 			var iChar = sChar.charCodeAt(0);
 			if (iChar < 128) {
 				sEncoded = "%" + hex(iChar, 2);
-			}
-			else if (iChar < 2048) {
+			} else if (iChar < 2048) {
 				sEncoded = "%" + hex((iChar >> 6) | 192, 2) +
 						   "%" + hex((iChar & 63) | 128, 2);
 			} else {
@@ -178,10 +177,10 @@ sap.ui.define(['jquery.sap.global'],
 	jQuery.sap.encodeURL = function(sString) {
 		return sString.replace(rURL, fURL);
 	};
-	
+
 	/**
 	 * Encode a map of parameters into a combined URL parameter string
-	 * 
+	 *
 	 * @param {object} mParams The map of parameters to encode
 	 * @return The URL encoded parameters
 	 * @type {string}
@@ -228,7 +227,7 @@ sap.ui.define(['jquery.sap.global'],
 	jQuery.sap.encodeCSS = function(sString) {
 		return sString.replace(rCSS, fCSS);
 	};
-	
+
 	/**
 	 * WhitelistEntry object
 	 * @param {string} protocol The protocol of the URL
@@ -432,8 +431,8 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Strips unsafe tags and attributes from HTML.
-	 * 
-	 * @param {string} sHTML the HTML to be sanitized. 
+	 *
+	 * @param {string} sHTML the HTML to be sanitized.
 	 * @param {object} [mOptions={}] options for the sanitizer
 	 * @return {string} sanitized HTML
 	 * @private
@@ -441,30 +440,30 @@ sap.ui.define(['jquery.sap.global'],
 	jQuery.sap._sanitizeHTML = function(sHTML, mOptions) {
 		return fnSanitizer(sHTML, mOptions || {
 			uriRewriter: function(sUrl) {
-				// by default we use the URL whitelist to check the URL's 
+				// by default we use the URL whitelist to check the URL's
 				if (jQuery.sap.validateUrl(sUrl)) {
 					return sUrl;
 				}
 			}
 		});
 	};
-	
+
 	/**
 	 * Registers an application defined sanitizer to be used instead of the built-in one.
-	 * 
-	 * The given sanitizer function must have the same signature as 
+	 *
+	 * The given sanitizer function must have the same signature as
 	 * {@link jQuery.sap._sanitizeHTML}:
-	 * 
+	 *
 	 * <pre>
 	 *   function sanitizer(sHtml, mOptions);
 	 * </pre>
-	 * 
-	 * The parameter <code>mOptions</code> will always be provided, but might be empty. 
-	 * The set of understood options is defined by the sanitizer. If no specific 
+	 *
+	 * The parameter <code>mOptions</code> will always be provided, but might be empty.
+	 * The set of understood options is defined by the sanitizer. If no specific
 	 * options are given, the sanitizer should run with the most secure settings.
-	 * Sanitizers should ignore unknown settings. Known, but misconfigured settings should be 
+	 * Sanitizers should ignore unknown settings. Known, but misconfigured settings should be
 	 * reported as error.
-	 *  
+	 *
 	 * @param {function} fnSanitizer
 	 * @private
 	 */
@@ -478,11 +477,11 @@ sap.ui.define(['jquery.sap.global'],
 			jQuery.sap.require("sap.ui.thirdparty.caja-html-sanitizer");
 			jQuery.sap.assert(window.html && window.html.sanitize, "Sanitizer should have been loaded");
 		}
-		
+
 		var oTagPolicy = mOptions.tagPolicy || window.html.makeTagPolicy(mOptions.uriRewriter, mOptions.tokenPolicy);
 		return window.html.sanitizeWithPolicy(sHTML, oTagPolicy);
 	}
-	
+
 	/**
 	 * Globally configured sanitizer.
 	 * @private

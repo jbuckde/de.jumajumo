@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * @author SAP SE
 	 * @version
-	 * 1.26.10
+	 * 1.28.5
 	 * @namespace
 	 */
 	var GridRenderer = {};
@@ -79,6 +79,15 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			oRm.writeAttribute("style", sWidth);
 		}
+
+		var sRole = oControl._getAccessibleRole();
+		var mAriaProps;
+		if (sRole) {
+			mAriaProps = {role: sRole};
+		}
+
+		oRm.writeAccessibilityState(oControl, mAriaProps);
+
 		oRm.write(">");
 	
 		var aItems = oControl.getContent();

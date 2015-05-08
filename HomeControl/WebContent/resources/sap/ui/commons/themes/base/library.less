@@ -1328,7 +1328,6 @@ html[data-sap-ui-browser="ie8"] .sapUiDlgGrip {
 /* ======================================================= */
 /* CSS for control sap.ui.commons/HorizontalLayout.control */
 /* ======================================================= */
-
 /* END "HorizontalLayout.less" */
 
 /* START "Image.less" */
@@ -2044,6 +2043,32 @@ span.sapUiLblIco { /* icon font */
 	box-sizing: border-box;
 }
 
+/* HAlign */
+.sapUiMltCellHAlignCenter {
+	text-align: center;
+}
+.sapUiMltCellHAlignLeft {
+	text-align: left;
+}
+.sapUiMltCellHAlignRight {
+	text-align: right;
+}
+
+.sapUiMltCellHAlignCenter > * {
+	margin-left: auto;
+	margin-right: auto;
+}
+.sapUiMltCellHAlignLeft > *,
+html[dir=rtl] .sapUiMltCellHAlignRight > * {
+	margin-right: auto;
+	margin-left: 0;
+}
+.sapUiMltCellHAlignRight > *,
+html[dir=rtl] .sapUiMltCellHAlignLeft > * {
+	margin-left: auto;
+	margin-right: 0;
+}
+
 /* BackGround design */
 .sapUiMltBgBorder   {background-color:@sapUiMediumBorder;}
 .sapUiMltBgFill1    {background-color:@sapUiHighlight;}
@@ -2208,7 +2233,6 @@ span.sapUiLblIco { /* icon font */
 .sapUiLbxDis > ul .sapUiLbxIIco > img,
 .sapUiLbxIDis > .sapUiLbxIIco > img {
 	opacity: 0.5;
-	filter: alpha(opacity=50);
 }
 
 .sapUiLbxRo {
@@ -2258,17 +2282,8 @@ html[data-sap-ui-browser^="ie"] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:las
 	padding-right: 2px;
 }
 
-/*ONLY IE8: when width is not set, a scrollbar may cover the last part of the text which is not nice because no width means "adapted to content" */
-html[data-sap-ui-browser="ie8"] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
-	padding-right: 16px;
-}
-
 .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
 	padding-right: 18px; /* above mentioned problem does not appear in IE9 */
-}
-
-html[dir=rtl][data-sap-ui-browser=ff3] .sapUiLbx.sapUiLbxFlexWidth > ul > li > span:last-child {
-	padding-right: 20px; /* in FF3.6 in RTL the scrollbar is still on the right, so increase the padding a bit because clipping looks more unlogical */
 }
 
 .sapUiLbxIIco,
@@ -2283,6 +2298,7 @@ html[dir=rtl][data-sap-ui-browser=ff3] .sapUiLbx.sapUiLbxFlexWidth > ul > li > s
 .sapUiLbxIIco > img {
 	vertical-align: middle;
 }
+
 /* END "ListBox.less" */
 
 /* START "MenuBar.less" */
@@ -2864,8 +2880,7 @@ html[dir=rtl][data-sap-ui-browser=ff3] .sapUiLbx.sapUiLbxFlexWidth > ul > li > s
 	background-image: url(img/panel/collapsed.gif);
 }
 
-.sapUiPanelCollIco,
-html[data-sap-ui-browser="ie8"] .sapUiXPanelCollIco {
+.sapUiPanelCollIco {
 	display: none;
 }
 
@@ -2982,6 +2997,7 @@ html[data-sap-ui-browser*="ie"] .sapUiPanelTb {
 .sapUiPanel.sapUiPanelBorderDesignNone {
 	border: none;
 }
+
 /* END "Panel.less" */
 
 /* START "ProgressIndicator.less" */

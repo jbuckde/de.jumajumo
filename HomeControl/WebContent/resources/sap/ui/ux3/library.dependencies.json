@@ -3,32 +3,32 @@
     {
       "name" : "sap/ui/ux3/ActionBar.js",
       "description" : "Provides control sap.ui.ux3.ActionBar.",
-      "size" : 53117,
-      "compressedSize" : 21485,
+      "size" : 53116,
+      "compressedSize" : 21642,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ActionBarRenderer.js",
       "description" : "! SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5) (c) Copyright 2009-2015 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
-      "size" : 7723,
-      "compressedSize" : 2938,
+      "size" : 7671,
+      "compressedSize" : 2959,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/Collection.js",
       "description" : "Provides control sap.ui.ux3.Collection.",
-      "size" : 5590,
-      "compressedSize" : 2520,
+      "size" : 5589,
+      "compressedSize" : 2541,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Element.js", "sap/ui/model/SelectionModel.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/CollectionInspector.js",
       "description" : "Provides control sap.ui.ux3.CollectionInspector.",
-      "size" : 19080,
-      "compressedSize" : 8812,
+      "size" : 19079,
+      "compressedSize" : 8881,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -36,23 +36,23 @@
       "name" : "sap/ui/ux3/CollectionInspectorRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.Collection",
       "size" : 5800,
-      "compressedSize" : 2608,
+      "compressedSize" : 2621,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/DataSet.js",
       "description" : "Provides control sap.ui.ux3.DataSet.",
-      "size" : 20806,
-      "compressedSize" : 11213,
+      "size" : 20912,
+      "compressedSize" : 11396,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/ResizeHandler.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/DataSetItem.js",
       "description" : "Provides control sap.ui.ux3.DataSetItem.",
-      "size" : 2415,
-      "compressedSize" : 995,
+      "size" : 2414,
+      "compressedSize" : 998,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Element.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -60,15 +60,15 @@
       "name" : "sap/ui/ux3/DataSetRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.DataSet",
       "size" : 3075,
-      "compressedSize" : 1286,
+      "compressedSize" : 1293,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/DataSetSimpleView.js",
       "description" : "Provides control sap.ui.ux3.DataSetSimpleView.",
-      "size" : 14808,
-      "compressedSize" : 6865,
+      "size" : 14807,
+      "compressedSize" : 6924,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/ResizeHandler.js", "sap/ui/ux3/library.js", "jquery.sap.script.js"],
       "includes" : []
     },
@@ -76,23 +76,23 @@
       "name" : "sap/ui/ux3/DataSetSimpleViewRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.DataSetSimpleView",
       "size" : 2248,
-      "compressedSize" : 1162,
+      "compressedSize" : 1172,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/Exact.js",
       "description" : "Provides control sap.ui.ux3.Exact.",
-      "size" : 7179,
-      "compressedSize" : 3548,
+      "size" : 7178,
+      "compressedSize" : 3569,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/Button.js", "sap/ui/commons/Menu.js", "sap/ui/commons/SearchField.js", "sap/ui/commons/TextView.js", "sap/ui/core/Control.js", "sap/ui/ux3/ExactArea.js", "sap/ui/ux3/ExactAttribute.js", "sap/ui/ux3/ExactBrowser.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ExactArea.js",
       "description" : "Provides control sap.ui.ux3.ExactArea.",
-      "size" : 2505,
-      "compressedSize" : 918,
+      "size" : 2504,
+      "compressedSize" : 920,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/Toolbar.js", "sap/ui/core/Control.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -100,23 +100,23 @@
       "name" : "sap/ui/ux3/ExactAreaRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.ExactArea",
       "size" : 2126,
-      "compressedSize" : 1168,
+      "compressedSize" : 1175,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ExactAttribute.js",
       "description" : "Provides control sap.ui.ux3.ExactAttribute.",
-      "size" : 11889,
-      "compressedSize" : 5382,
+      "size" : 11888,
+      "compressedSize" : 5425,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Element.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ExactBrowser.js",
       "description" : "Provides control sap.ui.ux3.ExactBrowser.",
-      "size" : 11866,
-      "compressedSize" : 4935,
+      "size" : 11865,
+      "compressedSize" : 4963,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/Button.js", "sap/ui/commons/Menu.js", "sap/ui/core/Control.js", "sap/ui/ux3/ExactAttribute.js", "sap/ui/ux3/ExactList.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -124,15 +124,15 @@
       "name" : "sap/ui/ux3/ExactBrowserRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.ExactBrowser",
       "size" : 1976,
-      "compressedSize" : 1087,
+      "compressedSize" : 1095,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ExactList.js",
       "description" : "Provides control sap.ui.ux3.ExactList.",
-      "size" : 46711,
-      "compressedSize" : 20702,
+      "size" : 46710,
+      "compressedSize" : 20913,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/ListBox.js", "sap/ui/core/Control.js", "sap/ui/core/Popup.js", "sap/ui/core/theming/Parameters.js", "sap/ui/ux3/library.js", "jquery.sap.dom.js"],
       "includes" : []
     },
@@ -140,7 +140,7 @@
       "name" : "sap/ui/ux3/ExactListRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.ExactListRenderer",
       "size" : 6575,
-      "compressedSize" : 3814,
+      "compressedSize" : 3841,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
@@ -148,23 +148,23 @@
       "name" : "sap/ui/ux3/ExactRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.Exact",
       "size" : 1361,
-      "compressedSize" : 645,
+      "compressedSize" : 649,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/FacetFilter.js",
       "description" : "Provides control sap.ui.ux3.FacetFilter.",
-      "size" : 1771,
-      "compressedSize" : 698,
+      "size" : 1770,
+      "compressedSize" : 700,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/FacetFilterList.js",
       "description" : "Provides control sap.ui.ux3.FacetFilterList.",
-      "size" : 9164,
-      "compressedSize" : 4791,
+      "size" : 9163,
+      "compressedSize" : 4824,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/ListBox.js", "sap/ui/core/Control.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -172,7 +172,7 @@
       "name" : "sap/ui/ux3/FacetFilterListRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.FacetFilterListRenderer",
       "size" : 1699,
-      "compressedSize" : 838,
+      "compressedSize" : 842,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
@@ -180,23 +180,23 @@
       "name" : "sap/ui/ux3/FacetFilterRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.FacetFilter",
       "size" : 1482,
-      "compressedSize" : 681,
+      "compressedSize" : 685,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/Feed.js",
       "description" : "Provides control sap.ui.ux3.Feed.",
-      "size" : 12512,
-      "compressedSize" : 6320,
+      "size" : 12511,
+      "compressedSize" : 6359,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/DropdownBox.js", "sap/ui/commons/MenuButton.js", "sap/ui/commons/SearchField.js", "sap/ui/commons/ToggleButton.js", "sap/ui/core/Control.js", "sap/ui/ux3/Feeder.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/FeedChunk.js",
       "description" : "Provides control sap.ui.ux3.FeedChunk.",
-      "size" : 19928,
-      "compressedSize" : 9318,
+      "size" : 19927,
+      "compressedSize" : 9367,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/MenuButton.js", "sap/ui/core/Control.js", "sap/ui/core/theming/Parameters.js", "sap/ui/ux3/Feeder.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -204,7 +204,7 @@
       "name" : "sap/ui/ux3/FeedChunkRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.FeedChunk",
       "size" : 8190,
-      "compressedSize" : 4857,
+      "compressedSize" : 4892,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
@@ -212,15 +212,15 @@
       "name" : "sap/ui/ux3/FeedRenderer.js",
       "description" : "! SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5) (c) Copyright 2009-2015 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
       "size" : 1990,
-      "compressedSize" : 952,
+      "compressedSize" : 957,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/Feeder.js",
       "description" : "Provides control sap.ui.ux3.Feeder.",
-      "size" : 8864,
-      "compressedSize" : 3499,
+      "size" : 8863,
+      "compressedSize" : 3522,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/Button.js", "sap/ui/core/Control.js", "sap/ui/core/theming/Parameters.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -228,15 +228,15 @@
       "name" : "sap/ui/ux3/FeederRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.Feeder",
       "size" : 2594,
-      "compressedSize" : 1355,
+      "compressedSize" : 1362,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/NavigationBar.js",
       "description" : "Provides control sap.ui.ux3.NavigationBar.",
-      "size" : 27545,
-      "compressedSize" : 11265,
+      "size" : 27629,
+      "compressedSize" : 11399,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/ux3/library.js", "jquery.sap.dom.js"],
       "includes" : []
     },
@@ -244,23 +244,23 @@
       "name" : "sap/ui/ux3/NavigationBarRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.NavigationBar",
       "size" : 4817,
-      "compressedSize" : 2332,
+      "compressedSize" : 2344,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/NavigationItem.js",
       "description" : "Provides control sap.ui.ux3.NavigationItem.",
-      "size" : 2408,
-      "compressedSize" : 654,
+      "size" : 2407,
+      "compressedSize" : 655,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Item.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/NotificationBar.js",
       "description" : "Provides control sap.ui.ux3.NotificationBar.",
-      "size" : 40416,
-      "compressedSize" : 16643,
+      "size" : 40415,
+      "compressedSize" : 16767,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/core/theming/Parameters.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -268,31 +268,31 @@
       "name" : "sap/ui/ux3/NotificationBarRenderer.js",
       "description" : "! SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5) (c) Copyright 2009-2015 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
       "size" : 14194,
-      "compressedSize" : 6643,
+      "compressedSize" : 6698,
       "required" : ["jquery.sap.global.js", "sap/ui/core/theming/Parameters.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/Notifier.js",
       "description" : "Provides control sap.ui.ux3.Notifier.",
-      "size" : 8480,
-      "compressedSize" : 3540,
+      "size" : 8479,
+      "compressedSize" : 3567,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/Callout.js", "sap/ui/core/Element.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/Overlay.js",
       "description" : "Provides control sap.ui.ux3.Overlay.",
-      "size" : 10176,
-      "compressedSize" : 4382,
+      "size" : 10444,
+      "compressedSize" : 4599,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/Popup.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/OverlayContainer.js",
       "description" : "Provides control sap.ui.ux3.OverlayContainer.",
-      "size" : 2086,
-      "compressedSize" : 977,
+      "size" : 2085,
+      "compressedSize" : 984,
       "required" : ["jquery.sap.global.js", "sap/ui/ux3/Overlay.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -300,15 +300,15 @@
       "name" : "sap/ui/ux3/OverlayContainerRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.OverlayContainer",
       "size" : 2278,
-      "compressedSize" : 698,
+      "compressedSize" : 703,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Renderer.js", "sap/ui/ux3/OverlayRenderer.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/OverlayDialog.js",
       "description" : "Provides control sap.ui.ux3.OverlayDialog.",
-      "size" : 6600,
-      "compressedSize" : 3383,
+      "size" : 6599,
+      "compressedSize" : 3403,
       "required" : ["jquery.sap.global.js", "sap/ui/core/IntervalTrigger.js", "sap/ui/ux3/Overlay.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -316,7 +316,7 @@
       "name" : "sap/ui/ux3/OverlayDialogRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.OverlayDialog",
       "size" : 2257,
-      "compressedSize" : 698,
+      "compressedSize" : 703,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Renderer.js", "sap/ui/ux3/OverlayRenderer.js"],
       "includes" : []
     },
@@ -324,15 +324,15 @@
       "name" : "sap/ui/ux3/OverlayRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.Overlay",
       "size" : 2464,
-      "compressedSize" : 1496,
+      "compressedSize" : 1503,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/QuickView.js",
       "description" : "Provides control sap.ui.ux3.QuickView.",
-      "size" : 14031,
-      "compressedSize" : 6322,
+      "size" : 14030,
+      "compressedSize" : 6385,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/CalloutBase.js", "sap/ui/core/delegate/ItemNavigation.js", "sap/ui/ux3/ActionBar.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -340,15 +340,15 @@
       "name" : "sap/ui/ux3/QuickViewRenderer.js",
       "description" : "! SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5) (c) Copyright 2009-2015 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
       "size" : 4980,
-      "compressedSize" : 2387,
+      "compressedSize" : 2403,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/CalloutBaseRenderer.js", "sap/ui/core/Renderer.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/Shell.js",
       "description" : "Provides control sap.ui.ux3.Shell.",
-      "size" : 94196,
-      "compressedSize" : 44551,
+      "size" : 94195,
+      "compressedSize" : 44847,
       "required" : ["jquery.sap.global.js", "sap/ui/commons/Menu.js", "sap/ui/core/Control.js", "sap/ui/core/theming/Parameters.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -356,7 +356,7 @@
       "name" : "sap/ui/ux3/ShellColorPicker.js",
       "description" : "Provides the class sap.ui.ux3.ShellColorPicker",
       "size" : 10670,
-      "compressedSize" : 6014,
+      "compressedSize" : 6052,
       "required" : ["jquery.sap.global.js", "sap/ui/base/EventProvider.js", "sap/ui/commons/Button.js", "sap/ui/core/Popup.js"],
       "includes" : []
     },
@@ -364,39 +364,39 @@
       "name" : "sap/ui/ux3/ShellPersonalization.js",
       "description" : "Provides the class sap.ui.ux3.ShellPersonalization",
       "size" : 25536,
-      "compressedSize" : 16252,
+      "compressedSize" : 16333,
       "required" : ["jquery.sap.global.js", "sap/ui/base/EventProvider.js", "sap/ui/commons/Button.js", "sap/ui/commons/Dialog.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ShellRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.Shell",
-      "size" : 15006,
-      "compressedSize" : 9243,
+      "size" : 15038,
+      "compressedSize" : 9317,
       "required" : ["jquery.sap.global.js", "sap/ui/core/IconPool.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ThingAction.js",
       "description" : "Provides control sap.ui.ux3.ThingAction.",
-      "size" : 2057,
-      "compressedSize" : 762,
+      "size" : 2056,
+      "compressedSize" : 765,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Element.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ThingGroup.js",
       "description" : "Provides control sap.ui.ux3.ThingGroup.",
-      "size" : 1845,
-      "compressedSize" : 703,
+      "size" : 1844,
+      "compressedSize" : 704,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Element.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ThingInspector.js",
       "description" : "Provides control sap.ui.ux3.ThingInspector.",
-      "size" : 20761,
-      "compressedSize" : 10599,
+      "size" : 20760,
+      "compressedSize" : 10706,
       "required" : ["jquery.sap.global.js", "sap/ui/ux3/ActionBar.js", "sap/ui/ux3/Overlay.js", "sap/ui/ux3/ThingViewer.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -404,31 +404,31 @@
       "name" : "sap/ui/ux3/ThingInspectorRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.ThingInspector",
       "size" : 2208,
-      "compressedSize" : 652,
+      "compressedSize" : 656,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Renderer.js", "sap/ui/ux3/OverlayRenderer.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ThingViewer.js",
       "description" : "Provides control sap.ui.ux3.ThingViewer.",
-      "size" : 15590,
-      "compressedSize" : 8081,
+      "size" : 15589,
+      "compressedSize" : 8134,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ThingViewerRenderer.js",
       "description" : "! SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5) (c) Copyright 2009-2015 SAP SE or an SAP affiliate company. Licensed under the Apache License, Version 2.0 - see LICENSE.txt.",
-      "size" : 9371,
-      "compressedSize" : 4762,
+      "size" : 9422,
+      "compressedSize" : 4836,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/ToolPopup.js",
       "description" : "Provides control sap.ui.ux3.ToolPopup.",
-      "size" : 42848,
-      "compressedSize" : 14814,
+      "size" : 42178,
+      "compressedSize" : 14990,
       "required" : ["jquery.sap.global.js", "sap/ui/core/Control.js", "sap/ui/core/IconPool.js", "sap/ui/core/Popup.js", "sap/ui/core/theming/Parameters.js", "sap/ui/ux3/library.js"],
       "includes" : []
     },
@@ -436,14 +436,14 @@
       "name" : "sap/ui/ux3/ToolPopupRenderer.js",
       "description" : "Provides default renderer for the sap.ui.ux3.ToolPopup",
       "size" : 4200,
-      "compressedSize" : 2415,
+      "compressedSize" : 2425,
       "required" : ["jquery.sap.global.js"],
       "includes" : []
     },
     {
       "name" : "sap/ui/ux3/library.js",
       "description" : "Initialization Code and shared classes of library sap.ui.ux3.",
-      "size" : 8298,
+      "size" : 8296,
       "compressedSize" : 2284,
       "required" : ["jquery.sap.global.js", "sap/ui/core/library.js", "sap/ui/commons/library.js"],
       "includes" : []
@@ -504,7 +504,7 @@
     },
     {
       "name" : "sap/ui/ux3/messagebundle_en_US_sappsd.properties",
-      "size" : 17207,
+      "size" : 19499,
       "required" : [],
       "includes" : []
     },
@@ -552,7 +552,7 @@
     },
     {
       "name" : "sap/ui/ux3/messagebundle_hu.properties",
-      "size" : 12218,
+      "size" : 12197,
       "required" : [],
       "includes" : []
     },
@@ -564,7 +564,7 @@
     },
     {
       "name" : "sap/ui/ux3/messagebundle_iw.properties",
-      "size" : 14962,
+      "size" : 14908,
       "required" : [],
       "includes" : []
     },
@@ -636,7 +636,7 @@
     },
     {
       "name" : "sap/ui/ux3/messagebundle_sk.properties",
-      "size" : 12168,
+      "size" : 12179,
       "required" : [],
       "includes" : []
     },
@@ -654,7 +654,7 @@
     },
     {
       "name" : "sap/ui/ux3/messagebundle_th.properties",
-      "size" : 16998,
+      "size" : 16950,
       "required" : [],
       "includes" : []
     },

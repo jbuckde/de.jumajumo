@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	 * @class
 	 * A View defined using JSON.
 	 * @extends sap.ui.core.mvc.View
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 					// => make sure to store old preprocessor in case of nested views
 					settings : function(oSettings) {
 						var oMetadata = this.getMetadata(),
-						aValidKeys = oMetadata.getJSONKeys(),
+						aValidKeys = oMetadata.getJSONKeys(), // UID names required, they're part of the documented contract
 						sKey, oValue, oKeyInfo;
 						for (sKey in oSettings) {
 							// get info object for the key
@@ -137,7 +137,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 								switch (oKeyInfo._iKind) {
 								case 3: // SINGLE ASSOCIATIONS
 									// prefix the association ids with the view id
-									oSettings[sKey] = that.createId(oValue);
+									if ( typeof oValue === "string" ) {
+										oSettings[sKey] = that.createId(oValue);
+									}
 									break;
 								case 5: // EVENTS
 									if ( typeof oValue === "string" ) {

@@ -5,8 +5,8 @@
  */
 
 // Provides the render manager sap.ui.core.RenderManager
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'jquery.sap.act', 'jquery.sap.encoder'],
-	function(jQuery, Interface, BaseObject /* , jQuerySap1, jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/core/LabelEnablement', 'jquery.sap.act', 'jquery.sap.encoder'],
+	function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
 	"use strict";
 
 	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData",
@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 						  "addStyle", "writeStyles", "writeAccessibilityState", "writeIcon",
 						  "getConfiguration", "getHTML", "cleanupControlWithoutRendering"];
 	var aNonRendererMethods = ["render", "flush", "destroy"];
-	
+
 	/**
 	 * Creates an instance of the RenderManager.
 	 *
@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		this.getRendererInterface = jQuery.sap.getter(oInterface);
 		return oInterface;
 	};
-	
+
 	/**
 	 * Cleans up the resources associated with this instance.
 	 * After the instance has been destroyed, it must not be used anymore.
@@ -79,7 +79,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		this.aRenderedControls = [];
 		this.aStyleStack = [{}];
 	};
-	
+
 	/**
 	 * Returns the configuration object
 	 * Shortcut for <code>sap.ui.getCore().getConfiguration()</code>
@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	RenderManager.prototype.getConfiguration = function() {
 		return sap.ui.getCore().getConfiguration();
 	};
-	
+
 	/**
 	 * Returns the renderer class for a given control instance
 	 *
@@ -101,10 +101,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		jQuery.sap.assert(oControl && oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control");
 		return RenderManager.getRenderer(oControl);
 	};
-	
+
 	/**
 	 * Sets the focus handler to be used by the RenderManager.
-	 * 
+	 *
 	 * @param {sap.ui.core.FocusHandler} oFocusHandler the focus handler to be used.
 	 * @private
 	 */
@@ -112,7 +112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		jQuery.sap.assert(oFocusHandler && oFocusHandler instanceof sap.ui.core.FocusHandler, "oFocusHandler must be a sap.ui.core.FocusHandler");
 		this.oFocusHandler = oFocusHandler;
 	};
-	
+
 	//Triggers the BeforeRendering event on the given Control
 	var triggerBeforeRendering = function(oRM, oControl){
 		oRM._bLocked = true;
@@ -125,10 +125,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			oRM._bLocked = false;
 		}
 	};
-	
+
 	/**
 	 * Cleans up the rendering state of the given control with rendering it.
-	 * 
+	 *
 	 * A control is responsible for the rendering of all its child controls.
 	 * But in some cases it makes sense that a control does not render all its
 	 * children based on a filter condition. For example a Carousel control only renders
@@ -139,7 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 *
 	 * The following example shows how renderControl and cleanupControlWithoutRendering should
 	 * be used:
-	 * 
+	 *
 	 * render = function(rm, ctrl){
 	 *   //...
 	 *   var aAggregatedControls = //...
@@ -152,7 +152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 *   }
 	 *   //...
 	 * }
-	 * 
+	 *
 	 * Note:
 	 * The method does not remove DOM of the given control. The callee of this method has to take over the
 	 * responsibility to cleanup the DOM of the control afterwards.
@@ -169,13 +169,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		if (!oControl || !oControl.getDomRef()) {
 			return;
 		}
-		
+
 		//Call beforeRendering to allow cleanup
 		triggerBeforeRendering(this, oControl);
-		
+
 		oControl.bOutput = false;
 	};
-	
+
 	/**
 	 * Turns the given control into its HTML representation and appends it to the
 	 * rendering buffer.
@@ -191,7 +191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		if (!oControl) {
 			return;
 		}
-	
+
 		// create stack to determine rendered parent
 		if (!this.aRenderStack) {
 			this.aRenderStack = [];
@@ -205,17 +205,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		this.aRenderStack.unshift(oControl.getId());
 		// start performance measurement
 		jQuery.sap.measure.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName());
-	
+
 		//Remember the current buffer size to check later whether the control produced output
 		var iBufferLength = this.aBuffer.length;
-	
+
 		var oControlStyles = {};
 		if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length > 0) {
 			oControlStyles.aCustomStyleClasses = oControl.aCustomStyleClasses; //cleared again in the writeClasses function
 		}
-	
+
 		this.aStyleStack.push(oControlStyles);
-	
+
 		jQuery.sap.measure.pause(oControl.getId() + "---renderControl");
 		// don't measure getRenderer because if Load needed its measured in Ajax call
 		// but start measurement before is to see general rendering time including loading time
@@ -230,18 +230,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			oRenderer = oMetadata.getRenderer();
 		} else {
 			// If the control is invisible, find out whether it uses its own visible implementation
-			var oVisibleProperty = oMetadata.getJSONKeys()["visible"];
+			var oVisibleProperty = oMetadata.getProperty("visible");
 
-			var bUsesDefaultVisibleProperty = 
-				   oVisibleProperty 
-				&& oVisibleProperty._oParent 
+			var bUsesDefaultVisibleProperty =
+				   oVisibleProperty
+				&& oVisibleProperty._oParent
 				&& oVisibleProperty._oParent.getName() == "sap.ui.core.Control";
 
-			oRenderer = bUsesDefaultVisibleProperty 
+			oRenderer = bUsesDefaultVisibleProperty
 				// If the control inherited its visible property from sap.ui.core.Control, use
 				// the default InvisibleRenderer to render a placeholder instead of the real
 				// control HTML
-				? InvisibleRenderer 
+				? InvisibleRenderer
 				// If the control has their own visible property or one not inherited from
 				// sap.ui.core.Control, return the real renderer
 				: oMetadata.getRenderer();
@@ -262,12 +262,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				}
 			}
 		}
-	
+
 		//Render the control using the RenderManager interface
 		oRenderer.render(this.getRendererInterface(), oControl);
-	
+
 		this.aStyleStack.pop();
-	
+
 		//Remember the rendered control
 		this.aRenderedControls.push(oControl);
 
@@ -276,14 +276,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		if ( oControl.getUIArea && oControl.getUIArea() ) {
 			oControl.getUIArea()._onControlRendered(oControl);
 		}
-		
+
 		//Check whether the control has produced HTML
 		// Special case: If an invisible placeholder was rendered, use a non-boolean value
 		oControl.bOutput = this.aBuffer.length != iBufferLength;
 		if (oRenderer === InvisibleRenderer) {
 			oControl.bOutput = "invisible"; // Still evaluates to true, but can be checked for the special case
 		}
-	
+
 		// end performance measurement
 		jQuery.sap.measure.end(oControl.getId() + "---renderControl");
 		this.aRenderStack.shift();
@@ -294,7 +294,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			jQuery.sap.measure.resume(oControl.getParent().getId() + "---rerender");
 		}
 	};
-	
+
 	/**
 	 * Renders the given {@link sap.ui.core.Control} and finally returns
 	 * the content of the rendering buffer.
@@ -308,28 +308,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 */
 	RenderManager.prototype.getHTML = function(oControl) {
 		jQuery.sap.assert(oControl && oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control");
-	
+
 		var tmp = this.aBuffer;
 		var aResult = this.aBuffer = [];
 		this.renderControl(oControl);
 		this.aBuffer = tmp;
 		return aResult.join("");
 	};
-	
+
 	(function() {
-	
+
 		//Does everything needed after the rendering (restore focus, calling "onAfterRendering", initialize event binding)
 		var finalizeRendering = function(oRM, aRenderedControls, oStoredFocusInfo){
-			
+
 			var i, size = aRenderedControls.length;
-			
+
 			for (i = 0; i < size; i++) {
 				aRenderedControls[i]._sapui_bInAfterRenderingPhase = true;
 			}
 			oRM._bLocked = true;
-			
+
 			try {
-				
+
 				// Notify the behavior object that the controls will be attached to DOM
 				for (i = 0; i < size; i++) {
 					var oControl = aRenderedControls[i];
@@ -344,26 +344,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 						jQuery.sap.measure.end(oControl.getId() + "---AfterRendering");
 					}
 				}
-			
+
 			} finally {
 				for (i = 0; i < size; i++) {
 					delete aRenderedControls[i]._sapui_bInAfterRenderingPhase;
 				}
 				oRM._bLocked = false;
 			}
-			
+
 			//finally restore focus
 			try {
 				oRM.oFocusHandler.restoreFocus(oStoredFocusInfo);
 			} catch (e) {
 				jQuery.sap.log.warning("Problems while restore focus after rendering: " + e, null, oRM);
 			}
-	
+
 			// Re-bind any generically bound browser event handlers (must happen after restoring focus to avoid focus event)
 			for (i = 0; i < size; i++) {
 				var oControl = aRenderedControls[i],
 					aBindings = oControl.aBindParameters;
-	
+
 				if (aBindings && aBindings.length > 0) { // if we have stored bind calls...
 					var jDomRef = jQuery(oControl.getDomRef());
 					if (jDomRef && jDomRef[0]) { // ...and we have a DomRef - TODO: this check should not be required right after rendering...
@@ -375,7 +375,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				}
 			}
 		};
-	
+
 		/**
 		 * Renders the content of the rendering buffer into the provided DOMNode.
 		 *
@@ -407,19 +407,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				jQuery.sap.log.info("Flush must not be called from control renderers. Call ignored.", null, this);
 				return;
 			}
-			
+
 			// preserve HTML content before flushing HTML into target DOM node
 			if (!bDoNotPreserve && (typeof vInsert !== "number") && !vInsert) { // expression mimics the conditions used below
 				RenderManager.preserveContent(oTargetDomNode);
 			}
-			
+
 			var oStoredFocusInfo = this.oFocusHandler ? this.oFocusHandler.getControlFocusInfo() : null;
-	
-			var vHTML = RenderManager.prepareHTML5(this.aBuffer.join("")); // Note: string might have been converted to a node list!
-	
+
+			var sHTML = this.aBuffer.join("");
+
 			if (this._fPutIntoDom) {
 				//Case when render function was called
-				this._fPutIntoDom(oTargetDomNode, vHTML);
+				this._fPutIntoDom(oTargetDomNode, sHTML);
 			} else {
 				for (var i = 0; i < this.aRenderedControls.length; i++) {
 					//TODO It would be enough to loop over the controls for which renderControl was initially called but for this
@@ -435,33 +435,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				}
 				if (typeof vInsert === "number") {
 					if (vInsert <= 0) { // new HTML should be inserted at the beginning
-						jQuery(oTargetDomNode).prepend(vHTML);
+						jQuery(oTargetDomNode).prepend(sHTML);
 					} else { // new element should be inserted at a certain position > 0
 						var $predecessor = jQuery(oTargetDomNode).children().eq(vInsert - 1); // find the element which should be directly before the new one
 						if ($predecessor.length === 1) {
 							// element found - put the HTML in after this element
-							$predecessor.after(vHTML);
+							$predecessor.after(sHTML);
 						} else {
 							// element not found (this should not happen when properly used), append the new HTML
-							jQuery(oTargetDomNode).append(vHTML);
+							jQuery(oTargetDomNode).append(sHTML);
 						}
 					}
 				} else if (!vInsert) {
-					jQuery(oTargetDomNode).html(vHTML); // Put the HTML into the given DOM Node
+					jQuery(oTargetDomNode).html(sHTML); // Put the HTML into the given DOM Node
 				} else {
-					jQuery(oTargetDomNode).append(vHTML); // Append the HTML into the given DOM Node
+					jQuery(oTargetDomNode).append(sHTML); // Append the HTML into the given DOM Node
 				}
 			}
-			
+
 			finalizeRendering(this, this.aRenderedControls, oStoredFocusInfo);
-	
+
 			this.aRenderedControls = [];
 			this.aBuffer = [];
 			this.aStyleStack = [{}];
-			
+
 			jQuery.sap.act.refresh();
 		};
-	
+
 		/**
 		 * Renders the given control to the provided DOMNode.
 		 *
@@ -486,20 +486,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				jQuery.sap.log.error("Render must not be called within Before or After Rendering Phase. Call ignored.", null, this);
 				return;
 			}
-	
+
 			// Reset the buffer before rendering
 			this.aBuffer = [];
-	
+
 			// Retrieve the markup (the rendering phase)
 			this.renderControl(oControl);
-	
+
 			// FIXME: MULTIPLE ROOTS
 			// The implementation of this method doesn't support multiple roots for a control.
 			// Affects all places where 'oldDomNode' is used
-			this._fPutIntoDom = function(oTarget, vHTML){
-	
+			this._fPutIntoDom = function(oTarget, sHTML){
+
 				if (oControl && oTargetDomNode) {
-	
+
 					var oldDomNode = oControl.getDomRef();
 					if ( RenderManager.isPreservedContent(oldDomNode) ) {
 						// use placeholder instead
@@ -511,18 +511,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 					}
 
 					var bNewTarget = oldDomNode && oldDomNode.parentNode != oTargetDomNode;
-	
+
 					var fAppend = function(){
 						var jTarget = jQuery(oTargetDomNode);
 						if (oTargetDomNode.innerHTML == "") {
-							jTarget.html(vHTML);
+							jTarget.html(sHTML);
 						} else {
-							jTarget.append(vHTML);
+							jTarget.append(sHTML);
 						}
 					};
-	
+
 					if (bNewTarget) { //Control was rendered already and is now moved to different location
-	
+
 						if (!RenderManager.isPreservedContent(oldDomNode)) {
 							if (RenderManager.isInlineTemplate(oldDomNode)) {
 								jQuery(oldDomNode).empty();
@@ -530,19 +530,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 								jQuery(oldDomNode).remove();
 							}
 						}
-	
-						if (vHTML) {
+
+						if (sHTML) {
 							fAppend();
 						}
-	
+
 					} else { //Control either rendered initially or rerendered at the same location
-	
-						if (vHTML) {
+
+						if (sHTML) {
 							if (oldDomNode) {
 								if (RenderManager.isInlineTemplate(oldDomNode)) {
-									jQuery(oldDomNode).html(vHTML);
+									jQuery(oldDomNode).html(sHTML);
 								} else {
-									jQuery(oldDomNode).replaceWith(vHTML);
+									jQuery(oldDomNode).replaceWith(sHTML);
 								}
 							} else {
 								fAppend();
@@ -560,25 +560,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 							}
 
 						}
-	
+
 					}
-	
+
 				}
-	
+
 			};
-	
+
 			this.flush(oTargetDomNode, true);
-	
+
 			this._fPutIntoDom = null;
 		};
-	
+
 	}());
-	
-	
+
+
 	//#################################################################################################
 	// Static Methods
 	//#################################################################################################
-	
+
 	/**
 	 * Returns the renderer class for a given control instance
 	 *
@@ -591,78 +591,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 */
 	RenderManager.getRenderer = function(oControl) {
 		jQuery.sap.assert(oControl && oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control");
-	
+
 		return oControl.getMetadata().getRenderer();
 	};
-	
-	/**
-	 * Makes the HTML5 tags known to older IE browsers; to be called once before rendering happens.
-	 *
-	 * Applies two workarounds
-	 * <ol>
-	 * <li>1. "SHIV": create each HTML5 tag once in the window document to make IE8 aware of it
-	 * <li>2. "INNERSHIV": IE8 fails when using innerHTML in conjunction with HTML5 tags for a DOM element __not__ part of the document.
-	 *        prepareHTML5 uses a dummy DOM element to convert the innerHTML to a set of DOM nodes first.
-	 * </ol>
-	 * @static
-	 * @private
-	 */
-	//Called once by the Core during initialization
-	RenderManager.initHTML5Support = function() {
-		if (!!sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version === 8 || sap.ui.Device.browser.version === 7)) { // IE8 is recognized as "7.0"!!
-	
-			var aTags = [ "article", "aside", "audio", "canvas", "command", "datalist", "details",
-					"figcaption", "figure", "footer", "header", "hgroup", "keygen", "mark", "meter", "nav",
-					"output", "progress", "rp", "rt", "ruby", "section", "source", "summary", "template", "time", "video", "wbr" ];
-	
-			// 1. SHIV, create each HTML5 element once to make IE8 recognize it
-			// see http://paulirish.com/2011/the-history-of-the-html5-shiv/ for an explanation
-			for (var i = 0; i < aTags.length; i++) {
-				document.createElement(aTags[i]);
-			}
-	
-			// 2. INNERSHIV, converts string with HTML5 tags to DOM nodes before using them with jQuery
-			// see http://jdbartlett.com/innershiv/ for an explanation of the matter
-			var rhtmltags = new RegExp("<(" + aTags.join("|") + ")(\\s|>)", "i");
-			var d = null;
-			RenderManager.prepareHTML5 = function(sHTML) {
-				if ( sHTML && sHTML.match(rhtmltags) ) {
-					if (!d) {
-						d = document.createElement('div');
-						d.style.display = 'none';
-					}
-	
-					var e = d.cloneNode(true);
-					// in case of early usage of HTML views (before DOMReady) the 
-					// prepareHTML5 call will fail since the body is undefined
-					var f = document.body || document.createDocumentFragment();
-					f.appendChild(e);
-					e.innerHTML = sHTML.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-					f.removeChild(e);
-	
-					return e.childNodes;
-				}
-				return sHTML;
-			};
-	
-			jQuery.sap.log.info("IE8 HTML5 support activated");
-	
-		} else {
-	
-			jQuery.sap.log.info("no IE8 HTML5 support required");
-	
-			RenderManager.prepareHTML5 = function(sHTML) {
-				return sHTML;
-			};
-		}
-	};
-	
+
 	/**
 	 * Helper to enforce a repaint for a given dom node.
-	 * 
+	 *
 	 * Introduced to fix repaint issues in Webkit browsers, esp. Chrome.
 	 * @param {Element} vDomNode a DOM node or ID of a DOM node
-	 * 
+	 *
 	 * @private
 	 */
 	RenderManager.forceRepaint = function(vDomNode) {
@@ -679,18 +617,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			}
 		}
 	};
-	
+
 	//#################################################################################################
 	// Methods for preserving HTML content
 	//#################################################################################################
-	
+
 	(function() {
-	
+
 		var ID_PRESERVE_AREA = "sap-ui-preserve",
 			ID_STATIC_AREA = "sap-ui-static", // to be kept in sync with Core!
 			ATTR_PRESERVE_MARKER = "data-sap-ui-preserve",
 			ATTR_UI_AREA_MARKER = "data-sap-ui-area";
-			
+
 		function getPreserveArea() {
 			var $preserve = jQuery("#" + ID_PRESERVE_AREA);
 			if ($preserve.length === 0) {
@@ -707,7 +645,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		function makePlaceholder(node) {
 			jQuery("<DIV/>", { id: sap.ui.core.RenderPrefixes.Dummy + node.id}).addClass("sapUiHidden").insertBefore(node);
 		}
-		
+
 		/**
 		 * Collects descendants of the given root node that need to be preserved before the root node
 		 * is wiped out. The "to-be-preserved" nodes are moved to a special, hidden 'preserve' area.
@@ -729,13 +667,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		 */
 		RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId) {
 			jQuery.sap.assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
-	
+
 			sap.ui.getCore().getEventBus().publish("sap.ui","__preserveContent", { domNode : oRootNode});
-	
+
 			var $preserve = getPreserveArea();
-	
+
 			function check(candidate) {
-				
+
 				// don't process the preserve area or the static area
 				if ( candidate.id === ID_PRESERVE_AREA || candidate.id === ID_STATIC_AREA ) {
 					return;
@@ -752,7 +690,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 					$preserve.append(candidate);
 					return;
 				}
-				
+
 				// don't dive into nested UIAreas. They are preserved together with any preserved parent (e.g. HTML control)
 				if ( !candidate.hasAttribute(ATTR_UI_AREA_MARKER) ) {
 					var next = candidate.firstChild;
@@ -766,9 +704,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 						}
 					}
 				}
-				
+
 			}
-	
+
 			jQuery.sap.measure.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id);
 			if ( bPreserveRoot ) {
 				check(oRootNode);
@@ -779,7 +717,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			}
 			jQuery.sap.measure.end(oRootNode.id + "---preserveContent");
 		};
-	
+
 		/**
 		 * Searches "to-be-preserved" nodes for the given control id.
 		 *
@@ -794,7 +732,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 				$content = $preserve.children("[" + ATTR_PRESERVE_MARKER + "='" + sId.replace(/(:|\.)/g,'\\$1') + "']");
 			return $content;
 		};
-	
+
 		/**
 		 * Marks the given content as "to-be-preserved" for a control with the given id.
 		 * When later on the content has been preserved, it can be found by giving the same id.
@@ -806,7 +744,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		RenderManager.markPreservableContent = function($content, sId) {
 			$content.attr(ATTR_PRESERVE_MARKER, sId);
 		};
-	
+
 		/**
 		 * Checks whether the given DOM node is part of the 'preserve' area.
 		 *
@@ -818,7 +756,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		RenderManager.isPreservedContent = function(oDomNode) {
 			return ( oDomNode && oDomNode.getAttribute(ATTR_PRESERVE_MARKER) && oDomNode.parentNode && oDomNode.parentNode.id == ID_PRESERVE_AREA );
 		};
-	
+
 		/**
 		 * Returns the hidden area reference belonging to this window instance.
 		 *
@@ -829,9 +767,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		RenderManager.getPreserveAreaRef = function() {
 			return getPreserveArea()[0];
 		};
-	
+
 		var ATTR_INLINE_TEMPLATE_MARKER = "data-sap-ui-template";
-	
+
 		/**
 		 * Marks the given content as "inline template".
 		 *
@@ -842,7 +780,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		RenderManager.markInlineTemplate = function($content) {
 			$content.attr(ATTR_INLINE_TEMPLATE_MARKER, "");
 		};
-	
+
 		/**
 		 * Checks whether the given DOM node is an 'inline template' area.
 		 *
@@ -854,15 +792,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		RenderManager.isInlineTemplate = function(oDomNode) {
 			return ( oDomNode && oDomNode.hasAttribute(ATTR_INLINE_TEMPLATE_MARKER) );
 		};
-	
+
 	}());
-	
-	
+
+
 	//#################################################################################################
 	// Methods for 'Buffered writer' functionality... (all public)
 	// i.e. used methods in render-method of Renderers
 	//#################################################################################################
-	
+
 	/**
 	 * Write the given texts to the buffer
 	 * @param {...string|number} sText (can be a number too)
@@ -875,7 +813,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		this.aBuffer.push.apply(this.aBuffer, arguments);
 		return this;
 	};
-	
+
 	/**
 	 * Escape text for HTML and write it to the buffer
 	 * @param {string} sText
@@ -885,20 +823,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	 */
 	RenderManager.prototype.writeEscaped = function(/** string */ sText, bLineBreaks) {
 		jQuery.sap.assert( typeof sText === "string", "sText must be a string");
+		sText = jQuery.sap.encodeHTML(sText);
 		if (bLineBreaks) {
-			var aLines = sText.split("\n");
-			for (var i = 0; i < aLines.length; i++) {
-				aLines[i] = jQuery.sap.encodeHTML(aLines[i]);
-			}
-			sText = aLines.join("<br>");
-		} else {
-			sText = jQuery.sap.encodeHTML(sText);
+			sText = sText.replace(/&#xa;/g, "<br>");
 		}
 		this.aBuffer.push(sText);
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * @param {string} sKey
 	 * @deprecated Not implemented - DO NOT USE
@@ -907,7 +840,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	RenderManager.prototype.translate = function(sKey) {
 		// TODO
 	};
-	
+
 	/**
 	 * @deprecated Not implemented - DO NOT USE
 	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
@@ -924,7 +857,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		*/
 		return this;
 	};
-	
+
 	/**
 	 * Adds a style property to the style collection if the value is not empty or null
 	 * The style collection is flushed if it is written to the buffer using {@link #writeStyle}
@@ -947,7 +880,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Writes and flushes the style collection
 	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
@@ -961,7 +894,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		oStyle.aStyle = null;
 		return this;
 	};
-	
+
 	/**
 	 * Adds a class to the class collection if the name is not empty or null.
 	 * The class collection is flushed if it is written to the buffer using {@link #writeClasses}
@@ -982,7 +915,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Writes and flushes the class collection (all CSS classes added by "addClass()" since the last flush).
 	 * Also writes the custom style classes added by the application with "addStyleClass(...)". Custom classes are
@@ -996,7 +929,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	RenderManager.prototype.writeClasses = function(oElement) {
 		jQuery.sap.assert(!oElement || typeof oElement === "boolean" || oElement instanceof sap.ui.core.Element, "oElement must be empty, a boolean, or a sap.ui.core.Element");
 		var oStyle = this.aStyleStack[this.aStyleStack.length - 1];
-	
+
 		// Custom classes are added by default from the currently rendered control. If an oElement is given, this Element's custom style
 		// classes are added instead. If oElement === false, no custom style classes are added.
 		var aCustomClasses;
@@ -1007,7 +940,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		} else {
 			aCustomClasses = oStyle.aCustomStyleClasses;
 	}
-	
+
 		if (oStyle.aClasses || aCustomClasses) {
 			var aClasses = [].concat(oStyle.aClasses || [], aCustomClasses || []);
 			aClasses.sort();
@@ -1016,14 +949,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			});
 			this.write(" class=\"", aClasses.join(" "), "\" ");
 		}
-		
+
 		if (!oElement) {
 			oStyle.aCustomStyleClasses = null;
 		}
 		oStyle.aClasses = null;
 		return this;
 	};
-	
+
 	/**
 	 * Writes the controls data into the HTML.
 	 * Control Data consists at least of the id of a control
@@ -1036,7 +969,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		this.writeElementData(oControl);
 		return this;
 	};
-	
+
 	/**
 	 * Writes the elements data into the HTML.
 	 * Element Data consists at least of the id of a element
@@ -1060,7 +993,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Writes the attribute and its value into the HTML
 	 * @param {string} sName the name of the attribute
@@ -1075,12 +1008,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		this.write(" ", sName, "=\"", value, "\"");
 		return this;
 	};
-	
+
 	/**
 	 * Writes the attribute and its value into the HTML
-	 * 
+	 *
 	 * The value is properly escaped to avoid XSS attacks.
-	 * 
+	 *
 	 * @param {string} sName the name of the attribute
 	 * @param {any} vValue the value of the attribute
 	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
@@ -1092,7 +1025,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		this.writeAttribute(sName, jQuery.sap.escapeHTML(String(vValue)));
 		return this;
 	};
-	
+
 	/**
 	 * Writes the accessibility state (see WAI-ARIA specification) of the provided element into the HTML
 	 * based on the element's properties and associations.
@@ -1141,35 +1074,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
 			return this;
 		}
-	
+
 		if (arguments.length == 1 && !(oElement instanceof sap.ui.core.Element)) {
 			mProps = oElement;
 			oElement = null;
 		}
-	
+
 		var mAriaProps = {};
-	
+
 		if (oElement != null) {
 			var oMetadata = oElement.getMetadata();
-			oMetadata._enrichChildInfos();
-	
+
 			var addACCForProp = function(sElemProp, sACCProp, oVal){
-				var oProp = oMetadata.getAllProperties()[sElemProp];
+				var oProp = oMetadata.getProperty(sElemProp);
 				if (oProp && oElement[oProp._sGetter]() === oVal) {
 					mAriaProps[sACCProp] = "true";
 				}
 			};
-	
+
 			var addACCForAssoc = function(sElemAssoc, sACCProp){
-				var oAssoc = oMetadata.getAllAssociations()[sElemAssoc];
+				var oAssoc = oMetadata.getAssociation(sElemAssoc);
 				if (oAssoc && oAssoc.multiple) {
 					var aIds = oElement[oAssoc._sGetter]();
+					if (sElemAssoc == "ariaLabelledBy") {
+						var aLabelIds = sap.ui.core.LabelEnablement.getReferencingLabels(oElement);
+						if (aLabelIds.length) {
+							aIds = aLabelIds.concat(aIds);
+						}
+					}
+
 					if (aIds.length > 0) {
 						mAriaProps[sACCProp] = aIds.join(" ");
 					}
 				}
 			};
-	
+
 			addACCForProp("editable", "readonly", false);
 			addACCForProp("enabled", "disabled", false);
 			addACCForProp("visible", "hidden", false);
@@ -1179,16 +1118,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			addACCForAssoc("ariaDescribedBy", "describedby");
 			addACCForAssoc("ariaLabelledBy", "labelledby");
 		}
-	
+
 		if (mProps) {
 			var checkValue = function(v){
 				var type = typeof (v);
 				return v === null || v === "" || type === "number" || type === "string" || type === "boolean";
 			};
-			
+
 			var prop = {};
 			var x, val, autoVal;
-			
+
 			for (x in mProps) {
 				val = mProps[x];
 				if (checkValue(val)) {
@@ -1201,26 +1140,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 					prop[x] = autoVal + val.value;
 				}
 			}
-			
+
 			//The auto-generated values above can be overridden or reset (via null)
 			jQuery.extend(mAriaProps, prop);
 		}
-	
+
 		// allow parent (e.g. FormElement) to overwrite or enhance aria attributes
 		if (oElement instanceof sap.ui.core.Element && oElement.getParent() && oElement.getParent().enhanceAccessibilityState) {
 			oElement.getParent().enhanceAccessibilityState(oElement, mAriaProps);
 		}
-	
+
 		for (var p in mAriaProps) {
 			if (mAriaProps[p] != null && mAriaProps[p] !== "") { //allow 0 and false but no null, undefined or empty string
 				this.writeAttributeEscaped(p === "role" ? p : "aria-" + p, mAriaProps[p]);
 			}
 		}
-	
+
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Writes either an img tag for normal URI or an span tag with needed properties for icon URI.
 	 * 
@@ -1241,7 +1180,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	
 		var bIconURI = sap.ui.core.IconPool.isIconURI(sURI),
 			sStartTag = bIconURI ? "<span " : "<img ",
-			bTextNeeded = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9),
 			sClasses, sProp, oIconInfo;
 	
 		if (typeof aClasses === "string") {
@@ -1253,7 +1191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	
 			if (!oIconInfo) {
 				jQuery.sap.log.error("An unregistered icon: " + sURI + " is used in sap.ui.core.RenderManager's writeIcon method.");
-				return;
+				return this;
 			}
 	
 			if (!aClasses) {
@@ -1276,9 +1214,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			if (!mAttributes) {
 				mAttributes = {};
 			}
-			if (!bTextNeeded) {
-				mAttributes["data-sap-ui-icon-content"] = oIconInfo.content;
-			}
+			mAttributes["data-sap-ui-icon-content"] = oIconInfo.content;
+			mAttributes["role"] = "img";
+			mAttributes["aria-label"] = oIconInfo.name;
 			this.write("style=\"font-family: " + oIconInfo.fontFamily + ";\" ");
 		} else {
 			mAttributes = jQuery.extend({
@@ -1296,14 +1234,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			}
 		}
 	
-		this.write(bIconURI ? ">" : "/>");
+		this.write(bIconURI ? "></span>" : "/>");
 	
-		if (bIconURI) {
-			bTextNeeded && this.write(oIconInfo.content);
-			this.write("</span>");
-		}
+		return this;
 	};
-
 
 	/**
 	 * Renders an invisible dummy element for controls that have set their visible-property to
@@ -1312,26 +1246,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 	var InvisibleRenderer = {
 		/**
 		 * Renders the invisible dummy element
-		 * 
+		 *
 		 * @param {sap.ui.core.RenderManager} [oRm] The RenderManager instance
 		 * @param {sap.ui.core.Control} [oControl] The instance of the invisible control
 		 */
 		render: function(oRm, oControl) {
 			var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oControl.getId();
 
-			var sPlaceholderHtml = 
-				'<span ' + 
+			var sPlaceholderHtml =
+				'<span ' +
 					'id="' + sPlaceholderId + '" ' +
-					'class="sapUiHiddenPlaceholder" ' + 
-					'data-sap-ui="' + sPlaceholderId + '" ' + 
-					'style="display: none;"' + 
-					'aria-hidden="true">' + 
+					'class="sapUiHiddenPlaceholder" ' +
+					'data-sap-ui="' + sPlaceholderId + '" ' +
+					'style="display: none;"' +
+					'aria-hidden="true">' +
 				'</span>';
 
 			oRm.write(sPlaceholderHtml);
 		}
 	};
-	
+
 
 	return RenderManager;
 

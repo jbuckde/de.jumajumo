@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @class The ConditionPanel Control will be used to realize the Sorting, Filtering and Grouping
 	 *        panel of the new Personalization dialog.
 	 * @extends sap.m.P13nPanel
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -1184,7 +1184,7 @@ sap.ui.define([
 	 * @private
 	 * @param {object}
 	 *            oCurrentKeyField object of the current selected KeyField which contains type of the
-	 *            column ("string" (default) "date" or "numeric") and a maxLength information
+	 *            column ("string", "date" or "numeric") and a maxLength information
 	 * @param {object}
 	 *            oFieldInfo
 	 * @param {grid}
@@ -1260,6 +1260,11 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype._fillOperationItems = function(oSelect, aOperations, sType) {
 		oSelect.removeAllItems();
+		if (sType === "_STRING_") {
+			// ignore the "String" Type when accessing the resource text 
+			sType = "";
+		}
+		
 		for ( var iOperation in aOperations) {
 			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + aOperations[iOperation]);
 			oSelect.addItem(new sap.ui.core.ListItem({
@@ -1398,6 +1403,10 @@ sap.ui.define([
 
 		var aOperations = this._oTypeOperations["default"];
 		if (oKeyField && !this.getExclude()) {
+			if (oKeyField.type && oKeyField.type === "string" && this._oTypeOperations["string"]) {
+				sType = oKeyField.type;
+				aOperations = this._oTypeOperations[sType];
+			}
 			if (oKeyField.type && oKeyField.type === "numeric" && this._oTypeOperations["numeric"]) {
 				sType = oKeyField.type;
 				aOperations = this._oTypeOperations[sType];
@@ -1831,7 +1840,7 @@ sap.ui.define([
 	 * removes all errors/warning states from the value1/2 fields of all conditions.
 	 *
 	 * @public
-	 * @since 1.26.7
+	 * @since 1.28.0
 	 */
 	P13nConditionPanel.prototype.removeValidationErrors = function() {
 		this._oConditionsGrid.getContent().forEach(function(oConditionGrid) {
@@ -1846,7 +1855,7 @@ sap.ui.define([
 	 * removes all invalid conditions.
 	 *
 	 * @public
-	 * @since 1.26.7
+	 * @since 1.28.0
 	 */
 	P13nConditionPanel.prototype.removeInvalidConditions = function() {
 		var aInvalidConditionGrids = [];

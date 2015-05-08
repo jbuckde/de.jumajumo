@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class tbd
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @constructor
 	 * @public
 	 * @since 1.26.0
@@ -84,12 +84,22 @@ sap.ui.define([
 	});
 
 	/**
-	 * This method can be overwritten by subclass in order to return a payload
+	 * This method can be overwritten by subclass in order to return a payload for Ok action
+	 * 
+	 * @public
+	 * @since 1.26.7
+	 */
+	P13nPanel.prototype.getOkPayload = function() {
+		return {};
+	};
+	
+	/**
+	 * This method can be overwritten by subclass in order to return a payload for Reset action
 	 * 
 	 * @public
 	 * @since 1.28.0
 	 */
-	P13nPanel.prototype.getOkPayload = function() {
+	P13nPanel.prototype.getResetPayload = function() {
 		return {};
 	};
 	

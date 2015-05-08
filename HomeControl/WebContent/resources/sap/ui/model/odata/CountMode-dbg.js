@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-// Provides enumeration sap.ui.model.FilterOperator
+// Provides enumeration sap.ui.model.CountMode
 sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";

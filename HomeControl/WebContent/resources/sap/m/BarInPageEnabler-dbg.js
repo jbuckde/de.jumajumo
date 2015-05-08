@@ -12,15 +12,18 @@ sap.ui.define(['sap/ui/base/Object'],
 	var mContexts = {
 		footer : {
 			contextClass : "sapMFooter-CTX",
-			tag : "Footer"
+			tag : "Footer",
+			ariaLabel: "BAR_ARIA_DESCRIPTION_FOOTER"
 		},
 		header : {
 			contextClass : "sapMHeader-CTX",
-			tag : "Header"
+			tag : "Header",
+			ariaLabel: "BAR_ARIA_DESCRIPTION_HEADER"
 		},
 		subheader : {
 			contextClass : "sapMSubHeader-CTX",
-			tag : "Header"
+			tag : "Header",
+			ariaLabel: "BAR_ARIA_DESCRIPTION_SUBHEADER"
 		}
 	};
 
@@ -32,7 +35,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @protected
 	 * @alias sap.m.IBarInPageEnabler
 	 */
-	var BarInPageEnabler = Object.extend("sap.m.BarInPageEnabler", {
+	var BarInPageEnabler = Object.extend("sap.m.BarInPageEnabler", /** @lends sap.m.BarInPageEnabler.prototype */ {
 		/**
 		 * Determines whether the bar is sensitive to the container context.
 		 *
@@ -46,15 +49,11 @@ sap.ui.define(['sap/ui/base/Object'],
 
 		/**
 		 * Sets the HTML tag of the root element.
-		 * @param {sap.m.IBarHTMLTag} sTag
+		 * @param {string} sTag
 		 * @returns {sap.m.IBar} this for chaining
 		 * @protected
 		 */
 		setHTMLTag : function (sNewTag) {
-			if (!sap.m.IBarHTMLTag.hasOwnProperty(sNewTag)) {
-				jQuery.sap.log.error(sNewTag + " is no valid entry for sap.m.IBarHTMLTag", this);
-			}
-
 			if (sNewTag === this.sTag) {
 				return this;
 			}
@@ -66,7 +65,7 @@ sap.ui.define(['sap/ui/base/Object'],
 
 		/**
 		 * Gets the HTML tag of the root domref.
-		 * @returns {sap.m.IBarHTMLTag} the HTML-tag
+		 * @returns {string} the HTML-tag
 		 * @protected
 		 */
 		getHTMLTag : function () {
@@ -93,6 +92,8 @@ sap.ui.define(['sap/ui/base/Object'],
 				jQuery.sap.log.error("The context " + sContext + " is not known", this);
 				return this;
 			}
+
+			this._sAriaLabel = oOptions.ariaLabel;
 
 			if (!this.isContextSensitive || !this.setHTMLTag) {
 				jQuery.sap.log.error("The bar control you are using does not implement all the members of the IBar interface", this);
@@ -122,16 +123,16 @@ sap.ui.define(['sap/ui/base/Object'],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered.
 		 */
 		render : function(oRM, oControl) {
-			if (!oControl.getVisible()) {
-				//render an empty div so the parent container does not get rerendered...
-				BarInPageEnabler.renderInvisible(oRM, oControl);
-				return;
-			}
-
-			var sTag = oControl.getHTMLTag().toLowerCase();
+			var sTag = oControl.getHTMLTag().toLowerCase(),
+				sLabelID = oControl.getId() + "-ariaLabel";
 
 			oRM.write("<" + sTag);
 			oRM.addClass(IBAR_CSS_CLASS);
+
+			//ARIA
+			if (oControl._sAriaLabel) {
+				oRM.writeAttribute("aria-labelledby", sLabelID);
+			}
 
 			if (this.shouldAddIBarContext(oControl)) {
 				oRM.addClass(IBAR_CSS_CLASS + "-CTX");
@@ -147,27 +148,18 @@ sap.ui.define(['sap/ui/base/Object'],
 			oRM.writeStyles();
 			oRM.write(">");
 
+			//ARIA
+			if (oControl._sAriaLabel) {
+				var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				oRM.write("<label id='" + sLabelID + "' style='display:none;' aria-hidden='true'>" + oMessageBundle.getText(oControl._sAriaLabel) + "</label>");
+			}
+
 			this.renderBarContent(oRM, oControl);
 
 			oRM.write("</" + sTag + ">");
 		}
 
 	});
-
-	/**
-	 * Renders a div with display none.
-	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered.
-	 * @protected
-	 * @static
-	 */
-	BarInPageEnabler.renderInvisible = function(oRM, oControl) {
-		oRM.write("<div");
-		oRM.writeControlData(oControl);
-		oRM.addStyle("display", "none");
-		oRM.writeStyles();
-		oRM.write("></div>");
-	};
 
 	/**
 	 * Renders the tooltip for the given control

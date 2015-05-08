@@ -308,7 +308,6 @@ html[data-sap-ui-browser^="ie"] .sapUiCb:focus:after {
 	border-right: none;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar,
 html[data-sap-ui-browser="ie9"] .sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliBar {
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='img/ColorPicker/Alphaslider_BG.png') progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#FF000000',GradientType=1 );
 }
@@ -336,6 +335,7 @@ html[data-sap-ui-browser="ie9"] .sapUiColorPicker-ColorPickerAlphaSlider.sapUiSl
 .sapUiColorPicker-ColorPickerAlphaSlider.sapUiSliHori .sapUiSliL{
 	border-color: transparent;
 }
+
 /* END "ColorPicker.less" */
 
 /* START "ComboBox.less" */
@@ -1256,7 +1256,7 @@ html[data-sap-ui-browser^="ie"] .sapUiRb:focus:after {
 .sapUiRating:focus{
 	outline-width: 3px;
 	outline-style: solid;
-	outline-color: invert;
+	outline-color: @sapHCStandardFG;
 }
 
 /* END "RatingIndicator.less" */
@@ -2499,6 +2499,7 @@ must be re-inverted */
 .sapUiTfCombo.sapUiTfDsbl > span.sapUiTfValueHelpIcon:hover,
 .sapUiTfCombo.sapUiTfRo > span.sapUiTfValueHelpIcon:hover {
 	border-left: none;
+	background-color: transparent;
 }
 
 .sapUiTfCombo.sapUiTfDsbl > span.sapUiTfValueHelpIcon,

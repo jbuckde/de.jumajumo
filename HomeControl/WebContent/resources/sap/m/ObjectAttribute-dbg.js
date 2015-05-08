@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @class
 	 * ObjectAttribute displays a text field that can be normal or active. Object attribute fires a press event when the user selects active text.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -46,7 +46,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Indicates if the object attribute text is selectable by the user.
 			 */
-			active : {type : "boolean", group : "Misc", defaultValue : null}
+			active : {type : "boolean", group : "Misc", defaultValue : null},
+
+			/**
+			 * Determines the direction of the text, not including the title.
+			 * Available options for the text direction are LTR (left-to-right) and RTL (right-to-left). By default the control inherits the text direction from its parent control.
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		},
 		aggregations : {
 	
@@ -92,13 +98,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	ObjectAttribute.prototype._getUpdatedTextControl = function() {
 		var oTextControl = this.getAggregation('_textControl');
+		var sTextDir = this.getTextDirection();
 		var oParent = this.getParent();
+		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
 		var oMaxLinesConst = {
 			singleLine : 1,
 			multiLine : 2
 		};
 		var iMaxLines = oMaxLinesConst.multiLine;
-		oTextControl.setProperty('text', (this.getTitle() ? this.getTitle() + ": " : "") + this.getText(), true);
+		var oppositeDirectionMarker = '';
+		if (sTextDir === sap.ui.core.TextDirection.LTR && bPageRTL) {
+			oppositeDirectionMarker = '\u200e';
+		}
+		if (sTextDir === sap.ui.core.TextDirection.RTL && !bPageRTL) {
+			oppositeDirectionMarker = '\u200f';
+		}
+
+		oTextControl.setProperty('text', (this.getTitle() ? this.getTitle() + ": " : "") + oppositeDirectionMarker + this.getText() + oppositeDirectionMarker, true);
 		//if attribute is used inside responsive ObjectHeader or in ObjectListItem - only 1 line
 		if (oParent && ((oParent instanceof sap.m.ObjectHeader && oParent.getResponsive()) || oParent instanceof sap.m.ObjectListItem)) {
 			iMaxLines = oMaxLinesConst.singleLine;

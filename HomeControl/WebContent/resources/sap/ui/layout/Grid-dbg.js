@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -223,6 +223,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				this.invalidate();
 			}
 		};
+
+		/**
+		 * Gets the role used for accessibility
+		 * Set by the Form control if Grid represents a FormContainer
+		 * @return {string} sRole accessibility role
+		 * @since 1.28.0
+		 * @private
+		 */
+		Grid.prototype._getAccessibleRole = function() {
+
+			return null;
+
+		};
+
 	}());
 	
 

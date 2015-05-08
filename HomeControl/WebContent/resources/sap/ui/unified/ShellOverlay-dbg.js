@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -51,7 +51,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 			/**
 			 * Reference to the sap.ui.unified.Shell or sap.ui.unified.ShellLayout control.
 			 */
-			shell : {type : "sap.ui.unified.ShellLayout", multiple : false}
+			shell : {type : "sap.ui.unified.ShellLayout", multiple : false},
+			
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
 	

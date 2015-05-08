@@ -27,9 +27,30 @@
 	padding-left: 0.75rem;
 }
 
+.sap-desktop .sapMMultiInputMultiModeBorder{
+	height: auto;
+	max-height: 10.375rem;
+	overflow-y: auto;
+	z-index: 1;
+}
+
+.sapMMultiInput > .sapMInputBasePlaceholder {
+	width: calc(100% - 2.375rem);
+}
+
 .sapUiSizeCompact .sapMMultiInputBorder {
 	height: 1.625rem;
-	padding-left: 0.1875rem;
+	padding-left: 0.25rem;
+}
+
+.sapMMultiInputMultiModeBorder .sapMInputBaseInner{
+	border: 1px;
+}
+
+.sap-desktop .sapUiSizeCompact .sapMMultiInputMultiModeBorder{
+	height: auto;
+	max-height: 7rem;
+	overflow-y: auto;
 }
 
 .sapMMultiInputNotEditable .sapMMultiInputBorder:hover {
@@ -50,6 +71,10 @@
 	bottom: 0;
 	left: 0;
 	pointer-events: none;
+}
+
+.sapMMultiInput.sapMFocus .sapMInputBaseInner:focus {
+	outline: 0 none;
 }
 
 .sapMMultiInputShadowDiv {
@@ -95,4 +120,8 @@
 .sapUiSizeCompact  .sapMMultiInput .sapMInputBaseInner {
 	padding-left: 0.0rem;
 	padding-right: 0.1rem;
+}
+
+.sapUiSizeCompact .sapMMultiInput > .sapMInputBasePlaceholder {
+	width: calc(100% - 1.5rem);
 }

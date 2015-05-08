@@ -18,7 +18,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @param {sap.ui.core.Core}
 	 *            oCore the core instance to use for analysis
@@ -111,7 +111,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					aHTML.push("</td></tr>");
 					bHeaderCreated = true;
 				}
-				oMetadata.getJSONKeys(); // side effect: properties are enriched with _oParent
 				this.printProperties(aHTML, oControl, mProperties);
 			}
 			var mProperties = this.getAggregationsAsProperties(oMetadata);
@@ -122,7 +121,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					aHTML.push("</td></tr>");
 					bHeaderCreated = true;
 				}
-				oMetadata.getJSONKeys(); // side effect: properties are enriched with _oParent
 				this.printProperties(aHTML, oControl, mProperties);
 			}
 			oMetadata = oMetadata.getParent();

@@ -7,7 +7,7 @@
 /** 
  * Device and Feature Detection API of the SAP UI5 Library.
  *
- * @version 1.26.10
+ * @version 1.28.5
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -32,7 +32,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.26.10";
+		var apiVersion = "1.28.5";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -90,7 +90,7 @@ if (typeof window.sap.ui !== "object") {
 	
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.26.10";
+		var v = "1.28.5";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -752,6 +752,13 @@ if (typeof window.sap.ui !== "object") {
 	//Maybe better to but this on device.browser because there are cases that a browser can touch but a device can't!
 	device.support.touch = !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch);
 
+	// FIXME: PhantomJS doesn't support touch events but exposes itself as touch
+	//        enabled browser. Therfore we manually override that in jQuery.support!
+	//        This has been tested with PhantomJS 1.9.7 and 2.0.0!
+	if (device.browser.phantomJS) {
+		device.support.touch = false;
+	}
+
 	device.support.pointer = !!window.PointerEvent;
 
 	device.support.matchmedia = !!window.matchMedia;
@@ -1237,7 +1244,7 @@ if (typeof window.sap.ui !== "object") {
 		var t = isTablet();
 		
 		var s = {};
-		s.tablet = ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && t;
+		s.tablet = ((device.support.touch && !isWin7) || isWin8 || !!_simMobileOnDesktop) && t;
 		s.phone = device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t;
 		s.desktop = (!s.tablet && !s.phone) || isWin8 || isWin7;
 		s.combi = (s.desktop && s.tablet);
@@ -1296,9 +1303,10 @@ if (typeof window.sap.ui !== "object") {
 
 				return bTablet;
 			} else {
-				//in desktop browser
-				var android_tablet = (device.os.name === device.os.OS.ANDROID) && !android_phone;
-				return android_tablet;
+				// in desktop browser, it's detected as tablet when
+				// 1. Windows 8 device with a touch screen where "Touch" is contained in the userAgent
+				// 2. Android emulation and it's not an Android phone
+				return (device.browser.msie && ua.indexOf("Touch") !== -1) || (device.os.name === device.os.OS.ANDROID && !android_phone);
 			}
 		}
 	}

@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	 * @implements sap.ui.core.PopupInterface
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -188,72 +188,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			opened : {}
 		}
 	}});
-
-	
-
-
-	/**
-	 * Opens the pop up.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#open
-	 * @function
-	 * @param {string} sMy
-	 *         The ToolPopup's content reference position for docking. This value is optional if the position of the ToolPopup is set via 'setPosition'.
-	 * @param {string} sAt
-	 *         The "of" element's reference point for docking to. This value is optional if the position of the ToolPopup is set via 'setPosition'.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	
-
-
-	
-
-
-	/**
-	 * Whether the ToolPopup is currently enabled or not.
-	 * 
-	 * Applications can't control the enabled state via a property. A ToolPopup is implicitly enabled while it is OPENING or OPEN. Descendant controls that honor the enabled state of their ancestors will appear disabled after the ToolPopup is closed.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#getEnabled
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @since 1.13.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Add an identified area to the parent Popup as additional focusable area that can be used for an "autoclose" ToolPopup. This added area can be focused and prevent the ToolPopup from closing if the added area is outside of the ToolPopup.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#addFocusableArea
-	 * @function
-	 * @param {string} sId
-	 *         ID of a control or DOM-node
-	 * @type void
-	 * @public
-	 * @since 1.19.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Removes the control's or DOM-node's id from focusable areas.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#removeFocusableArea
-	 * @function
-	 * @param {string} sId
-	 *         ID of a control or DOM-node
-	 * @type void
-	 * @public
-	 * @since 1.19.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
 
 	// regex rules for arrows corresponding to the given 'my' and 'at' parameters
 	// these regexes also consider the new offset style of jQueryUI-position from version 1.10.x
@@ -507,8 +441,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		if (!this._sInitialFocusId) {
 			var sInitFocusId = fnGetInitialFocus(this);
-			var oControl = jQuery.sap.byId(sInitFocusId);
-			oControl.focus();
+
+			// Compare the initial focus id with the current focus that is
+			// stored in the FocusHandler in the core.
+			// If the initial focus was set properly already by the Popup
+			// don't focus twice. Because Internet Explorer will be confused with
+			// two focusin and focusout events
+			if (sInitFocusId !== sap.ui.getCore().getCurrentFocusedControlId()) {
+				var oControl = jQuery.sap.byId(sInitFocusId);
+				oControl.focus();
+			}
 		}
 
 		// forward the Popup's opened event accordingly
@@ -536,6 +478,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		return eState !== sap.ui.core.OpenState.OPENING && eState !== sap.ui.core.OpenState.OPEN;
 	};
 
+	// first variant of the documentation: to be parsed by the metamodel derivation
+	/**
+	 * Opens the pop up.
+	 *
+	 * @name sap.ui.ux3.ToolPopup#open
+	 * @function
+	 * @param {string} sMy The ToolPopup's content reference position for docking. This value is optional if the position of the ToolPopup is set via 'setPosition'.
+	 * @param {string} sAt The "of" element's reference point for docking to. This value is optional if the position of the ToolPopup is set via 'setPosition'.
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	// second variant of the documentation: public documentation
 	/**
 	 * This opens the ToolPopup. It is checked which control wants to open the ToolPopup. The Shell was previously set as parent so the
 	 * corresponding parent element is used to set the correct position of the ToolPopup.
@@ -951,6 +905,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	 * @since 1.13.1
 	 * @return {boolean} whether the ToolPopup is currently enabled or not.
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ToolPopup.prototype.getEnabled = function() {
 		var eState = this.oPopup ? this.oPopup.getOpenState() : sap.ui.core.OpenState.CLOSED; // assuming that a ToolPopup without a Popup can’t be open
@@ -1034,7 +989,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	/**
 	 * Sets the position of the pop up, the same parameters as for sap.ui.core.Popup can be used.
 	 *
-	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1193,7 +1147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	 *
 	 * @param {Element[]} aAutoCloseAreas
 	 * @public
-	 * @since: 1.19.0
+	 * @since 1.19.0
 	 */
 	ToolPopup.prototype.setAutoCloseAreas = function(aAutoCloseAreas) {
 		this._ensurePopup();
@@ -1207,6 +1161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	 * @param {sap.ui.core.string} [sID] Id of the corresponding element that should be focusable as well
 	 * @since 1.19.0
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ToolPopup.prototype.addFocusableArea = function(sID) {
 		this._ensurePopup();
@@ -1227,10 +1182,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	 * Chaining is only possible if a valid type (string) is given.
 	 *
 	 * @param {sap.ui.core.string} [sID] of the corresponding element
-	 * @since: 1.19.0
+	 * @since 1.19.0
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-
 	ToolPopup.prototype.removeFocusableArea = function(sID) {
 		this._ensurePopup();
 

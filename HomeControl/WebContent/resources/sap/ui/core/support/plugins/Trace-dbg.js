@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 *
 		 * @abstract
 		 * @extends sap.ui.base.Object
-		 * @version 1.26.10
+		 * @version 1.28.5
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Trace
@@ -37,6 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 					this._oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance();
 				} else {
 					var that = this;
+					this._oldLogLevel = jQuery.sap.log.getLevel();
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ALL);
 					jQuery.sap.log.addLogListener({
 						onLogEntry: function(oLogEntry){
@@ -120,17 +121,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		
 		
 		Trace.prototype.exit = function(oSupportStub){
-			if (this._fClearHandler) {
-				this.$("clear").unbind("click", this._fClearHandler);
-				this._fClearHandler = null;
-			}
-			if (this._fFilterHandler) {
-				this.$("filter").unbind("change", this._fFilterHandler);
-				this._fFilterHandler = null;
-			}
-			if (this._fLogLevelHandler) {
-				this.$("loglevel").unbind("change", this._fLogLevelHandler);
-				this._fLogLevelHandler = null;
+			if (this.isToolPlugin()) {
+				if (this._fClearHandler) {
+					this.$("clear").unbind("click", this._fClearHandler);
+					this._fClearHandler = null;
+				}
+				if (this._fFilterHandler) {
+					this.$("filter").unbind("change", this._fFilterHandler);
+					this._fFilterHandler = null;
+				}
+				if (this._fLogLevelHandler) {
+					this.$("loglevel").unbind("change", this._fLogLevelHandler);
+					this._fLogLevelHandler = null;
+				}
+			} else {
+				jQuery.sap.log.setLevel(this._oldLogLevel);
+				this._oldLogLevel = null;
 			}
 			Plugin.prototype.exit.apply(this, arguments);
 		};

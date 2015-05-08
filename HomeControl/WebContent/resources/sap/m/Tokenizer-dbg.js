@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @class
 	 * Tokenizer displays multiple tokens
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -79,13 +79,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					
 					/**
 					 * the array of tokens that are added.
-					 * This parameter is used when tokenChange type is "tokenChange".
+					 * This parameter is used when tokenChange type is "tokenChanged".
 					 */
 					addedTokens :  { type: "sap.m.Token[]"},
 					
 					/**
 					 * the array of tokens that are removed.
-					 * This parameter is used when tokenChange type is "tokenChange".
+					 * This parameter is used when tokenChange type is "tokenChanged".
 					 */
 					removedTokens :  { type: "sap.m.Token[]"}
 				}				
@@ -190,6 +190,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// when token selected we no longer truncate; thereby the delete icon is visible
 		var fSelectHandler = null;
 		fSelectHandler = function() {
+			lastToken.removeStyleClass("sapMTokenTruncate");
 			this.$().removeAttr("style");
 			this.detachSelect(fSelectHandler);
 			that.scrollToEnd();
@@ -200,10 +201,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!lastToken.getSelected() && nWidth < widthOfLastToken) {
 			// truncate last token if not selected and not completely visible
 			$LastToken.outerWidth(nWidth, true);
-			$LastToken.css("overflow", "hidden");
-			$LastToken.css("text-overflow", "ellipsis");
-			$LastToken.css("white-space", "nowrap");
-	
+			lastToken.addStyleClass("sapMTokenTruncate");
 			lastToken.attachSelect(fSelectHandler);
 		} else {
 		  // last token is completely visible
@@ -443,7 +441,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
 	
 		if (index < iLength - 1) {
-			this.getTokens()[index + 1].setSelected(true);
+			var oNextToken = this.getTokens()[index + 1];
+			oNextToken.setSelected(true);
+			this._ensureTokenVisible(oNextToken);
+
 			oEvent.preventDefault();
 		} else if (index === iLength - 1) {
 			// focus is on last token - we do not handle this event and let it bubble
@@ -496,7 +497,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
 	
 		if (index > 0) {
-			this.getTokens()[index - 1].setSelected(true);
+			var oPrevToken = this.getTokens()[index - 1];
+			oPrevToken.setSelected(true);
+			this._ensureTokenVisible(oPrevToken);
 		} else if (index === -1) {
 			this.getTokens()[this.getTokens().length - 1].setSelected(true);
 		}
@@ -659,10 +662,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 	
-		if (fValidateCallback) {
-			fValidateCallback(true);
-		}
-	
 		var tokenExists = this._tokenExists(oToken);
 		if (tokenExists) {
 			return;
@@ -670,6 +669,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		this.addToken(oToken);
 	
+		if (fValidateCallback) {
+			fValidateCallback(true);
+		}
+		
 		this.fireTokenChange({
 			addedTokens : [oToken],
 			removedTokens : [],

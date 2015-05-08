@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -303,8 +303,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oMobifyCarousel = this.getDomRef()._carousel;
 		this._oMobifyCarousel.setLoop(this.getLoop());
 		this._oMobifyCarousel.setRTL(sap.ui.getCore().getConfiguration().getRTL());
-
-
 
 		//Go to active page: this may be necessary after adding or
 		//removing pages

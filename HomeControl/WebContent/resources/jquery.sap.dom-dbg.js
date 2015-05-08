@@ -231,29 +231,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.fn.selectText = function selectText(iStart, iEnd) {
 		var oDomRef = this.get(0);
 
-		if (!oDomRef) {
-			return this;
-		}
-
 		try {
 			if (typeof (oDomRef.selectionStart) === "number") { // Firefox and IE9+
 
-				// sanity checks
-				if (iStart < 0) {
-					iStart = 0;
-				}
-
-				if (iEnd > oDomRef.value.length) {
-					iEnd = oDomRef.value.length;
-				}
-
-				if (!iEnd || iStart > iEnd) {
-					iStart = 0;
-					iEnd = 0;
-				}
-
-				oDomRef.selectionStart = iStart; // TODO: maybe need to decouple via setTimeout?
-				oDomRef.selectionEnd = iEnd;
+				oDomRef.setSelectionRange(iStart, iEnd);
 			} else if (oDomRef.createTextRange) { // IE
 				var oTextEditRange = oDomRef.createTextRange();
 				oTextEditRange.collapse();
@@ -279,10 +260,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 */
 	jQuery.fn.getSelectedText = function() {
 		var oDomRef = this.get(0);
-
-		if (!oDomRef) {
-			return "";
-		}
 
 		try {
 			if (typeof oDomRef.selectionStart === "number") {
@@ -566,46 +543,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 	};
 
-	/*
-	 * The following methods are taken from jQuery UI core but modified.
-	 *
-	 * jQuery UI Core
-	 * http://jqueryui.com
-	 *
-	 * Copyright 2014 jQuery Foundation and other contributors
-	 * Released under the MIT license.
-	 * http://jquery.org/license
-	 *
-	 * http://api.jqueryui.com/category/ui-core/
-	 */
-	jQuery.support.selectstart = "onselectstart" in document.createElement("div");
-	jQuery.fn.extend( /** @lends jQuery.prototype */ {
-
-		/**
-		 * Disable HTML elements selection.
-		 *
-		 * @return {jQuery} <code>this</code> to allow method chaining.
-		 * @protected
-		 * @since 1.24.0
-		 */
-		disableSelection: function() {
-			return this.on((jQuery.support.selectstart ? "selectstart" : "mousedown") + ".ui-disableSelection", function(oEvent) {
-				oEvent.preventDefault();
-			});
-		},
-
-		/**
-		 * Enable HTML elements to get selected.
-		 *
-		 * @return {jQuery} <code>this</code> to allow method chaining.
-		 * @protected
-		 * @since 1.24.0
-		 */
-		enableSelection: function() {
-			return this.off(".ui-disableSelection");
-		}
-	});
-
 	/**
 	 * Returns the MIRRORED scrollLeft value of the first element in the given jQuery collection in right-to-left mode.
 	 * Precondition: The element is rendered in RTL mode.
@@ -680,7 +617,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 	};
 
-	
+
 	/**
 	 * For the given scroll position measured from the "beginning" of a container (the right edge in RTL mode)
 	 * this method returns the scrollLeft value as understood by the current browser in RTL mode.
@@ -709,7 +646,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				return iNormalizedScrollBegin;
 
 			} else if (!!Device.browser.webkit) {
-				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin; 
+				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollBegin;
 
 			} else if (!!Device.browser.firefox) {
 				return -iNormalizedScrollBegin;
@@ -721,6 +658,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 	};
 
+
+
+	/*
+	 * The following methods are taken from jQuery UI core but modified.
+	 *
+	 * jQuery UI Core
+	 * http://jqueryui.com
+	 *
+	 * Copyright 2014 jQuery Foundation and other contributors
+	 * Released under the MIT license.
+	 * http://jquery.org/license
+	 *
+	 * http://api.jqueryui.com/category/ui-core/
+	 */
+	jQuery.support.selectstart = "onselectstart" in document.createElement("div");
+	jQuery.fn.extend( /** @lends jQuery.prototype */ {
+
+		/**
+		 * Disable HTML elements selection.
+		 *
+		 * @return {jQuery} <code>this</code> to allow method chaining.
+		 * @protected
+		 * @since 1.24.0
+		 */
+		disableSelection: function() {
+			return this.on((jQuery.support.selectstart ? "selectstart" : "mousedown") + ".ui-disableSelection", function(oEvent) {
+				oEvent.preventDefault();
+			});
+		},
+
+		/**
+		 * Enable HTML elements to get selected.
+		 *
+		 * @return {jQuery} <code>this</code> to allow method chaining.
+		 * @protected
+		 * @since 1.24.0
+		 */
+		enableSelection: function() {
+			return this.off(".ui-disableSelection");
+		}
+	});
 
 
 	/*!
@@ -735,7 +713,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	function visible( element ) {
 		// check if one of the parents (until it's position parent) is invisible
 		// prevent that elements in static area are always checked as invisible
-		
+
 		// list all items until the offsetParent item (with jQuery >1.6 you can use parentsUntil)
 		var oOffsetParent = jQuery(element).offsetParent();
 		var bOffsetParentFound = false;
@@ -745,7 +723,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			}
 			return bOffsetParentFound;
 		});
-		
+
 		// check for at least one item to be visible
 		return !jQuery(element).add($refs).filter(function() {
 			return jQuery.css( this, "visibility" ) === "hidden" || jQuery.expr.filters.hidden( this );
@@ -804,7 +782,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	if (!jQuery.expr[":"].sapTabbable) {
 		/*!
 		 * The following function is taken from
-		 * jQuery UI Core 1.10.4
+		 * jQuery UI Core 1.11.1
 		 * http://jqueryui.com
 		 *
 		 * Copyright 2014 jQuery Foundation and other contributors
@@ -847,7 +825,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	if (!jQuery.fn.zIndex) {
 		/*!
 		 * The following function is taken from
-		 * jQuery UI Core 1.10.4
+		 * jQuery UI Core 1.11.1
 		 * http://jqueryui.com
 		 *
 		 * Copyright 2014 jQuery Foundation and other contributors
@@ -923,13 +901,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 		return oDomRef.ownerDocument.defaultView;
 	};
-	
-	
+
+
 	var _oScrollbarSize = {};
-	
+
 	/**
 	 * Returns the size (width of the vertical / height of the horizontal) native browser scrollbars.
-	 * 
+	 *
 	 * This function must only be used when the DOM is ready.
 	 *
 	 * @param {string} [sClasses=null] the CSS class that should be added to the test element.
@@ -953,7 +931,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				_oScrollbarSize = {};
 			}
 		}
-		
+
 		if (_oScrollbarSize[sKey]) {
 			return _oScrollbarSize[sKey];
 		}
@@ -961,7 +939,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		if (!document.body) {
 			return {width: 0, height: 0};
 		}
-		
+
 		var $Area = jQuery("<DIV/>")
 			.css("visibility", "hidden")
 			.css("height", "0")
@@ -973,7 +951,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 
 		$Area.prependTo(document.body);
-		
+
 		var $Dummy = jQuery("<div style=\"visibility:visible;position:absolute;height:100px;width:100px;overflow:scroll;opacity:0;\"></div>");
 		$Area.append($Dummy);
 

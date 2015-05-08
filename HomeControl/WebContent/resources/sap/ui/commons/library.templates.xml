@@ -2,6 +2,7 @@
 <Library name="sap.ui.commons" xmlns="http://www.sap.com/ui5/ide/templates/xmlview">
 <Template name="sap.ui.commons.Accordion" alias="Accordion">
 	<jsTemplate><![CDATA[new sap.ui.commons.Accordion({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -23,6 +24,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Accordion xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -39,6 +41,7 @@
 </Template>
 <Template name="sap.ui.commons.AccordionSection" alias="AccordionSection,Section">
 	<jsTemplate><![CDATA[new sap.ui.commons.AccordionSection({
+	id: "${id}", // sap.ui.core.ID
 	maxHeight: undefined, // sap.ui.core.CSSSize
 	enabled: true, // boolean
 	collapsed: false, // boolean
@@ -53,6 +56,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<AccordionSection xmlns="sap.ui.commons"
+	id="${id}"
 	maxHeight=""
 	enabled="true"
 	collapsed="false"
@@ -66,6 +70,7 @@
 </Template>
 <Template name="sap.ui.commons.ApplicationHeader" alias="ApplicationHeader,Header">
 	<jsTemplate><![CDATA[new sap.ui.commons.ApplicationHeader({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -83,6 +88,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ApplicationHeader xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -99,6 +105,7 @@
 </Template>
 <Template name="sap.ui.commons.Area" alias="Area">
 	<jsTemplate><![CDATA[new sap.ui.commons.Area({
+	id: "${id}", // sap.ui.core.ID
 	shape: undefined, // string
 	coords: undefined, // string
 	href: undefined, // sap.ui.core.URI
@@ -109,6 +116,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Area xmlns="sap.ui.commons"
+	id="${id}"
 	shape=""
 	coords=""
 	href=""
@@ -120,6 +128,7 @@
 </Template>
 <Template name="sap.ui.commons.AutoComplete" alias="AutoComplete,Complete">
 	<jsTemplate><![CDATA[new sap.ui.commons.AutoComplete({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -162,6 +171,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<AutoComplete xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -199,6 +209,7 @@
 </Template>
 <Template name="sap.ui.commons.Button" alias="Button">
 	<jsTemplate><![CDATA[new sap.ui.commons.Button({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -225,6 +236,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Button xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -250,6 +262,7 @@
 </Template>
 <Template name="sap.ui.commons.Callout" alias="Callout">
 	<jsTemplate><![CDATA[new sap.ui.commons.Callout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -284,6 +297,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Callout xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -309,6 +323,7 @@
 </Template>
 <Template name="sap.ui.commons.CalloutBase" alias="CalloutBase,Base">
 	<jsTemplate><![CDATA[new sap.ui.commons.CalloutBase({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -342,6 +357,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<CalloutBase xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -366,6 +382,7 @@
 </Template>
 <Template name="sap.ui.commons.Carousel" alias="Carousel">
 	<jsTemplate><![CDATA[new sap.ui.commons.Carousel({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -385,6 +402,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Carousel xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -405,6 +423,7 @@
 </Template>
 <Template name="sap.ui.commons.CheckBox" alias="CheckBox,Box">
 	<jsTemplate><![CDATA[new sap.ui.commons.CheckBox({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -427,6 +446,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<CheckBox xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -448,6 +468,7 @@
 </Template>
 <Template name="sap.ui.commons.ColorPicker" alias="ColorPicker,Picker">
 	<jsTemplate><![CDATA[new sap.ui.commons.ColorPicker({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -464,6 +485,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ColorPicker xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -477,6 +499,7 @@
 </Template>
 <Template name="sap.ui.commons.ComboBox" alias="ComboBox,Box">
 	<jsTemplate><![CDATA[new sap.ui.commons.ComboBox({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -515,6 +538,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ComboBox xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -550,6 +574,7 @@
 </Template>
 <Template name="sap.ui.commons.DatePicker" alias="DatePicker,Picker">
 	<jsTemplate><![CDATA[new sap.ui.commons.DatePicker({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -584,6 +609,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<DatePicker xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -615,6 +641,7 @@
 </Template>
 <Template name="sap.ui.commons.Dialog" alias="Dialog">
 	<jsTemplate><![CDATA[new sap.ui.commons.Dialog({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -648,6 +675,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Dialog xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -680,6 +708,7 @@
 </Template>
 <Template name="sap.ui.commons.DropdownBox" alias="DropdownBox,Box">
 	<jsTemplate><![CDATA[new sap.ui.commons.DropdownBox({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -726,6 +755,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<DropdownBox xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -767,6 +797,7 @@
 </Template>
 <Template name="sap.ui.commons.FileUploader" alias="FileUploader,Uploader">
 	<jsTemplate><![CDATA[new sap.ui.commons.FileUploader({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -827,6 +858,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<FileUploader xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -872,6 +904,7 @@
 </Template>
 <Template name="sap.ui.commons.FileUploaderParameter" alias="FileUploaderParameter,Parameter">
 	<jsTemplate><![CDATA[new sap.ui.commons.FileUploaderParameter({
+	id: "${id}", // sap.ui.core.ID
 	name: undefined, // string, since 1.12.2
 	value: undefined, // string, since 1.12.2
 	tooltip: undefined, // sap.ui.core.TooltipBase
@@ -880,6 +913,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<FileUploaderParameter xmlns="sap.ui.commons"
+	id="${id}"
 	name=""
 	value="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -889,6 +923,7 @@
 </Template>
 <Template name="sap.ui.commons.FormattedTextView" alias="FormattedTextView,View">
 	<jsTemplate><![CDATA[new sap.ui.commons.FormattedTextView({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -901,6 +936,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<FormattedTextView xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -914,6 +950,7 @@
 </Template>
 <Template name="sap.ui.commons.HorizontalDivider" alias="HorizontalDivider,Divider">
 	<jsTemplate><![CDATA[new sap.ui.commons.HorizontalDivider({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -926,6 +963,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<HorizontalDivider xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -939,6 +977,7 @@
 </Template>
 <Template name="sap.ui.commons.Image" alias="Image">
 	<jsTemplate><![CDATA[new sap.ui.commons.Image({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -957,6 +996,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Image xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -974,6 +1014,7 @@
 </Template>
 <Template name="sap.ui.commons.ImageMap" alias="ImageMap,Map">
 	<jsTemplate><![CDATA[new sap.ui.commons.ImageMap({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -988,6 +1029,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ImageMap xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1001,6 +1043,7 @@
 </Template>
 <Template name="sap.ui.commons.InPlaceEdit" alias="InPlaceEdit,Edit">
 	<jsTemplate><![CDATA[new sap.ui.commons.InPlaceEdit({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1020,6 +1063,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<InPlaceEdit xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1036,6 +1080,7 @@
 </Template>
 <Template name="sap.ui.commons.Label" alias="Label">
 	<jsTemplate><![CDATA[new sap.ui.commons.Label({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1055,6 +1100,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Label xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1075,6 +1121,7 @@
 </Template>
 <Template name="sap.ui.commons.Link" alias="Link">
 	<jsTemplate><![CDATA[new sap.ui.commons.Link({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1095,6 +1142,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Link xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1114,6 +1162,7 @@
 </Template>
 <Template name="sap.ui.commons.ListBox" alias="ListBox,Box">
 	<jsTemplate><![CDATA[new sap.ui.commons.ListBox({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1142,6 +1191,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ListBox xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1169,6 +1219,7 @@
 </Template>
 <Template name="sap.ui.commons.Menu" alias="Menu">
 	<jsTemplate><![CDATA[new sap.ui.commons.Menu({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1187,6 +1238,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Menu xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1204,6 +1256,7 @@
 </Template>
 <Template name="sap.ui.commons.MenuBar" alias="MenuBar,Bar">
 	<jsTemplate><![CDATA[new sap.ui.commons.MenuBar({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1217,6 +1270,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<MenuBar xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1231,6 +1285,7 @@
 </Template>
 <Template name="sap.ui.commons.MenuButton" alias="MenuButton,Button">
 	<jsTemplate><![CDATA[new sap.ui.commons.MenuButton({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1263,6 +1318,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<MenuButton xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1292,6 +1348,7 @@
 </Template>
 <Template name="sap.ui.commons.MenuItem" alias="MenuItem,Item">
 	<jsTemplate><![CDATA[new sap.ui.commons.MenuItem({
+	id: "${id}", // sap.ui.core.ID
 	enabled: true, // boolean
 	visible: true, // boolean
 	startsSection: false, // boolean
@@ -1307,6 +1364,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<MenuItem xmlns="sap.ui.commons"
+	id="${id}"
 	enabled="true"
 	visible="true"
 	startsSection="false"
@@ -1321,6 +1379,7 @@
 </Template>
 <Template name="sap.ui.commons.MenuTextFieldItem" alias="MenuTextFieldItem,Item">
 	<jsTemplate><![CDATA[new sap.ui.commons.MenuTextFieldItem({
+	id: "${id}", // sap.ui.core.ID
 	enabled: true, // boolean
 	visible: true, // boolean
 	startsSection: false, // boolean
@@ -1338,6 +1397,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<MenuTextFieldItem xmlns="sap.ui.commons"
+	id="${id}"
 	enabled="true"
 	visible="true"
 	startsSection="false"
@@ -1354,6 +1414,7 @@
 </Template>
 <Template name="sap.ui.commons.Message" alias="Message">
 	<jsTemplate><![CDATA[new sap.ui.commons.Message({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1367,6 +1428,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Message xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1381,6 +1443,7 @@
 </Template>
 <Template name="sap.ui.commons.MessageBar" alias="MessageBar,Bar">
 	<jsTemplate><![CDATA[new sap.ui.commons.MessageBar({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1395,6 +1458,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<MessageBar xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1410,6 +1474,7 @@
 </Template>
 <Template name="sap.ui.commons.MessageList" alias="MessageList,List">
 	<jsTemplate><![CDATA[new sap.ui.commons.MessageList({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1422,6 +1487,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<MessageList xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1435,6 +1501,7 @@
 </Template>
 <Template name="sap.ui.commons.MessageToast" alias="MessageToast,Toast">
 	<jsTemplate><![CDATA[new sap.ui.commons.MessageToast({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1448,6 +1515,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<MessageToast xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1460,6 +1528,7 @@
 </Template>
 <Template name="sap.ui.commons.Paginator" alias="Paginator">
 	<jsTemplate><![CDATA[new sap.ui.commons.Paginator({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1474,6 +1543,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Paginator xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1487,6 +1557,7 @@
 </Template>
 <Template name="sap.ui.commons.Panel" alias="Panel">
 	<jsTemplate><![CDATA[new sap.ui.commons.Panel({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1510,6 +1581,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Panel xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1534,6 +1606,7 @@
 </Template>
 <Template name="sap.ui.commons.PasswordField" alias="PasswordField,Field">
 	<jsTemplate><![CDATA[new sap.ui.commons.PasswordField({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1566,6 +1639,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<PasswordField xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1595,6 +1669,7 @@
 </Template>
 <Template name="sap.ui.commons.ProgressIndicator" alias="ProgressIndicator,Indicator">
 	<jsTemplate><![CDATA[new sap.ui.commons.ProgressIndicator({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1610,6 +1685,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ProgressIndicator xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1626,6 +1702,7 @@
 </Template>
 <Template name="sap.ui.commons.RadioButton" alias="RadioButton,Button">
 	<jsTemplate><![CDATA[new sap.ui.commons.RadioButton({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1649,6 +1726,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<RadioButton xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1671,6 +1749,7 @@
 </Template>
 <Template name="sap.ui.commons.RadioButtonGroup" alias="RadioButtonGroup,Group">
 	<jsTemplate><![CDATA[new sap.ui.commons.RadioButtonGroup({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1692,6 +1771,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<RadioButtonGroup xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1712,6 +1792,7 @@
 </Template>
 <Template name="sap.ui.commons.RangeSlider" alias="RangeSlider,Slider">
 	<jsTemplate><![CDATA[new sap.ui.commons.RangeSlider({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1742,6 +1823,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<RangeSlider xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1769,6 +1851,7 @@
 </Template>
 <Template name="sap.ui.commons.RatingIndicator" alias="RatingIndicator,Indicator">
 	<jsTemplate><![CDATA[new sap.ui.commons.RatingIndicator({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1791,6 +1874,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<RatingIndicator xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1812,6 +1896,7 @@
 </Template>
 <Template name="sap.ui.commons.ResponsiveContainer" alias="ResponsiveContainer,Container">
 	<jsTemplate><![CDATA[new sap.ui.commons.ResponsiveContainer({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1828,6 +1913,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ResponsiveContainer xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1843,6 +1929,7 @@
 </Template>
 <Template name="sap.ui.commons.ResponsiveContainerRange" alias="ResponsiveContainerRange,Range">
 	<jsTemplate><![CDATA[new sap.ui.commons.ResponsiveContainerRange({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1856,6 +1943,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ResponsiveContainerRange xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1870,6 +1958,7 @@
 </Template>
 <Template name="sap.ui.commons.RichTooltip" alias="RichTooltip,Tooltip">
 	<jsTemplate><![CDATA[new sap.ui.commons.RichTooltip({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1895,6 +1984,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<RichTooltip xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1919,6 +2009,7 @@
 </Template>
 <Template name="sap.ui.commons.RoadMap" alias="RoadMap,Map">
 	<jsTemplate><![CDATA[new sap.ui.commons.RoadMap({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -1939,6 +2030,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<RoadMap xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -1956,6 +2048,7 @@
 </Template>
 <Template name="sap.ui.commons.RoadMapStep" alias="RoadMapStep,Step">
 	<jsTemplate><![CDATA[new sap.ui.commons.RoadMapStep({
+	id: "${id}", // sap.ui.core.ID
 	label: undefined, // string
 	enabled: true, // boolean
 	expanded: false, // boolean
@@ -1967,6 +2060,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<RoadMapStep xmlns="sap.ui.commons"
+	id="${id}"
 	label=""
 	enabled="true"
 	expanded="false"
@@ -1979,6 +2073,7 @@
 </Template>
 <Template name="sap.ui.commons.RowRepeater" alias="RowRepeater,Repeater">
 	<jsTemplate><![CDATA[new sap.ui.commons.RowRepeater({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2011,6 +2106,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<RowRepeater xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2036,6 +2132,7 @@
 </Template>
 <Template name="sap.ui.commons.RowRepeaterFilter" alias="RowRepeaterFilter,Filter">
 	<jsTemplate><![CDATA[new sap.ui.commons.RowRepeaterFilter({
+	id: "${id}", // sap.ui.core.ID
 	text: undefined, // string
 	icon: undefined, // string
 	filters: undefined, // object
@@ -2045,6 +2142,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<RowRepeaterFilter xmlns="sap.ui.commons"
+	id="${id}"
 	text=""
 	icon=""
 	filters="">
@@ -2055,6 +2153,7 @@
 </Template>
 <Template name="sap.ui.commons.RowRepeaterSorter" alias="RowRepeaterSorter,Sorter">
 	<jsTemplate><![CDATA[new sap.ui.commons.RowRepeaterSorter({
+	id: "${id}", // sap.ui.core.ID
 	text: undefined, // string
 	icon: undefined, // string
 	sorter: undefined, // object
@@ -2064,6 +2163,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<RowRepeaterSorter xmlns="sap.ui.commons"
+	id="${id}"
 	text=""
 	icon=""
 	sorter="">
@@ -2074,6 +2174,7 @@
 </Template>
 <Template name="sap.ui.commons.SearchField" alias="SearchField,Field">
 	<jsTemplate><![CDATA[new sap.ui.commons.SearchField({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2108,6 +2209,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<SearchField xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2139,6 +2241,7 @@
 </Template>
 <Template name="sap.ui.commons.SearchProvider" alias="SearchProvider,Provider">
 	<jsTemplate><![CDATA[new sap.ui.commons.SearchProvider({
+	id: "${id}", // sap.ui.core.ID
 	icon: undefined, // string
 	suggestUrl: undefined, // sap.ui.core.URI
 	suggestType: "json", // string
@@ -2148,6 +2251,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<SearchProvider xmlns="sap.ui.commons"
+	id="${id}"
 	icon=""
 	suggestUrl=""
 	suggestType="json">
@@ -2158,6 +2262,7 @@
 </Template>
 <Template name="sap.ui.commons.SegmentedButton" alias="SegmentedButton,Button">
 	<jsTemplate><![CDATA[new sap.ui.commons.SegmentedButton({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2173,6 +2278,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<SegmentedButton xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2187,6 +2293,7 @@
 </Template>
 <Template name="sap.ui.commons.Slider" alias="Slider">
 	<jsTemplate><![CDATA[new sap.ui.commons.Slider({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2216,6 +2323,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Slider xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2242,6 +2350,7 @@
 </Template>
 <Template name="sap.ui.commons.Splitter" alias="Splitter">
 	<jsTemplate><![CDATA[new sap.ui.commons.Splitter({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2261,6 +2370,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Splitter xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2281,6 +2391,7 @@
 </Template>
 <Template name="sap.ui.commons.Tab" alias="Tab">
 	<jsTemplate><![CDATA[new sap.ui.commons.Tab({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2308,6 +2419,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Tab xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2336,6 +2448,7 @@
 </Template>
 <Template name="sap.ui.commons.TabStrip" alias="TabStrip,Strip">
 	<jsTemplate><![CDATA[new sap.ui.commons.TabStrip({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2355,6 +2468,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<TabStrip xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2371,6 +2485,7 @@
 </Template>
 <Template name="sap.ui.commons.TextArea" alias="TextArea,Area">
 	<jsTemplate><![CDATA[new sap.ui.commons.TextArea({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2410,6 +2525,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<TextArea xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2446,6 +2562,7 @@
 </Template>
 <Template name="sap.ui.commons.TextField" alias="TextField,Field">
 	<jsTemplate><![CDATA[new sap.ui.commons.TextField({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2478,6 +2595,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<TextField xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2507,6 +2625,7 @@
 </Template>
 <Template name="sap.ui.commons.TextView" alias="TextView,View">
 	<jsTemplate><![CDATA[new sap.ui.commons.TextView({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2528,6 +2647,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<TextView xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2550,6 +2670,7 @@
 </Template>
 <Template name="sap.ui.commons.Title" alias="Title">
 	<jsTemplate><![CDATA[new sap.ui.commons.Title({
+	id: "${id}", // sap.ui.core.ID
 	text: undefined, // string
 	icon: undefined, // sap.ui.core.URI
 	level: sap.ui.core.TitleLevel.Auto, // sap.ui.core.TitleLevel
@@ -2560,6 +2681,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Title xmlns="sap.ui.commons"
+	id="${id}"
 	text=""
 	icon=""
 	level="Auto"
@@ -2571,6 +2693,7 @@
 </Template>
 <Template name="sap.ui.commons.ToggleButton" alias="ToggleButton,Button">
 	<jsTemplate><![CDATA[new sap.ui.commons.ToggleButton({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2598,6 +2721,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ToggleButton xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2624,6 +2748,7 @@
 </Template>
 <Template name="sap.ui.commons.Toolbar" alias="Toolbar">
 	<jsTemplate><![CDATA[new sap.ui.commons.Toolbar({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2638,6 +2763,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Toolbar xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2653,6 +2779,7 @@
 </Template>
 <Template name="sap.ui.commons.ToolbarSeparator" alias="ToolbarSeparator,Separator">
 	<jsTemplate><![CDATA[new sap.ui.commons.ToolbarSeparator({
+	id: "${id}", // sap.ui.core.ID
 	displayVisualSeparator: true, // boolean
 	design: undefined, // sap.ui.commons.ToolbarSeparatorDesign
 	tooltip: undefined, // sap.ui.core.TooltipBase
@@ -2661,6 +2788,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ToolbarSeparator xmlns="sap.ui.commons"
+	id="${id}"
 	displayVisualSeparator="true"
 	design="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -2670,6 +2798,7 @@
 </Template>
 <Template name="sap.ui.commons.Tree" alias="Tree">
 	<jsTemplate><![CDATA[new sap.ui.commons.Tree({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2694,6 +2823,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<Tree xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2715,6 +2845,7 @@
 </Template>
 <Template name="sap.ui.commons.TreeNode" alias="TreeNode,Node">
 	<jsTemplate><![CDATA[new sap.ui.commons.TreeNode({
+	id: "${id}", // sap.ui.core.ID
 	text: undefined, // string
 	expanded: true, // boolean
 	hasExpander: false, // boolean
@@ -2736,6 +2867,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<TreeNode xmlns="sap.ui.commons"
+	id="${id}"
 	text=""
 	expanded="true"
 	hasExpander="false"
@@ -2754,6 +2886,7 @@
 </Template>
 <Template name="sap.ui.commons.TriStateCheckBox" alias="TriStateCheckBox,Box">
 	<jsTemplate><![CDATA[new sap.ui.commons.TriStateCheckBox({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2773,6 +2906,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<TriStateCheckBox xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2791,6 +2925,7 @@
 </Template>
 <Template name="sap.ui.commons.ValueHelpField" alias="ValueHelpField,Field">
 	<jsTemplate><![CDATA[new sap.ui.commons.ValueHelpField({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2829,6 +2964,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ValueHelpField xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -2862,6 +2998,7 @@
 </Template>
 <Template name="sap.ui.commons.form.Form" alias="Form">
 	<jsTemplate><![CDATA[new sap.ui.commons.form.Form({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2872,15 +3009,18 @@
 	dependents: [], // sap.ui.core.Control, since 1.19
 	formContainers: [], // sap.ui.layout.form.FormContainer
 	title: undefined, // sap.ui.core.Title
-	layout: undefined // sap.ui.layout.form.FormLayout
+	layout: undefined, // sap.ui.layout.form.FormLayout
+	ariaLabelledBy: [] // sap.ui.core.Control, since 1.28.0
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/Form xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
 	width=""
-	editable="">
+	editable=""
+	ariaLabelledBy="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 		<formContainers></formContainers> <!-- sap.ui.layout.form.FormContainer -->
@@ -2891,6 +3031,7 @@
 </Template>
 <Template name="sap.ui.commons.form.FormContainer" alias="FormContainer,Container">
 	<jsTemplate><![CDATA[new sap.ui.commons.form.FormContainer({
+	id: "${id}", // sap.ui.core.ID
 	expanded: true, // boolean
 	expandable: false, // boolean
 	visible: true, // boolean
@@ -2902,6 +3043,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/FormContainer xmlns="sap.ui.commons"
+	id="${id}"
 	expanded="true"
 	expandable="false"
 	visible="true">
@@ -2914,6 +3056,7 @@
 </Template>
 <Template name="sap.ui.commons.form.FormElement" alias="FormElement,Element">
 	<jsTemplate><![CDATA[new sap.ui.commons.form.FormElement({
+	id: "${id}", // sap.ui.core.ID
 	visible: true, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
@@ -2923,6 +3066,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/FormElement xmlns="sap.ui.commons"
+	id="${id}"
 	visible="true">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -2933,6 +3077,7 @@
 </Template>
 <Template name="sap.ui.commons.form.FormLayout" alias="FormLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.commons.form.FormLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2942,6 +3087,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/FormLayout xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true">
@@ -2952,6 +3098,7 @@
 </Template>
 <Template name="sap.ui.commons.form.GridContainerData" alias="GridContainerData,Data">
 	<jsTemplate><![CDATA[new sap.ui.commons.form.GridContainerData({
+	id: "${id}", // sap.ui.core.ID
 	halfGrid: false, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
@@ -2959,6 +3106,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/GridContainerData xmlns="sap.ui.commons"
+	id="${id}"
 	halfGrid="false">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -2967,6 +3115,7 @@
 </Template>
 <Template name="sap.ui.commons.form.GridElementData" alias="GridElementData,Data">
 	<jsTemplate><![CDATA[new sap.ui.commons.form.GridElementData({
+	id: "${id}", // sap.ui.core.ID
 	hCells: "auto", // sap.ui.layout.form.GridElementCells
 	vCells: 1, // int
 	tooltip: undefined, // sap.ui.core.TooltipBase
@@ -2975,6 +3124,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/GridElementData xmlns="sap.ui.commons"
+	id="${id}"
 	hCells="auto"
 	vCells="1">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
@@ -2984,6 +3134,7 @@
 </Template>
 <Template name="sap.ui.commons.form.GridLayout" alias="GridLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.commons.form.GridLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -2994,6 +3145,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/GridLayout xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -3005,6 +3157,7 @@
 </Template>
 <Template name="sap.ui.commons.form.ResponsiveLayout" alias="ResponsiveLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.commons.form.ResponsiveLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -3014,6 +3167,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/ResponsiveLayout xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true">
@@ -3024,11 +3178,13 @@
 </Template>
 <Template name="sap.ui.commons.form.SimpleForm" alias="SimpleForm,Form">
 	<jsTemplate><![CDATA[new sap.ui.commons.form.SimpleForm({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
 	maxContainerCols: 2, // int
 	minWidth: -1, // int
+	width: undefined, // sap.ui.core.CSSSize, since 1.28.0
 	editable: undefined, // boolean
 	labelMinWidth: 192, // int
 	layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout, // sap.ui.layout.form.SimpleFormLayout
@@ -3050,11 +3206,13 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<form/SimpleForm xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
 	maxContainerCols="2"
 	minWidth="-1"
+	width=""
 	editable=""
 	labelMinWidth="192"
 	layout="ResponsiveLayout"
@@ -3077,6 +3235,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.AbsoluteLayout" alias="AbsoluteLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.AbsoluteLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -3091,6 +3250,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/AbsoluteLayout xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -3106,6 +3266,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.BorderLayout" alias="BorderLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.BorderLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -3123,6 +3284,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/BorderLayout xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -3141,6 +3303,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.BorderLayoutArea" alias="BorderLayoutArea,Area">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.BorderLayoutArea({
+	id: "${id}", // sap.ui.core.ID
 	areaId: sap.ui.commons.layout.BorderLayoutAreaTypes.top, // sap.ui.commons.layout.BorderLayoutAreaTypes
 	overflowX: "auto", // string
 	overflowY: "auto", // string
@@ -3154,6 +3317,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/BorderLayoutArea xmlns="sap.ui.commons"
+	id="${id}"
 	areaId="top"
 	overflowX="auto"
 	overflowY="auto"
@@ -3168,6 +3332,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.HorizontalLayout" alias="HorizontalLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.HorizontalLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -3179,6 +3344,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/HorizontalLayout xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -3191,6 +3357,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.MatrixLayout" alias="MatrixLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.MatrixLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -3206,6 +3373,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/MatrixLayout xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -3222,6 +3390,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.MatrixLayoutCell" alias="MatrixLayoutCell,Cell">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.MatrixLayoutCell({
+	id: "${id}", // sap.ui.core.ID
 	backgroundDesign: sap.ui.commons.layout.BackgroundDesign.Transparent, // sap.ui.commons.layout.BackgroundDesign
 	colSpan: 1, // int
 	hAlign: sap.ui.commons.layout.HAlign.Begin, // sap.ui.commons.layout.HAlign
@@ -3236,6 +3405,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/MatrixLayoutCell xmlns="sap.ui.commons"
+	id="${id}"
 	backgroundDesign="Transparent"
 	colSpan="1"
 	hAlign="Begin"
@@ -3251,6 +3421,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.MatrixLayoutRow" alias="MatrixLayoutRow,Row">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.MatrixLayoutRow({
+	id: "${id}", // sap.ui.core.ID
 	height: undefined, // sap.ui.core.CSSSize
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
@@ -3259,6 +3430,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/MatrixLayoutRow xmlns="sap.ui.commons"
+	id="${id}"
 	height="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
@@ -3268,6 +3440,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.PositionContainer" alias="PositionContainer,Container">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.PositionContainer({
+	id: "${id}", // sap.ui.core.ID
 	top: undefined, // sap.ui.core.CSSSize
 	bottom: undefined, // sap.ui.core.CSSSize
 	left: undefined, // sap.ui.core.CSSSize
@@ -3281,6 +3454,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/PositionContainer xmlns="sap.ui.commons"
+	id="${id}"
 	top=""
 	bottom=""
 	left=""
@@ -3295,6 +3469,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.ResponsiveFlowLayout" alias="ResponsiveFlowLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.ResponsiveFlowLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -3306,6 +3481,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/ResponsiveFlowLayout xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"
@@ -3318,6 +3494,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.ResponsiveFlowLayoutData" alias="ResponsiveFlowLayoutData,Data">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.ResponsiveFlowLayoutData({
+	id: "${id}", // sap.ui.core.ID
 	minWidth: 100, // int
 	weight: 1, // int
 	linebreak: false, // boolean
@@ -3329,6 +3506,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/ResponsiveFlowLayoutData xmlns="sap.ui.commons"
+	id="${id}"
 	minWidth="100"
 	weight="1"
 	linebreak="false"
@@ -3341,6 +3519,7 @@
 </Template>
 <Template name="sap.ui.commons.layout.VerticalLayout" alias="VerticalLayout,Layout">
 	<jsTemplate><![CDATA[new sap.ui.commons.layout.VerticalLayout({
+	id: "${id}", // sap.ui.core.ID
 	busy: false, // boolean
 	busyIndicatorDelay: 1000, // int
 	visible: true, // boolean
@@ -3353,6 +3532,7 @@
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<layout/VerticalLayout xmlns="sap.ui.commons"
+	id="${id}"
 	busy="false"
 	busyIndicatorDelay="1000"
 	visible="true"

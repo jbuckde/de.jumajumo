@@ -20,7 +20,7 @@ sap.ui.define([
 	 *        tables.
 	 * @extends sap.m.Dialog
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @constructor
 	 * @public
 	 * @since 1.26.0
@@ -107,6 +107,7 @@ sap.ui.define([
 
 	P13nDialog.prototype._initDialog = function() {
 		var that = this;
+		this.setHorizontalScrolling(false);
 		this.setContentWidth("50rem");
 		this.setContentHeight("40rem");
 		this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
@@ -154,7 +155,13 @@ sap.ui.define([
 			text: this._oResourceBundle.getText("P13NDIALOG_RESET"),
 			visible: this.getShowReset(),
 			press: function() {
-				that.fireReset({});
+				var oPayload = {};
+				that.getPanels().forEach(function(oPanel) {
+					oPayload[oPanel.getType()] = oPanel.getResetPayload();
+				});
+				that.fireReset({
+					payload: oPayload
+				});
 			}
 		});
 		this.addButton(this._oResetButton);
@@ -372,7 +379,7 @@ sap.ui.define([
 	/**
 	 * Returns visible panel.
 	 * 
-	 * @returns {sap.m.P13nPanel || null}
+	 * @returns {sap.m.P13nPanel | null}
 	 * @public
 	 * @since 1.26.0
 	 */

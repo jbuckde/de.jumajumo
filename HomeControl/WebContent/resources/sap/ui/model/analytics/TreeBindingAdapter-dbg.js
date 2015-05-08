@@ -105,6 +105,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 			iLength = this.oModel.iSizeLimit;
 		}
 	
+		// FIX for Frontrunner-Apps:
+		// If the requests(s) triggered by getRootContexts return no data (__count == "0" and results.length == 0),
+		// the TBA should not again request the data. This will lead to an endless loop, since the AnalyticalBinding does not
+		// check if the length for the root group is final before requesting data again.
+		if (this.mFinalLength["null"] && this.mLength["null"] === 0) {
+			this._bInitial = false;
+		}
+		
 		if (this._bInitial) {
 			//Get number of expandend levels from the parameters
 			var iNumberOfExpandedLevels = this.mParameters && this.mParameters.numberOfExpandedLevels;
@@ -358,8 +366,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		}
 	};
 
+	TreeBindingAdapter.prototype.isExpanded = function(iIndex) {
+		var oContextInfo = this._aContextInfos[iIndex];
+		return oContextInfo && oContextInfo.expanded;
+	};
 	
-	TreeBindingAdapter.prototype.expand = function(iIndex) {
+	TreeBindingAdapter.prototype.expand = function(iIndex, bPreventChangeEvent) {
 		var oContextInfo = this._aContextInfos[iIndex];
 		// if the context is already expanded => return
 		if (oContextInfo.expanded) {
@@ -367,9 +379,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		}
 		
 		oContextInfo.autoExpand = oContextInfo.autoExpand || 1;
+		if (!bPreventChangeEvent) {
+			this._fireChange();
+		}
 	};
 	
-	TreeBindingAdapter.prototype.collapse = function(iIndex) {
+	TreeBindingAdapter.prototype.collapse = function(iIndex, bPreventChangeEvent) {
 	
 		var oContextInfo = this._aContextInfos[iIndex];
 		var oContext = this._aContexts[iIndex];
@@ -430,18 +445,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	
 		// node is collapse now => notifiy control
 		oContextInfo.expanded = false;
+		if (!bPreventChangeEvent) {
+			this._fireChange();
+		}
 	};
 	
 	TreeBindingAdapter.prototype.collapseAll = function(iLevel) {
 		if (!iLevel || iLevel < 1) {
 			iLevel = 1;
 		}
+		// This for-loop is not length-condition conservant:
+		// the collapse function called inside will modify the original array!
 		for (var i = 0, j = this._aContextInfos.length; i < j; i++) {
+
+			// all nodes which would be auto expanded should reconsider their autoexpansion level, once they have been collapsed
+			if (this._aContextInfos[i].autoExpand > 0) {
+				// autoExpand property of the context info is 1 lower than the level,
+				// e.g. when collapsing node level 3, we still want to auto expand to level 2
+				this._aContextInfos[i].autoExpand = Math.max(iLevel - 1, 0);
+			}
+
 			if (this._aContextInfos[i].level == iLevel) {
-				this.collapse(i);
+				this.collapse(i, true);
 				j = this._aContextInfos.length;
 			}
 		}
+
+		this._fireChange();
 	};
 	
 	TreeBindingAdapter.prototype.toggleIndex = function(iIndex) {

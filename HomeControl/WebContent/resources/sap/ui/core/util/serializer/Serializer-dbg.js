@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @class Serializer class.
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @alias sap.ui.core.util.serializer.Serializer
 	 * @experimental Since 1.15.1. The Serializer is still under construction, so some implementation details can be changed in future.
 	 */
@@ -63,10 +63,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	
 		var bWriteDelegate = (!this._bSkipRoot || iLevel !== 0);
 		if (bWriteDelegate) {
-	
-			// make sure all prop / aggregation / association informations are available
-			// (getJSONKeys calls sap.ui.base.ManagedObjectMetadata.prototype._enrichChildInfos)
-			oControl.getMetadata().getJSONKeys();
 	
 			// write start and end
 			var start = this._delegate.start(oControl, sAggregationName, isDefaultAggregation);

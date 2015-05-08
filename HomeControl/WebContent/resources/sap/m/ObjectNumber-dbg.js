@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @class
 	 * ObjectNumber displays number and number unit properties for an object. The number can be displayed using semantic colors to provide addition meaning about the object to the user.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -60,7 +60,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Number units qualifier. If numberUnit and unit are both set, the unit value is used.
 			 * @since 1.16.1
 			 */
-			unit : {type : "string", group : "Misc", defaultValue : null}
+			unit : {type : "string", group : "Misc", defaultValue : null},
+
+			/**
+			 * Available options for the number and unit text direction are LTR and RTL. By default the control inherits the text direction from its parent control.
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+
+			/**
+			 * Sets the horizontal alignment of the number and unit.
+			 */
+			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin}
 		}
 	}});
 	
@@ -89,6 +99,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.$().addClass(this._sCSSPrefixObjNumberStatus + this.getState());
 	
 		return this;
+	};
+	
+	/*
+	 * API method to set the text alignment of the control without rerendering the whole object number
+	 * @override
+	 * @public
+	 * @param {sap.ui.core.TextAlign} sAlign the new value
+	 * @param suppressTextDirection if true the text direction doesn't influence to the text alignment
+	 */
+	ObjectNumber.prototype.setTextAlign = function(sAlign) {
+		var sAlignVal;
+
+		//do suppress re-rendering
+		this.setProperty("textAlign", sAlign, true);
+
+		sAlignVal = this.getRenderer()._getTextAlignment(sAlign, this.getTextDirection());
+		if (sAlignVal) {
+			//change the inline style
+			this.$().css("text-align", sAlignVal);
+		} else {
+			// if empty set what was given by the user
+			this.$().css("text-align", sAlign);
+		}
 	};
 
 	return ObjectNumber;

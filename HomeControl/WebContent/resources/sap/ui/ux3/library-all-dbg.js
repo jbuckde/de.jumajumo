@@ -16,25 +16,25 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 
 	/**
 	 * Static initializer. Creates and empty ActionBarRenderer instance.
-	 * 
-	 * @class ActionBar renderer. 
+	 *
+	 * @class ActionBar renderer.
 	 * @static
 	 */
 	var ActionBarRenderer = {
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ActionBarRenderer.render = function(oRenderManager, oControl){
 		// convenience variable
 		var rm = oRenderManager;
-		
+
 		// render ActionBar
 		// result: <div id=​"<id>" data-sap-ui=​"<id>" class=​"sapUiUx3ActionBar" role=​"toolbar">​
 		rm.write("<div");
@@ -45,30 +45,30 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 			rm.writeAttribute('role', 'toolbar');
 		}
 		rm.write(">");
-		
+
 		// render list for social actions
 		rm.write("<ul");
 		rm.writeAttribute('id', oControl.getId() + "-socialActions");
 		rm.addClass("sapUiUx3ActionBarSocialActions");
 		rm.writeClasses();
-		
+
 		rm.addStyle("min-width", oControl._getSocialActionListMinWidth() + "px");
 		rm.writeStyles();
-		
+
 		rm.write(">");
 		this.renderSocialActions(rm, oControl);
 		rm.write("</ul>");
-		
+
 		// render list for business actions
 		rm.write("<ul  id='" + oControl.getId() + "-businessActions' class='sapUiUx3ActionBarBusinessActions'>");
 		this.renderBusinessActionButtons(rm, oControl);
 		rm.write("</ul>");
-		
+
 		// closing tag for toolbar
 		rm.write("</div>");
-		
+
 	};
-	
+
 	/**
 	 * Renders the HTML for toolbar buttons of business actions
 	 *
@@ -80,10 +80,10 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 	 *			rendered
 	 */
 	ActionBarRenderer.renderBusinessActionButtons = function(rm, oControl) {
-	
+
 		var actionButtons = oControl._getBusinessActionButtons();
 		var oMoreMenuButton = oControl._getMoreMenuButton();
-		
+
 		if (actionButtons && actionButtons.length > 0) {
 			//Render list for business action buttons
 			//Do not write attribue tabindex in list element because this is
@@ -104,7 +104,7 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 			this._renderMoreMenuButton(rm, oMoreMenuButton);
 		}
 	}
-	
+
 	/**
 	 * Renders "More" menu button if present
 	 *
@@ -116,7 +116,7 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 	 * @private
 	 */;
 	ActionBarRenderer._renderMoreMenuButton = function (rm, oMoreMenuButton) {
-		
+
 		if (oMoreMenuButton) {
 			rm.write("<li");
 			rm.addClass("sapUiUx3ActionBarItemRight");
@@ -127,9 +127,9 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 			rm.write("</li>");
 		}
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Renders the HTML for sap.ui.ux3.Actionbar: social actions in a specified order:
 	 * 1. Update (Feed)
@@ -148,11 +148,11 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 	 *			rendered
 	 */
 	 ActionBarRenderer.renderSocialActions = function(rm, oControl) {
-	
+
 		var mMap = oControl.mActionMap;
 		var mKeys = oControl.mActionKeys;
-		
-		
+
+
 		if (mMap[mKeys.Update]) {
 			this._renderSocialActionListItem(rm, oControl, mMap[mKeys.Update]);
 		}
@@ -177,7 +177,7 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 			}
 		}
 	 };
-	 
+
 	 /**
 	  * Renders the HTML for sap.ui.ux3.Actionbar: single social action list item
 	  *
@@ -193,7 +193,7 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 	  *  @private
 	  */
 	  ActionBarRenderer._renderSocialActionListItem = function(rm, oControl, action) {
-		if (action && ! action.hide) {
+		if (action && !action.hide) {
 			rm.write("<li");
 			rm.addClass("sapUiUx3ActionBarItem");
 			rm.writeClasses();
@@ -202,8 +202,8 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 			rm.write("</li>");
 		}
 	  };
-	 
-	 
+
+
 	 /**
 	 * Renders the HTML for sap.ui.ux3.Actionbar: single social action
 	 *
@@ -235,7 +235,7 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 		}
 		rm.addClass("sapUiUx3ActionBarAction");
 		rm.writeClasses();
-		
+
 		if (action.getTooltip()) {
 			rm.writeAttributeEscaped("title", action.getTooltip());
 		}
@@ -244,11 +244,11 @@ sap.ui.define("sap/ui/ux3/ActionBarRenderer",['jquery.sap.global'],
 		}
 		rm.write("></a>");
 	 };
-	 
-	
-	 
-	 
-	
+
+
+
+
+
 
 	return ActionBarRenderer;
 
@@ -3612,7 +3612,7 @@ sap.ui.define("sap/ui/ux3/ShellRenderer",['jquery.sap.global', 'sap/ui/core/Icon
 	
 		ShellRenderer.renderFacetBar(rm, oControl);
 	
-		rm.write("<article class='sapUiUx3ShellContent' id='" + sId + "-content' role='main'>");
+		rm.write("<article class='sapUiUx3ShellContent' id='" + sId + "-content' role='main' data-sap-ui-fastnavgroup='true'>");
 		var aContent = oControl.getContent();
 		for (var i = 0; i < aContent.length; i++) {
 			rm.renderControl(aContent[i]);
@@ -4119,6 +4119,7 @@ sap.ui.define("sap/ui/ux3/ThingViewerRenderer",['jquery.sap.global'],
 		rm.write(">");
 		rm.writeEscaped(oControl.getTitle());
 		rm.write("</span><br/>");
+		rm.write("</div><div class='sapUiUx3TVTitle'>");
 		rm.write("<span role='heading' aria-level='3' class='sapUiUx3TVTitleSecond'");
 		rm.writeAttributeEscaped("title", oControl.getSubtitle());
 		rm.write(">");
@@ -4393,14 +4394,14 @@ sap.ui.define("sap/ui/ux3/library",['jquery.sap.global',
 	 * @namespace
 	 * @name sap.ui.ux3
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @public
 	 */
 	
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.ux3",
-		version: "1.26.10",
+		version: "1.28.5",
 		dependencies : ["sap.ui.core","sap.ui.commons"],
 		types: [
 			"sap.ui.ux3.ActionBarSocialActions",
@@ -4794,7 +4795,7 @@ sap.ui.define("sap/ui/ux3/ActionBar",['jquery.sap.global', 'sap/ui/core/Control'
 	 * 
 	 * When using this control, please be aware that it fulfills rather specific requirements: it has been designed for and is used within composite controls QuickView and ThingInspector.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -6335,7 +6336,7 @@ sap.ui.define("sap/ui/ux3/Collection",['jquery.sap.global', 'sap/ui/core/Element
 	 * @class
 	 * Collection
 	 * @extends sap.ui.core.Element
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -6538,7 +6539,7 @@ sap.ui.define("sap/ui/ux3/CollectionInspector",['jquery.sap.global', 'sap/ui/cor
 	 * @class
 	 * CollectionInspector
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -7158,17 +7159,17 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new DataSet.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * DataSet
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -7176,90 +7177,90 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DataSet = Control.extend("sap.ui.ux3.DataSet", /** @lends sap.ui.ux3.DataSet.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * show Toolbar
 			 */
 			showToolbar : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * show filter
 			 */
 			showFilter : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Show/hide SearchField in Toolbar
 			 */
 			showSearchField : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Selection mode of the DataSet
 			 */
 			multiSelect : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Aggregation of DataSetItems
 			 */
-			items : {type : "sap.ui.ux3.DataSetItem", multiple : true, singularName : "item", bindable : "bindable"}, 
-	
+			items : {type : "sap.ui.ux3.DataSetItem", multiple : true, singularName : "item", bindable : "bindable"},
+
 			/**
 			 * views
 			 */
-			views : {type : "sap.ui.ux3.DataSetView", multiple : true, singularName : "view"}, 
-	
+			views : {type : "sap.ui.ux3.DataSetView", multiple : true, singularName : "view"},
+
 			/**
 			 * Filter control (e.g. a FacetFilter) for the DataSet
 			 */
-			filter : {type : "sap.ui.core.Control", multiple : true, singularName : "filter"}, 
-	
+			filter : {type : "sap.ui.core.Control", multiple : true, singularName : "filter"},
+
 			/**
 			 * Internally managed by Dataset
 			 */
-			_viewSwitches : {type : "sap.ui.core.Control", multiple : true, singularName : "_viewSwitch", visibility : "hidden"}, 
-	
+			_viewSwitches : {type : "sap.ui.core.Control", multiple : true, singularName : "_viewSwitch", visibility : "hidden"},
+
 			/**
 			 * A Toolbar, internally managed by Dataset
 			 */
 			_toolbar : {type : "sap.ui.commons.Toolbar", multiple : false, visibility : "hidden"}
 		},
 		associations : {
-	
+
 			/**
 			 * Selected view of the Dataset
 			 */
 			selectedView : {type : "sap.ui.ux3.DataSetView", multiple : false}
 		},
 		events : {
-	
+
 			/**
 			 * selection Changed
 			 */
 			selectionChanged : {
 				parameters : {
-	
+
 					/**
 					 * Old lead selected index
 					 */
-					oldLeadSelectedIndex : {type : "int"}, 
-	
+					oldLeadSelectedIndex : {type : "int"},
+
 					/**
 					 * New lead selected index
 					 */
 					newLeadSelectedIndex : {type : "int"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Event which is fired when the user triggers a search
 			 */
 			search : {
 				parameters : {
-	
+
 					/**
 					 * The search query
 					 */
@@ -7268,8 +7269,8 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 			}
 		}
 	}});
-	
-	
+
+
 	DataSet.prototype.init = function() {
 		var that = this, oToolbar;
 		//each DS needs a selectionModel for its items
@@ -7306,17 +7307,17 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		this._setToolbar(oToolbar);
 		this._iShiftStart = null;
 	};
-	
+
 	DataSet.prototype.exit = function() {
 		this._oSegBut.destroy();
 		this._oSearchField.destroy();
 		this.destroyAggregation("_toolbar");
 	};
-	
+
 	DataSet.prototype._prepareToolbar = function() {
 		var iViewCount = this.getViews().length,
 			oToolbar = this._getToolbar();
-			
+
 		if (iViewCount > 1 && this._oSegBut.show == false) {
 			oToolbar.insertItem(this._oSegBut,0);
 				this._oSegBut.show = true;
@@ -7332,7 +7333,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 			this._oSearchField.show = false;
 		}
 	};
-	
+
 	/**
 	 * Press handler for the view selection buttons
 	 *
@@ -7346,7 +7347,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		oldView.exitView(this.getItems());
 		this.setSelectedView(viewId);
 	};
-	
+
 	/**
 	 * Fire filter event
 	 *
@@ -7365,20 +7366,20 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	DataSet.prototype.sort = function() {
 		this.fireSort();
 	};
-	
+
 	/**
 	 * adds selection interval to array of selected items.
-	 * 
+	 *
 	 * @private
 	 */
 	DataSet.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
 		this.selectionModel.addSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
-	
+
 	/**
 	 * sets selection interval to array of selected items.
-	 * 
+	 *
 	 * @private
 	 */
 	DataSet.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
@@ -7387,39 +7388,39 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	};
 	/**
 	 * removes selection interval from array of selected items
-	 * 
+	 *
 	 * @private
 	 */
 	DataSet.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		this.selectionModel.removeSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
 	};
-	
+
 	/** use this function to retrieve the lead selected index
-	 * 
-	 * @public 
+	 *
+	 * @public
 	 */
 	DataSet.prototype.getSelectedIndex = function() {
 			return this.selectionModel.getLeadSelectedIndex();
 	};
-	
+
 	/** use this function to retrieve all selected indices if multiple select is enabled
-	 * 
-	 * @public 
+	 *
+	 * @public
 	 */
 	DataSet.prototype.getSelectedIndices = function(){
 		return this.selectionModel.getSelectedIndices() || [];
 	};
-	
+
 	/** clears dataset from all previous selections
-	 * 
-	 * @public 
+	 *
+	 * @public
 	 */
 	DataSet.prototype.clearSelection = function() {
 		this.selectionModel.clearSelection();
 		return this;
 	};
-	
+
 	/**
 	 * Selection handler for the DataSetItem selection event.
 	 *
@@ -7433,7 +7434,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 			aItems = this.getItems(),
 			iIndex = jQuery.inArray(oItem,aItems),
 			oldSelectedIndex = this.getLeadSelection();
-	
+
 		if (!this.getMultiSelect()) {
 			if (oldSelectedIndex == iIndex && !oParams.shift) {
 				this.setLeadSelection( -1);
@@ -7452,21 +7453,21 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 					this._iShiftStart = iIndex;
 				}
 			}
-	
+
 			if (oParams.shift) {
 				if (!this._iShiftStart && this._iShiftStart !== 0) {
 					this._iShiftStart = oldSelectedIndex;
 				}
 				if (this._iShiftStart >= 0 && oParams.ctrl) {
 					this.addSelectionInterval(this._iShiftStart, iIndex);
-				} else if (this._iShiftStart >= 0 & ! oParams.ctrl) {
+				} else if (this._iShiftStart >= 0 & !oParams.ctrl) {
 					this.setSelectionInterval(this._iShiftStart, iIndex);
 				} else {
 					this.setLeadSelection(iIndex);
 					this._iShiftStart = iIndex;
 				}
 			}
-	
+
 			if (!oParams.shift && !oParams.ctrl) {
 				if (oldSelectedIndex == iIndex && iIndex != this._iShiftStart) {
 					this.setLeadSelection( -1);
@@ -7477,7 +7478,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 			}
 		}
 	};
-	
+
 	/**
 	 * Prepare rendering: Calls init end exit hooks on the selected view instance. Necessary to keep the view
 	 * consistent to the DataSet state.
@@ -7502,9 +7503,9 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 			this._bDirty = false;
 		}
 	};
-	
+
 	//*** Selection Model methods ***
-	
+
 	/**
 	 * Returns the LeadSelection index
 	 *
@@ -7516,7 +7517,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	DataSet.prototype.getLeadSelection = function() {
 		return this.selectionModel.getLeadSelectedIndex();
 	};
-	
+
 	/**
 	 * Set the LeadSelection index
 	 *
@@ -7528,7 +7529,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	DataSet.prototype.setLeadSelection = function(iIndex) {
 		this.selectionModel.setLeadSelectedIndex(iIndex);
 	};
-	
+
 	/**
 	 * Returns true if iIndex is selected
 	 *
@@ -7539,7 +7540,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	DataSet.prototype.isSelectedIndex = function(iIndex) {
 		return (this.selectionModel.isSelectedIndex(iIndex));
 	};
-	
+
 	/**
 	 * Returns id of selected Item from given index
 	 *
@@ -7550,7 +7551,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	DataSet.prototype.getSelectedItemId = function(iIndex) {
 		 return this.getItems()[iIndex].getId();
 	};
-	
+
 	/**
 	 * Creates a view switch button
 	 *
@@ -7561,7 +7562,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	*/
 	DataSet.prototype.createViewSwitch = function(oView, iIndex) {
 		 var oViewSwitch;
-	
+
 		 if (oView.getIcon()) {
 			 oViewSwitch = new sap.ui.commons.Button({
 				 id : this.getId() + "-view-" + oView.getId(),
@@ -7587,7 +7588,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		 //oViewSwitch.attachPress(function(oEvent){that.press(oEvent,iIndex);}, that);
 		 return oViewSwitch;
 	};
-	
+
 	/**
 	 * Rerendering of the Toolbar
 	 *
@@ -7622,9 +7623,9 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 			rm.destroy();
 		}
 	};
-	
+
 	//*** override API methods ***
-	
+
 	/**
 	 * setter for multi selection mode
 	 * @param {boolean}
@@ -7646,7 +7647,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		}
 		return this;
 	};
-	
+
 	DataSet.prototype.removeItem = function(oItem) {
 		var result = this.removeAggregation("items", oItem, true);
 		if (result) {
@@ -7656,7 +7657,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		}
 		return result;
 	};
-	
+
 	DataSet.prototype.removeAllItems = function() {
 		var aItems = this.getItems(), result;
 		jQuery.each(aItems,function(i,oItem) {
@@ -7667,36 +7668,36 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		this._bDirty = true;
 		return result;
 	};
-	
+
 	DataSet.prototype.destroyItems = function() {
 		var result = this.destroyAggregation("items");
 		this._bDirty = true;
 		return result;
 	};
-	
+
 	DataSet.prototype.addItem = function(oItem) {
 		this.addAggregation("items", oItem, true);
 		oItem.attachSelected(this.selectItem,this);
 		this._bDirty = true;
 		return this;
 	};
-	
+
 	DataSet.prototype.insertItem = function(oItem, iIndex) {
 		this.insertAggregation("items", oItem, iIndex, true);
 		oItem.attachSelected(this.selectItem,this);
 		this._bDirty = true;
 		return this;
 	};
-	
+
 	DataSet.prototype.setFilterValue = function(sFilterValue) {
 		this.setProperty("filterValue",sFilterValue, true);
 		return this;
 	};
-	
+
 	DataSet.prototype.getFilterValue = function() {
 		return this.getProperty("filterValue");
 	};
-	
+
 	DataSet.prototype.insertView = function(oView, iIndex) {
 		var oViewSwitch = this.createViewSwitch(oView,iIndex,true);
 		if (!this.getSelectedView()) {
@@ -7707,7 +7708,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		this._rerenderToolbar();
 		return this;
 	};
-	
+
 	DataSet.prototype.addView = function(oView) {
 		var iIndex = this.getViews().length,
 			oViewSwitch = this.createViewSwitch(oView,iIndex);
@@ -7719,10 +7720,10 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		this._rerenderToolbar();
 		return this;
 	};
-	
+
 	DataSet.prototype.removeView = function(oView) {
 		var result = this.removeAggregation("views", oView, true);
-		
+
 		if (result) {
 			if (this.getSelectedView() == result.getId()) {
 				this.setSelectedView(this.getViews()[0]);
@@ -7731,41 +7732,41 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 			} else {
 				this._rerenderToolbar();
 			}
-		
+
 			this._oSegBut.removeButton(this.getId() + "-view-" + result.getId()).destroy();
 		}
 		return result;
 	};
-	
+
 	DataSet.prototype.destroyViews = function() {
 		this._oSegBut.destroyButtons();
 		this.destroyAggregation("views");
 		return this;
 	};
-	
+
 	DataSet.prototype.removeAllViews = function() {
 		var result = this.removeAllAggregation("views");
 		this._oSegBut.destroyButtons();
 		return result;
 	};
-	
+
 	DataSet.prototype.setEnableSorting = function(bEnableSorting) {
 		//suppress rerendering ofDataSet. Rerender only the toolbar.
 		this.setProperty("enableSorting", bEnableSorting, true);
 		this._rerenderToolbar();
 		return this;
 	};
-	
+
 	DataSet.prototype.setEnableFiltering = function(bEnableFiltering) {
 		//suppress rerendering ofDataSet. Rerender only the toolbar.
 		this.setProperty("enableFiltering", bEnableFiltering, true);
 		this._rerenderToolbar();
 		return this;
 	};
-	
+
 	DataSet.prototype.setSelectedView = function(vView) {
 		var oldSelectedView = this.getSelectedView();
-		
+
 		this.setAssociation("selectedView", vView);
 		if (oldSelectedView != this.getSelectedView()) {
 			this._bDirty = true;
@@ -7775,7 +7776,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		}
 		return this;
 	};
-	
+
 
 	/**
 	 * add a toolbarItem to the toolbar
@@ -7790,7 +7791,7 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		this._getToolbar().addItem(oToolbarItem);
 		this._rerenderToolbar();
 	};
-	
+
 
 	/**
 	 * remove a toolbarItem to the toolbar
@@ -7804,17 +7805,17 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		this._getToolbar().removeItem(oToolbarItem);
 		this._rerenderToolbar();
 	};
-	
+
 	DataSet.prototype.setShowToolbar = function(bShow) {
 		this.setProperty("showToolbar",bShow, true);
 		this._rerenderToolbar();
 	};
-	
+
 	DataSet.prototype.setShowFilter = function(bShow) {
 		this.setProperty("showFilter",bShow, true);
 		this._rerenderFilter();
 	};
-	
+
 	DataSet.prototype.setShowSearchField = function(bShow) {
 		this.setProperty("showSearchField",bShow, true);
 		this._rerenderToolbar();
@@ -7832,13 +7833,13 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 	DataSet.prototype._getToolbar = function() {
 		return this.getAggregation("_toolbar");
 	};
-	
+
 	DataSet.prototype.refreshItems = function() {
 		var	oBinding = this.getBinding("items"),
 			oSelectedView = sap.ui.getCore().byId(this.getSelectedView());
-		
+
 		oBinding.bUseExtendedChangeDetection = true;
-		
+
 		if (oSelectedView && oSelectedView.getItemCount && oSelectedView.getItemCount()) {
 			var iItemCount = Math.max(oSelectedView.getItemCount(),this.getItems().length);
 			if (iItemCount) {
@@ -7850,22 +7851,22 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 			oBinding.getContexts();
 		}
 	};
-	
+
 	DataSet.prototype.updateItems = function(sChangeReason) {
 		var oBindingInfo = this.mBindingInfos["items"],
-			oAggregationInfo = this.getMetadata().getJSONKeys()["items"],
+			oAggregationInfo = this.getMetadata().getAggregation("items"),
 			oSelectedView = sap.ui.getCore().byId(this.getSelectedView()),
 			oBinding = oBindingInfo.binding,
 			fnFactory = oBindingInfo.factory,
 			oClone,
-			oItems,
+			aItems,
 			oItem,
 			iIndex,
 			that = this,
 			aContexts = [];
-		
+
 		oBinding.bUseExtendedChangeDetection = true;
-		
+
 		if (oSelectedView && oSelectedView.getItemCount && oSelectedView.getItemCount()) {
 			var iItemCount = Math.max(oSelectedView.getItemCount(),this.getItems().length);
 			if (iItemCount) {
@@ -7876,14 +7877,14 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 		} else {
 			aContexts = oBinding.getContexts();
 		}
-	
+
 		if (aContexts.diff && sChangeReason) {
 			var aDiff = aContexts.diff;
 			for (var i = 0; i < aDiff.length; i++) {
-				oItems = this.getItems();
+				aItems = this.getItems();
 				iIndex = aDiff[i].index;
 				if (aDiff[i].type === "delete") {
-					oItem = oItems[iIndex];
+					oItem = aItems[iIndex];
 					aDiff[i].item = oItem;
 					this.removeItem(oItem);
 				} else if (aContexts.diff[i].type === "insert") {
@@ -7905,8 +7906,13 @@ sap.ui.define("sap/ui/ux3/DataSet",['jquery.sap.global', 'sap/ui/core/Control', 
 				that[oAggregationInfo._sMutator](oClone);
 			});
 		}
+		
+		// update context on all items after applying diff
+		aItems = this.getItems();
+		for (var i = 0, l = aContexts.length; i < l; i++) {
+			aItems[i].setBindingContext(aContexts[i], oBindingInfo.model);
+		}
 	};
-	
 
 	return DataSet;
 
@@ -7939,7 +7945,7 @@ sap.ui.define("sap/ui/ux3/DataSetItem",['jquery.sap.global', 'sap/ui/core/Elemen
 	 * @class
 	 * DataSet Item
 	 * @extends sap.ui.core.Element
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -8051,7 +8057,7 @@ sap.ui.define("sap/ui/ux3/DataSetSimpleView",['jquery.sap.global', 'sap/ui/core/
 	 * DataSetSimpleView provides a simple view example for DataSet usage.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.ux3.DataSetView
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -8569,7 +8575,7 @@ sap.ui.define("sap/ui/ux3/ExactArea",['jquery.sap.global', 'sap/ui/commons/Toolb
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -8658,7 +8664,7 @@ sap.ui.define("sap/ui/ux3/ExactAttribute",['jquery.sap.global', 'sap/ui/core/Ele
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -9063,7 +9069,7 @@ sap.ui.define("sap/ui/ux3/ExactList",['jquery.sap.global', 'sap/ui/commons/ListB
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -10595,7 +10601,7 @@ sap.ui.define("sap/ui/ux3/FacetFilter",['jquery.sap.global', 'sap/ui/core/Contro
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -10659,7 +10665,7 @@ sap.ui.define("sap/ui/ux3/FacetFilterList",['jquery.sap.global', 'sap/ui/commons
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -10983,7 +10989,7 @@ sap.ui.define("sap/ui/ux3/Feeder",['jquery.sap.global', 'sap/ui/commons/Button',
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -11320,7 +11326,7 @@ sap.ui.define("sap/ui/ux3/NavigationBar",['jquery.sap.global', 'sap/ui/core/Cont
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -11406,6 +11412,8 @@ sap.ui.define("sap/ui/ux3/NavigationBar",['jquery.sap.global', 'sap/ui/core/Cont
 		// Initialize the ItemNavigation
 		this._oItemNavigation = new ItemNavigation().setCycling(false);
 		this.addDelegate(this._oItemNavigation);
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	
 		if (jQuery.sap.touchEventMode === "ON") {
 			var fnTouchStart = function(evt) {
@@ -12143,7 +12151,7 @@ sap.ui.define("sap/ui/ux3/NavigationItem",['jquery.sap.global', 'sap/ui/core/Ite
 	 * @extends sap.ui.core.Item
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -12215,7 +12223,7 @@ sap.ui.define("sap/ui/ux3/NotificationBar",['jquery.sap.global', 'sap/ui/core/Co
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -13641,7 +13649,7 @@ sap.ui.define("sap/ui/ux3/Notifier",['jquery.sap.global', 'sap/ui/commons/Callou
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -13950,7 +13958,7 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 	 * @implements sap.ui.core.PopupInterface
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -14180,6 +14188,9 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 		if (initialFocusId) {
 			this._oPopup.setInitialFocusId(initialFocusId);
 		}
+		
+		this._oPreviousFocus = Popup.getCurrentFocusInfo();
+		
 		this._oPopup.open(400);
 		
 		this._initDom(jQuery.proxy(this._setFocusFirst, this), jQuery.proxy(this._setFocusLast, this), jQuery.proxy(this._applyChanges, this));
@@ -14202,6 +14213,7 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 			return;
 		}
 		this._oPopup.close(400);
+		jQuery.sap.delayedCall(400, this, 'restorePreviousFocus');
 		this._cleanupDom();
 	};
 	
@@ -14315,6 +14327,10 @@ sap.ui.define("sap/ui/ux3/Overlay",['jquery.sap.global', 'sap/ui/core/Control', 
 		return this._oPopup.isOpen();
 	};
 	
+	/* restore previous focus when closing */
+	Overlay.prototype.restorePreviousFocus = function() {
+		Popup.applyFocusInfo(this._oPreviousFocus);
+	};
 
 	return Overlay;
 
@@ -14348,7 +14364,7 @@ sap.ui.define("sap/ui/ux3/OverlayContainer",['jquery.sap.global', './Overlay', '
 	 * @extends sap.ui.ux3.Overlay
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -14507,7 +14523,7 @@ sap.ui.define("sap/ui/ux3/OverlayDialog",['jquery.sap.global', 'sap/ui/core/Inte
 	 * @class
 	 * Dialog implementation based on the Overlay. If used in a Shell it leaves the Tool-Palette, Pane-Bar and Header-Items accessible.
 	 * @extends sap.ui.ux3.Overlay
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -14824,7 +14840,7 @@ sap.ui.define("sap/ui/ux3/QuickView",['jquery.sap.global', 'sap/ui/commons/Callo
 	 * @extends sap.ui.commons.CalloutBase
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -15349,7 +15365,7 @@ sap.ui.define("sap/ui/ux3/Shell",['jquery.sap.global', 'sap/ui/commons/Menu', 's
 	 * The Ux3 GoldReflection Shell, which is an application frame with navigation capabilities.
 	 * It is supposed to be added to a direct child of the BODY tag of a page and there should be no other parts of the page consuming space outside the Shell.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -17992,7 +18008,7 @@ sap.ui.define("sap/ui/ux3/ThingAction",['jquery.sap.global', 'sap/ui/core/Elemen
 	 * @class
 	 * Thing Action for Swatch, QuickView, Thinginspector
 	 * @extends sap.ui.core.Element
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -18086,7 +18102,7 @@ sap.ui.define("sap/ui/ux3/ThingGroup",['jquery.sap.global', 'sap/ui/core/Element
 	 * @class
 	 * Thing Group Area
 	 * @extends sap.ui.core.Element
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -18162,7 +18178,7 @@ sap.ui.define("sap/ui/ux3/ThingViewer",['jquery.sap.global', 'sap/ui/core/Contro
 	 * ThingViewer: Same as ThingInspector but decoupled from the Overlay and the ActionBar.
 	 * The control can be added to a Parent container that has a defined width. The ThingViewer fill the whole container. If the parent container has no width defined the control will not work properly.
 	 * @extends sap.ui.core.Control
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -18701,7 +18717,7 @@ sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control'
 	 * @implements sap.ui.core.PopupInterface
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -18863,72 +18879,6 @@ sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control'
 			opened : {}
 		}
 	}});
-
-	
-
-
-	/**
-	 * Opens the pop up.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#open
-	 * @function
-	 * @param {string} sMy
-	 *         The ToolPopup's content reference position for docking. This value is optional if the position of the ToolPopup is set via 'setPosition'.
-	 * @param {string} sAt
-	 *         The "of" element's reference point for docking to. This value is optional if the position of the ToolPopup is set via 'setPosition'.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	
-
-
-	
-
-
-	/**
-	 * Whether the ToolPopup is currently enabled or not.
-	 * 
-	 * Applications can't control the enabled state via a property. A ToolPopup is implicitly enabled while it is OPENING or OPEN. Descendant controls that honor the enabled state of their ancestors will appear disabled after the ToolPopup is closed.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#getEnabled
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @since 1.13.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Add an identified area to the parent Popup as additional focusable area that can be used for an "autoclose" ToolPopup. This added area can be focused and prevent the ToolPopup from closing if the added area is outside of the ToolPopup.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#addFocusableArea
-	 * @function
-	 * @param {string} sId
-	 *         ID of a control or DOM-node
-	 * @type void
-	 * @public
-	 * @since 1.19.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Removes the control's or DOM-node's id from focusable areas.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#removeFocusableArea
-	 * @function
-	 * @param {string} sId
-	 *         ID of a control or DOM-node
-	 * @type void
-	 * @public
-	 * @since 1.19.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
 
 	// regex rules for arrows corresponding to the given 'my' and 'at' parameters
 	// these regexes also consider the new offset style of jQueryUI-position from version 1.10.x
@@ -19182,8 +19132,16 @@ sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control'
 
 		if (!this._sInitialFocusId) {
 			var sInitFocusId = fnGetInitialFocus(this);
-			var oControl = jQuery.sap.byId(sInitFocusId);
-			oControl.focus();
+
+			// Compare the initial focus id with the current focus that is
+			// stored in the FocusHandler in the core.
+			// If the initial focus was set properly already by the Popup
+			// don't focus twice. Because Internet Explorer will be confused with
+			// two focusin and focusout events
+			if (sInitFocusId !== sap.ui.getCore().getCurrentFocusedControlId()) {
+				var oControl = jQuery.sap.byId(sInitFocusId);
+				oControl.focus();
+			}
 		}
 
 		// forward the Popup's opened event accordingly
@@ -19211,6 +19169,18 @@ sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control'
 		return eState !== sap.ui.core.OpenState.OPENING && eState !== sap.ui.core.OpenState.OPEN;
 	};
 
+	// first variant of the documentation: to be parsed by the metamodel derivation
+	/**
+	 * Opens the pop up.
+	 *
+	 * @name sap.ui.ux3.ToolPopup#open
+	 * @function
+	 * @param {string} sMy The ToolPopup's content reference position for docking. This value is optional if the position of the ToolPopup is set via 'setPosition'.
+	 * @param {string} sAt The "of" element's reference point for docking to. This value is optional if the position of the ToolPopup is set via 'setPosition'.
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	// second variant of the documentation: public documentation
 	/**
 	 * This opens the ToolPopup. It is checked which control wants to open the ToolPopup. The Shell was previously set as parent so the
 	 * corresponding parent element is used to set the correct position of the ToolPopup.
@@ -19626,6 +19596,7 @@ sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control'
 	 * @since 1.13.1
 	 * @return {boolean} whether the ToolPopup is currently enabled or not.
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ToolPopup.prototype.getEnabled = function() {
 		var eState = this.oPopup ? this.oPopup.getOpenState() : sap.ui.core.OpenState.CLOSED; // assuming that a ToolPopup without a Popup can’t be open
@@ -19709,7 +19680,6 @@ sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control'
 	/**
 	 * Sets the position of the pop up, the same parameters as for sap.ui.core.Popup can be used.
 	 *
-	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -19868,7 +19838,7 @@ sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control'
 	 *
 	 * @param {Element[]} aAutoCloseAreas
 	 * @public
-	 * @since: 1.19.0
+	 * @since 1.19.0
 	 */
 	ToolPopup.prototype.setAutoCloseAreas = function(aAutoCloseAreas) {
 		this._ensurePopup();
@@ -19882,6 +19852,7 @@ sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control'
 	 * @param {sap.ui.core.string} [sID] Id of the corresponding element that should be focusable as well
 	 * @since 1.19.0
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ToolPopup.prototype.addFocusableArea = function(sID) {
 		this._ensurePopup();
@@ -19902,10 +19873,10 @@ sap.ui.define("sap/ui/ux3/ToolPopup",['jquery.sap.global', 'sap/ui/core/Control'
 	 * Chaining is only possible if a valid type (string) is given.
 	 *
 	 * @param {sap.ui.core.string} [sID] of the corresponding element
-	 * @since: 1.19.0
+	 * @since 1.19.0
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-
 	ToolPopup.prototype.removeFocusableArea = function(sID) {
 		this._ensurePopup();
 
@@ -19987,7 +19958,7 @@ sap.ui.define("sap/ui/ux3/ExactBrowser",['jquery.sap.global', 'sap/ui/commons/Bu
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -20389,7 +20360,7 @@ sap.ui.define("sap/ui/ux3/Feed",['jquery.sap.global', 'sap/ui/commons/DropdownBo
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -20894,7 +20865,7 @@ sap.ui.define("sap/ui/ux3/FeedChunk",['jquery.sap.global', 'sap/ui/commons/MenuB
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -21595,7 +21566,7 @@ sap.ui.define("sap/ui/ux3/ThingInspector",['jquery.sap.global', './ActionBar', '
 	 * @class
 	 * Thing Inspector
 	 * @extends sap.ui.ux3.Overlay
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -22340,7 +22311,7 @@ sap.ui.define("sap/ui/ux3/Exact",['jquery.sap.global', 'sap/ui/commons/Button', 
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public

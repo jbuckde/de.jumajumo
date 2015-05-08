@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -50,17 +50,17 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			/**
 			 * The color of the Icon. If color is not defined here, the Icon inherits the color from its DOM parent.
 			 */
-			color : {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null},
+			color : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
 			 * This color is shown when icon is hovered. This property has no visual effect when run on mobile device.
 			 */
-			hoverColor : {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null},
+			hoverColor : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
 			 * This color is shown when icon is pressed/activated by the user.
 			 */
-			activeColor : {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null},
+			activeColor : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
 			 * This is the width of the DOM element which contains the Icon. Setting this property doesn't affect the size of the font. If you want to make the font bigger, increase the size property.
@@ -75,17 +75,17 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			/**
 			 * Background color of the Icon in normal state.
 			 */
-			backgroundColor : {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null},
+			backgroundColor : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
 			 * Background color for Icon in hover state. This property has no visual effect when run on mobile device.
 			 */
-			hoverBackgroundColor : {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null},
+			hoverBackgroundColor : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
 			 * Background color for Icon in active state.
 			 */
-			activeBackgroundColor : {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null},
+			activeBackgroundColor : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
 			 * A decorative icon is included for design reasons. Accessibility tools will ignore decorative icons. Decorative icons don't have tab stop.
@@ -159,11 +159,11 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 				$Icon.addClass("sapUiIconActive");
 	
 				if (sActiveColor) {
-					$Icon.css("color", sActiveColor);
+					this._addColorClass(sActiveColor, "color");
 				}
 	
 				if (sActiveBackgroundColor) {
-					$Icon.css("background-color", sActiveBackgroundColor);
+					this._addColorClass(sActiveBackgroundColor, "background-color");
 				}
 			}
 		}
@@ -217,15 +217,14 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	Icon.prototype.onmouseover = function() {
 	
 		var sHoverColor = this.getHoverColor(),
-			sHoverBackgroundColor = this.getHoverBackgroundColor(),
-			$Icon = this.$();
+			sHoverBackgroundColor = this.getHoverBackgroundColor();
 	
 		if (sHoverColor) {
-			$Icon.css("color", sHoverColor);
+			this._addColorClass(sHoverColor, "color");
 		}
 	
 		if (sHoverBackgroundColor) {
-			$Icon.css("background-color", sHoverBackgroundColor);
+			this._addColorClass(sHoverBackgroundColor, "background-color");
 		}
 	};
 	
@@ -278,11 +277,11 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			$Icon.addClass("sapUiIconActive");
 	
 			if (sActiveColor) {
-				$Icon.css("color", sActiveColor);
+				this._addColorClass(sActiveColor, "color");
 			}
 	
 			if (sActiveBackgroundColor) {
-				$Icon.css("background-color", sActiveBackgroundColor);
+				this._addColorClass(sActiveBackgroundColor, "background-color");
 			}
 		}
 	};
@@ -308,10 +307,8 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	/* =========================================================== */
 	
 	Icon.prototype._restoreColors = function() {
-		this.$().css({
-			"color": this.getColor() || "",
-			"background-color": this.getBackgroundColor() || ""
-		});
+		this._addColorClass(this.getColor() || "", "color");
+		this._addColorClass(this.getBackgroundColor() || "", "background-color");
 	};
 	
 	/* =========================================================== */
@@ -367,9 +364,35 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	
 	Icon.prototype.setColor = function(sColor) {
 		this.setProperty("color", sColor, true);
-		this.$().css("color", sColor);
+		this._addColorClass(sColor, "color");
 	
 		return this;
+	};
+	
+	Icon.prototype._addColorClass = function(sColor, sCSSPropName) {
+		var $Icon = this.$(),
+				that = this;
+
+		var sCSSClassNamePrefix = "";
+		if (sCSSPropName === "color") {
+			sCSSClassNamePrefix = "sapUiIconColor";
+		} else if (sCSSPropName === "background-color") {
+			sCSSClassNamePrefix = "sapUiIconBGColor";
+		} else {
+			return;
+		}
+
+		jQuery.each(sap.ui.core.IconColor, function(sPropertyName, sPropertyValue) {
+			that.removeStyleClass(sCSSClassNamePrefix + sPropertyValue);
+		});
+
+		if (sColor in sap.ui.core.IconColor) {
+			// reset the relevant css property
+			$Icon.css(sCSSPropName, "");
+			this.addStyleClass(sCSSClassNamePrefix + sColor);
+		} else {
+			$Icon.css(sCSSPropName, sColor);
+		}
 	};
 	
 	Icon.prototype.setActiveColor = function(sColor) {
@@ -382,7 +405,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 	
 	Icon.prototype.setBackgroundColor = function(sColor) {
 		this.setProperty("backgroundColor", sColor, true);
-		this.$().css("background-color", sColor);
+		this._addColorClass(sColor, "background-color");
 	
 		return this;
 	};

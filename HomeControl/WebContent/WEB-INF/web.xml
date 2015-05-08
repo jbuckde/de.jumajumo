@@ -41,5 +41,4 @@
 		<url-pattern>/dispatcher/*</url-pattern>
 	</servlet-mapping>
 
-
-</web-app>
+	</web-app>

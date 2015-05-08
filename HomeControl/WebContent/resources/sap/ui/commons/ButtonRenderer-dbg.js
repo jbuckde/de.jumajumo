@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @namespace
 	 */
 	var ButtonRenderer = {

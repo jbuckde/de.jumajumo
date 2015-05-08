@@ -270,6 +270,7 @@
     "sapUiMarginSmall": "1rem",
     "sapUiMarginMedium": "2rem",
     "sapUiMarginLarge": "3rem",
+    "sapUiEscapedEmptyString": "",
     "sapUiMnuItmHeight": "20px",
     "sapUiUfdShellHeadCenterAnimDuration": "200ms",
     "sapUiUfdShellHeadCenterAnimDelay": "30ms",

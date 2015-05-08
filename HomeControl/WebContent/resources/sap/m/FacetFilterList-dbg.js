@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 * @class
 	 * FacetFilterList represents a list of values for the FacetFilter control.
 	 * @extends sap.m.List
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -52,6 +52,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			 * Indicates that the list is displayed as a button when the FacetFilter type is set to Simple.
 			 */
 			active : {type : "boolean", group : "Behavior", defaultValue : true},
+
 
             /**
              * If true, enable case-insensitive search for OData .
@@ -471,7 +472,6 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 					}
 				}
 			}
-	
 			if (oBinding) { // There will be no binding if the items aggregation has not been bound to a model, so search is not
 											// possible
 				if (sSearchVal || numberOfsPath > 0) {
@@ -479,7 +479,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 					if (path) {
 						var oUserFilter = new sap.ui.model.Filter(path, sap.ui.model.FilterOperator.Contains, sSearchVal);
 						if (oBinding.getModel() instanceof sap.ui.model.odata.ODataModel && this.getEnableCaseInsensitiveSearch()){
-							//notice the single quotes wrapping the value from the UI control!
+							 //notice the single quotes wrapping the value from the UI control!
 							var sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
 							sEncodedString = sEncodedString.toLowerCase();
 							oUserFilter = new sap.ui.model.Filter("tolower(" + path + ")", sap.ui.model.FilterOperator.Contains, sEncodedString);
@@ -565,7 +565,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	
 	/**
 	 * Remove the given key from the selected keys cache. This does not deselect the associated item and therefore does
-	 * not cause onItemSetSelected to be called.
+	 * not cause onItemSelectedChange to be called.
 	 * 
 	 * @param sKey The key to remove. If null, then the value of sText will be used as the key.
 	 * @param sText If key is null then this parameter will be used as the key.
@@ -613,7 +613,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 	
 	
-	FacetFilterList.prototype.onItemSetSelected = function(oItem, bSelect) {
+	FacetFilterList.prototype.onItemSelectedChange = function(oItem, bSelect) {
 		
 		// This method override runs when setSelected is called from ListItemBase. Here we update
 		// the selected keys cache based on whether the item is being selected or not. We also
@@ -624,7 +624,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		} else {
 			this._removeSelectedKey(oItem.getKey(), oItem.getText());
 		}
-		sap.m.ListBase.prototype.onItemSetSelected.apply(this, arguments);
+		sap.m.ListBase.prototype.onItemSelectedChange.apply(this, arguments);
 		
 		this._updateSelectAllCheckBox(bSelect);
 		this.setActive(this.getActive() || bSelect);

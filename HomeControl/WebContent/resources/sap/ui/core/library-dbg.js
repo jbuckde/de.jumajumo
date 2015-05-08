@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * @namespace
 	 * @name sap.ui.core
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @public
 	 */
 	
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.core",
-		version: "1.26.10",
+		version: "1.28.5",
 		types: [
 			
 			// builtin types
@@ -80,6 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.Control",
 			"sap.ui.core.HTML",
 			"sap.ui.core.Icon",
+			"sap.ui.core.InvisibleText",
 			"sap.ui.core.LocalBusyIndicator",
 			"sap.ui.core.ScrollBar",
 			"sap.ui.core.TooltipBase",
@@ -1443,12 +1444,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	lazy("sap.ui", "htmlfragment", "sap.ui.core.Fragment");
 
 	each("sap.ui.model.", ["Filter","Sorter","json.JSONModel","resource.ResourceModel","odata.ODataModel","odata.v2.ODataModel","xml.XMLModel"]);
-	each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime","FileSize"]);
+	each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime","FileSize", "Currency"]);
+	each("sap.ui.model.odata.type.", ["Boolean","Byte","DateTime","DateTimeOffset","Double","Decimal","Guid","Int16","Int32","Int64","SByte","Single","String","Time"]);
 	each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller"]);
 	each("sap.ui.core.mvc.", ["Controller", "View", "JSView", "JSONView", "XMLView", "HTMLView", "TemplateView"], "sap.ui");
 	each("sap.ui.core.", ["Component"], "sap.ui");
 	each("sap.ui.core.tmpl.", ["Template"], "sap.ui");
-	
+	each("sap.ui.core.routing.", ["HashChanger", "History", "Route", "Router", "Target", "Targets", "Views"]);
+
 	return sap.ui.core;
 	
 }, /* bExport= */ false);

@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	 * @implements sap.m.IconTab
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -133,7 +133,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		}
 	};
 
-	
 	IconTabFilter.prototype.invalidate = function() {
 		var oIconTabHeader = this.getParent(),
 			oIconTabBar;

@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -54,18 +54,36 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			 * Title will be put to capital letters by default, otherwise set this property to 'false'
 			 * @since 1.13.2
 			 */
-			upperCase : {type : "boolean", group : "Appearance", defaultValue : true}
+			upperCase : {type : "boolean", group : "Appearance", defaultValue : true},
+			
+			/**
+			 * This property specifies the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		}
 	}});
 	
-	
-	// GroupHeaderListItem is not selectable
-	GroupHeaderListItem.prototype.isSelectable = function() {
-		return false;
+	// GroupHeaderListItem does not respect the list mode
+	GroupHeaderListItem.prototype.getMode = function() {
+		return sap.m.ListMode.None;
 	};
 	
 	GroupHeaderListItem.prototype.shouldClearLastValue = function() {
 		return true;
+	};
+	
+	// returns responsible table control for the item
+	GroupHeaderListItem.prototype.getTable = function() {
+		var oParent = this.getParent();
+		if (oParent instanceof sap.m.Table) {
+			return oParent;
+		}
+		
+		// support old list with columns aggregation
+		if (oParent && oParent.getMetadata().getName() == "sap.m.Table") {
+			return oParent;
+		}
 	};
 	
 	GroupHeaderListItem.prototype.onBeforeRendering = function() {

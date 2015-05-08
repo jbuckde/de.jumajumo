@@ -10,6 +10,10 @@
 	vertical-align: baseline;
 }
 
+.sapMObjLItem > .sapMLIBContent {
+	overflow: hidden;
+}
+
 .sapMLIB.sapMObjLItem {
 	padding: 1rem;
 }
@@ -173,4 +177,11 @@ html[data-sap-ui-browser="ie10"] .sapMObjLItem .sapMLIBContent,
 html[data-sap-ui-browser="ie11"] .sapMObjLItem .sapMLIBContent
 {
 	width: 100%;
+}
+
+/* overwrite transform for the markers favorite and flag icon */
+html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
+	-ms-transform: none; /* IE 9 */
+	-webkit-transform: none; /* Chrome, Safari, Opera */
+	transform: none;
 }

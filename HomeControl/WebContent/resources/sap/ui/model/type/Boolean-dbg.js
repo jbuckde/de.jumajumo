@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -28,14 +28,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @alias sap.ui.model.type.Boolean
 	 */
 	var BooleanType = SimpleType.extend("sap.ui.model.type.Boolean", /** @lends sap.ui.model.type.Boolean.prototype */ {
-		
+
 		constructor : function () {
 			SimpleType.apply(this, arguments);
 			this.sName = "Boolean";
 		}
-	
+
 	});
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
 	 */
@@ -43,8 +43,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		if (bValue == undefined || bValue == null) {
 			return null;
 		}
-		switch (sInternalType) {
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "boolean":
+			case "any":
 				return bValue;
 			case "string":
 				return bValue.toString();
@@ -54,37 +55,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.FormatException("Don't know how to format Boolean to " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 */
 	BooleanType.prototype.parseValue = function(oValue, sInternalType) {
-		switch (sInternalType) {
+		var oBundle;
+		switch (this.getPrimitiveType(sInternalType)) {
 			case "boolean":
 				return oValue;
 			case "string":
 				if (oValue.toLowerCase() == "true" || oValue == "X") {
 					return true;
 				}
-				if (oValue.toLowerCase() == "false" || oValue == "") {
+				if (oValue.toLowerCase() == "false" || oValue == "" || oValue == " ") {
 					return false;
 				}
-				throw new sap.ui.model.ParseException("Don't know how to parse Boolean from " + sInternalType);
+				oBundle = sap.ui.getCore().getLibraryResourceBundle();
+				throw new sap.ui.model.ParseException(oBundle.getText("Boolean.Invalid"));
 			case "int": // TODO return 1 for true?!
 			case "float":
 			default:
 				throw new sap.ui.model.ParseException("Don't know how to parse Boolean from " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 */
 	BooleanType.prototype.validateValue = function(sValue) {
-	
+
 	};
-	
-	
+
+
 
 	return BooleanType;
 

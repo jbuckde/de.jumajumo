@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.26.10
+		 * @version 1.28.5
 		 *
 		 * @constructor
 		 * @public
@@ -68,6 +68,14 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				 */
 				type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: sap.m.SwitchType.Default }
 			},
+			associations: {
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			},
 			events: {
 
 				/**
@@ -111,7 +119,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			}
 
 			this._iCurrentPosition = iPosition;
-			this._$SwitchInner[0].style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = iPosition + "px";
+			this.getDomRef("inner").style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = iPosition + "px";
 			this._setTempState(Math.abs(iPosition) < Switch._SWAPPOINT);
 		};
 
@@ -121,31 +129,52 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			}
 
 			this._bTempState = b;
-			this._$Handle[0].setAttribute("data-sap-ui-swt", b ? this._sOn : this._sOff);
+			this.getDomRef("handle").setAttribute("data-sap-ui-swt", b ? this._sOn : this._sOff);
 		};
 
 		Switch.prototype._setDomState = function(bState) {
 			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
-				sState = bState ? this._sOn : this._sOff;
+				sState = bState ? this._sOn : this._sOff,
+				oDomRef = this.getDomRef();
 
-			if (!this._$Switch) {
-				return this;
+			if (!oDomRef) {
+				return;
 			}
 
-			this._$Handle[0].setAttribute("data-sap-ui-swt", sState);
+			var sId = this.getId(),
+				oOnDomRef = oDomRef.querySelector("#" + sId + "-texton"),
+				oOffDomRef = oDomRef.querySelector("#" + sId + "-textoff"),
+				sAriaLabelledBy = oDomRef.getAttribute("aria-labelledby"),
+				$Switch = this.$("switch"),
+				oSwitchInnerDomRef = this.getDomRef("inner"),
+				oCheckboxDomRef = null;
+
+			this.getDomRef("handle").setAttribute("data-sap-ui-swt", sState);
 
 			if (this.getName()) {
-				this._$Checkbox[0].setAttribute("checked", bState);
-				this._$Checkbox[0].setAttribute("value", sState);
+				oCheckboxDomRef = this.getDomRef("input");
+				oCheckboxDomRef.setAttribute("checked", bState);
+				oCheckboxDomRef.setAttribute("value", sState);
 			}
 
-			bState ? this._$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On")
-					: this._$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
+			if (bState) {
+				$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
+				oDomRef.setAttribute("aria-checked", "true");
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sId + "-textoff", sId + "-texton"));
+				oOnDomRef.removeAttribute("aria-hidden");
+				oOffDomRef.setAttribute("aria-hidden", "true");
+			} else {
+				$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
+				oDomRef.setAttribute("aria-checked", "false");
+				oDomRef.setAttribute("aria-labelledby", sAriaLabelledBy.replace(sId + "-texton", sId + "-textoff"));
+				oOnDomRef.setAttribute("aria-hidden", "true");
+				oOffDomRef.removeAttribute("aria-hidden");
+			}
 
-			this._$Switch.addClass(CSS_CLASS + "Trans");
+			$Switch.addClass(CSS_CLASS + "Trans");
 
 			// remove inline styles
-			this._$SwitchInner[0].style.cssText = "";
+			oSwitchInnerDomRef.style.cssText = "";
 		};
 
 		Switch._getCssParameter = function(sParameter) {
@@ -187,31 +216,6 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			this._sOff = this.getCustomTextOff() || Swt._oRb.getText("SWITCH_OFF");
 		};
 
-		/**
-		 * Required adaptations after rendering.
-		 *
-		 * @private
-		 */
-		Switch.prototype.onAfterRendering = function() {
-			var $SwitchCont,
-				CSS_CLASS = "." + SwitchRenderer.CSS_CLASS;
-
-			// switch control container jQuery DOM reference
-			$SwitchCont = this.$();
-
-			// switch jQuery DOM reference
-			this._$Switch = $SwitchCont.find(CSS_CLASS);
-
-			// switch inner jQuery DOM reference
-			this._$SwitchInner = this._$Switch.children(CSS_CLASS + "Inner");
-
-			// switch handle jQuery DOM reference
-			this._$Handle = this._$SwitchInner.children(CSS_CLASS + "Handle");
-
-			// checkbox jQuery DOM reference
-			this._$Checkbox = $SwitchCont.children("input");
-		};
-
 		/* =========================================================== */
 		/* Event handlers                                              */
 		/* =========================================================== */
@@ -224,7 +228,8 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 */
 		Switch.prototype.ontouchstart = function(oEvent) {
 			var oTargetTouch = oEvent.targetTouches[0],
-				CSS_CLASS = SwitchRenderer.CSS_CLASS;
+				CSS_CLASS = SwitchRenderer.CSS_CLASS,
+				$SwitchInner = this.$("inner");
 
 			// mark the event for components that needs to know if the event was handled by the Switch
 			oEvent.setMarked();
@@ -248,12 +253,12 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 			jQuery.sap.delayedCall(0, this, "focus");
 
 			// add active state
-			this._$Switch.addClass(CSS_CLASS + "Pressed")
-						.removeClass(CSS_CLASS + "Trans");
+			this.$("switch").addClass(CSS_CLASS + "Pressed")
+							.removeClass(CSS_CLASS + "Trans");
 
 			this._bTempState = this.getState();
 			this._iStartPressPosX = oTargetTouch.pageX;
-			this._iPosition = this._$SwitchInner.position().left;
+			this._iPosition = $SwitchInner.position().left;
 
 			// track movement to determine if the interaction was a click or a tap
 			this._bDragging = false;
@@ -356,7 +361,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				assert(!fnTouch.find(oEvent.touches, this._iActiveTouchId), "touchend still active");
 
 				// remove active state
-				this._$Switch.removeClass(SwitchRenderer.CSS_CLASS + "Pressed");
+				this.$("switch").removeClass(SwitchRenderer.CSS_CLASS + "Pressed");
 
 				// note: update the DOM before the change event is fired for better user experience
 				this._setDomState(this._bDragging ? this._bTempState : !this.getState());

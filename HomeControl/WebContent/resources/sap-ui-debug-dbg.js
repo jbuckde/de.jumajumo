@@ -31,7 +31,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	 * @class Control Tree used for the Debug Environment
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @alias sap.ui.debug.ControlTree
 	 * @private
 	 */
@@ -403,7 +403,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	return ControlTree;
 
 }, /* bExport= */ true);
-
 },
 	"sap/ui/debug/DebugEnv.js":function(){/*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
@@ -423,7 +422,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', './ControlTree', '.
 	 * @class Central Class for the Debug Environment
 	 *
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @private
 	 * @alias sap.ui.debug.DebugEnv
 	 */
@@ -729,7 +728,6 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', './ControlTree', '.
 	return DebugEnv;
 
 }, /* bExport= */ true);
-
 },
 	"sap/ui/debug/Highlighter.js":function(){/*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
@@ -822,7 +820,6 @@ sap.ui.define('sap/ui/debug/Highlighter', ['jquery.sap.global', 'jquery.sap.dom'
 	return Highlighter;
 
 }, /* bExport= */ true);
-
 },
 	"sap/ui/debug/LogViewer.js":function(){/*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
@@ -1013,7 +1010,6 @@ sap.ui.define('sap/ui/debug/LogViewer', ['jquery.sap.global'],
 	return LogViewer;
 
 }, /* bExport= */ true);
-
 },
 	"sap/ui/debug/PropertyList.js":function(){/*!
  * SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
@@ -1035,7 +1031,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @param {sap.ui.core.Core}
 	 *            oCore the core instance to use for analysis
@@ -1128,7 +1124,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					aHTML.push("</td></tr>");
 					bHeaderCreated = true;
 				}
-				oMetadata.getJSONKeys(); // side effect: properties are enriched with _oParent
 				this.printProperties(aHTML, oControl, mProperties);
 			}
 			var mProperties = this.getAggregationsAsProperties(oMetadata);
@@ -1139,7 +1134,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					aHTML.push("</td></tr>");
 					bHeaderCreated = true;
 				}
-				oMetadata.getJSONKeys(); // side effect: properties are enriched with _oParent
 				this.printProperties(aHTML, oControl, mProperties);
 			}
 			oMetadata = oMetadata.getParent();
@@ -1558,7 +1552,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	return PropertyList;
 
 }, /* bExport= */ true);
-
 }
 }});
 jQuery.sap.require("sap.ui.debug.DebugEnv");

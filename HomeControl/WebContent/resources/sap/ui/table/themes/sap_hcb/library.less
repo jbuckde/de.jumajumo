@@ -41,7 +41,6 @@
 }
 
 .sapUiTableColHdrCnt > .sapUiTableSelAllEnabled,
-.sapUiTableColHdrScr > .sapUiTableColHdr > .sapUiTableCol,
 .sapUiTableCell > .sapUiTv,
 .sapUiTableCell .sapUiTfComboIcon,
 .sapUiTableCell > .sapUiTfStd,
@@ -155,7 +154,7 @@
 	margin-bottom: 2px;
 }
 
-.sapUiTableHdrTitle {
+.sapUiTable .sapUiTableHdrTitle {
 	font-size: @sapUiFontHeader3Size;
 	height: 100%;
 }
@@ -299,12 +298,6 @@
 	padding: 0 10px;
 }
 
-.sapUiSizeCondensed .sapUiTableCellControlPadding {
-	padding-left:0.5rem;
-	padding-right:0.5rem;
-}
-
-
 .sapUiTableCell>.sapUiTv {
 	font-weight: normal;
 	font-size: 12px;
@@ -380,7 +373,7 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	color: @sapHCStandardFG;
 }
 
-.sapUiTableTr > td:focus {
+.sapUiTableTr > td:focus, .sapUiTableRowHdrScr > .sapUiTableRowHdr:focus, .sapUiTableColHdr *:focus, .sapUiTableColRowHdr:focus {
 	outline: 0.125rem dotted @sapHCStandardFG;
 	outline-offset: -0.125rem;
 }

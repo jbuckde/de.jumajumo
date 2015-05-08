@@ -14,14 +14,14 @@ sap.ui.define(['jquery.sap.global'],
 	 * @class Base Class for Renderer.
 	 *
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @static
 	 * @public
 	 * @alias sap.ui.core.Renderer
 	 */
 	var Renderer = {
 	};
-	
+
 	/**
 	 * Provides some 'extends' functionality for Renderers.<br/> Creates a new
 	 * object (i.e. static class) that knows its parent (accessible from
@@ -39,6 +39,8 @@ sap.ui.define(['jquery.sap.global'],
 		//var oChild = jQuery.extend(new jQuery.sap.newObject(oParentClass), {_super: oParentClass});
 		//return oChild;
 		var oChild = {_super: oParentClass};
+
+		/*eslint-disable no-loop-func */
 		for (var f in oParentClass) {
 			if (typeof (oParentClass[f]) == "function") {
 				oChild[f] = (function(){
@@ -49,9 +51,10 @@ sap.ui.define(['jquery.sap.global'],
 				}());
 			}
 		}
+		/*eslint-enable no-loop-func */
 		return oChild;
 	};
-	
+
 	/**
 	 * Returns the TextAlignment for the provided configuration.
 	 *
@@ -66,7 +69,7 @@ sap.ui.define(['jquery.sap.global'],
 	Renderer.getTextAlign = function(oTextAlign, oTextDirection) {
 		var sTextAlign = "";
 		var oConfig = sap.ui.getCore().getConfiguration();
-	
+
 		switch (oTextAlign) {
 		case sap.ui.core.TextAlign.End:
 			switch (oTextDirection) {

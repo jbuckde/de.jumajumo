@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -105,6 +105,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 		
 		this._cont = new SplitContainer(this.getId() + "-container");
 		this._cont._bRootContent = true; // see e.g. sap.m.App#onAfterRendering
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			var that = this;
+			this._cont.addEventDelegate({
+				onAfterRendering : function() {
+					that._cont.$("canvas").attr("role", "main");
+					that._cont.$("pane").attr("role", "complementary");
+				}
+			});
+		}
 		this.setAggregation("canvasSplitContainer", this._cont, true);
 		
 		this._curtCont = new SplitContainer(this.getId() + "-curt-container");

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -35,7 +35,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		properties : {
 
 			/**
-			 * Type of input (e.g. Text, Number, Email, Phone)
+			 * Type of input (e.g. Text, Number, Email, Phone). This is the HTML type for the "input" tag. It is supported
+			 * by browsers natively. Touch devices open various soft keyboard layouts depending on the given input type.
+			 * However, only the default value <code>sap.m.InputType.Text</code> may be used in combination with data model formats.
+			 * <code>sap.ui.model</code> defines extended formats that are mostly incompatible with normal HTML
+			 * representations for numbers and dates.
 			 */
 			type : {type : "sap.m.InputType", group : "Data", defaultValue : sap.m.InputType.Text},
 
@@ -210,7 +214,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 
 	IconPool.insertFontFaceStyle();
-	
+
+	// create an F4 ARIA announcement and remember its ID for later use in the renderer:
+	Input.prototype._sAriaF4LabelId = new sap.ui.core.InvisibleText({
+		text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VALUEHELP_ARIA_F4")
+	}).toStatic().getId();
+
 	/**
 	 * The default filter function for one and two-value. It checks whether the item text begins with the typed value.
 	 * @param {string} sValue the current filter string
@@ -677,6 +686,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
 			// mark the event as already handled
 			oEvent.originalEvent._sapui_handledByControl = true;
+			this._iPopupListSelectedIndex = -1;
 			this._oSuggestionPopup.close();
 
 			// if popup is open, simply returns from here to prevent from setting the input to the last known value.
@@ -701,12 +711,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
 			if (this._iPopupListSelectedIndex >= 0) {
-				var oSelectedListItem = this._oList.getItems()[this._iPopupListSelectedIndex];
-
-				if (oSelectedListItem) {
-					this._fireSuggestionItemSelectedEvent(oSelectedListItem);
-				}
-
+				this._fireSuggestionItemSelectedEvent();
 				this._doSelect();
 
 				this._iPopupListSelectedIndex = -1;
@@ -799,6 +804,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				this._oList.destroyItems();
 			}
 		} else if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
+			this._iPopupListSelectedIndex = -1;
 			this._oSuggestionPopup.close();
 		}
 	};
@@ -839,6 +845,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				press : function() {
 					if (that.getShowTableSuggestionValueHelp()) {
 						that.fireValueHelpRequest({fromSuggestions: true});
+						that._iPopupListSelectedIndex = -1;
 						that._oSuggestionPopup.close();
 					}
 				}
@@ -1054,7 +1061,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					placement : sap.m.PlacementType.Vertical,
 					initialFocus : oInput
 				}).attachAfterClose(function() {
-					oInput._iPopupListSelectedIndex = -1;
+					if (oInput._iPopupListSelectedIndex  >= 0) {
+						oInput._fireSuggestionItemSelectedEvent();
+					}
 					// only destroy items in simple suggestion mode
 					if (oInput._oList instanceof Table) {
 						oInput._oList.removeSelections(true);
@@ -1089,13 +1098,35 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 								._getInputValue(oInput._oPopupInput
 										.getValue()));
 						oInput._changeProxy();
+						
+						if (oInput instanceof sap.m.MultiInput ) {
+							oInput._validateCurrentText();
+						}
+						
 				}).attachAfterClose(function() {
-					// only destroy items in simple suggestion mode
-					if (Table && !(oInput._oList instanceof Table)) {
-						oInput._oList.destroyItems();
-					} else {
-						oInput._oList.removeSelections(true);
+					
+					if (oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode()) {
+						
+						oInput._updateTokenizerInMultiInput();
+						oInput._tokenizerInPopup.destroy();
+						oInput._showIndicator();
+						setTimeout(function() {
+							oInput._setContainerSizes();
+						}, 0);
+						
+						
 					}
+					
+					// only destroy items in simple suggestion mode
+					if (oInput._oList) {
+						if (Table && !(oInput._oList instanceof Table)) {
+							oInput._oList.destroyItems();
+						} else {
+							oInput._oList.removeSelections(true);
+						}
+					}
+
+					
 				}).attachAfterOpen(function() {
 					var sValue = oInput.getValue();
 
@@ -1130,7 +1161,48 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			if (!oInput._hasTabularSuggestions() && !bTabular) {
 				oInput._oList = new List(oInput.getId() + "-popup-list", {
 					width : "100%",
-					showNoData : false
+					showNoData : false,
+					mode : sap.m.ListMode.SingleSelectMaster,
+					rememberSelections : false,
+					selectionChange : function(oEvent) {
+						var oListItem = oEvent.getParameter("listItem"),
+							sOriginalValue = oInput.getValue(),
+							sNewValue;
+
+						// fire suggestion item select event
+						oInput.fireSuggestionItemSelected({
+							selectedItem: oListItem._oItem
+						});
+
+						// choose which field should be used for the value
+						if (sOriginalValue !== oInput.getValue()) {
+							// if the event handler modified the input value we take this one as new value
+							sNewValue = oInput.getValue();
+						} else if (oListItem instanceof sap.m.DisplayListItem) {
+							// use label for two value suggestions
+							sNewValue = oListItem.getLabel();
+						} else {
+							// otherwise use title
+							sNewValue = oListItem.getTitle();
+						}
+
+						// update the input field
+						if (oInput._bUseDialog) {
+							oInput._oPopupInput.setValue(sNewValue);
+							oInput._oPopupInput._doSelect();
+						} else {
+							// call _getInputValue to apply the maxLength to the typed value
+							oInput._$input.val(oInput._getInputValue(sNewValue));
+							oInput._changeProxy();
+						}
+						oInput._iPopupListSelectedIndex = -1;
+						if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode())) {
+							oInput._oSuggestionPopup.close();
+						}						
+						if (!sap.ui.Device.support.touch) {
+							oInput._doSelect();
+						}
+					}
 				});
 			} else {
 				// tabular suggestions
@@ -1251,6 +1323,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			if (!bFilter && oInput.getFilterSuggests()) {
 				// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 				if (!oInput._bUseDialog) {
+					oInput._iPopupListSelectedIndex = -1;
 					oPopup.close();
 				} else {
 					// hide table on phone when value is empty
@@ -1294,43 +1367,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						}
 
 						oListItem.setType(oItem.getEnabled() ? sap.m.ListType.Active : sap.m.ListType.Inactive);
-						/*eslint-disable no-loop-func */
-						oListItem.attachPress(function () {
-							var sOriginalValue = oInput.getValue(),
-								sNewValue;
-
-							// fire suggestion item select event
-							oInput.fireSuggestionItemSelected({
-								selectedItem: this._oItem
-							});
-
-							// choose which field should be used for the value
-							if (sOriginalValue !== oInput.getValue()) {
-								// if the event handler modified the input value we take this one as new value
-								sNewValue = oInput.getValue();
-							} else if (bListItem) {
-								// use label for two value suggestions
-								sNewValue = this.getLabel();
-							} else {
-								// otherwise use title
-								sNewValue = this.getTitle();
-							}
-
-							// update the input field
-							if (oInput._bUseDialog) {
-								oInput._oPopupInput.setValue(sNewValue);
-								oInput._oPopupInput._doSelect();
-							} else {
-								// call _getInputValue to apply the maxLength to the typed value
-								oInput._$input.val(oInput._getInputValue(sNewValue));
-								oInput._changeProxy();
-							}
-							oPopup.close();
-							if (!sap.ui.Device.support.touch) {
-								oInput._doSelect();
-							}
-						});
-						/*eslint-enable no-loop-func */
 						oListItem._oItem = oItem;
 						oListItem.addEventDelegate(oListItemDelegate);
 						aHitItems.push(oListItem);
@@ -1365,6 +1401,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				if (!oInput._bUseDialog) {
 					if (oPopup.isOpen()) {
 						oInput._sCloseTimer = setTimeout(function() {
+							oInput._iPopupListSelectedIndex = -1;
 							oPopup.close();
 						}, 0);
 					}
@@ -1429,7 +1466,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				showSeparators: "All",
 				width: "100%",
 				enableBusyIndicator: false,
-				rememberSelection : false,
+				rememberSelections : false,
 				selectionChange: function (oEvent) {
 					var oInput = that,
 						sOriginalValue = oInput.getValue(),
@@ -1459,7 +1496,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						that._$input.val(that._getInputValue(sNewValue));
 						that._changeProxy();
 					}
-					that._oSuggestionPopup.close();
+					that._iPopupListSelectedIndex = -1;
+					
+					if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode())) {
+						oInput._oSuggestionPopup.close();
+					}
+
 					if (!sap.ui.Device.support.touch) {
 						that._doSelect();
 					}
@@ -1480,11 +1522,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		return this._oSuggestionTable;
 	};
 
-	Input.prototype._fireSuggestionItemSelectedEvent = function (oSelectedListItem) {
-		if (sap.m.ColumnListItem && oSelectedListItem instanceof sap.m.ColumnListItem) {
-			this.fireSuggestionItemSelected({selectedRow : oSelectedListItem});
-		} else {
-			this.fireSuggestionItemSelected({selectedItem : oSelectedListItem._oItem});
+	Input.prototype._fireSuggestionItemSelectedEvent = function () {
+		if (this._iPopupListSelectedIndex >= 0) {
+			var oSelectedListItem = this._oList.getItems()[this._iPopupListSelectedIndex];
+			if (oSelectedListItem) {
+				if (sap.m.ColumnListItem && oSelectedListItem instanceof sap.m.ColumnListItem) {
+					this.fireSuggestionItemSelected({selectedRow : oSelectedListItem});
+				} else {
+					this.fireSuggestionItemSelected({selectedItem : oSelectedListItem._oItem});
+				}
+			}
+			this._iPopupListSelectedIndex = -1;
 		}
 	};
 

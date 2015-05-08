@@ -6,6 +6,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
+	<properties>
+		<sapui5.version>1.28.5</sapui5.version>
+	</properties>
+
 	<repositories>
 		<repository>
 			<id>maven</id>
@@ -42,6 +46,12 @@
 			<artifactId>de.jumajumo.core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.webjars</groupId> -->
+<!-- 			<artifactId>openui5</artifactId> -->
+<!-- 			<version>1.28.5</version> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

@@ -269,5 +269,6 @@
     "sapUiMarginTiny": "0.5rem",
     "sapUiMarginSmall": "1rem",
     "sapUiMarginMedium": "2rem",
-    "sapUiMarginLarge": "3rem"
+    "sapUiMarginLarge": "3rem",
+    "sapUiEscapedEmptyString": ""
 }

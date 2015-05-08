@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.LocaleData
@@ -219,11 +219,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		/**
 		 * Get currency format pattern
 		 *
+		 * @param {string} sContext the context of the currency pattern (standard or accounting)
 		 * @returns {string} The pattern
 		 * @public
 		 */
-		getCurrencyPattern : function() {
-			return this._get("currencyFormat").standard;
+		getCurrencyPattern : function(sContext) {
+			return this._get("currencyFormat")[sContext] || this._get("currencyFormat").standard;
 		},
 		
 		/**
@@ -336,7 +337,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			var oCurrencySymbols = this._get("currencySymbols");
 			return (oCurrencySymbols && oCurrencySymbols[sCurrency]) || sCurrency;
 		},
-		
+
+		/**
+		 * Returns the currency code which is corresponded with the given currency symbol.
+		 *
+		 * @param {string} sCurrencySymbol The currency symbol which needs to be converted to currency code
+		 * @return {string} The corresponded currency code defined for the given currency symbol. Null is returned if no currency code can be found by using the given currency symbol.
+		 * @public
+		 * @since 1.27.0
+		 */
+		getCurrencyCodeBySymbol : function(sCurrencySymbol) {
+			var oCurrencySymbols = this._get("currencySymbols"), sCurrencyCode;
+			for (sCurrencyCode in oCurrencySymbols) {
+				if (oCurrencySymbols[sCurrencyCode] === sCurrencySymbol) {
+					return sCurrencyCode;
+				}
+			}
+			return null;
+		},
+
 		_getRelative : function(sType, iDiff) {
 			if (Math.abs(iDiff) <= 1) {
 				return this._get("dateField-" + sType + "-relative-" + iDiff);

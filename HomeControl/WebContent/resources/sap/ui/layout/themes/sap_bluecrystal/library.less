@@ -27,33 +27,29 @@
 }*/
 
 .sapUiForm .sapUiFormTitle > button{
-	height: 16px;
-	width: 16px;
+	height: 1rem;
+	width: 1rem;
 	padding-left: 0;
 	padding-right:0;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite{
-	padding-top: 1px;
-}
-
 html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite > img{
-	margin-top: -2px;
+	margin-top: -0.125rem;
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiBtnAct{
 	padding-left: 0;
-	padding-right:0px;
-	padding-top: 0px;
+	padding-right:0;
+	padding-top: 0;
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiBtnAct > img{
-	margin-left: -1px;
-	margin-top: -3px;
+	margin-left: -0.0625rem;
+	margin-top: -0.1875rem;
 }
 
 html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiBtnAct > img{
-	margin-left: -2px;
+	margin-left: -0.125rem;
 }
 
 .sapUiFormTitle > .sapMBtn{
@@ -63,9 +59,9 @@ html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiB
 }
 
 .sapUiFormTitle > .sapMBtn > .sapMBtnContent{
-	line-height: 16px;
-	height: 16px;
-	width: 16px;
+	line-height: 1rem;
+	height: 1rem;
+	width: 1rem;
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -75,10 +71,9 @@ html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiB
 	vertical-align: top;
 }
 
-
-/* Form placed directly in a body of a Fiori page */
-.sap-tablet .sapUiFioriObjectPage > section > div > .sapUiForm,
-.sap-desktop .sapUiFioriObjectPage > section > div > .sapUiForm {
+.sap-tablet .sapUiFioriObjectPage > section > .sapUiForm,
+.sap-desktop .sapUiFioriObjectPage > section > .sapUiForm {
+	margin: 1rem 0;
 	padding: 0 1rem;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -148,7 +143,7 @@ html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiB
 	font-size: @sapUiDesktopFontSize;
 }
 
-.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:first-child{
+.sapUiGrid > tbody > tr.sapUiGridTitle{
 	background-color: transparent;
 }
 
@@ -157,53 +152,53 @@ html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiB
 }
 
 .sapUiGrid > tbody > tr > td:first-child{
-	padding-left: 16px;
+	padding-left: 1rem;
 }
 
 .sapUiGrid > tbody > tr:first-child > td, /* if no title */
-.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:nth-child(2) > td{
-	padding-top: 16px;
+.sapUiForm[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td{
+	padding-top: 1rem;
 }
 
 .sapUiGrid > tbody > tr > td:last-child{
-	padding-right: 16px;
+	padding-right: 1rem;
 }
 
 .sapUiGrid > tbody > tr:last-child > td{
-	padding-bottom: 16px;
+	padding-bottom: 1rem;
 }
 
 .sapUiGrid > tbody > tr > td{
-	padding: 4px 0 4px 8px;
+	padding: 0.25rem 0 0.25rem 0.5rem;
 }
 
 .sapUiFormM > .sapUiGrid > tbody > tr > td{
-	padding: 0 0 0 8px;
+	padding: 0 0 0 0.5rem;
 }
 
 .sapUiGrid > tbody > tr > td.sapUiGridLabel{
-	padding-right: 4px;
+	padding-right: 0.25rem;
 }
 
 .sapUiGrid > tbody > tr > td.sapUiGridLabelFull{
-	padding-bottom: 2px;
+	padding-bottom: 0.125rem;
 }
 
 .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
-	padding-top: 16px;
+	padding-top: 1rem;
 }
 
 html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
-	padding-top: 15px;
+	padding-top: 0.375rem;
 }
 
 .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
-	padding-top: 8px;
+	padding-top: 0.5rem;
 }
 
 html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel,
 html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
-	padding-top: 7px;
+	padding-top: 0.4375rem;
 }
 
 .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabelFull{
@@ -215,36 +210,36 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .s
 }
 
 .sapUiGrid th > .sapUiFormTitle{
-	height: 48px;
-	line-height: 48px;
+	height: 3rem;
+	line-height: 3rem;
 	-moz-box-sizing: padding-box;
 	box-sizing: border-box;
-	padding: 0 16px 0 16px;
+	padding: 0 1rem 0 1rem;
 	text-shadow: 0em 0.0625em 0em fade(@sapUiTextInverted, 100%);
 }
 
 .sapUiGrid > tbody > tr > td > .sapUiFormTitle{
 	border: none;
-	margin-bottom: 16px;
-	margin-top: 32px;
+	margin-bottom: 1rem;
+	margin-top: 2rem;
 }
 
 .sapUiGrid > tbody > tr:first-child > td > .sapUiFormTitle, /* if no title */
-.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:nth-child(2) > td > .sapUiFormTitle{
+.sapUiForm[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td > .sapUiFormTitle{
 	margin-top: 0;
 }
 
 .sapUiGridSpace{
-	width: 32px;
+	width: 2rem;
 }
 
 .sapUiGrid .sapUiFormTitle > img,
 .sapUiGrid .sapUiFormTitle > span{
-	margin-right: 4px;
+	margin-right: 0.25rem;
 }
 
 .sapUiGridHeader > .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite{
-	bottom: 5px;
+	bottom: 0.3125rem;
 }
 /* END "GridLayout.less" */
 
@@ -332,7 +327,7 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .s
 html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12),
 html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12),
 html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12){
-	padding-top: 15px;
+	padding-top: 0.9375rem;
 }
 
 .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12),
@@ -347,7 +342,7 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sap
 html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12),
 html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12),
 html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12){
-	padding-top: 7px;
+	padding-top: 0.4375rem;
 }
 /* END "ResponsiveGridLayout.less" */
 
@@ -359,27 +354,27 @@ html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapU
 
 .sapUiFormResLayout > div {
 	background-color: fade(@sapUiLightestBG, @sapUiTranslucentBGOpacity);
-	padding: 16px;
+	padding: 1rem;
 	-moz-box-sizing: padding-box;
 	box-sizing: border-box;
 }
 
 .sapUiFormResLayout .sapUiFormTitle > img,
 .sapUiFormResLayout .sapUiFormTitle > span{
-	margin-right: 3px;
+	margin-right: 0.1875rem;
 }
 
 .sapUiRLContainer > .sapUiFormTitle > button{
-	bottom: 5px;
+	bottom: 0.3125rem;
 }
 
 .sapUiFormM .sapUiRFLPaddingClass,
 .sapUiFormM .sapUiRFLMultiContent.sapUiRFLPaddingClass {
-	padding: 0 0 0 8px;
+	padding: 0 0 0 0.5rem;
 }
 
 .sapUiRLContainerCont > .sapUiRFL >.sapUiRFLRow >.sapUiRFLContainer{
-	padding-right: 8px;
+	padding-right: 0.5rem;
 }
 
 .sapUiRLContainerCont > .sapUiRFL >.sapUiRFLRow >.sapUiRFLContainer:last-child{
@@ -391,24 +386,24 @@ html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapU
 }
 
 .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
-	padding-top: 16px;
+	padding-top: 1rem;
 }
 
 html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
-	padding-top: 15px;
+	padding-top: 0.9375rem;
 }
 
 .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
-	padding-top: 8px;
+	padding-top: 0.5rem;
 }
 
 html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent,
 html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
-	padding-top: 7px;
+	padding-top: 0.4375rem;
 }
 
 .sapUiFormResLayout .sapUiRFLRow > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElement > .sapUiRFLRow:last-child > .sapUiRFLFullLength:last-child{
-	padding-bottom: 10px;
+	padding-bottom: 0.625rem;
 }
 .sapUiFormResLayout .sapUiRFLRow:last-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElement > .sapUiRFLRow:last-child > .sapUiRFLFullLength:last-child{
 	/* last element in row has no padding bottom */
@@ -417,7 +412,7 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sap
 
 .sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:first-child,
 .sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLMultiContainerContent.sapUiRFLPaddingClass:first-child > .sapUiRFLMultiContent.sapUiRFLPaddingClass:first-child{
-	padding-left: 8px;
+	padding-left: 0.5rem;
 }
 .sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLMultiContainerContent.sapUiRFLPaddingClass:first-child,
 .sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:first-child,
@@ -427,8 +422,8 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sap
 
 .sapUiRFLRow > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer{
 	/* space between 2 containers, devide it to previous and next container to have the same size for all*/
-	padding-left: 8px;
-	padding-right: 16px;
+	padding-left: 0.5rem;
+	padding-right: 1rem;
 }
 .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapUiRLContainer{
 	padding-left: 0;
@@ -439,22 +434,22 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sap
 
 /* Title */
 .sapUiFormResLayout > .sapUiFormTitle{
-	height: 48px;
-	line-height: 48px;
+	height: 3rem;
+	line-height: 3rem;
 	-moz-box-sizing: padding-box;
 	box-sizing: border-box;
-	padding: 0 16px 0 16px;
+	padding: 0 1rem 0 1rem;
 	text-shadow: 0em 0.0625em 0em fade(@sapUiTextInverted, 100%);
 }
 
 .sapUiRLContainer > .sapUiFormTitle{
 	border: none;
-	margin-bottom: 16px;
+	margin-bottom: 1rem;
 }
 
 /* vertical spacing between containers */
 .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer{
-	padding-top: 16px;
+	padding-top: 1rem;
 }
 
 .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer{
@@ -476,6 +471,10 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sap
 
 .sapUiFormEdit-CTX .sapMRbBLabel {
 	line-height:3rem;
+}
+
+.sapUiSizeCompact .sapUiFormEdit-CTX .sapMRbBLabel {
+	line-height:  2rem;
 }
 
 .sapUiFormEdit-CTX .sapMSwtCont {

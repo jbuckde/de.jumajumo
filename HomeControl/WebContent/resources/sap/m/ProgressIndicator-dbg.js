@@ -5,8 +5,8 @@
  */
 
 // Provides control sap.m.ProgressIndicator.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSupport'],
+	function(jQuery, library, Control, ValueStateSupport) {
 	"use strict";
 
 
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.26.10
+	 * @version 1.28.5
 	 *
 	 * @constructor
 	 * @public
@@ -69,7 +69,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * The height of the control. The default value depends on the theme. Suggested size for normal use is 2.5rem (40px). Suggested size for small size (like for use in ObjectHeader) is 1.375rem (22px).
 			 * @since 1.15.0
 			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * @since 1.28.0
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
 		}
 	}});
 
@@ -94,7 +100,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (this.getPercentValue() !== fPercentValue) {
 			// animation without rerendering
 			this.setProperty("percentValue", fPercentValue, true);
-			this.$().addClass("sapMPIAnimate");
+			this.$().addClass("sapMPIAnimate")
+					.attr("aria-valuenow", fPercentValue)
+					.attr("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));
+
 			var time = Math.abs(that.getPercentValue() - fPercentValue) * 20;
 			var $Bar = this.$("bar");
 			$Bar.animate({
@@ -123,8 +132,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var $textRight = this.$("textRight");
 		$textLeft.text(sDisplayValue);
 		$textRight.text(sDisplayValue);
+		this.$().attr("aria-valuetext", this._getAriaValueText({sText: sDisplayValue}));
 
 		return this;
+	};
+
+	ProgressIndicator.prototype._getAriaValueText = function (oParams) {
+		oParams.sText = oParams.sText || this.getDisplayValue();
+		oParams.fPercent = oParams.fPercent || this.getPercentValue();
+		oParams.sStateText = oParams.sStateText || this._getStateText();
+
+		var sAriaValueText = oParams.sText || oParams.fPercent + "%";
+		if (oParams.sStateText) {
+			sAriaValueText += " " + oParams.sStateText;
+		}
+
+		return sAriaValueText;
+	};
+
+	ProgressIndicator.prototype._getStateText = function () {
+		return ValueStateSupport.getAdditionalText(this.getState());
 	};
 
 	return ProgressIndicator;

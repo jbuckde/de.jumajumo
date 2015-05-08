@@ -270,6 +270,7 @@
     "sapUiMarginSmall": "1rem",
     "sapUiMarginMedium": "2rem",
     "sapUiMarginLarge": "3rem",
+    "sapUiEscapedEmptyString": "",
     "sapFontFamily": "Arial, Helvetica, sans-serif, Verdana",
     "sapFontSize": "0.75em",
     "sapContent_LineHeight": "1.3",

@@ -37,13 +37,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		var aItems = oControl.getItems(),
 			bTextOnly = oControl._checkTextOnly(aItems),
-			bNoText = oControl._checkNoText(aItems);
+			bNoText = oControl._checkNoText(aItems),
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
 		var oIconTabBar = oControl.getParent();
 		var bUpperCase = oIconTabBar && oIconTabBar instanceof sap.m.IconTabBar && oIconTabBar.getUpperCase();
 
 		// render wrapper div
-		oRM.write("<div ");
+		oRM.write("<div role='tablist' ");
 		oRM.addClass("sapMITH");
 		if (oControl._scrollable) {
 			oRM.addClass("sapMITBScrollable");
@@ -94,7 +95,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			if (!(oItem instanceof sap.m.IconTabSeparator) && !oItem.getVisible()) {
 				return; // only render visible items
 			}
-			oRM.write("<div ");
+
+			var sTabParams = '';
+
+			if (oItem instanceof sap.m.IconTabSeparator) {
+				if (oItem.getIcon()) {
+					sTabParams += 'role="img" aria-label="' + oResourceBundle.getText("ICONTABBAR_NEXTSTEP") + '"';
+				} else {
+					sTabParams += 'role="separator"';
+				}
+			} else {
+				sTabParams += 'role="tab" aria-controls="' + oControl.getParent().sId + '-content" ';
+
+				//if there is tab text
+				if (oItem) {
+					var sIconColor = oItem.getIconColor();
+					var bReadIconColor = sIconColor === 'Positive' || sIconColor === 'Critical' || sIconColor === 'Negative';
+
+					if (oItem.getText().length || oItem.getCount() !== "" || oItem.getIcon()) {
+						sTabParams += 'aria-labelledby="';
+						var aIds = [];
+
+						if (oItem.getText().length) {
+							aIds.push(oItem.getId() + '-text');
+						}
+						if (oItem.getCount() !== "") {
+							aIds.push(oItem.getId() + '-count');
+						}
+						if (oItem.getIcon()) {
+							aIds.push(oItem.getId() + '-icon');
+						}
+						if (bReadIconColor) {
+							aIds.push(oItem.getId() + '-iconColor');
+						}
+
+						sTabParams += aIds.join(' ');
+						sTabParams += '"';
+					}
+				}
+			}
+
+			oRM.write('<div ' + sTabParams + ' ');
+
 			oRM.writeElementData(oItem);
 			oRM.addClass("sapMITBItem");
 
@@ -127,6 +169,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				oRM.write("<div id='" + oItem.getId() + "-tab' class='sapMITBTab'>");
 
 				if (!oItem.getShowAll() || !oItem.getIcon()) {
+					if (bReadIconColor) {
+						oRM.write('<div id="' + oItem.getId() + '-iconColor" style="display: none;">' + oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + sIconColor.toUpperCase()) + '</div>');
+					}
+
 					oRM.renderControl(oItem._getImageControl(['sapMITBFilterIcon', 'sapMITBFilter' + oItem.getIconColor()], oControl, IconTabHeaderRenderer._aAllIconColors));
 				}
 
@@ -139,7 +185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oRM.write("<div class='sapMITBHorizontalWrapper'>");
 				}
 
-				oRM.write("<span ");
+				oRM.write("<span id='" + oItem.getId() + "-count' ");
 				oRM.addClass("sapMITBCount");
 				oRM.writeClasses();
 				oRM.write(">");

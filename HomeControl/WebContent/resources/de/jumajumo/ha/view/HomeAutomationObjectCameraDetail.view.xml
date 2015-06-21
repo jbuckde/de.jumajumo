@@ -9,11 +9,11 @@
 		<IconTabBar class="iconTabBarPaddingTop" expanded="{device>/isNoPhone}">
 			<items>
 				<IconTabFilter text="{ui>tab.door}" icon="sap-icon://video">
-					<html:img class="imgborder" src="http://192.168.1.21/videostream.cgi?user=watcher&amp;pwd=watcher" alt="" width="99%" border="0"/>
+					<html:img class="imgborder" src="http://192.168.1.83/camera/door?user=watcher&amp;pwd=watcher" alt="" width="99%" border="0"/>
 					
 				</IconTabFilter>
 				<IconTabFilter text="{ui>tab.garage}" icon="sap-icon://video">
-					<html:img src="http://192.168.1.81:8085/?action=stream" width="99%" border="0" />
+					<html:img src="http://192.168.1.83/camera/garage?action=stream" width="99%" border="0" />
 				</IconTabFilter>
 			</items>
 		</IconTabBar>

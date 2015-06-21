@@ -26,7 +26,7 @@
                     text="{ui>button.switchDoor}"/>
 
                 <html:br />
-                    <html:img width="99%" src="http://192.168.1.81:8085/?action=stream" >
+                    <html:img width="99%" src="http://192.168.1.83/camera/garage?action=stream" >
                     </html:img>
             </VBox>
         </content>

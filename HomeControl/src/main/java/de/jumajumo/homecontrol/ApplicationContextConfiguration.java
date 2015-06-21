@@ -3,6 +3,7 @@ package de.jumajumo.homecontrol;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -16,6 +17,7 @@ import de.jumajumo.core.service.weather.WeatherServiceOpenWeatherMap;
 @EnableScheduling
 @EnableAsync
 @EnableWebMvc
+@Import({ WebSocketConfig.class })
 public class ApplicationContextConfiguration extends WebMvcConfigurerAdapter
 {
 	public ApplicationContextConfiguration()

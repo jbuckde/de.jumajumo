@@ -4,4 +4,6 @@ public interface ConfigurationContextHolder
 {
 	// the context holder provides the current configuration
 	ConfigurationContext getConfiguration();
+
+	void invalidateContext();
 }

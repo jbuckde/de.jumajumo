@@ -1,6 +1,12 @@
 package de.jumajumo.homecontrol.webservice;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,5 +59,23 @@ public class ConfigurationController
 		configurationContextHolder.invalidateContext();
 
 		return configurationContextHolder.getConfiguration();
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "xml", headers = "Accept=application/json")
+	public void getConfigurationAsXml(HttpServletResponse response)
+			throws JAXBException, IOException
+	{
+		configurationContextHolder.invalidateContext();
+
+		final ConfigurationContext configuration = configurationContextHolder
+				.getConfiguration();
+
+		final JAXBContext context = JAXBContext
+				.newInstance(ConfigurationContext.class);
+
+		final Marshaller marshaller = context.createMarshaller();
+
+		marshaller.marshal(configuration, response.getOutputStream());
+		response.setContentType("application/xml");
 	}
 }

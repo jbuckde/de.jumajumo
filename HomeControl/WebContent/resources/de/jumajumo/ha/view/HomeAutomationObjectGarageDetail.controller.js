@@ -20,14 +20,19 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectGarageDetail",
 		var button = oEvent.getSource();
 
 		button.setEnabled(false);
-
-		jQuery.ajax("dispatcher/trigger/opengaragedoor/activate",
-		{
-			complete : function(oEvent)
-			{
-				button.setEnabled(true);
-			}
-		});
+		
+		var json = '{"command" : "SENSOR_TRIGGER","parameters" : {"sensorId" : "b081714d-f0fd-4889-84c9-84e36a859cbb"}}';
+		jumajumo.ha.WebSocket.connection().send(json);
+		
+		button.setEnabled(true);
+		
+//		jQuery.ajax("dispatcher/trigger/opengaragedoor/activate",
+//		{
+//			complete : function(oEvent)
+//			{
+//				button.setEnabled(true);
+//			}
+//		});
 	}
 
 // _handleRouteMatched : function(oEvent)

@@ -1,0 +1,77 @@
+<html>
+
+<head>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script>
+	$(document)
+			.ready(
+					function()
+					{
+						$("#btnSend").click(function()
+						{
+							connection.send($("#txtValue").val());
+						});
+
+						$("#btnCleanActors").click(function()
+						{
+							$("#actors").val("");
+						});
+
+						$("#btnDoorRing")
+								.click(
+										function()
+										{
+											var json = '{"command" : "SENSOR_TRIGGER","parameters" : {"sensorId" : "1542c66a-ca7b-4bec-ac73-2c2b0bb6d15f"}}';
+
+											connection.send(json);
+
+										});
+
+					});
+</script>
+
+
+<script>
+	var connection = new WebSocket(
+			'ws://localhost:8080/HomeControl/dispatcher/websocketapi');
+
+	connection.onopen = function()
+	{
+
+		var json = '{"command" : "DEFINE_DEVICE","parameters" : {"deviceId" : "e920e40b-7d12-4bb4-afd8-476d187913b7"}}';
+
+		connection.send(json); // Send the message ""Ping"" to the server
+	};
+
+	connection.onmessage = function(e)
+	{
+		$('#actors').val($('#actors').val() + e.data + '\n\n');
+	};
+
+	connection.onclose = function()
+	{
+		$('#actors').val("disconnected");
+	};
+</script>
+<head>
+<body>
+	<h2>send</h2>
+	<input id="txtValue" type="text"></input>
+	<button id="btnSend">Send</button>
+
+	<br />
+	<br />
+
+	<h2>sensors</h2>
+	<button id="btnDoorRing">door ring</button>
+	<br />
+	<br />
+
+	<h2>actor log</h2>
+	<textarea rows="12" cols="50" id="actors"></textarea>
+	<br />
+	<button id="btnCleanActors">clean</button>
+</body>
+</html>

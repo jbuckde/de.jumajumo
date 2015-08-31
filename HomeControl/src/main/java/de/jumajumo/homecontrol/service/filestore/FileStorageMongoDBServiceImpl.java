@@ -8,6 +8,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSInputFile;
@@ -45,29 +46,37 @@ public class FileStorageMongoDBServiceImpl implements FileStorageService
 	@Override
 	public InputStream loadFile(FileHandle fileHandle)
 	{
-		final GridFS fs = this.getMongoFileSystem();
-
-		final InputStream fileStream;
-
 		try
 		{
-			// load the file
-			GridFSDBFile out = fs.findOne(new BasicDBObject("_id",
-					new ObjectId(fileHandle.getFileName().getBytes())));
 
-			if (null != out)
+			final GridFS fs = this.getMongoFileSystem();
+
+			final InputStream fileStream;
+
+			try
 			{
-				fileStream = out.getInputStream();
-			} else
+				// load the file
+				GridFSDBFile out = fs.findOne(new BasicDBObject("_id",
+						new ObjectId(fileHandle.getFileName().getBytes())));
+
+				if (null != out)
+				{
+					fileStream = out.getInputStream();
+				} else
+				{
+					throw new FileNotFoundException(fileHandle);
+				}
+			} catch (IllegalArgumentException e)
 			{
 				throw new FileNotFoundException(fileHandle);
 			}
-		} catch (IllegalArgumentException e)
+
+			return fileStream;
+
+		} catch (MongoException ex)
 		{
 			throw new FileNotFoundException(fileHandle);
 		}
-
-		return fileStream;
 	}
 
 	@Override

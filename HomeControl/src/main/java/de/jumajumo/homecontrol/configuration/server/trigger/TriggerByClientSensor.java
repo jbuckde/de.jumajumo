@@ -4,8 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 public class TriggerByClientSensor extends Trigger
 {
+	@XmlElementWrapper(name = "sensorUuids")
+	@XmlElement(name = "sensorUuid")
 	private List<UUID> sensorUuids;
 
 	public TriggerByClientSensor()

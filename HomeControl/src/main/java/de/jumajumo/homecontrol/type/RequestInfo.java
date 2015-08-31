@@ -15,7 +15,7 @@ public class RequestInfo
 	@XmlEnum
 	public enum EnumRequestType
 	{
-		REQUEST_TYPE_HHTP;
+		REQUEST_TYPE_HHTP, REQUEST_TYPE_WEBSOCKET;
 
 		public String value()
 		{
@@ -49,7 +49,8 @@ public class RequestInfo
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getPath() == null) ? 0 : getPath().hashCode());
+		result = prime * result
+				+ ((getPath() == null) ? 0 : getPath().hashCode());
 		result = prime
 				* result
 				+ ((getRequestType() == null) ? 0 : getRequestType().hashCode());

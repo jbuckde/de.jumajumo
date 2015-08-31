@@ -127,6 +127,7 @@ sap.ui.core.UIComponent.extend("jumajumo.ha.Component",
 		// 1. some very generic requires
 		jQuery.sap.require("sap.m.routing.RouteMatchedHandler");
 		jQuery.sap.require("jumajumo.ha.MyRouter");
+		jQuery.sap.require("jumajumo.ha.WebSocket");
 
 		// 2. call overridden init (calls createContent)
 		sap.ui.core.UIComponent.prototype.init.apply(this, arguments);

@@ -6,11 +6,12 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import de.jumajumo.core.service.filestore.FileHandle;
-import de.jumajumo.core.service.filestore.FileNotFoundException;
 import de.jumajumo.core.service.filestore.FileStorageService;
 
 /**
@@ -21,6 +22,12 @@ import de.jumajumo.core.service.filestore.FileStorageService;
 public class ConfigurationContextHolderImpl implements
 		ConfigurationContextHolder
 {
+
+	private final static Log LOGGER = LogFactory
+			.getLog(ConfigurationContextHolder.class);
+
+	private final static boolean USE_FILE_STORE = Boolean.parseBoolean(System
+			.getProperty("config.use.filestore"));
 
 	private ConfigurationContext configuration;
 
@@ -55,10 +62,11 @@ public class ConfigurationContextHolderImpl implements
 	private void loadConfiguration()
 	{
 		InputStream resourceAsStream;
-		try
+
+		if (USE_FILE_STORE)
 		{
 			resourceAsStream = this.loadConfigurationFromFileStore();
-		} catch (FileNotFoundException ex)
+		} else
 		{
 			resourceAsStream = this.loadConfigurationFromResource();
 		}
@@ -82,13 +90,16 @@ public class ConfigurationContextHolderImpl implements
 
 	private InputStream loadConfigurationFromFileStore()
 	{
+		LOGGER.info("load configuration from file store");
+
 		return this.fileStorageService.loadFile(new FileHandle("configuratio"));
 	}
 
 	private InputStream loadConfigurationFromResource()
 	{
-		return this.getClass().getResourceAsStream("configuration.xml");
+		LOGGER.info("load configuration from resource");
 
+		return this.getClass().getResourceAsStream("configuration.xml");
 	}
 
 }

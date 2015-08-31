@@ -1,0 +1,47 @@
+<html>
+
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    
+    $("#btnCleanActors").click(function(){
+    	$("#actors").val("");
+    });
+   
+    
+});
+</script>
+
+
+<script>
+
+var connection = new WebSocket('ws://localhost:8080/HomeControl/dispatcher/websocketapi');
+
+connection.onopen = function () {
+
+  var json = '{"command" : "DEFINE_DEVICE","parameters" : {"deviceId" : "5920a5fe-8c30-41ba-ab72-76f2481c10b0"}}';
+  
+  connection.send(json); // Send the message ""Ping"" to the server
+};
+
+connection.onmessage = function (e) {
+  $('#actors').val($('#actors').val()+ e.data+'\n\n');
+};
+
+connection.onclose = function()
+{
+	$('#actors').val("disconnected");
+};
+</script>
+<head>
+
+<body>
+
+	<h2>actor log</h2>
+	<textarea rows="12" cols="50" id="actors"></textarea>
+	<br/>
+	<button id="btnCleanActors">clean</button>
+</body>
+</html>

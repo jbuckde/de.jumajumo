@@ -17,7 +17,7 @@ public class ActionServiceImpl implements ActionService
 	private ConfigurationContextHolder configurationContextHolder;
 
 	@Autowired
-	private DeviceService deviceService;
+	private DeviceConfigurationService deviceService;
 
 	@Override
 	public Action findActionByUuid(UUID actionUuid)

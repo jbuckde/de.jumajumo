@@ -12,6 +12,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import de.jumajumo.core.service.filestore.FileStorageService;
+import de.jumajumo.core.service.twitter.TwitterService;
+import de.jumajumo.core.service.twitter.TwitterServiceImpl;
 import de.jumajumo.core.service.weather.WeatherService;
 import de.jumajumo.core.service.weather.WeatherServiceOpenWeatherMap;
 import de.jumajumo.homecontrol.service.filestore.FileStorageMongoDBServiceImpl;
@@ -55,6 +57,23 @@ public class ApplicationContextConfiguration extends WebMvcConfigurerAdapter
 		storageService.setDbName("homecontrol");
 
 		return storageService;
+	}
+
+	@Bean
+	public TwitterService twitterService()
+	{
+		final TwitterServiceImpl twitterService = new TwitterServiceImpl();
+
+		twitterService.setConsumerKey("gqgY0HOfuZkjSKOsKJSI3qXbJ");
+		twitterService
+				.setConsumerSecret("TE3u7lFfnurgRMdVCvbthZ9Zcnzmwi9c6Q5ah7V08ceQFeeTgJ");
+
+		twitterService
+				.setAccessToken("51803797-PfBAjdV3rYttu9Dz6EKz4i9FM0ThJIajzi07TGg2E");
+		twitterService
+				.setAccessTokenSecret("6V4e0UJpdmz0DyB9JTvJpQE7EhxTACjhnoBBeGRfEPChy");
+
+		return twitterService;
 	}
 
 }

@@ -21,6 +21,34 @@ public class Action extends AbstractConfigurationObject
 	@XmlElement(name = "actorUuid")
 	private List<UUID> actorUuids;
 
+	@XmlElement
+	private String beanName;
+
+	public List<UUID> getActorUuids()
+	{
+		if (null == actorUuids)
+		{
+			actorUuids = new ArrayList<UUID>();
+		}
+
+		return actorUuids;
+	}
+
+	public void setActorUuids(List<UUID> actorUuids)
+	{
+		this.actorUuids = actorUuids;
+	}
+
+	public String getBeanName()
+	{
+		return beanName;
+	}
+
+	public void setBeanName(String beanName)
+	{
+		this.beanName = beanName;
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -48,20 +76,5 @@ public class Action extends AbstractConfigurationObject
 		} else if (!actorUuids.equals(other.actorUuids))
 			return false;
 		return true;
-	}
-
-	public List<UUID> getActorUuids()
-	{
-		if (null == actorUuids)
-		{
-			actorUuids = new ArrayList<UUID>();
-		}
-
-		return actorUuids;
-	}
-
-	public void setActorUuids(List<UUID> actorUuids)
-	{
-		this.actorUuids = actorUuids;
 	}
 }

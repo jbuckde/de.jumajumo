@@ -23,6 +23,16 @@ public class TriggerByRestCall extends Trigger
 		this.setRequestInfo(requestInfo);
 	}
 
+	public RequestInfo getRequestInfo()
+	{
+		return requestInfo;
+	}
+
+	public void setRequestInfo(RequestInfo requestInfo)
+	{
+		this.requestInfo = requestInfo;
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -51,16 +61,6 @@ public class TriggerByRestCall extends Trigger
 		} else if (!getRequestInfo().equals(other.getRequestInfo()))
 			return false;
 		return true;
-	}
-
-	public RequestInfo getRequestInfo()
-	{
-		return requestInfo;
-	}
-
-	public void setRequestInfo(RequestInfo requestInfo)
-	{
-		this.requestInfo = requestInfo;
 	}
 
 }

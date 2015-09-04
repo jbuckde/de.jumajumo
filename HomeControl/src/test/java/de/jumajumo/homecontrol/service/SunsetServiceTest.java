@@ -13,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 
 import de.jumajumo.core.service.weather.WeatherService;
 import de.jumajumo.core.type.CurrentWeather;
+import de.jumajumo.homecontrol.service.sunset.SunsetServiceImpl;
 
 public class SunsetServiceTest
 {

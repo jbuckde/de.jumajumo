@@ -1,9 +1,10 @@
-package de.jumajumo.homecontrol;
+package de.jumajumo.homecontrol.spring;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.multipart.MultipartResolver;
@@ -23,7 +24,8 @@ import de.jumajumo.homecontrol.service.filestore.FileStorageMongoDBServiceImpl;
 @EnableScheduling
 @EnableAsync
 @EnableWebMvc
-@Import({ WebSocketConfig.class })
+@Import({ WebSocketConfigConfiguration.class })
+@ImportResource("classpath:de/jumajumo/homecontrol/spring/scheduling-context.xml")
 public class ApplicationContextConfiguration extends WebMvcConfigurerAdapter
 {
 	public ApplicationContextConfiguration()

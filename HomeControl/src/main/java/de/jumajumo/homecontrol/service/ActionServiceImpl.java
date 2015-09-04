@@ -4,15 +4,20 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import de.jumajumo.homecontrol.configuration.ConfigurationContextHolder;
 import de.jumajumo.homecontrol.configuration.client.Device;
 import de.jumajumo.homecontrol.configuration.server.Action;
+import de.jumajumo.homecontrol.service.action.ActionExecutor;
 
 @Service
 public class ActionServiceImpl implements ActionService
 {
+	@Autowired
+	private ApplicationContext appContext;
+
 	@Autowired
 	private ConfigurationContextHolder configurationContextHolder;
 
@@ -44,6 +49,23 @@ public class ActionServiceImpl implements ActionService
 	@Override
 	public boolean executeAction(Action action)
 	{
+		// execute the defined bean
+		final String actionBeanName = action.getBeanName();
+		if (null != actionBeanName)
+		{
+			ActionExecutor actionBean = (ActionExecutor) appContext
+					.getBean(actionBeanName);
+
+			if (null != actionBean)
+			{
+				return actionBean.executeAction();
+			} else
+			{
+				return false;
+			}
+		}
+
+		// execute the specified device actors
 		final List<UUID> actorUuids = action.getActorUuids();
 
 		for (final UUID actorUuid : actorUuids)

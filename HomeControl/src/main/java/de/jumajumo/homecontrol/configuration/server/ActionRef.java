@@ -20,6 +20,38 @@ public class ActionRef extends AbstractConfigurationObject
 	@XmlElement(name = "conditionRef")
 	private List<ConditionRef> conditionRefs;
 
+	public ActionRef()
+	{
+		super();
+
+		this.setUuid(UUID.randomUUID());
+	}
+
+	public List<ConditionRef> getConditionRefs()
+	{
+		if (null == conditionRefs)
+		{
+			conditionRefs = new ArrayList<ConditionRef>();
+		}
+
+		return conditionRefs;
+	}
+
+	public void setConditionRefs(List<ConditionRef> conditionRefs)
+	{
+		this.conditionRefs = conditionRefs;
+	}
+
+	public UUID getActionUuid()
+	{
+		return actionUuid;
+	}
+
+	public void setActionUuid(UUID actionUuid)
+	{
+		this.actionUuid = actionUuid;
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -55,30 +87,5 @@ public class ActionRef extends AbstractConfigurationObject
 		} else if (!conditionRefs.equals(other.conditionRefs))
 			return false;
 		return true;
-	}
-
-	public List<ConditionRef> getConditionRefs()
-	{
-		if (null == conditionRefs)
-		{
-			conditionRefs = new ArrayList<ConditionRef>();
-		}
-
-		return conditionRefs;
-	}
-
-	public void setConditionRefs(List<ConditionRef> conditionRefs)
-	{
-		this.conditionRefs = conditionRefs;
-	}
-
-	public UUID getActionUuid()
-	{
-		return actionUuid;
-	}
-
-	public void setActionUuid(UUID actionUuid)
-	{
-		this.actionUuid = actionUuid;
 	}
 }

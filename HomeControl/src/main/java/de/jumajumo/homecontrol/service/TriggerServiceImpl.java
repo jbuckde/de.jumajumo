@@ -12,6 +12,8 @@ import de.jumajumo.homecontrol.configuration.server.ActionChain;
 import de.jumajumo.homecontrol.configuration.server.trigger.Trigger;
 import de.jumajumo.homecontrol.configuration.server.trigger.TriggerByClientSensor;
 import de.jumajumo.homecontrol.configuration.server.trigger.TriggerByRestCall;
+import de.jumajumo.homecontrol.configuration.server.trigger.TriggerByScheduling;
+import de.jumajumo.homecontrol.service.scheduling.ESchedulingPointInTime;
 import de.jumajumo.homecontrol.type.ActionChainResult;
 
 @Service
@@ -71,6 +73,31 @@ public class TriggerServiceImpl implements TriggerService
 				"the trigger-by-sensor with the sensor uuid <"
 						+ sensorUuid.toString()
 						+ "> is not defined in the current configuration.");
+	}
+
+	@Override
+	public List<TriggerByScheduling> findTriggersByScheduledInterval(
+			ESchedulingPointInTime pointInTime)
+	{
+		final List<Trigger> triggers = this.configurationContextHolder
+				.getConfiguration().getTriggers();
+
+		final List<TriggerByScheduling> result = new ArrayList<TriggerByScheduling>();
+
+		for (final Trigger trigger : triggers)
+		{
+			if (trigger instanceof TriggerByScheduling)
+			{
+				TriggerByScheduling specialTrigger = (TriggerByScheduling) trigger;
+
+				if (pointInTime.equals(specialTrigger.getRunAt()))
+				{
+					result.add(specialTrigger);
+				}
+			}
+		}
+
+		return result;
 	}
 
 	@Override

@@ -9,6 +9,23 @@ public class TriggerRef extends AbstractConfigurationObject
 	// the reference to the trigger
 	private UUID triggerUuid;
 
+	public TriggerRef()
+	{
+		super();
+
+		this.setUuid(UUID.randomUUID());
+	}
+
+	public UUID getTriggerUuid()
+	{
+		return triggerUuid;
+	}
+
+	public void setTriggerUuid(UUID triggerUuid)
+	{
+		this.triggerUuid = triggerUuid;
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -36,15 +53,5 @@ public class TriggerRef extends AbstractConfigurationObject
 		} else if (!triggerUuid.equals(other.triggerUuid))
 			return false;
 		return true;
-	}
-
-	public UUID getTriggerUuid()
-	{
-		return triggerUuid;
-	}
-
-	public void setTriggerUuid(UUID triggerUuid)
-	{
-		this.triggerUuid = triggerUuid;
 	}
 }

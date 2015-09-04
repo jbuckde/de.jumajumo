@@ -1,4 +1,4 @@
-package de.jumajumo.homecontrol.service;
+package de.jumajumo.homecontrol.service.sunset;
 
 import java.util.Date;
 

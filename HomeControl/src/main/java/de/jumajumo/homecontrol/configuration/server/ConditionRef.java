@@ -8,6 +8,23 @@ public class ConditionRef extends AbstractConfigurationObject
 {
 	private UUID conditionUuid;
 
+	public ConditionRef()
+	{
+		super();
+
+		this.setUuid(UUID.randomUUID());
+	}
+
+	public UUID getConditionUuid()
+	{
+		return conditionUuid;
+	}
+
+	public void setConditionUuid(UUID conditionUuid)
+	{
+		this.conditionUuid = conditionUuid;
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -35,15 +52,5 @@ public class ConditionRef extends AbstractConfigurationObject
 		} else if (!conditionUuid.equals(other.conditionUuid))
 			return false;
 		return true;
-	}
-
-	public UUID getConditionUuid()
-	{
-		return conditionUuid;
-	}
-
-	public void setConditionUuid(UUID conditionUuid)
-	{
-		this.conditionUuid = conditionUuid;
 	}
 }

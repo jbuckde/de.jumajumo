@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import de.jumajumo.homecontrol.service.SunsetService;
+import de.jumajumo.homecontrol.service.sunset.SunsetService;
 
 public class ConditionIsItDarkTest
 {

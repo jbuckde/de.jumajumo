@@ -17,7 +17,7 @@
 				<items>
 					<ColumnListItem>
 						<cells>
-							<ObjectIdentifier title="{configuration>name}" text="{configuration>requestInfo/requestType}"
+							<ObjectIdentifier title="{configuration>name}" text="{configuration>@class}"
 								class="sapMTableContentMargin" />
 							<Text text="{configuration>uuid}" />
 						</cells>

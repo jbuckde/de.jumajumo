@@ -18,7 +18,7 @@
 						<cells>
 							<ObjectIdentifier title="{configuration>name}"
 								text="{configuration>uuid}" class="sapMTableContentMargin" />
-							<List items="{configuration>actorUuids}">
+							<List items="{configuration>actorUuids/0)}">
 								<StandardListItem title="{configuration>/}" />
 							</List>								
 						</cells>

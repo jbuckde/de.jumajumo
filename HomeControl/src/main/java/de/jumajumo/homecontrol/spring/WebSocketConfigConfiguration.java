@@ -1,4 +1,4 @@
-package de.jumajumo.homecontrol;
+package de.jumajumo.homecontrol.spring;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ import de.jumajumo.homecontrol.websocket.WebSocketAPIHandler;
 
 @Configuration
 @EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer
+public class WebSocketConfigConfiguration implements WebSocketConfigurer
 {
 
 	@Override

@@ -15,7 +15,8 @@ import de.jumajumo.homecontrol.configuration.AbstractConfigurationObject;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 @XmlTransient
-@XmlSeeAlso({ TriggerByClientSensor.class, TriggerByRestCall.class })
+@XmlSeeAlso({ TriggerByClientSensor.class, TriggerByRestCall.class,
+		TriggerByScheduling.class })
 public abstract class Trigger extends AbstractConfigurationObject
 {
 

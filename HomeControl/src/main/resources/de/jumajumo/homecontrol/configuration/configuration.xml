@@ -4,15 +4,13 @@
 		<jj:actionChain uuid="077adbf6-b178-11e4-b479-12e3f512a338"
 			name="GarageDeviceHealthCheck">
 			<jj:triggerRefs>
-				<jj:triggerRef uuid="2e00775e-b178-11e4-b479-12e3f512a338"
-					name="RestTrigger">
+				<jj:triggerRef name="RestTrigger">
 					<jj:triggerUuid>d729d89e-b177-11e4-b479-12e3f512a338
 					</jj:triggerUuid>
 				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
-				<jj:actionRef uuid="39e7a330-b178-11e4-b479-12e3f512a338"
-					name="GarageDeviceHealthCheck">
+				<jj:actionRef name="GarageDeviceHealthCheck">
 					<jj:actionUuid>5f92d358-b177-11e4-b479-12e3f512a338</jj:actionUuid>
 				</jj:actionRef>
 			</jj:actionRefs>
@@ -20,8 +18,7 @@
 		<jj:actionChain uuid="5f8b9c31-833f-4de5-8c24-d57435763156"
 			name="OpenGarageDoor">
 			<jj:triggerRefs>
-				<jj:triggerRef uuid="7a05244d-1886-49d0-8e52-eb5c167ab282"
-					name="RestTrigger">
+				<jj:triggerRef name="RestTrigger">
 					<jj:triggerUuid>573e766f-409c-485e-8114-df9bf982363e
 					</jj:triggerUuid>
 					<jj:triggerUuid>7a0b93e3-5cf4-4f64-b885-54649937e73b
@@ -29,8 +26,7 @@
 				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
-				<jj:actionRef uuid="6f76685b-16fe-47ab-9589-b2e0470439be"
-					name="OpenGarageDoor">
+				<jj:actionRef name="OpenGarageDoor">
 					<jj:actionUuid>c57cf1df-2c95-4ecc-a1d0-8097be284843</jj:actionUuid>
 				</jj:actionRef>
 			</jj:actionRefs>
@@ -39,16 +35,31 @@
 		<jj:actionChain uuid="641d95fa-8d47-49e6-8bee-d35adcd090d6"
 			name="DoorRingActions">
 			<jj:triggerRefs>
-				<jj:triggerRef uuid="641d95fa-8d47-49e6-8bee-d35adcd090d6"
-					name="SensorTrigger">
+				<jj:triggerRef name="SensorTrigger">
 					<jj:triggerUuid>b2c13bbc-e2dd-48d5-bdc9-2ab56860abc2
 					</jj:triggerUuid>
 				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
-				<jj:actionRef uuid="176ce6c8-27a5-4a77-b952-0d4b78c89106"
-					name="uiNavToDoorCamera">
+				<jj:actionRef name="uiNavToDoorCamera">
 					<jj:actionUuid>e36c4705-203d-49b4-87ec-1a691e3bb8c2</jj:actionUuid>
+				</jj:actionRef>
+			</jj:actionRefs>
+		</jj:actionChain>
+		<jj:actionChain uuid="dc1a7eb5-cd68-4ed6-9eb7-e69abcbd3aa7" name="testTwitterByScheduler">
+			<jj:triggerRefs>
+				<jj:triggerRef name="scheduled_each_minute">
+					<jj:triggerUuid>d9319d7c-b29c-4ddf-b488-14c4a456731e</jj:triggerUuid>
+				</jj:triggerRef>
+			</jj:triggerRefs>
+			<jj:actionRefs>
+				<jj:actionRef name="send twitter update">
+					<jj:actionUuid>a70a9476-3d37-4eb5-a448-346ac83cbbe2</jj:actionUuid>
+					<jj:conditionRefs>
+						<jj:conditionRef name="do not execute">
+							<jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f</jj:conditionUuid>
+						</jj:conditionRef>
+					</jj:conditionRefs>
 				</jj:actionRef>
 			</jj:actionRefs>
 		</jj:actionChain>
@@ -130,6 +141,10 @@
 				<jj:sensorUuid>b081714d-f0fd-4889-84c9-84e36a859cbb</jj:sensorUuid>
 			</jj:sensorUuids>
 		</jj:trigger>
+		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:type="jj:triggerByScheduling" uuid="d9319d7c-b29c-4ddf-b488-14c4a456731e" name="testTwitterByScheduler">
+			<jj:runAt>EACH_MINUTE</jj:runAt>
+		</jj:trigger>
 	</jj:triggers>
 	<jj:conditions>
 		<jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46e"
@@ -186,6 +201,10 @@
 			<jj:actorUuids>
 				<jj:actorUuid>41e55166-ab21-4d3e-b5dc-9c3b6cf90768</jj:actorUuid>
 			</jj:actorUuids>
+		</jj:action>
+		
+		<jj:action uuid="a70a9476-3d37-4eb5-a448-346ac83cbbe2" name="testTwitterUpdate">
+			<jj:beanName>actionExecutorTwitterUpdate</jj:beanName>
 		</jj:action>
 	</jj:actions>
 </jj:configuration>

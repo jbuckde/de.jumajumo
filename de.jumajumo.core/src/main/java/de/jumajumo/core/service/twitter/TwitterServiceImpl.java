@@ -16,14 +16,15 @@ public class TwitterServiceImpl implements TwitterService
 	private String accessTokenSecret;
 
 	final Twitter twitter = TwitterFactory.getSingleton();
+	private boolean authenticated = false;
 
 	@Override
 	public Status sendUpdate(StatusUpdate statusUpdate)
 	{
-		this.authenticate();
-
 		try
 		{
+			this.authenticate();
+
 			return twitter.updateStatus(statusUpdate);
 		} catch (TwitterException e)
 		{
@@ -31,13 +32,18 @@ public class TwitterServiceImpl implements TwitterService
 		}
 	}
 
-	private void authenticate()
+	private void authenticate() throws TwitterException
 	{
-		twitter.setOAuthConsumer(this.getConsumerKey(),
-				this.getConsumerSecret());
+		if (!this.authenticated)
+		{
+			twitter.setOAuthConsumer(this.getConsumerKey(),
+					this.getConsumerSecret());
 
-		twitter.setOAuthAccessToken(new AccessToken(this.getAccessToken(), this
-				.getAccessTokenSecret()));
+			twitter.setOAuthAccessToken(new AccessToken(this.getAccessToken(),
+					this.getAccessTokenSecret()));
+
+			this.authenticated = true;
+		}
 	}
 
 	public String getConsumerKey()

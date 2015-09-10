@@ -26,8 +26,8 @@ public class ConfigurationContextHolderImpl implements
 	private final static Log LOGGER = LogFactory
 			.getLog(ConfigurationContextHolder.class);
 
-	private final static boolean USE_FILE_STORE = Boolean.parseBoolean(System
-			.getProperty("config.use.filestore"));
+	private final static boolean USE_RESOURCE = Boolean.parseBoolean(System
+			.getProperty("config.use.resource"));
 
 	private ConfigurationContext configuration;
 
@@ -63,12 +63,12 @@ public class ConfigurationContextHolderImpl implements
 	{
 		InputStream resourceAsStream;
 
-		if (USE_FILE_STORE)
-		{
-			resourceAsStream = this.loadConfigurationFromFileStore();
-		} else
+		if (USE_RESOURCE)
 		{
 			resourceAsStream = this.loadConfigurationFromResource();
+		} else
+		{
+			resourceAsStream = this.loadConfigurationFromFileStore();
 		}
 
 		try
@@ -83,8 +83,8 @@ public class ConfigurationContextHolderImpl implements
 
 		} catch (JAXBException e)
 		{
-			throw new IllegalArgumentException(
-					"error on loading configuration!", e);
+			LOGGER.error("error on configuration deserialization: "
+					+ e.getMessage());
 		}
 	}
 

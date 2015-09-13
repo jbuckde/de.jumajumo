@@ -57,8 +57,8 @@ public class ConditionServiceImpl implements ConditionService
 
 		if (null != conditionBean)
 		{
-
-			return conditionBean.checkCondition();
+			return (condition.getExpectedValue() == conditionBean
+					.checkCondition());
 		} else
 		{
 			return false;

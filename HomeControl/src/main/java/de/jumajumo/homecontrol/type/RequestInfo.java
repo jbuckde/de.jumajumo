@@ -30,6 +30,7 @@ public class RequestInfo
 
 	private EnumRequestType requestType;
 	private String path;
+	private String query;
 
 	public RequestInfo()
 	{
@@ -49,11 +50,10 @@ public class RequestInfo
 	{
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		result = prime * result + ((query == null) ? 0 : query.hashCode());
 		result = prime * result
-				+ ((getPath() == null) ? 0 : getPath().hashCode());
-		result = prime
-				* result
-				+ ((getRequestType() == null) ? 0 : getRequestType().hashCode());
+				+ ((requestType == null) ? 0 : requestType.hashCode());
 		return result;
 	}
 
@@ -67,13 +67,19 @@ public class RequestInfo
 		if (getClass() != obj.getClass())
 			return false;
 		RequestInfo other = (RequestInfo) obj;
-		if (getPath() == null)
+		if (path == null)
 		{
-			if (other.getPath() != null)
+			if (other.path != null)
 				return false;
-		} else if (!getPath().equals(other.getPath()))
+		} else if (!path.equals(other.path))
 			return false;
-		if (getRequestType() != other.getRequestType())
+		if (query == null)
+		{
+			if (other.query != null)
+				return false;
+		} else if (!query.equals(other.query))
+			return false;
+		if (requestType != other.requestType)
 			return false;
 		return true;
 	}
@@ -88,6 +94,11 @@ public class RequestInfo
 		return path;
 	}
 
+	public String getQuery()
+	{
+		return query;
+	}
+
 	public void setRequestType(EnumRequestType requestType)
 	{
 		this.requestType = requestType;
@@ -96,6 +107,11 @@ public class RequestInfo
 	public void setPath(String path)
 	{
 		this.path = path;
+	}
+
+	public void setQuery(String query)
+	{
+		this.query = query;
 	}
 
 }

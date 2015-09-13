@@ -14,7 +14,6 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 
 import de.jumajumo.core.type.CurrentWeather;
 
@@ -50,7 +49,7 @@ public class OpenWeatherMapMessageConverter implements
 		JsonFactory factory = new JsonFactory();
 		JsonParser parser = factory.createParser(inputMessage.getBody());
 
-		while (parser.nextToken() != JsonToken.END_ARRAY)
+		while (parser.nextToken() != null)
 		{
 			String token = parser.getCurrentName();
 

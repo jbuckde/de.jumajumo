@@ -25,7 +25,7 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectGarageDetail",
 		jumajumo.ha.WebSocket.connection().send(json);
 		
 		button.setEnabled(true);
-		
+//		
 //		jQuery.ajax("dispatcher/trigger/opengaragedoor/activate",
 //		{
 //			complete : function(oEvent)

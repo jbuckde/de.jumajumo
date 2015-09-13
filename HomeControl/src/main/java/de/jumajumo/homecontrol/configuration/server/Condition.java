@@ -17,10 +17,46 @@ import de.jumajumo.homecontrol.configuration.property.Property;
 public class Condition extends AbstractConfigurationObject
 {
 	private String beanName;
+	private boolean expectedValue = true;
 
 	@XmlElementWrapper(name = "properties")
 	@XmlElement(name = "property")
 	private List<Property> properties;
+
+	public String getBeanName()
+	{
+		return beanName;
+	}
+
+	public void setBeanName(String beanName)
+	{
+		this.beanName = beanName;
+	}
+
+	public List<Property> getProperties()
+	{
+		if (null == this.properties)
+		{
+			this.properties = new ArrayList<Property>();
+		}
+
+		return properties;
+	}
+
+	public void setProperties(List<Property> properties)
+	{
+		this.properties = properties;
+	}
+
+	public boolean getExpectedValue()
+	{
+		return expectedValue;
+	}
+
+	public void setExpectedValue(boolean expectedValue)
+	{
+		this.expectedValue = expectedValue;
+	}
 
 	@Override
 	public int hashCode()
@@ -51,28 +87,4 @@ public class Condition extends AbstractConfigurationObject
 		return true;
 	}
 
-	public String getBeanName()
-	{
-		return beanName;
-	}
-
-	public void setBeanName(String beanName)
-	{
-		this.beanName = beanName;
-	}
-
-	public List<Property> getProperties()
-	{
-		if (null == this.properties)
-		{
-			this.properties = new ArrayList<Property>();
-		}
-
-		return properties;
-	}
-
-	public void setProperties(List<Property> properties)
-	{
-		this.properties = properties;
-	}
 }

@@ -18,12 +18,34 @@ public class SchedulingServiceImpl implements SchedulingService
 	private TriggerService triggerService;
 
 	@Override
-	public void runEachMinute()
+	public void runEveryMinute()
 	{
-		LOGGER.info("execute scheduled triggers: each minute.");
+		LOGGER.info("execute scheduled triggers: every minute.");
 
 		final List<TriggerByScheduling> triggers = this.triggerService
-				.findTriggersByScheduledInterval(ESchedulingPointInTime.EACH_MINUTE);
+				.findTriggersByScheduledInterval(ESchedulingPointInTime.EVERY_MINUTE);
+
+		for (final TriggerByScheduling trigger : triggers)
+		{
+			try
+			{
+				this.triggerService.executeTrigger(trigger);
+			} catch (RuntimeException ex)
+			{
+				LOGGER.error("execution of trigger <" + trigger.getName()
+						+ "> terminated with exception <"
+						+ ex.getLocalizedMessage() + ">");
+			}
+		}
+	}
+
+	@Override
+	public void runEveryQuarterHour()
+	{
+		LOGGER.info("execute scheduled triggers: every quarter hour.");
+
+		final List<TriggerByScheduling> triggers = this.triggerService
+				.findTriggersByScheduledInterval(ESchedulingPointInTime.EVERY_QUARTER_HOUR);
 
 		for (final TriggerByScheduling trigger : triggers)
 		{

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jj:configuration xmlns:jj="http://www.jumajumo.de/homecontrol/configuration">
+    <jj:actionChains>
+        <jj:actionChain uuid="077adbf6-b178-11e4-b479-12e3f512a338" name="GarageDeviceHealthCheck">
+            <jj:triggerRefs>
+                <jj:triggerRef uuid="2e00775e-b178-11e4-b479-12e3f512a338" name="RestTrigger">
+                    <jj:triggerUuid>d729d89e-b177-11e4-b479-12e3f512a338</jj:triggerUuid>
+                </jj:triggerRef>
+            </jj:triggerRefs>
+            <jj:actionRefs>
+                <jj:actionRef uuid="39e7a330-b178-11e4-b479-12e3f512a338" name="GarageDeviceHealthCheck">
+                    <jj:actionUuid>5f92d358-b177-11e4-b479-12e3f512a338</jj:actionUuid>
+                </jj:actionRef>
+            </jj:actionRefs>
+        </jj:actionChain>
+        <jj:actionChain uuid="5f8b9c31-833f-4de5-8c24-d57435763156" name="OpenGarageDoor">
+            <jj:triggerRefs>
+<!--
+                <jj:triggerRef uuid="7a05244d-1886-49d0-8e52-eb5c167ab282" name="RestTrigger">
+                    <jj:triggerUuid>573e766f-409c-485e-8114-df9bf982363e</jj:triggerUuid>
+                </jj:triggerRef>
+-->
+                <jj:triggerRef name="SensorTrigger">
+                    <jj:triggerUuid>7a0b93e3-5cf4-4f64-b885-54649937e73b</jj:triggerUuid>
+                </jj:triggerRef>
+            </jj:triggerRefs>
+            <jj:actionRefs>
+                <jj:actionRef uuid="6f76685b-16fe-47ab-9589-b2e0470439be" name="OpenGarageDoor">
+                    <jj:actionUuid>c57cf1df-2c95-4ecc-a1d0-8097be284843</jj:actionUuid>
+                </jj:actionRef>
+            </jj:actionRefs>
+        </jj:actionChain>
+		<jj:actionChain uuid="e289002d-1072-471b-92b8-daadee33c996" name="doorCameraMotionControlSwitch">
+			<jj:triggerRefs>
+				<jj:triggerRef name="ScheduledTrigger">
+					<jj:triggerUuid>45d81f4b-4d2a-4438-a472-ac81755dc8f7</jj:triggerUuid>
+				</jj:triggerRef>
+			</jj:triggerRefs>		
+			<jj:actionRefs>
+				<jj:actionRef name="switchOn">
+					<jj:actionUuid>a87da99c-9d5a-40ba-8546-bf723e4e84a0</jj:actionUuid>
+					<jj:conditionRefs>
+						<jj:conditionRef name="itIsDark">
+							<jj:conditionUuid>4ebd0e67-03f3-4c14-88e9-e2af50c0ae9c</jj:conditionUuid>
+						</jj:conditionRef>
+					</jj:conditionRefs>
+				</jj:actionRef>
+				<jj:actionRef name="switchOff">
+					<jj:actionUuid>97ec9a60-0ac5-44c4-a229-a98dfa20d0e1</jj:actionUuid>
+					<jj:conditionRefs>
+						<jj:conditionRef name="isItBright">
+							<jj:conditionUuid>b35d9755-5d80-49a9-b7a6-634a0226e01c</jj:conditionUuid>
+						</jj:conditionRef>
+					</jj:conditionRefs>
+				</jj:actionRef>
+			</jj:actionRefs>
+		</jj:actionChain>        
+    </jj:actionChains>
+    <jj:devices>
+        <jj:device uuid="5920a5fe-8c30-41ba-ab72-76f2481c10b0" name="GarageDevice">
+            <jj:protocol>http</jj:protocol>
+            <jj:hostName>192.168.1.81</jj:hostName>
+            <jj:actors>
+                <jj:actor uuid="87df2ec4-b177-11e4-b479-12e3f512a338" name="HealthCheck">
+                    <jj:requestInfo>
+                        <jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+                        <jj:path>/</jj:path>
+                    </jj:requestInfo>
+                </jj:actor>
+                <jj:actor uuid="4661402f-4618-4309-a43d-9786eeafd099" name="ToggleRelais1">
+                    <jj:requestInfo>
+                        <jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+                        <jj:path>/cgi-bin/tasterRelais1.sh</jj:path>
+                    </jj:requestInfo>
+                </jj:actor>
+            </jj:actors>
+        </jj:device>
+        <jj:device uuid="9a8bed96-230e-4b37-b030-4e3d1795996f" name="ui">
+            <jj:sensors>
+                <jj:sensor uuid="b081714d-f0fd-4889-84c9-84e36a859cbb"
+                    name="btnOpenGrageDoor" />
+            </jj:sensors>
+            <jj:actors>
+                <jj:actor uuid="41e55166-ab21-4d3e-b5dc-9c3b6cf90768" name="navToDoorCamera">
+                    <jj:requestInfo>
+                        <jj:requestType>REQUEST_TYPE_WEBSOCKET</jj:requestType>
+                    </jj:requestInfo>
+                </jj:actor>
+            </jj:actors>
+        </jj:device>       
+		<jj:device uuid="b375c8ef-43bc-4cd2-88bd-317d138613c4" name="DoorCamera">
+			<jj:protocol>http</jj:protocol>
+			<jj:hostName>192.168.1.21</jj:hostName>
+			<jj:actors>
+				<jj:actor uuid="14cf83b8-a0e9-41cb-83d6-431718ef565b" name="enableMotionControl">
+					<jj:requestInfo>
+						<jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+						<jj:path>/set_alarm.cgi</jj:path>
+						<jj:query>upload_interval=1&amp;user=admin&amp;pwd=jodafon</jj:query>
+					</jj:requestInfo>
+				</jj:actor>
+				<jj:actor uuid="f99e43a7-811c-488a-a47e-c7f5bbafe54d" name="disableMotionControl">
+					<jj:requestInfo>
+						<jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+						<jj:path>/set_alarm.cgi</jj:path>
+						<jj:query>upload_interval=1&amp;user=admin&amp;pwd=jodafon</jj:query>
+					</jj:requestInfo>
+				</jj:actor>
+			</jj:actors>
+		</jj:device>
+    </jj:devices>
+    <jj:triggers>
+        <jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jj:triggerByRestCall" uuid="d729d89e-b177-11e4-b479-12e3f512a338" name="GarageDeviceHealthCheckRestTrigger">
+            <jj:requestInfo>
+                <jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+                <jj:path>garagedevicehealthcheck</jj:path>
+            </jj:requestInfo>
+        </jj:trigger>
+        <jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jj:triggerByRestCall" uuid="573e766f-409c-485e-8114-df9bf982363e" name="OpenGarageDoorRestTrigger">
+            <jj:requestInfo>
+                <jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+                <jj:path>opengaragedoor</jj:path>
+            </jj:requestInfo>
+        </jj:trigger>
+        <jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:type="jj:triggerByClientSensor" uuid="7a0b93e3-5cf4-4f64-b885-54649937e73b"
+            name="btnOpenGarageDoorSensorTrigger">
+            <jj:sensorUuids>
+                <jj:sensorUuid>b081714d-f0fd-4889-84c9-84e36a859cbb</jj:sensorUuid>
+            </jj:sensorUuids>
+        </jj:trigger>    
+		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:type="jj:triggerByScheduling" uuid="45d81f4b-4d2a-4438-a472-ac81755dc8f7" name="doorCameraSwitchMotionControl">
+			<jj:runAt>EVERY_QUARTER_HOUR</jj:runAt>
+		</jj:trigger>            
+    </jj:triggers>
+    <jj:conditions>
+    	<jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46e" name="TrueCondition">
+            <jj:beanName>conditionScript</jj:beanName>
+            <jj:properties>
+            	<jj:property>
+            		<jj:key>script</jj:key>
+            		<jj:value>
+            			<![CDATA[
+            			function checkCondition() 
+            			{ 
+            				return true; 
+            			}
+            			]]>
+            		</jj:value>
+            	</jj:property>
+            </jj:properties>
+        </jj:condition>
+        <jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46f" name="FalseCondition">
+            <jj:beanName>conditionScript</jj:beanName>
+            <jj:properties>
+            	<jj:property>
+            		<jj:key>script</jj:key>
+            		<jj:value>
+            			<![CDATA[
+            			function checkCondition() 
+            			{ 
+            				return false; 
+            			}
+            			]]>
+            		</jj:value>
+            	</jj:property>
+            </jj:properties>
+        </jj:condition>
+        <jj:condition uuid="4ebd0e67-03f3-4c14-88e9-e2af50c0ae9c" name="IsItDarkCondition">
+            <jj:beanName>conditionIsItDark</jj:beanName>
+        </jj:condition>
+		<jj:condition uuid="b35d9755-5d80-49a9-b7a6-634a0226e01c" name="IsItBrightCondition">
+			<jj:beanName>conditionIsItDark</jj:beanName>
+			<jj:expectedValue>false</jj:expectedValue>
+		</jj:condition>
+        
+    </jj:conditions>
+    <jj:actions>
+        <jj:action uuid="5f92d358-b177-11e4-b479-12e3f512a338" name="GarageDeviceHealthCheck">
+            <jj:actorUuids>
+                <jj:actorUuid>87df2ec4-b177-11e4-b479-12e3f512a338</jj:actorUuid>
+            </jj:actorUuids>
+        </jj:action>
+        <jj:action uuid="c57cf1df-2c95-4ecc-a1d0-8097be284843" name="GarageDoorOpenAction">
+            <jj:actorUuids>
+                <jj:actorUuid>4661402f-4618-4309-a43d-9786eeafd099</jj:actorUuid>
+            </jj:actorUuids>
+        </jj:action>
+		<jj:action uuid="a87da99c-9d5a-40ba-8546-bf723e4e84a0" name="doorCameraMotionControlOn">
+			<jj:actorUuids>
+				<jj:actorUuid>14cf83b8-a0e9-41cb-83d6-431718ef565b</jj:actorUuid>
+			</jj:actorUuids>
+		</jj:action>
+		<jj:action uuid="97ec9a60-0ac5-44c4-a229-a98dfa20d0e1" name="doorCameraMotionControlOff">
+			<jj:actorUuids>
+				<jj:actorUuid>63846c69-967a-4291-b27b-e79b27911ea9</jj:actorUuid>
+			</jj:actorUuids>
+		</jj:action>        
+        </jj:actions>
+</jj:configuration>

@@ -79,7 +79,8 @@ public class ClientActorRequestTemplate
 		try
 		{
 			return new URI(this.device.getProtocol(),
-					this.device.getHostName(), this.requestInfo.getPath(), "");
+					this.device.getHostName(), this.requestInfo.getPath(),
+					this.requestInfo.getQuery(), "");
 		} catch (URISyntaxException e)
 		{
 			throw new IllegalArgumentException("uri syntax is not valid", e);

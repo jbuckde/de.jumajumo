@@ -2,8 +2,8 @@ package de.jumajumo.core.service.weather;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +23,7 @@ import de.jumajumo.core.type.CurrentWeather;
 public class WeatherServiceOpenWeatherMap implements WeatherService
 {
 
-	private Map<Date, CurrentWeather> weatherCache = new HashMap<Date, CurrentWeather>();
+	private Map<String, CurrentWeather> weatherCache = new HashMap<String, CurrentWeather>();
 
 	@Override
 	public CurrentWeather loadCurrentWeather()
@@ -34,7 +34,12 @@ public class WeatherServiceOpenWeatherMap implements WeatherService
 		{
 			currentWeather = this.loadFromService("Bad Schussenried");
 
-			this.weatherCache.put(this.getToday(), currentWeather);
+			if (null != currentWeather.getSunset())
+			{
+				this.weatherCache.put(
+						this.getDateFromSunset(currentWeather.getSunset()),
+						currentWeather);
+			}
 		}
 
 		return currentWeather;
@@ -42,7 +47,7 @@ public class WeatherServiceOpenWeatherMap implements WeatherService
 
 	protected CurrentWeather loadFromCache()
 	{
-		final Date today = getToday();
+		final String today = this.getToday();
 
 		if (this.weatherCache.containsKey(today))
 		{
@@ -52,14 +57,18 @@ public class WeatherServiceOpenWeatherMap implements WeatherService
 		return null;
 	}
 
-	private Date getToday()
+	private String getDateFromSunset(Date sunset)
 	{
-		Calendar cal = Calendar.getInstance();
-		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
-				cal.get(Calendar.DATE));
-		final Date today = cal.getTime();
+		final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 
-		return today;
+		return format.format(sunset);
+	}
+
+	private String getToday()
+	{
+		final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+
+		return format.format(new Date());
 	}
 
 	protected CurrentWeather loadFromService(final String location)

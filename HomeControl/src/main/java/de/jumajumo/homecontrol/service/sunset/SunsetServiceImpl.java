@@ -24,9 +24,15 @@ public class SunsetServiceImpl implements SunsetService
 		final CurrentWeather currentWeather = getWeatherService()
 				.loadCurrentWeather();
 
-		if (null != currentWeather.getSunset())
+		if (null != currentWeather.getSunset()
+				&& null != currentWeather.getSunrise())
 		{
-			return currentWeather.getSunset().compareTo(timeToCheck) < 0;
+			final boolean afterSunset = currentWeather.getSunset().compareTo(
+					timeToCheck) < 0;
+			final boolean beforeSunrise = currentWeather.getSunrise()
+					.compareTo(timeToCheck) > 0;
+
+			return afterSunset || beforeSunrise;
 		} else
 		{
 			LOGGER.warn("something went wrong with sunset determination.");

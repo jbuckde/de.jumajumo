@@ -26,10 +26,10 @@ public class ConfigurationContextHolderImpl implements
 	private final static Log LOGGER = LogFactory
 			.getLog(ConfigurationContextHolder.class);
 
-	private final static boolean USE_RESOURCE = Boolean.parseBoolean(System
-			.getProperty("config.use.resource"));
-
 	private ConfigurationContext configuration;
+
+	protected boolean use_resource = Boolean.parseBoolean(System
+			.getProperty("config.use.resource"));
 
 	@Autowired
 	private FileStorageService fileStorageService;
@@ -63,7 +63,7 @@ public class ConfigurationContextHolderImpl implements
 	{
 		InputStream resourceAsStream;
 
-		if (USE_RESOURCE)
+		if (this.use_resource)
 		{
 			resourceAsStream = this.loadConfigurationFromResource();
 		} else

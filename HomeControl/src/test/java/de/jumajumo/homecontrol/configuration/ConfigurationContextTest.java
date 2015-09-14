@@ -8,19 +8,16 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ConfigurationContextTest
 {
-	@Autowired
-	private ConfigurationContextHolder configurationContextHolder;
-
 	@Test
 	public void testExportJson() throws Exception
 	{
-		final ConfigurationContextHolder configurationHolder = new ConfigurationContextHolderImpl();
+		final ConfigurationContextHolderImpl configurationHolder = new ConfigurationContextHolderImpl();
+		configurationHolder.use_resource = true;
 
 		final ObjectMapper mapper = new ObjectMapper();
 		mapper.writeValue(System.out, configurationHolder.getConfiguration());
@@ -29,7 +26,8 @@ public class ConfigurationContextTest
 	@Test
 	public void testExportXml()
 	{
-		final ConfigurationContextHolder configurationHolder = new ConfigurationContextHolderImpl();
+		final ConfigurationContextHolderImpl configurationHolder = new ConfigurationContextHolderImpl();
+		configurationHolder.use_resource = true;
 
 		JAXBContext context;
 		try

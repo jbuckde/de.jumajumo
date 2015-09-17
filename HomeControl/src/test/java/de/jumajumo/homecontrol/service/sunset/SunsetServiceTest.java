@@ -1,4 +1,4 @@
-package de.jumajumo.homecontrol.service;
+package de.jumajumo.homecontrol.service.sunset;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -7,16 +7,19 @@ import java.util.GregorianCalendar;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import de.jumajumo.core.service.weather.WeatherService;
 import de.jumajumo.core.type.CurrentWeather;
-import de.jumajumo.homecontrol.service.sunset.SunsetServiceImpl;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SunsetServiceTest
 {
+	@InjectMocks
 	private SunsetServiceImpl testee;
 
 	@Mock
@@ -25,23 +28,28 @@ public class SunsetServiceTest
 	@Before
 	public void setup()
 	{
-		MockitoAnnotations.initMocks(this);
-
-		testee = new SunsetServiceImpl();
-		testee.setWeatherService(this.weatherService);
+		// define the weather mock
+		this.defineWeatherMock();
 	}
 
 	@Test
 	public void testSunsetYesNo() throws Exception
 	{
-		// define the weather mock
-		this.defineWeatherMock();
-
 		final Date timeToCheck = this.timeToday(14, 0);
 
-		final boolean isItDark = testee.isItDarkAt(timeToCheck);
+		final boolean isItDark = this.testee.isItDarkAt(timeToCheck);
 
 		Assert.assertFalse("should not be dark at 2:00 pm", isItDark);
+	}
+
+	@Test
+	public void testSunriseYesNo() throws Exception
+	{
+		final Date timeToCheck = this.timeToday(4, 0);
+
+		final boolean isItDark = this.testee.isItDarkAt(timeToCheck);
+
+		Assert.assertTrue("should be dark at 4:00 am", isItDark);
 	}
 
 	private void defineWeatherMock()
@@ -53,7 +61,6 @@ public class SunsetServiceTest
 
 		Mockito.when(weatherService.loadCurrentWeather()).thenReturn(
 				mockedCurrentWeather);
-
 	}
 
 	private Date timeToday(int hour, int minutes)

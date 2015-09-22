@@ -61,4 +61,20 @@ public class ConfigurationContextTest
 				.unmarshal(resourceAsStream);
 
 	}
+
+	@Test
+	public void testImportLiveConfiguration() throws Exception
+	{
+		final InputStream resourceAsStream = this.getClass()
+				.getResourceAsStream("live_configuration.xml");
+
+		JAXBContext context = JAXBContext
+				.newInstance(ConfigurationContext.class);
+
+		final Unmarshaller unmarshaller = context.createUnmarshaller();
+
+		ConfigurationContext configuration = (ConfigurationContext) unmarshaller
+				.unmarshal(resourceAsStream);
+
+	}
 }

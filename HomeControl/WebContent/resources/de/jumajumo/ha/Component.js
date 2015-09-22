@@ -44,6 +44,14 @@ sap.ui.core.UIComponent.extend("jumajumo.ha.Component",
 					targetAggregation : "detailPages"
 				},
 				{
+					pattern : "homeAutomationObject/lightning",
+					name : "homeAutomationObjectLightning",
+					view : "HomeAutomationObjectLightningDetail",
+					viewPath : "jumajumo.ha.view",
+					viewLevel : 2,
+					targetAggregation : "detailPages"
+				},
+				{
 					pattern : "homeControlConfiguration",
 					name : "homeControlConfiguration",
 					view : "HomeControlConfiguration",

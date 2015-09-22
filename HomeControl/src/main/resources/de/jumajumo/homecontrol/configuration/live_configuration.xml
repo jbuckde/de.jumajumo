@@ -15,11 +15,6 @@
         </jj:actionChain>
         <jj:actionChain uuid="5f8b9c31-833f-4de5-8c24-d57435763156" name="OpenGarageDoor">
             <jj:triggerRefs>
-<!--
-                <jj:triggerRef uuid="7a05244d-1886-49d0-8e52-eb5c167ab282" name="RestTrigger">
-                    <jj:triggerUuid>573e766f-409c-485e-8114-df9bf982363e</jj:triggerUuid>
-                </jj:triggerRef>
--->
                 <jj:triggerRef name="SensorTrigger">
                     <jj:triggerUuid>7a0b93e3-5cf4-4f64-b885-54649937e73b</jj:triggerUuid>
                 </jj:triggerRef>
@@ -29,6 +24,18 @@
                     <jj:actionUuid>c57cf1df-2c95-4ecc-a1d0-8097be284843</jj:actionUuid>
                 </jj:actionRef>
             </jj:actionRefs>
+        </jj:actionChain>
+        <jj:actionChain uuid="14bdb355-9b1f-46d8-9923-7fd7c7e38768" name="DoorLight">
+        	<jj:triggerRefs>
+        		<jj:triggerRef name="SensorTrigger">
+        			<jj:triggerUuid>ccd0f5f1-ba71-4414-b6cf-a2f14948a184</jj:triggerUuid>
+        		</jj:triggerRef>
+        	</jj:triggerRefs>
+        	<jj:actionRefs>
+        		<jj:actionRef name="switchOn">
+        			<jj:actionUuid>9d385792-17e0-492b-a25a-06b9a804285f</jj:actionUuid>
+        		</jj:actionRef>
+        	</jj:actionRefs>
         </jj:actionChain>
 		<jj:actionChain uuid="e289002d-1072-471b-92b8-daadee33c996" name="doorCameraMotionControlSwitch">
 			<jj:triggerRefs>
@@ -57,6 +64,18 @@
 		</jj:actionChain>        
     </jj:actionChains>
     <jj:devices>
+		<jj:device uuid="e920e40b-7d12-4bb4-afd8-476d187913b7" name="CentralDevice">
+			<jj:protocol>http</jj:protocol>
+            <jj:hostName>192.168.1.83</jj:hostName>
+			<jj:actors>
+				<jj:actor uuid="fa358adf-73c3-4b77-80e5-d8ed9b96119b" name="ToggleRelais1">
+					<jj:requestInfo>
+						<jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+						<jj:path>/cgi-bin/tasterRelais1.sh</jj:path>
+					</jj:requestInfo>
+				</jj:actor>
+			</jj:actors>
+		</jj:device>    
         <jj:device uuid="5920a5fe-8c30-41ba-ab72-76f2481c10b0" name="GarageDevice">
             <jj:protocol>http</jj:protocol>
             <jj:hostName>192.168.1.81</jj:hostName>
@@ -79,6 +98,7 @@
             <jj:sensors>
                 <jj:sensor uuid="b081714d-f0fd-4889-84c9-84e36a859cbb"
                     name="btnOpenGrageDoor" />
+				<jj:sensor uuid="584180e8-c2a3-41ac-9f64-f6c542179d06" name="btnDoorLightOn" />
             </jj:sensors>
             <jj:actors>
                 <jj:actor uuid="41e55166-ab21-4d3e-b5dc-9c3b6cf90768" name="navToDoorCamera">
@@ -116,11 +136,10 @@
                 <jj:path>garagedevicehealthcheck</jj:path>
             </jj:requestInfo>
         </jj:trigger>
-        <jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jj:triggerByRestCall" uuid="573e766f-409c-485e-8114-df9bf982363e" name="OpenGarageDoorRestTrigger">
-            <jj:requestInfo>
-                <jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
-                <jj:path>opengaragedoor</jj:path>
-            </jj:requestInfo>
+        <jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jj:triggerByClientSensor" uuid="ccd0f5f1-ba71-4414-b6cf-a2f14948a184" name="btnDoorLightSensorTrigger">
+			<jj:sensorUuids>
+				<jj:sensorUuid>584180e8-c2a3-41ac-9f64-f6c542179d06</jj:sensorUuid>
+			</jj:sensorUuids>
         </jj:trigger>
         <jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:type="jj:triggerByClientSensor" uuid="7a0b93e3-5cf4-4f64-b885-54649937e73b"
@@ -186,6 +205,11 @@
             <jj:actorUuids>
                 <jj:actorUuid>4661402f-4618-4309-a43d-9786eeafd099</jj:actorUuid>
             </jj:actorUuids>
+        </jj:action>
+        <jj:action uuid="9d385792-17e0-492b-a25a-06b9a804285f" name="doorLightOn">
+        	<jj:actorUuids>
+        		<jj:actorUuid>fa358adf-73c3-4b77-80e5-d8ed9b96119b</jj:actorUuid>
+        	</jj:actorUuids>
         </jj:action>
 		<jj:action uuid="a87da99c-9d5a-40ba-8546-bf723e4e84a0" name="doorCameraMotionControlOn">
 			<jj:actorUuids>

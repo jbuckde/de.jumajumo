@@ -1,0 +1,31 @@
+<mvc:View xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    controllerName="de.jumajumo.ha.view.HomeAutomationObjectLightningDetail"
+    xmlns="sap.m" resourceBundleUrl="resources/de/jumajumo/ha/view/lightning.properties"
+	resourceBundleAlias="ui">
+
+    <Page
+        showNavButton="{device>/isPhone}"
+        title="{ui>page.title}" 
+        navButtonPress="goBack">
+
+        <content>
+
+            <ObjectHeader title="{ui>objectheader.title}" >
+            </ObjectHeader>
+
+            <VBox alignItems="Center" >
+
+                <Button
+                    press="switchDoorLight"
+                    text="{ui>button.switchDoorLight}"/>
+
+                <html:br />
+                    <html:img width="99%" src="http://192.168.1.83/camera/door?user=watcher&amp;pwd=watcher" >
+                    </html:img>
+            </VBox>
+        </content>
+    </Page>
+
+</mvc:View>

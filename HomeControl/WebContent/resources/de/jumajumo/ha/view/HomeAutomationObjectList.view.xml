@@ -15,7 +15,7 @@
 						icon="sap-icon://video" iconDensityAware="true" press="navToCamera">
 					</ObjectListItem>
 					<ObjectListItem title="{ui>item.lightning}" type="{device>/listItemType}"
-						icon="sap-icon://lightbulb" iconDensityAware="true">
+						icon="sap-icon://lightbulb" iconDensityAware="true" press="navToLightning">
 					</ObjectListItem>
 					<ObjectListItem title="{ui>item.configuration}" type="{device>/listItemType}"
 						icon="sap-icon://settings" iconDensityAware="true" press="navToConfiguration">

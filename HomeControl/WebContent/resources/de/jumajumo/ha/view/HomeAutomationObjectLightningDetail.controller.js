@@ -1,4 +1,4 @@
-sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectList",
+sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectLightningDetail",
 {
 
 	onInit : function()
@@ -10,25 +10,23 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectList",
 		// this);
 	},
 
-	navToGarage : function(oEvent)
+	goBack : function(oEvent)
 	{
-		this.router.navTo("homeAutomationObjectGarage");
+		this.router.navTo("homeAutomationObjectList");
 	},
 
-	navToCamera : function(oEvent)
+	switchDoorLight : function(oEvent)
 	{
-		this.router.navTo("homeAutomationObjectCamera");
-	},
+		var button = oEvent.getSource();
 
-	navToLightning: function(oEvent)
-	{
-		this.router.navTo("homeAutomationObjectLightning");
-	},
-	
-	navToConfiguration : function(oEvent)
-	{
-		this.router.navTo("homeControlConfiguration");
-	},
+		button.setEnabled(false);
+		
+		var json = '{"command" : "SENSOR_TRIGGER","parameters" : {"sensorId" : "584180e8-c2a3-41ac-9f64-f6c542179d06"}}';
+		jumajumo.ha.WebSocket.connection().send(json);
+		
+		button.setEnabled(true);
+
+	}
 
 // _handleRouteMatched : function(oEvent)
 // {

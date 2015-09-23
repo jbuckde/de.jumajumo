@@ -10,6 +10,9 @@
 					<Column>
 						<Text text="Name" />
 					</Column>
+					<Column>
+						<Text text="Expected" />
+					</Column>
 					<Column width="12em">
 						<Text text="UUID" />
 					</Column>
@@ -19,6 +22,7 @@
 						<cells>
 							<ObjectIdentifier title="{configuration>name}" text="{configuration>beanName}"
 								class="sapMTableContentMargin" />
+							<Text text="{configuration>expectedValue}" />
 							<Text text="{configuration>uuid}" />
 						</cells>
 					</ColumnListItem>

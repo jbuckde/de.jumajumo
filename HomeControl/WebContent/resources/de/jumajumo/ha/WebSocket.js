@@ -2,14 +2,14 @@ jQuery.sap.declare("jumajumo.ha.WebSocket");
 
 jumajumo.ha.WebSocket =
 {
-
 	connection: function()
 	{
 		return connection;
 	}
 };
 
-var connection = new WebSocket('ws://192.168.1.83:8080/HomeControl/dispatcher/websocketapi');
+
+var connection = new WebSocket('ws://' + window.location.host + '/HomeControl/dispatcher/websocketapi');
 
 connection.onopen = function () {
 

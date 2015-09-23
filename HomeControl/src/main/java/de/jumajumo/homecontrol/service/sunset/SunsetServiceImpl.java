@@ -15,13 +15,12 @@ public class SunsetServiceImpl implements SunsetService
 {
 	private final static Log LOGGER = LogFactory.getLog(SunsetService.class);
 
-	@Autowired
 	private WeatherService weatherService;
 
 	@Override
 	public boolean isItDarkAt(final Date timeToCheck)
 	{
-		final CurrentWeather currentWeather = getWeatherService()
+		final CurrentWeather currentWeather = this.getWeatherService()
 				.loadCurrentWeather();
 
 		if (null != currentWeather.getSunset()
@@ -45,6 +44,7 @@ public class SunsetServiceImpl implements SunsetService
 		return weatherService;
 	}
 
+	@Autowired
 	public void setWeatherService(WeatherService weatherService)
 	{
 		this.weatherService = weatherService;

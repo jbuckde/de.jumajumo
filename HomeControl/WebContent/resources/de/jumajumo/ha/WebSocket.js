@@ -9,7 +9,7 @@ jumajumo.ha.WebSocket =
 	}
 };
 
-var connection = new WebSocket('ws://localhost:8080/HomeControl/dispatcher/websocketapi');
+var connection = new WebSocket('ws://192.168.1.83:8080/HomeControl/dispatcher/websocketapi');
 
 connection.onopen = function () {
 

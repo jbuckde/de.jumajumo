@@ -26,7 +26,7 @@
             <jj:actors>
                 <jj:actor uuid="4661402f-4618-4309-a43d-9786eeafd099" name="GaragDeviceOpenDoorActor">
                     <jj:requestInfo>
-                        <jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+                        <jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
                         <jj:path>/cgi-bin/tasterRelais1.sh</jj:path>
                     </jj:requestInfo>
                 </jj:actor>
@@ -36,7 +36,7 @@
     <jj:triggers>
         <jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="jj:triggerByRestCall" uuid="573e766f-409c-485e-8114-df9bf982363e" name="trigger for a request to open the garage door">
             <jj:requestInfo>
-                <jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+                <jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
                 <jj:path>opengaragedoor</jj:path>
             </jj:requestInfo>
         </jj:trigger>

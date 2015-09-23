@@ -92,7 +92,7 @@
 			<jj:actors>
 				<jj:actor uuid="fa358adf-73c3-4b77-80e5-d8ed9b96119b" name="ToggleRelais1">
 					<jj:requestInfo>
-						<jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 						<jj:path>/cgi-bin/tasterRelais1.sh</jj:path>
 					</jj:requestInfo>
 				</jj:actor>
@@ -104,13 +104,13 @@
 			<jj:actors>
 				<jj:actor uuid="87df2ec4-b177-11e4-b479-12e3f512a338" name="HealthCheck">
 					<jj:requestInfo>
-						<jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 						<jj:path>/</jj:path>
 					</jj:requestInfo>
 				</jj:actor>
 				<jj:actor uuid="4661402f-4618-4309-a43d-9786eeafd099" name="ToggleRelais1">
 					<jj:requestInfo>
-						<jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 						<jj:path>/cgi-bin/tasterRelais1.sh</jj:path>
 					</jj:requestInfo>
 				</jj:actor>
@@ -137,7 +137,7 @@
 			<jj:actors>
 				<jj:actor uuid="14cf83b8-a0e9-41cb-83d6-431718ef565b" name="enableMotionControl">
 					<jj:requestInfo>
-						<jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 						<jj:path>/set_alarm.cgi</jj:path>
 						<jj:query>upload_interval=1&amp;user=admin&amp;pwd=jodafon
 						</jj:query>
@@ -145,7 +145,7 @@
 				</jj:actor>
 				<jj:actor uuid="f99e43a7-811c-488a-a47e-c7f5bbafe54d" name="disableMotionControl">
 					<jj:requestInfo>
-						<jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 						<jj:path>/set_alarm.cgi</jj:path>
 						<jj:query>upload_interval=0&amp;user=admin&amp;pwd=jodafon
 						</jj:query>
@@ -159,7 +159,7 @@
 			xsi:type="jj:triggerByRestCall" uuid="d729d89e-b177-11e4-b479-12e3f512a338"
 			name="GarageDeviceHealthCheckRestTrigger">
 			<jj:requestInfo>
-				<jj:requestType>REQUEST_TYPE_HHTP</jj:requestType>
+				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 				<jj:path>garagedevicehealthcheck</jj:path>
 			</jj:requestInfo>
 		</jj:trigger>

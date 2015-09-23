@@ -15,7 +15,7 @@ public class RequestInfo
 	@XmlEnum
 	public enum EnumRequestType
 	{
-		REQUEST_TYPE_HHTP, REQUEST_TYPE_WEBSOCKET;
+		REQUEST_TYPE_HTTP, REQUEST_TYPE_WEBSOCKET;
 
 		public String value()
 		{

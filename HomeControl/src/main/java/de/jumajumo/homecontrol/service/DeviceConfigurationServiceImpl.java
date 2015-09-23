@@ -81,7 +81,7 @@ public class DeviceConfigurationServiceImpl implements
 	{
 		final Actor actor = this.getActor(device, actorUuid);
 
-		if (RequestInfo.EnumRequestType.REQUEST_TYPE_HHTP.equals(actor
+		if (RequestInfo.EnumRequestType.REQUEST_TYPE_HTTP.equals(actor
 				.getRequestInfo().getRequestType()))
 		{
 			final ClientActorRequestTemplate requestTemplate = new ClientActorRequestTemplate(

@@ -25,7 +25,9 @@ import de.jumajumo.homecontrol.service.filestore.FileStorageMongoDBServiceImpl;
 @EnableAsync
 @EnableWebMvc
 @Import({ WebSocketConfigConfiguration.class })
-@ImportResource("classpath:de/jumajumo/homecontrol/spring/scheduling-context.xml")
+@ImportResource({
+		"classpath:de/jumajumo/homecontrol/spring/scheduling-context.xml",
+		"classpath:de/jumajumo/homecontrol/spring/mbean-context.xml" })
 public class ApplicationContextConfiguration extends WebMvcConfigurerAdapter
 {
 	public ApplicationContextConfiguration()

@@ -79,8 +79,10 @@ public class ActionChainServiceImpl implements ActionChainService
 		{
 			if (this.checkConditions(actionRef))
 			{
-				result.setSuccess(result.isSuccess()
-						&& this.executeActionByRef(actionRef));
+				final boolean currentSuccess = this
+						.executeActionByRef(actionRef);
+
+				result.setSuccess(result.isSuccess() && currentSuccess);
 			}
 		}
 

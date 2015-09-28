@@ -59,7 +59,7 @@
 					<jj:actionUuid>a87da99c-9d5a-40ba-8546-bf723e4e84a0</jj:actionUuid>
 					<jj:conditionRefs>
 						<jj:conditionRef name="itIsDark">
-							<jj:conditionUuid>4ebd0e67-03f3-4c14-88e9-e2af50c0ae9c</jj:conditionUuid>
+							<jj:conditionUuid><!-- dark -->4ebd0e67-03f3-4c14-88e9-e2af50c0ae9c</jj:conditionUuid>
 						</jj:conditionRef>
 					</jj:conditionRefs>
 				</jj:actionRef>
@@ -67,7 +67,7 @@
 					<jj:actionUuid>97ec9a60-0ac5-44c4-a229-a98dfa20d0e1</jj:actionUuid>
 					<jj:conditionRefs>
 						<jj:conditionRef name="isItBright">
-							<jj:conditionUuid>b35d9755-5d80-49a9-b7a6-634a0226e01c</jj:conditionUuid>
+							<jj:conditionUuid><!-- bright -->b35d9755-5d80-49a9-b7a6-634a0226e01c</jj:conditionUuid>
 						</jj:conditionRef>
 					</jj:conditionRefs>
 				</jj:actionRef>
@@ -193,7 +193,7 @@
 		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:type="jj:triggerByScheduling" uuid="45d81f4b-4d2a-4438-a472-ac81755dc8f7" name="doorCameraSwitchMotionControl">
-			<jj:runAt>EVERY_QUARTER_HOUR</jj:runAt>
+			<jj:runAt>EVERY_MINUTE</jj:runAt>
 		</jj:trigger>		
 	</jj:triggers>
 	<jj:conditions>
@@ -265,7 +265,7 @@
 		</jj:action>
 		<jj:action uuid="97ec9a60-0ac5-44c4-a229-a98dfa20d0e1" name="doorCameraMotionControlOff">
 			<jj:actorUuids>
-				<jj:actorUuid>63846c69-967a-4291-b27b-e79b27911ea9</jj:actorUuid>
+				<jj:actorUuid>f99e43a7-811c-488a-a47e-c7f5bbafe54d</jj:actorUuid>
 			</jj:actorUuids>
 		</jj:action>
 		

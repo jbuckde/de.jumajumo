@@ -3,6 +3,8 @@ package de.jumajumo.homecontrol.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ import de.jumajumo.homecontrol.service.action.ActionExecutor;
 @Service
 public class ActionServiceImpl implements ActionService
 {
+	private final static Log LOGGER = LogFactory.getLog(ActionService.class);
+
 	@Autowired
 	private ApplicationContext appContext;
 
@@ -58,9 +62,19 @@ public class ActionServiceImpl implements ActionService
 
 			if (null != actionBean)
 			{
-				return actionBean.executeAction();
+				boolean executionResult = actionBean.executeAction();
+
+				LOGGER.debug("action <" + action.getName()
+						+ "> executed with result <" + executionResult
+						+ "> (bean: <" + actionBeanName + ">)");
+
+				return executionResult;
 			} else
 			{
+				LOGGER.debug("action <" + action.getName()
+						+ "> executed with result <" + false + "> (bean: <"
+						+ actionBeanName + "> could not be found.)");
+
 				return false;
 			}
 		}
@@ -75,9 +89,15 @@ public class ActionServiceImpl implements ActionService
 
 			if (!this.deviceService.callActor(device, actorUuid))
 			{
+				LOGGER.debug("action <" + action.getName()
+						+ "> executed with result <false>");
+
 				return false;
 			}
 		}
+
+		LOGGER.debug("action <" + action.getName()
+				+ "> executed with result <true>");
 
 		return true;
 	}

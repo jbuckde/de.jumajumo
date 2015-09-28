@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -28,6 +30,9 @@ import de.jumajumo.homecontrol.websocket.WebSocketRequest;
 public class DeviceConfigurationServiceImpl implements
 		DeviceConfigurationService
 {
+	private final static Log LOGGER = LogFactory
+			.getLog(DeviceConfigurationService.class);
+
 	@Autowired
 	private ConfigurationContextHolder configurationContextHolder;
 
@@ -87,7 +92,12 @@ public class DeviceConfigurationServiceImpl implements
 			final ClientActorRequestTemplate requestTemplate = new ClientActorRequestTemplate(
 					device, actor.getRequestInfo());
 
-			return requestTemplate.executeRequest();
+			final boolean requestResult = requestTemplate.executeRequest();
+
+			LOGGER.debug("actor <" + actor.getName()
+					+ "> executed with result: <" + requestResult + ">");
+
+			return requestResult;
 		}
 
 		else if (RequestInfo.EnumRequestType.REQUEST_TYPE_WEBSOCKET
@@ -114,18 +124,28 @@ public class DeviceConfigurationServiceImpl implements
 						session.sendMessage(webSocketMessage);
 					} catch (IOException e)
 					{
+						LOGGER.debug("actor <" + actor.getName()
+								+ "> executed with result: <false>");
+
 						return false;
 					}
 				}
 			} catch (JsonProcessingException e1)
 			{
+				LOGGER.debug("actor <" + actor.getName()
+						+ "> executed with result: <false>");
+
 				return false;
 			}
+
+			LOGGER.debug("actor <" + actor.getName()
+					+ "> executed with result: <true>");
 
 			return true;
 		}
 
-		throw new IllegalAccessError("the actor is not valid for calling.");
+		throw new IllegalAccessError("the actor <" + actor.getName()
+				+ "> is not valid for calling.");
 	}
 
 	private TextMessage getWebSocketMessage(WebSocketRequest request)

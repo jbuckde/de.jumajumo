@@ -13,7 +13,7 @@
 	<bean name="schedulingService" class="de.jumajumo.homecontrol.service.scheduling.SchedulingServiceImpl" />
 	<task:scheduled-tasks scheduler="myScheduler">
 	
-		<task:scheduled ref="schedulingService" method="runEveryMinute" fixed-delay="60000" initial-delay="60000" />
+		<task:scheduled ref="schedulingService" method="runEveryMinute" fixed-delay="60000" initial-delay="1000" />
 		<task:scheduled ref="schedulingService" method="runEveryQuarterHour" fixed-delay="900000" initial-delay="1000" />
 
 <!-- 		<task:scheduled ref="beanB" method="methodB" fixed-rate="5000" /> -->

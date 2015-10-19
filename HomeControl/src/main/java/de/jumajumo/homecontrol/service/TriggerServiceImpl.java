@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import de.jumajumo.homecontrol.configuration.ConfigurationContextHolder;
@@ -101,6 +102,7 @@ public class TriggerServiceImpl implements TriggerService
 	}
 
 	@Override
+	@Async
 	public List<ActionChainResult> executeTrigger(final Trigger trigger)
 	{
 		final List<ActionChainResult> results = new ArrayList<ActionChainResult>();

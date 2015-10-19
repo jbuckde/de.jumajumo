@@ -3,6 +3,8 @@ package de.jumajumo.homecontrol.websocket;
 import java.io.IOException;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -20,6 +22,9 @@ import de.jumajumo.homecontrol.service.websocketregistry.WebSocketRegistryServic
 
 public class WebSocketAPIHandler extends TextWebSocketHandler
 {
+	private final static Log LOGGER = LogFactory
+			.getLog(WebSocketAPIHandler.class);
+
 	@Autowired
 	private WebSocketRegistryService webSocketRegistryService;
 
@@ -33,14 +38,20 @@ public class WebSocketAPIHandler extends TextWebSocketHandler
 	public void handleTextMessage(WebSocketSession session, TextMessage message)
 			throws IOException
 	{
-		session.sendMessage(message);
+		try
+		{
+			session.sendMessage(message);
 
-		final ObjectMapper deserializationMapper = new ObjectMapper();
-		final WebSocketRequest targetRequest = deserializationMapper.readValue(
-				message.getPayload(), WebSocketRequest.class);
+			final ObjectMapper deserializationMapper = new ObjectMapper();
+			final WebSocketRequest targetRequest = deserializationMapper
+					.readValue(message.getPayload(), WebSocketRequest.class);
 
-		this.executeRequest(session, targetRequest);
-
+			this.executeRequest(session, targetRequest);
+		} catch (RuntimeException e)
+		{
+			LOGGER.error("websocket message handler terminated with exception ("
+					+ e.getMessage() + ")");
+		}
 	}
 
 	private void executeRequest(final WebSocketSession session,

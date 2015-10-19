@@ -82,8 +82,10 @@ public class WeatherServiceOpenWeatherMap implements WeatherService
 		CurrentWeather forObject = null;
 		try
 		{
+			// FIXME: make apikey configurable
 			String urlString = "http://api.openweathermap.org/data/2.5/weather?q="
-					+ URLEncoder.encode(location, "UTF-8");
+					+ URLEncoder.encode(location, "UTF-8")
+					+ "&appid=5ab77ad296ebeec4fda0a335ab44ed88";
 			forObject = restTemplate.getForObject(urlString,
 					CurrentWeather.class);
 		} catch (UnsupportedEncodingException e)

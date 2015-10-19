@@ -130,14 +130,16 @@
 					<jj:requestInfo>
 						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 						<jj:path>/set_alarm.cgi</jj:path>
-						<jj:query>upload_interval=1&amp;user=admin&amp;pwd=jodafon</jj:query>
+						<jj:query>upload_interval=1</jj:query>
+						<jj:authorization>YWRtaW46am9kYWZvbg==</jj:authorization>
 					</jj:requestInfo>
 				</jj:actor>
 				<jj:actor uuid="f99e43a7-811c-488a-a47e-c7f5bbafe54d" name="disableMotionControl">
 					<jj:requestInfo>
 						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 						<jj:path>/set_alarm.cgi</jj:path>
-						<jj:query>upload_interval=0&amp;user=admin&amp;pwd=jodafon</jj:query>
+						<jj:query>upload_interval=0</jj:query>
+						<jj:authorization>YWRtaW46am9kYWZvbg==</jj:authorization>
 					</jj:requestInfo>
 				</jj:actor>
 			</jj:actors>

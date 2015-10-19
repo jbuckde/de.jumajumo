@@ -31,6 +31,7 @@ public class RequestInfo
 	private EnumRequestType requestType;
 	private String path;
 	private String query;
+	private String authorization;
 
 	public RequestInfo()
 	{
@@ -99,6 +100,11 @@ public class RequestInfo
 		return query;
 	}
 
+	public String getAuthorization()
+	{
+		return authorization;
+	}
+
 	public void setRequestType(EnumRequestType requestType)
 	{
 		this.requestType = requestType;
@@ -112,6 +118,11 @@ public class RequestInfo
 	public void setQuery(String query)
 	{
 		this.query = query;
+	}
+
+	public void setAuthorization(String authorization)
+	{
+		this.authorization = authorization;
 	}
 
 }

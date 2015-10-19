@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -20,6 +22,9 @@ import de.jumajumo.homecontrol.type.RequestInfo;
  */
 public class ClientActorRequestTemplate
 {
+	private final static Log LOGGER = LogFactory
+			.getLog(ClientActorRequestTemplate.class);
+
 	private final Device device;
 	private final RequestInfo requestInfo;
 
@@ -43,6 +48,12 @@ public class ClientActorRequestTemplate
 
 		try
 		{
+			if (null != this.requestInfo.getAuthorization()
+					&& !"".equals(this.requestInfo.getAuthorization()))
+			{
+				httpGet.setHeader("Authorization",
+						"Basic " + this.requestInfo.getAuthorization());
+			}
 
 			CloseableHttpResponse response;
 			response = httpclient.execute(httpGet);
@@ -53,6 +64,9 @@ public class ClientActorRequestTemplate
 						.contains("HTTP/1.1 200 OK"))
 				{
 					isStatus200 = false;
+
+					LOGGER.error("exception status received: <"
+							+ response.getStatusLine().toString() + ">");
 				}
 
 				HttpEntity entity1 = response.getEntity();
@@ -65,9 +79,15 @@ public class ClientActorRequestTemplate
 			}
 		} catch (HttpHostConnectException e)
 		{
+			LOGGER.error("request terminated with HttpHostConnectException: "
+					+ e.getMessage() + " (" + uri.toString() + ")");
+
 			return false;
 		} catch (IOException e)
 		{
+			LOGGER.error("request terminated with IOException: "
+					+ e.getMessage() + " (" + uri.toString() + ")");
+
 			return false;
 		}
 

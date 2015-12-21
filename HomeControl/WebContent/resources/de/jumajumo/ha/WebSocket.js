@@ -14,7 +14,6 @@ var connection = new WebSocket('ws://' + window.location.host + '/HomeControl/di
 connection.onopen = function () {
 
   var json = '{"command" : "DEFINE_DEVICE","parameters" : {"deviceId" : "9a8bed96-230e-4b37-b030-4e3d1795996f"}}';
-  
   connection.send(json); 
 };
 

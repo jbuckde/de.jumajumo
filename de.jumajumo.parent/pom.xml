@@ -7,7 +7,7 @@
   
   <modules>
   	<module>../de.jumajumo.core</module>
-  	<module>../HomeControl</module>
   	<module>../de.jumajumo.homecontrol.ui</module>
+  	<module>../de.jumajumo.homecontrol.server</module>
   </modules>
 </project>

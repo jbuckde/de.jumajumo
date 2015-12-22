@@ -1,5 +1,6 @@
 package de.jumajumo.core.service.twitter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import twitter4j.Status;
@@ -12,6 +13,7 @@ public class TwitterServiceTest
 	// TE3u7lFfnurgRMdVCvbthZ9Zcnzmwi9c6Q5ah7V08ceQFeeTgJ
 
 	@Test
+	@Ignore
 	public void testUpdate() throws Exception
 	{
 		final TwitterServiceImpl twitterService = new TwitterServiceImpl();

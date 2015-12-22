@@ -10,7 +10,7 @@ sap.ui.model.json.JSONModel.extend(
 				// Data is fetched here
 				jQuery.ajax(
 				{
-					url : "dispatcher/configuration",
+					url : "/HomeControlServer/dispatcher/configuration",
 					async : true,
 					dataType : "json",
 					type : "GET",

@@ -9,5 +9,7 @@
   	<module>../de.jumajumo.core</module>
   	<module>../de.jumajumo.homecontrol.ui</module>
   	<module>../de.jumajumo.homecontrol.server</module>
+
+  	<module>../de.jumajumo.homecontrol.camera</module>
   </modules>
 </project>

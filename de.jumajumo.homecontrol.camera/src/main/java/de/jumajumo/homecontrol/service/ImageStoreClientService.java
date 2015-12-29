@@ -2,7 +2,7 @@ package de.jumajumo.homecontrol.service;
 
 import java.util.List;
 
-public interface FtpClientService
+public interface ImageStoreClientService
 {
 
 	List<ImageGroup> collectFiles();

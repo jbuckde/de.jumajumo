@@ -15,10 +15,11 @@ import org.joda.time.Instant;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FtpClientServiceImpl implements FtpClientService
+public class FtpClientServiceImpl implements ImageStoreClientService
 {
 
-	private final static Log LOGGER = LogFactory.getLog(FtpClientService.class);
+	private final static Log LOGGER = LogFactory
+			.getLog(ImageStoreClientService.class);
 	private final static Duration GROUP_DURATION = Duration.standardMinutes(5);
 
 	public List<ImageGroup> collectFiles()
@@ -53,7 +54,8 @@ public class FtpClientServiceImpl implements FtpClientService
 					}
 				}
 
-				currentGroup.addNewFile(ftpFile.getName());
+				currentGroup.addNewImage(new Image(ftpFile.getName(), ftpFile
+						.getTimestamp().getTimeInMillis(), ftpFile.getSize()));
 			}
 
 			if (null != currentGroup)

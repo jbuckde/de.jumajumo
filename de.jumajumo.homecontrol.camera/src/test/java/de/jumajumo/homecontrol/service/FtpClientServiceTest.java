@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class FtpClientServiceTest
@@ -19,7 +18,6 @@ public class FtpClientServiceTest
 	}
 
 	@Test
-	@Ignore
 	public void testGetFiles() throws Exception
 	{
 		final List<ImageGroup> groups = testee.collectFiles();
@@ -28,7 +26,7 @@ public class FtpClientServiceTest
 		{
 			System.out.println(DateFormat.getInstance().format(
 					new Date(imageGroup.getShotAt()))
-					+ " / (" + imageGroup.getFiles().size() + ")");
+					+ " / (" + imageGroup.getImages().size() + ")");
 		}
 	}
 }

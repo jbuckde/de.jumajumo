@@ -7,11 +7,11 @@ import java.util.List;
 public class ImageGroup
 {
 	private long shotAt;
-	private List<String> files = new ArrayList<String>();
+	private List<Image> images = new ArrayList<Image>();
 
-	public void addNewFile(final String fileName)
+	public void addNewImage(final Image image)
 	{
-		this.files.add(fileName);
+		this.images.add(image);
 	}
 
 	public long getShotAt()
@@ -24,9 +24,9 @@ public class ImageGroup
 		this.shotAt = shotAt;
 	}
 
-	public List<String> getFiles()
+	public List<Image> getImages()
 	{
-		return Collections.unmodifiableList(this.files);
+		return Collections.unmodifiableList(this.images);
 	}
 
 }

@@ -8,8 +8,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.springframework.stereotype.Service;
@@ -74,6 +76,29 @@ public class FtpClientServiceImpl implements ImageStoreClientService
 		return null;
 	}
 
+	@Override
+	public byte[] loadFile(String fileName) throws IOException
+	{
+		final FTPClient ftpClient = this.getFtpClient();
+
+		final byte[] result;
+		try
+		{
+			this.connectFtpClient(ftpClient);
+			ftpClient.changeWorkingDirectory("images");
+
+			final ByteArrayOutputStream local = new ByteArrayOutputStream();
+			ftpClient.retrieveFile(fileName, local);
+			result = local.toByteArray();
+		} finally
+		{
+			ftpClient.logout();
+			ftpClient.disconnect();
+		}
+
+		return result;
+	}
+
 	private ImageGroup createNewGroup(final FTPFile ftpFile)
 	{
 		final ImageGroup newGroup = new ImageGroup();
@@ -86,17 +111,20 @@ public class FtpClientServiceImpl implements ImageStoreClientService
 	{
 		final FTPClient ftpClient = this.getFtpClient();
 
+		final List<FTPFile> result;
 		try
 		{
 			this.connectFtpClient(ftpClient);
 
 			final FTPFile[] listFiles = ftpClient.listFiles("images");
-			return Arrays.asList(listFiles);
+			result = Arrays.asList(listFiles);
 		} finally
 		{
 			ftpClient.logout();
 			ftpClient.disconnect();
 		}
+
+		return result;
 	}
 
 	private FTPClient getFtpClient()
@@ -109,6 +137,8 @@ public class FtpClientServiceImpl implements ImageStoreClientService
 	{
 		ftpClient.connect("81.169.145.47", 21);
 		ftpClient.login("56324323.swh.strato-hosting.eu", "SamsungGalaxy1");
+
+		ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 	}
 
 }

@@ -1,0 +1,30 @@
+<mvc:View controllerName="de.jumajumo.ha.view.HomeAutomationObjectImageGroupDetail"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout" xmlns:html="http://www.w3.org/1999/xhtml" resourceBundleUrl="resources/de/jumajumo/ha/view/images.properties"
+	resourceBundleAlias="ui">
+
+	<Page title="{ui>page.title}" showNavButton="true" navButtonPress="goBack">
+
+		<content>
+			<ObjectHeader
+				title="{path:'pictures>shotAt', formatter: 'formatter.DateFormatter.longDateFromMills'}" />
+
+			<Carousel class="sapUiContentPadding" loop="false"
+				pages="{pictures>images}" height="80%">
+				<pages>
+					<!-- <l:VerticalLayout> -->
+					<!-- <Text text="{path: 'pictures>fileName'}" /> -->
+					<Image src="{path:'pictures>fileName', formatter:'.getImageUrl'}" />
+					<!-- </l:VerticalLayout> -->
+				</pages>
+			</Carousel>
+		</content>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Button text="{ui>button.delete}" type="Reject" press="deleteGroup" />
+			</Toolbar>
+		</footer>
+	</Page>
+
+</mvc:View>

@@ -20,11 +20,16 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectList",
 		this.router.navTo("homeAutomationObjectCamera");
 	},
 
-	navToLightning: function(oEvent)
+	navToLightning : function(oEvent)
 	{
 		this.router.navTo("homeAutomationObjectLightning");
 	},
-	
+
+	navToPictures : function(oEvent)
+	{
+		this.router.navTo("homeAutomationObjectImageGroupOverview");
+	},
+
 	navToConfiguration : function(oEvent)
 	{
 		this.router.navTo("homeControlConfiguration");

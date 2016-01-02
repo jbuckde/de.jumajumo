@@ -47,6 +47,14 @@ sap.ui
 						view.setModel(oConfigurationModel, "configuration");
 
 						oConfigurationModel.loadData();
+
+						// introduce the pictures model
+						jQuery.sap
+								.require("jumajumo.ha.model.CameraPicturesModel");
+						var oCameraPicturesModel = new jumajumo.ha.model.CameraPicturesModel();
+						view.setModel(oCameraPicturesModel, "pictures");
+
+						oCameraPicturesModel.loadData();
 					},
 
 					navToHandler : function(channelId, eventId, data)

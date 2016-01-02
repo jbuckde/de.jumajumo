@@ -17,6 +17,9 @@
 					<ObjectListItem title="{ui>item.lightning}" type="{device>/listItemType}"
 						icon="sap-icon://lightbulb" iconDensityAware="true" press="navToLightning">
 					</ObjectListItem>
+					<ObjectListItem title="{ui>item.pictures}" type="{device>/listItemType}"
+						icon="sap-icon://picture" iconDensityAware="true" press="navToPictures">
+					</ObjectListItem>
 					<ObjectListItem title="{ui>item.configuration}" type="{device>/listItemType}"
 						icon="sap-icon://settings" iconDensityAware="true" press="navToConfiguration">
 					</ObjectListItem>

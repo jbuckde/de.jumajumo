@@ -1,9 +1,15 @@
-sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectCameraDetail",
+sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
 {
 	onInit : function()
 	{
 		this.view = this.getView();
 		this.router = sap.ui.core.UIComponent.getRouterFor(this);
+		this.router.attachRoutePatternMatched(this._handleRouteMatched, this);
+	},
+
+	_handleRouteMatched : function(oEvent)
+	{
+		this.getView().getModel("pictures").loadData();
 	},
 
 	goBack : function(oEvent)

@@ -14,25 +14,8 @@
 						alt="" width="99%" border="0" />
 				</IconTabFilter>
 				<IconTabFilter text="{ui>tab.garage}" icon="sap-icon://video">
-					<html:img src="http://192.168.1.83/camera/garage?action=stream"
+					<html:img class="imgborder" src="http://192.168.1.83/camera/garage?action=stream"
 						width="99%" border="0" />
-				</IconTabFilter>
-				<IconTabFilter text="{ui>tab.pictures}" icon="sap-icon://picture">
-					<Table id="cameraImagesOverview" inset="false"
-						items="{pictures>/}">
-						<columns>
-							<Column>
-								<Text text="shot at" />
-							</Column>
-						</columns>
-						<items>
-							<ColumnListItem press="selectActionChain" type="Navigation">
-								<cells>
-									<ObjectIdentifier title="{path:'pictures>shotAt', formatter:'formatter.DateFormatter.longDateFromMills'}" class="sapMTableContentMargin" />
-								</cells>
-							</ColumnListItem>
-						</items>
-					</Table>
 				</IconTabFilter>
 			</items>
 		</IconTabBar>

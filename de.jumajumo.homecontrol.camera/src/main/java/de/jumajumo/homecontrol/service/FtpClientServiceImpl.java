@@ -1,5 +1,6 @@
 package de.jumajumo.homecontrol.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -11,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.springframework.stereotype.Service;

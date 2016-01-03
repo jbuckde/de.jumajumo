@@ -17,6 +17,24 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
 		this.router.navTo("homeAutomationObjectList");
 	},
 
+	refreshCollection : function(oEvent)
+	{
+		var that = this;
+
+		jQuery.ajax(
+		{
+			url : "/HomeControlCamera/dispatcher/image/refreshcollection",
+			async : true,
+			dataType : "json",
+			type : "GET",
+			complete : function(data, sStatus)
+			{
+				that.getView().getModel("pictures").loadData();
+			}
+
+		});
+	},
+
 	selectImageGroup : function(oEvent)
 	{
 		var sBindingPath = oEvent.oSource.getBindingContext("pictures")

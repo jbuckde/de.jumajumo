@@ -6,22 +6,27 @@
 	<Page showNavButton="{device>/isPhone}" title="{ui>page.title}"
 		navButtonPress="goBack">
 
-		<Table id="cameraImagesOverview" inset="false" items="{pictures>/}">
-			<columns>
-				<Column>
-					<Text text="shot at" />
-				</Column>
-			</columns>
-			<items>
-				<ColumnListItem press="selectImageGroup" type="Navigation">
-					<cells>
-						<ObjectIdentifier
-							title="{path:'pictures>shotAt', formatter:'formatter.DateFormatter.longDateFromMills'}"
-							class="sapMTableContentMargin" />
-					</cells>
-				</ColumnListItem>
-			</items>
-		</Table>
+		<headerContent>
+			<Button icon="sap-icon://refresh" press="refreshCollection" />
+		</headerContent>
+		<content>
+			<Table id="cameraImagesOverview" inset="false" items="{pictures>/}">
+				<columns>
+					<Column>
+						<Text text="shot at" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem press="selectImageGroup" type="Navigation">
+						<cells>
+							<ObjectIdentifier
+								title="{path:'pictures>shotAt', formatter:'formatter.DateFormatter.longDateFromMills'}"
+								class="sapMTableContentMargin" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
 	</Page>
 
 </mvc:View>

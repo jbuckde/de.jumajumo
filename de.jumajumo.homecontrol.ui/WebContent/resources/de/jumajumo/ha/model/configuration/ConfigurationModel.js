@@ -14,7 +14,7 @@ sap.ui.model.json.JSONModel.extend(
 					async : true,
 					dataType : "json",
 					type : "GET",
-					complete : function(data, sStatus)
+					success : function(data, sStatus)
 					{
 						that.setData(data);
 					}

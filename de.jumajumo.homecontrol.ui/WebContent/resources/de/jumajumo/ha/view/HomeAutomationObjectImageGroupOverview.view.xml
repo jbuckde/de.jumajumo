@@ -13,7 +13,7 @@
 			<Table id="cameraImagesOverview" inset="false" items="{pictures>/}">
 				<columns>
 					<Column>
-						<Text text="shot at" />
+						<Text text="{ui>text.shotat}" />
 					</Column>
 				</columns>
 				<items>

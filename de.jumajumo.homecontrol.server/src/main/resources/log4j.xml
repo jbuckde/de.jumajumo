@@ -20,7 +20,7 @@
 		<appender-ref ref="CONSOLE" />
 	</logger>
 	<logger name="de.jumajumo.homecontrol.service.DeviceConfigurationService">
-		<level value="DEBUG" />
+		<level value="WARN" />
 		<appender-ref ref="CONSOLE" />
 	</logger>
 </log4j:configuration>

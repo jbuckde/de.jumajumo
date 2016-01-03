@@ -84,6 +84,18 @@
 				</jj:actionRef>
 			</jj:actionRefs>
 		</jj:actionChain>
+		<jj:actionChain uuid="6782c24c-97e8-41de-8a7c-2f2609c2c1c2" name="refreshCameraImageCollection">
+			<jj:triggerRefs>
+				<jj:triggerRef name="ScheduledTrigger">
+					<jj:triggerUuid>d69a6fdb-0136-4a02-9826-2e88254e2e6c</jj:triggerUuid>
+				</jj:triggerRef>
+			</jj:triggerRefs>
+			<jj:actionRefs>
+				<jj:actionRef name="refreshCollection">
+					<jj:actionUuid>aafb85e6-7009-47f7-9244-488b384f9161</jj:actionUuid>
+				</jj:actionRef>
+			</jj:actionRefs>
+		</jj:actionChain>
 	</jj:actionChains>
 	<jj:devices>
 		<jj:device uuid="e920e40b-7d12-4bb4-afd8-476d187913b7" name="CentralDevice">
@@ -153,6 +165,18 @@
 				</jj:actor>
 			</jj:actors>
 		</jj:device>
+		<jj:device uuid="1fbbb699-addd-49f1-b7de-a5009774132c" name="CameraPictures">
+			<jj:protocol>http</jj:protocol>
+			<jj:hostName>192.168.1.83:8080</jj:hostName>
+			<jj:actors>
+				<jj:actor uuid="362df13c-5b15-43f3-8ef2-32ab82f6f291" name="refreshImageCollection">
+					<jj:requestInfo>
+						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
+						<jj:path>/HomeControlCamera/dispatcher/image/refreshcollection</jj:path>
+					</jj:requestInfo>
+				</jj:actor>
+			</jj:actors>
+		</jj:device>
 	</jj:devices>
 	<jj:triggers>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -182,6 +206,10 @@
 			name="doorCameraSwitchMotionControl">
 			<jj:runAt>EVERY_QUARTER_HOUR</jj:runAt>
 		</jj:trigger>
+		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:type="jj:triggerByScheduling" uuid="d69a6fdb-0136-4a02-9826-2e88254e2e6c" name="refreshCameraImageCollection">
+			<jj:runAt>EVERY_QUARTER_HOUR</jj:runAt>
+		</jj:trigger>		
 	</jj:triggers>
 	<jj:conditions>
 		<jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46e"
@@ -255,5 +283,10 @@
 				<jj:actorUuid>f99e43a7-811c-488a-a47e-c7f5bbafe54d</jj:actorUuid>
 			</jj:actorUuids>
 		</jj:action>
+		<jj:action uuid="aafb85e6-7009-47f7-9244-488b384f9161" name="refreshCameraImageCollection">
+			<jj:actorUuids>
+				<jj:actorUuid>362df13c-5b15-43f3-8ef2-32ab82f6f291</jj:actorUuid>
+			</jj:actorUuids>
+		</jj:action>		
 	</jj:actions>
 </jj:configuration>

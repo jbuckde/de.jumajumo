@@ -1,6 +1,7 @@
 package de.jumajumo.homecontrol.webservice;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,9 @@ public class ImageCollectionController
 	private ImageService imageService;
 
 	@RequestMapping(method = RequestMethod.GET, value = "refreshcollection", headers = "Accept=application/json")
-	public void refreshImageCollection()
+	public void refreshImageCollection() throws SocketException, IOException
 	{
+		this.imageCollectionService.collectGarbage();
 		this.imageCollectionService.refreshCollection();
 	}
 
@@ -39,6 +41,13 @@ public class ImageCollectionController
 	public List<ImageGroup> loadImageCollection()
 	{
 		return this.imageCollectionService.getImageCollection();
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE, value = "group/{shotat}", headers = "Accept=application/json")
+	public void deleteImageGroup(@PathVariable("shotat") long shotAt)
+			throws SocketException, IOException
+	{
+		this.imageCollectionService.deleteImageGroup(shotAt);
 	}
 
 	@RequestMapping(value = "/image/{fileName}", method = RequestMethod.GET)

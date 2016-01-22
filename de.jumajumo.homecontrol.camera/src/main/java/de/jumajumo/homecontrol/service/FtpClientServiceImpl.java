@@ -127,6 +127,29 @@ public class FtpClientServiceImpl implements ImageStoreClientService
 		return result;
 	}
 
+	@Override
+	public void deleteFiles(List<String> fileNamesToDelete)
+			throws SocketException, IOException
+	{
+		final FTPClient ftpClient = this.getFtpClient();
+
+		try
+		{
+			this.connectFtpClient(ftpClient);
+			ftpClient.changeWorkingDirectory("images");
+
+			for (final String fileName : fileNamesToDelete)
+			{
+				ftpClient.deleteFile(fileName);
+			}
+		} finally
+		{
+			ftpClient.logout();
+			ftpClient.disconnect();
+		}
+
+	}
+
 	private FTPClient getFtpClient()
 	{
 		return new FTPClient();

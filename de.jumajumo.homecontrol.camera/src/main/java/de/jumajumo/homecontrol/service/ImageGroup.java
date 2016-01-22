@@ -29,4 +29,15 @@ public class ImageGroup
 		return Collections.unmodifiableList(this.images);
 	}
 
+	public List<String> getFileNames()
+	{
+		final List<String> fileNames = new ArrayList<String>();
+
+		for (final Image image : this.images)
+		{
+			fileNames.add(image.getFileName());
+		}
+
+		return Collections.unmodifiableList(fileNames);
+	}
 }

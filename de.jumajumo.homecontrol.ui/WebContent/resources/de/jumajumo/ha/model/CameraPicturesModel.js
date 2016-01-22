@@ -20,4 +20,18 @@ sap.ui.model.json.JSONModel.extend("jumajumo.ha.model.CameraPicturesModel",
 
 		});
 	},
+
+	deleteImageGroup : function(shotAt)
+	{
+		var that = this;
+
+		// Data is fetched here
+		jQuery.ajax(
+		{
+			url : "/HomeControlCamera/dispatcher/image/group/" + shotAt,
+			async : false,
+			type : "DELETE",
+
+		});
+	}
 });

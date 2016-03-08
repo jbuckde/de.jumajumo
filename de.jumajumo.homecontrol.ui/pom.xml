@@ -5,7 +5,7 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<sapui5.version>1.29.0</sapui5.version>
+		<sapui5.version>1.34.8</sapui5.version>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>

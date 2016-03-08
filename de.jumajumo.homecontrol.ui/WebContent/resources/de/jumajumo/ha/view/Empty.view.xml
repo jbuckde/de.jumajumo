@@ -11,6 +11,14 @@
 						icon="sap-icon://video"
 						iconDensityAware="true"
 						press="navToCamera"></StandardTile>
+	        <StandardTile title="Lightning"
+						icon="sap-icon://lightbulb"
+						iconDensityAware="true"
+						press="navToLightning"></StandardTile>
+	        <StandardTile title="Pictures"
+						icon="sap-icon://picture"
+						iconDensityAware="true"
+						press="navToPictures"></StandardTile>
 	        <StandardTile title="Configuration"
 						icon="sap-icon://settings"
 						iconDensityAware="true"

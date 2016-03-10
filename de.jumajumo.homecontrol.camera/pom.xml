@@ -28,6 +28,7 @@
 		<groupId>de.jumajumo</groupId>
 		<artifactId>de.jumajumo.parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../de.jumajumo.parent</relativePath>
 	</parent>
 	<dependencies>
 		<dependency>

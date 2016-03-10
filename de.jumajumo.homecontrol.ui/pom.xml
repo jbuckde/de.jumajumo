@@ -34,11 +34,6 @@
 
 		<dependency>
 			<groupId>com.sap.ui5</groupId>
-			<artifactId>utils-internal</artifactId>
-			<version>${sapui5.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.ui5</groupId>
 			<artifactId>mobile</artifactId>
 			<version>${sapui5.version}</version>
 		</dependency>

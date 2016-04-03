@@ -1,51 +1,57 @@
-sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectLightningDetail",
-{
+sap.ui
+		.controller(
+				"de.jumajumo.ha.view.HomeAutomationObjectLightningDetail",
+				{
 
-	onInit : function()
-	{
-		this.view = this.getView();
+					onInit : function()
+					{
+						this.view = this.getView();
 
-		this.router = sap.ui.core.UIComponent.getRouterFor(this);
-		// this.router.attachRoutePatternMatched(this._handleRouteMatched,
-		// this);
-	},
+						this.router = sap.ui.core.UIComponent
+								.getRouterFor(this);
+						// this.router.attachRoutePatternMatched(this._handleRouteMatched,
+						// this);
+					},
 
-	goBack : function(oEvent)
-	{
-		this.router.navTo("homeAutomationObjectList");
-	},
+					goBack : function(oEvent)
+					{
+						this.router.navTo("homeAutomationObjectList");
+					},
 
-	switchDoorLight : function(oEvent)
-	{
-		var button = oEvent.getSource();
+					switchDoorLight : function(oEvent)
+					{
+						var button = oEvent.getSource();
 
-		button.setEnabled(false);
+						button.setEnabled(false);
 
-		// var json = '{"command" : "SENSOR_TRIGGER","parameters" : {"sensorId"
-		// : "584180e8-c2a3-41ac-9f64-f6c542179d06"}}';
-		// jumajumo.ha.WebSocket.send(json);
-		// button.setEnabled(true);
+						// var json = '{"command" :
+						// "SENSOR_TRIGGER","parameters" : {"sensorId"
+						// : "584180e8-c2a3-41ac-9f64-f6c542179d06"}}';
+						// jumajumo.ha.WebSocket.send(json);
+						// button.setEnabled(true);
 
-		jQuery.ajax("dispatcher/trigger/switchdoorlight/activate",
-		{
-			complete : function(oEvent)
-			{
-				button.setEnabled(true);
-			}
-		});
+						jQuery
+								.ajax(
+										"/HomeControlServer/dispatcher/trigger/switchdoorlight/activate",
+										{
+											complete : function(oEvent)
+											{
+												button.setEnabled(true);
+											}
+										});
 
-	}
+					}
 
-// _handleRouteMatched : function(oEvent)
-// {
-// // get the path argument
-// var pathArgument = oEvent.getParameter("arguments").path;
-//
-// var sPath = "/" + pathArgument;
-// var oBindingContext = new
-// sap.ui.model.Context(this.view.getModel(),
-// sPath)
-// this.view.setBindingContext(oBindingContext);
-// },
+				// _handleRouteMatched : function(oEvent)
+				// {
+				// // get the path argument
+				// var pathArgument = oEvent.getParameter("arguments").path;
+				//
+				// var sPath = "/" + pathArgument;
+				// var oBindingContext = new
+				// sap.ui.model.Context(this.view.getModel(),
+				// sPath)
+				// this.view.setBindingContext(oBindingContext);
+				// },
 
-});
+				});

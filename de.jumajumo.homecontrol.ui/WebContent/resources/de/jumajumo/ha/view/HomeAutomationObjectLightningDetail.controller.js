@@ -32,7 +32,7 @@ sap.ui
 
 						jQuery
 								.ajax(
-										"/HomeControlServer/dispatcher/trigger/switchdoorlight/activate",
+										"/HomeControlServer/dispatcher/trigger/doorlightswitch/activate",
 										{
 											complete : function(oEvent)
 											{

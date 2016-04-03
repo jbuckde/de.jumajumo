@@ -20,11 +20,19 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectLightningDetail",
 		var button = oEvent.getSource();
 
 		button.setEnabled(false);
-		
-		var json = '{"command" : "SENSOR_TRIGGER","parameters" : {"sensorId" : "584180e8-c2a3-41ac-9f64-f6c542179d06"}}';
-		jumajumo.ha.WebSocket.connection().send(json);
-		
-		button.setEnabled(true);
+
+		// var json = '{"command" : "SENSOR_TRIGGER","parameters" : {"sensorId"
+		// : "584180e8-c2a3-41ac-9f64-f6c542179d06"}}';
+		// jumajumo.ha.WebSocket.send(json);
+		// button.setEnabled(true);
+
+		jQuery.ajax("dispatcher/trigger/switchdoorlight/activate",
+		{
+			complete : function(oEvent)
+			{
+				button.setEnabled(true);
+			}
+		});
 
 	}
 
@@ -34,7 +42,8 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectLightningDetail",
 // var pathArgument = oEvent.getParameter("arguments").path;
 //
 // var sPath = "/" + pathArgument;
-// var oBindingContext = new sap.ui.model.Context(this.view.getModel(),
+// var oBindingContext = new
+// sap.ui.model.Context(this.view.getModel(),
 // sPath)
 // this.view.setBindingContext(oBindingContext);
 // },

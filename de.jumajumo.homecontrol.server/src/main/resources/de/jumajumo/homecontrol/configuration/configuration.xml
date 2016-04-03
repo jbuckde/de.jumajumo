@@ -146,7 +146,8 @@
 				</jj:actor>
 				<jj:actor uuid="4661402f-4618-4309-a43d-9786eeafd099" name="ToggleRelais1">
 					<jj:requestInfo>
-						<jj:requestType>REQUEST_TYPE_WEBSOCKET</jj:requestType>
+						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
+						<jj:path>/cgi-bin/tasterRelais1.sh</jj:path>
 					</jj:requestInfo>
 				</jj:actor>
 			</jj:actors>

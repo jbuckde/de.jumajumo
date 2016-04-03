@@ -20,10 +20,15 @@
 		<jj:actionChain uuid="5f8b9c31-833f-4de5-8c24-d57435763156"
 			name="OpenGarageDoor">
 			<jj:triggerRefs>
+				<!-- sensor trigger is deprecated -->
 				<jj:triggerRef name="SensorTrigger">
 					<jj:triggerUuid>7a0b93e3-5cf4-4f64-b885-54649937e73b
 					</jj:triggerUuid>
 				</jj:triggerRef>
+				<jj:triggerRef name="RestTrigger">
+					<jj:triggerUuid>573e766f-409c-485e-8114-df9bf982363e
+					</jj:triggerUuid>
+				</jj:triggerRef>				
 			</jj:triggerRefs>
 			<jj:actionRefs>
 				<jj:actionRef uuid="6f76685b-16fe-47ab-9589-b2e0470439be"
@@ -44,9 +49,13 @@
 		<jj:actionChain uuid="14bdb355-9b1f-46d8-9923-7fd7c7e38768"
 			name="DoorLight">
 			<jj:triggerRefs>
+				<!-- sensor trigger is deprecated -->
 				<jj:triggerRef name="SensorTrigger">
 					<jj:triggerUuid>ccd0f5f1-ba71-4414-b6cf-a2f14948a184
 					</jj:triggerUuid>
+				</jj:triggerRef>
+				<jj:triggerRef name="RestTrigger">
+					<jj:triggerUuid>a30b3683-b1cc-4bc0-ad2b-3061f7139151</jj:triggerUuid>
 				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
@@ -187,6 +196,7 @@
 				<jj:path>garagedevicehealthcheck</jj:path>
 			</jj:requestInfo>
 		</jj:trigger>
+		<!-- sensor trigger is deprecated, use rest trigger instead -->
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:type="jj:triggerByClientSensor" uuid="ccd0f5f1-ba71-4414-b6cf-a2f14948a184"
 			name="btnDoorLightSensorTrigger">
@@ -195,12 +205,29 @@
 			</jj:sensorUuids>
 		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:type="jj:triggerByRestCall" uuid="a30b3683-b1cc-4bc0-ad2b-3061f7139151"
+			name="DoorLightRestTrigger">
+			<jj:requestInfo>
+				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
+				<jj:path>doorlightswitch</jj:path>
+			</jj:requestInfo>
+		</jj:trigger>
+		<!-- sensor trigger is deprecated, use rest trigger instead -->
+		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:type="jj:triggerByClientSensor" uuid="7a0b93e3-5cf4-4f64-b885-54649937e73b"
 			name="btnOpenGarageDoorSensorTrigger">
 			<jj:sensorUuids>
 				<jj:sensorUuid>b081714d-f0fd-4889-84c9-84e36a859cbb</jj:sensorUuid>
 			</jj:sensorUuids>
 		</jj:trigger>
+		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:type="jj:triggerByRestCall" uuid="573e766f-409c-485e-8114-df9bf982363e"
+			name="OpenGarageDoorRestTrigger">
+			<jj:requestInfo>
+				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
+				<jj:path>opengaragedoor</jj:path>
+			</jj:requestInfo>
+		</jj:trigger>		
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:type="jj:triggerByScheduling" uuid="45d81f4b-4d2a-4438-a472-ac81755dc8f7"
 			name="doorCameraSwitchMotionControl">

@@ -41,6 +41,9 @@
 					<jj:triggerUuid>b2c13bbc-e2dd-48d5-bdc9-2ab56860abc2
 					</jj:triggerUuid>
 				</jj:triggerRef>
+				<jj:triggerRef>
+					<jj:triggerUuid>2c03dbf4-29a2-4491-8f7f-81d490c07440</jj:triggerUuid>
+				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
 				<jj:actionRef name="uiNavToDoorCamera">
@@ -195,6 +198,14 @@
 			<jj:requestInfo>
 				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 				<jj:path>garagedevicehealthcheck</jj:path>
+			</jj:requestInfo>
+		</jj:trigger>
+		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:type="jj:triggerByRestCall" uuid="2c03dbf4-29a2-4491-8f7f-81d490c07440"
+			name="doorRingTrigger">
+			<jj:requestInfo>
+				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
+				<jj:path>doorring</jj:path>
 			</jj:requestInfo>
 		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

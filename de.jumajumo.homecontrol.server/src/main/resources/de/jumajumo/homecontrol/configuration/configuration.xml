@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <jj:configuration xmlns:jj="http://www.jumajumo.de/homecontrol/configuration">
+
+	<jj:properties>
+		<jj:property>
+			<jj:key>amqpServer</jj:key>
+			<jj:value>localhost</jj:value>
+		</jj:property>
+		<jj:property>
+			<jj:key>amqpServerPort</jj:key>
+			<jj:value>5672</jj:value>
+		</jj:property>
+		<jj:property>
+			<jj:key>amqpUserName</jj:key>
+			<jj:value>producer</jj:value>
+		</jj:property>
+		<jj:property>
+			<jj:key>amqpPassword</jj:key>
+			<jj:value>producer</jj:value>
+		</jj:property>
+	</jj:properties>
+
 	<jj:actionChains>
+
 		<jj:actionChain uuid="077adbf6-b178-11e4-b479-12e3f512a338"
 			name="GarageDeviceHealthCheck">
 			<jj:triggerRefs>
@@ -41,8 +62,9 @@
 					<jj:triggerUuid>b2c13bbc-e2dd-48d5-bdc9-2ab56860abc2
 					</jj:triggerUuid>
 				</jj:triggerRef>
-				<jj:triggerRef>
-					<jj:triggerUuid>2c03dbf4-29a2-4491-8f7f-81d490c07440</jj:triggerUuid>
+				<jj:triggerRef name="RestTrigger">
+					<jj:triggerUuid>2c03dbf4-29a2-4491-8f7f-81d490c07440
+					</jj:triggerUuid>
 				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
@@ -51,10 +73,12 @@
 				</jj:actionRef>
 			</jj:actionRefs>
 		</jj:actionChain>
-		<jj:actionChain uuid="e289002d-1072-471b-92b8-daadee33c996" name="doorCameraMotionControlSwitch">
+		<jj:actionChain uuid="e289002d-1072-471b-92b8-daadee33c996"
+			name="doorCameraMotionControlSwitch">
 			<jj:triggerRefs>
 				<jj:triggerRef name="ScheduledTrigger">
-					<jj:triggerUuid>45d81f4b-4d2a-4438-a472-ac81755dc8f7</jj:triggerUuid>
+					<jj:triggerUuid>45d81f4b-4d2a-4438-a472-ac81755dc8f7
+					</jj:triggerUuid>
 				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
@@ -62,7 +86,9 @@
 					<jj:actionUuid>a87da99c-9d5a-40ba-8546-bf723e4e84a0</jj:actionUuid>
 					<jj:conditionRefs>
 						<jj:conditionRef name="itIsDark">
-							<jj:conditionUuid><!-- dark -->4ebd0e67-03f3-4c14-88e9-e2af50c0ae9c</jj:conditionUuid>
+							<jj:conditionUuid><!-- dark -->
+								4ebd0e67-03f3-4c14-88e9-e2af50c0ae9c
+							</jj:conditionUuid>
 						</jj:conditionRef>
 					</jj:conditionRefs>
 				</jj:actionRef>
@@ -70,16 +96,20 @@
 					<jj:actionUuid>97ec9a60-0ac5-44c4-a229-a98dfa20d0e1</jj:actionUuid>
 					<jj:conditionRefs>
 						<jj:conditionRef name="isItBright">
-							<jj:conditionUuid><!-- bright -->b35d9755-5d80-49a9-b7a6-634a0226e01c</jj:conditionUuid>
+							<jj:conditionUuid><!-- bright -->
+								b35d9755-5d80-49a9-b7a6-634a0226e01c
+							</jj:conditionUuid>
 						</jj:conditionRef>
 					</jj:conditionRefs>
 				</jj:actionRef>
 			</jj:actionRefs>
 		</jj:actionChain>
-		<jj:actionChain uuid="6782c24c-97e8-41de-8a7c-2f2609c2c1c2" name="refreshCameraImageCollection">
+		<jj:actionChain uuid="6782c24c-97e8-41de-8a7c-2f2609c2c1c2"
+			name="refreshCameraImageCollection">
 			<jj:triggerRefs>
 				<jj:triggerRef name="ScheduledTrigger">
-					<jj:triggerUuid>d69a6fdb-0136-4a02-9826-2e88254e2e6c</jj:triggerUuid>
+					<jj:triggerUuid>d69a6fdb-0136-4a02-9826-2e88254e2e6c
+					</jj:triggerUuid>
 				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
@@ -87,16 +117,19 @@
 					<jj:actionUuid>aafb85e6-7009-47f7-9244-488b384f9161</jj:actionUuid>
 					<jj:conditionRefs>
 						<jj:conditionRef name="do not execute">
-							<jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f</jj:conditionUuid>
+							<jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f
+							</jj:conditionUuid>
 						</jj:conditionRef>
 					</jj:conditionRefs>
 				</jj:actionRef>
 			</jj:actionRefs>
 		</jj:actionChain>
-		<jj:actionChain uuid="dc1a7eb5-cd68-4ed6-9eb7-e69abcbd3aa7" name="testTwitterByScheduler">
+		<jj:actionChain uuid="dc1a7eb5-cd68-4ed6-9eb7-e69abcbd3aa7"
+			name="testTwitterByScheduler">
 			<jj:triggerRefs>
 				<jj:triggerRef name="scheduled_each_minute">
-					<jj:triggerUuid>d9319d7c-b29c-4ddf-b488-14c4a456731e</jj:triggerUuid>
+					<jj:triggerUuid>d9319d7c-b29c-4ddf-b488-14c4a456731e
+					</jj:triggerUuid>
 				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
@@ -104,7 +137,8 @@
 					<jj:actionUuid>a70a9476-3d37-4eb5-a448-346ac83cbbe2</jj:actionUuid>
 					<jj:conditionRefs>
 						<jj:conditionRef name="do not execute">
-							<jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f</jj:conditionUuid>
+							<jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f
+							</jj:conditionUuid>
 						</jj:conditionRef>
 					</jj:conditionRefs>
 				</jj:actionRef>
@@ -117,13 +151,6 @@
 				<jj:sensor uuid="b081714d-f0fd-4889-84c9-84e36a859cbb"
 					name="btnOpenGrageDoor" />
 			</jj:sensors>
-			<jj:actors>
-				<jj:actor uuid="41e55166-ab21-4d3e-b5dc-9c3b6cf90768" name="navToDoorCamera">
-					<jj:requestInfo>
-						<jj:requestType>REQUEST_TYPE_WEBSOCKET</jj:requestType>
-					</jj:requestInfo>
-				</jj:actor>
-			</jj:actors>
 		</jj:device>
 		<jj:device uuid="1fbbb699-addd-49f1-b7de-a5009774132c" name="CameraPictures">
 			<jj:protocol>http</jj:protocol>
@@ -132,7 +159,8 @@
 				<jj:actor uuid="362df13c-5b15-43f3-8ef2-32ab82f6f291" name="refreshImageCollection">
 					<jj:requestInfo>
 						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
-						<jj:path>/HomeControlCamera/dispatcher/image/refreshcollection</jj:path>
+						<jj:path>/HomeControlCamera/dispatcher/image/refreshcollection
+						</jj:path>
 					</jj:requestInfo>
 				</jj:actor>
 			</jj:actors>
@@ -231,17 +259,20 @@
 			</jj:sensorUuids>
 		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:type="jj:triggerByScheduling" uuid="d9319d7c-b29c-4ddf-b488-14c4a456731e" name="testTwitterByScheduler">
+			xsi:type="jj:triggerByScheduling" uuid="d9319d7c-b29c-4ddf-b488-14c4a456731e"
+			name="testTwitterByScheduler">
 			<jj:runAt>EVERY_MINUTE</jj:runAt>
 		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:type="jj:triggerByScheduling" uuid="45d81f4b-4d2a-4438-a472-ac81755dc8f7" name="doorCameraSwitchMotionControl">
+			xsi:type="jj:triggerByScheduling" uuid="45d81f4b-4d2a-4438-a472-ac81755dc8f7"
+			name="doorCameraSwitchMotionControl">
 			<jj:runAt>EVERY_MINUTE</jj:runAt>
-		</jj:trigger>		
+		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:type="jj:triggerByScheduling" uuid="d69a6fdb-0136-4a02-9826-2e88254e2e6c" name="refreshCameraImageCollection">
+			xsi:type="jj:triggerByScheduling" uuid="d69a6fdb-0136-4a02-9826-2e88254e2e6c"
+			name="refreshCameraImageCollection">
 			<jj:runAt>EVERY_MINUTE</jj:runAt>
-		</jj:trigger>		
+		</jj:trigger>
 	</jj:triggers>
 	<jj:conditions>
 		<jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46e"
@@ -300,11 +331,19 @@
 			</jj:actorUuids>
 		</jj:action>
 		<jj:action uuid="e36c4705-203d-49b4-87ec-1a691e3bb8c2" name="uiNavToDoorCamera">
-			<jj:actorUuids>
-				<jj:actorUuid>41e55166-ab21-4d3e-b5dc-9c3b6cf90768</jj:actorUuid>
-			</jj:actorUuids>
+			<jj:beanName>actionExecutorMessageQueueProducer</jj:beanName>
+			<jj:properties>
+				<jj:property>
+					<jj:key>exchange</jj:key>
+					<jj:value>doorring</jj:value>
+				</jj:property>
+				<jj:property>
+					<jj:key>message</jj:key>
+					<jj:value>notification</jj:value>
+				</jj:property>
+			</jj:properties>
 		</jj:action>
-		
+
 		<jj:action uuid="a87da99c-9d5a-40ba-8546-bf723e4e84a0" name="doorCameraMotionControlOn">
 			<jj:actorUuids>
 				<jj:actorUuid>14cf83b8-a0e9-41cb-83d6-431718ef565b</jj:actorUuid>
@@ -320,7 +359,7 @@
 				<jj:actorUuid>362df13c-5b15-43f3-8ef2-32ab82f6f291</jj:actorUuid>
 			</jj:actorUuids>
 		</jj:action>
-		
+
 		<jj:action uuid="a70a9476-3d37-4eb5-a448-346ac83cbbe2" name="testTwitterUpdate">
 			<jj:beanName>actionExecutorTwitterUpdate</jj:beanName>
 		</jj:action>

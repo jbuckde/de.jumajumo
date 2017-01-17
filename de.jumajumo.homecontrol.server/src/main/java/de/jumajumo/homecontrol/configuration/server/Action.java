@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import de.jumajumo.homecontrol.configuration.AbstractConfigurationObject;
+import de.jumajumo.homecontrol.configuration.property.Property;
 
 /**
  * The Class Action defines a server side action item.
@@ -23,6 +24,10 @@ public class Action extends AbstractConfigurationObject
 
 	@XmlElement
 	private String beanName;
+
+	@XmlElementWrapper(name = "properties")
+	@XmlElement(name = "property")
+	private List<Property> properties;
 
 	public List<UUID> getActorUuids()
 	{
@@ -47,6 +52,21 @@ public class Action extends AbstractConfigurationObject
 	public void setBeanName(String beanName)
 	{
 		this.beanName = beanName;
+	}
+
+	public List<Property> getProperties()
+	{
+		if (null == this.properties)
+		{
+			this.properties = new ArrayList<Property>();
+		}
+
+		return properties;
+	}
+
+	public void setProperties(List<Property> properties)
+	{
+		this.properties = properties;
 	}
 
 	@Override

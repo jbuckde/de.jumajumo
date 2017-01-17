@@ -28,7 +28,7 @@
 				<jj:triggerRef name="RestTrigger">
 					<jj:triggerUuid>573e766f-409c-485e-8114-df9bf982363e
 					</jj:triggerUuid>
-				</jj:triggerRef>				
+				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
 				<jj:actionRef uuid="6f76685b-16fe-47ab-9589-b2e0470439be"
@@ -42,7 +42,7 @@
 							<jj:conditionUuid>4ebd0e67-03f3-4c14-88e9-e2af50c0ae9c
 							</jj:conditionUuid>
 						</jj:conditionRef>
-					</jj:conditionRefs>					
+					</jj:conditionRefs>
 				</jj:actionRef>
 			</jj:actionRefs>
 		</jj:actionChain>
@@ -55,12 +55,33 @@
 					</jj:triggerUuid>
 				</jj:triggerRef>
 				<jj:triggerRef name="RestTrigger">
-					<jj:triggerUuid>a30b3683-b1cc-4bc0-ad2b-3061f7139151</jj:triggerUuid>
+					<jj:triggerUuid>a30b3683-b1cc-4bc0-ad2b-3061f7139151
+					</jj:triggerUuid>
 				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
 				<jj:actionRef name="switchOn">
 					<jj:actionUuid>9d385792-17e0-492b-a25a-06b9a804285f</jj:actionUuid>
+				</jj:actionRef>
+			</jj:actionRefs>
+		</jj:actionChain>
+		<jj:actionChain uuid="1b06e7fb-6f76-485d-a589-edf8f24edf85"
+			name="DoorBellRing">
+			<jj:triggerRefs>
+				<jj:triggerRef name="RestTrigger">
+					<jj:triggerUuid>47d1b1af-579c-45c1-a8ad-25ae67b5cf5c
+					</jj:triggerUuid>
+				</jj:triggerRef>
+			</jj:triggerRefs>
+			<jj:actionRefs>
+				<jj:actionRef name="switchOn">
+					<jj:actionUuid>9d385792-17e0-492b-a25a-06b9a804285f</jj:actionUuid>
+					<jj:conditionRefs>
+						<jj:conditionRef name="itIsDark">
+							<jj:conditionUuid>4ebd0e67-03f3-4c14-88e9-e2af50c0ae9c
+							</jj:conditionUuid>
+						</jj:conditionRef>
+					</jj:conditionRefs>
 				</jj:actionRef>
 			</jj:actionRefs>
 		</jj:actionChain>
@@ -86,17 +107,22 @@
 					<jj:actionUuid>97ec9a60-0ac5-44c4-a229-a98dfa20d0e1</jj:actionUuid>
 					<jj:conditionRefs>
 						<jj:conditionRef name="isItBright">
-							<jj:conditionUuid>b35d9755-5d80-49a9-b7a6-634a0226e01c
-							</jj:conditionUuid>
+							<jj:conditionUuid>b35d9755-5d80-49a9-b7a6-634a0226e01c</jj:conditionUuid>
+						</jj:conditionRef>
+						<!-- keep camera switched on due to security situation -->
+						<jj:conditionRef name="false">
+							<jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f</jj:conditionUuid>
 						</jj:conditionRef>
 					</jj:conditionRefs>
 				</jj:actionRef>
 			</jj:actionRefs>
 		</jj:actionChain>
-		<jj:actionChain uuid="6782c24c-97e8-41de-8a7c-2f2609c2c1c2" name="refreshCameraImageCollection">
+		<jj:actionChain uuid="6782c24c-97e8-41de-8a7c-2f2609c2c1c2"
+			name="refreshCameraImageCollection">
 			<jj:triggerRefs>
 				<jj:triggerRef name="ScheduledTrigger">
-					<jj:triggerUuid>d69a6fdb-0136-4a02-9826-2e88254e2e6c</jj:triggerUuid>
+					<jj:triggerUuid>d69a6fdb-0136-4a02-9826-2e88254e2e6c
+					</jj:triggerUuid>
 				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
@@ -181,7 +207,8 @@
 				<jj:actor uuid="362df13c-5b15-43f3-8ef2-32ab82f6f291" name="refreshImageCollection">
 					<jj:requestInfo>
 						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
-						<jj:path>/HomeControlCamera/dispatcher/image/refreshcollection</jj:path>
+						<jj:path>/HomeControlCamera/dispatcher/image/refreshcollection
+						</jj:path>
 					</jj:requestInfo>
 				</jj:actor>
 			</jj:actors>
@@ -221,22 +248,31 @@
 			</jj:sensorUuids>
 		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:type="jj:triggerByRestCall" uuid="47d1b1af-579c-45c1-a8ad-25ae67b5cf5c"
+			name="DoorBellRingRestTrigger">
+			<jj:requestInfo>
+				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
+				<jj:path>doorbellring</jj:path>
+			</jj:requestInfo>
+		</jj:trigger>
+		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:type="jj:triggerByRestCall" uuid="573e766f-409c-485e-8114-df9bf982363e"
 			name="OpenGarageDoorRestTrigger">
 			<jj:requestInfo>
 				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 				<jj:path>opengaragedoor</jj:path>
 			</jj:requestInfo>
-		</jj:trigger>		
+		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:type="jj:triggerByScheduling" uuid="45d81f4b-4d2a-4438-a472-ac81755dc8f7"
 			name="doorCameraSwitchMotionControl">
 			<jj:runAt>EVERY_QUARTER_HOUR</jj:runAt>
 		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:type="jj:triggerByScheduling" uuid="d69a6fdb-0136-4a02-9826-2e88254e2e6c" name="refreshCameraImageCollection">
+			xsi:type="jj:triggerByScheduling" uuid="d69a6fdb-0136-4a02-9826-2e88254e2e6c"
+			name="refreshCameraImageCollection">
 			<jj:runAt>EVERY_QUARTER_HOUR</jj:runAt>
-		</jj:trigger>		
+		</jj:trigger>
 	</jj:triggers>
 	<jj:conditions>
 		<jj:condition uuid="5ebf47b9-aff9-47be-a68c-83646535d46e"
@@ -314,6 +350,6 @@
 			<jj:actorUuids>
 				<jj:actorUuid>362df13c-5b15-43f3-8ef2-32ab82f6f291</jj:actorUuid>
 			</jj:actorUuids>
-		</jj:action>		
+		</jj:action>
 	</jj:actions>
 </jj:configuration>

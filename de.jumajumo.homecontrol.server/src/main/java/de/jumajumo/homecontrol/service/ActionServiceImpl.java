@@ -62,7 +62,8 @@ public class ActionServiceImpl implements ActionService
 
 			if (null != actionBean)
 			{
-				boolean executionResult = actionBean.executeAction();
+				boolean executionResult = actionBean
+						.executeAction(action.getProperties());
 
 				LOGGER.debug("action <" + action.getName()
 						+ "> executed with result <" + executionResult

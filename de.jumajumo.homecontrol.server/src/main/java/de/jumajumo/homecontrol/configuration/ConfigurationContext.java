@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import de.jumajumo.homecontrol.configuration.client.Device;
+import de.jumajumo.homecontrol.configuration.property.Property;
 import de.jumajumo.homecontrol.configuration.server.Action;
 import de.jumajumo.homecontrol.configuration.server.ActionChain;
 import de.jumajumo.homecontrol.configuration.server.Condition;
@@ -21,6 +22,10 @@ import de.jumajumo.homecontrol.configuration.server.trigger.Trigger;
 public class ConfigurationContext implements Serializable
 {
 	private static final long serialVersionUID = -2904843840064791996L;
+
+	@XmlElementWrapper(name = "properties")
+	@XmlElement(name = "property")
+	private List<Property> properties;
 
 	@XmlElementWrapper(name = "actionChains")
 	@XmlElement(name = "actionChain")
@@ -41,6 +46,35 @@ public class ConfigurationContext implements Serializable
 	@XmlElementWrapper(name = "actions")
 	@XmlElement(name = "action")
 	private List<Action> actions;
+
+	public String getPropertyValue(final String propertyName,
+			final String defaultValue)
+	{
+		for (final Property property : this.getProperties())
+		{
+			if (property.getKey().equals(propertyName))
+			{
+				return property.getValue();
+			}
+		}
+
+		return defaultValue;
+	}
+
+	public List<Property> getProperties()
+	{
+		if (null == this.properties)
+		{
+			this.properties = new ArrayList<Property>();
+		}
+
+		return properties;
+	}
+
+	public void setProperties(List<Property> properties)
+	{
+		this.properties = properties;
+	}
 
 	public List<ActionChain> getActionChains()
 	{

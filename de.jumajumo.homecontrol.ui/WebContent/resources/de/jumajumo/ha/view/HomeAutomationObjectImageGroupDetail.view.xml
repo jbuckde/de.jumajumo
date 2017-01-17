@@ -9,8 +9,8 @@
 			<ObjectHeader
 				title="{path:'pictures>shotAt', formatter: 'formatter.DateFormatter.longDateFromMills'}" />
 
-			<Carousel class="sapUiContentPadding" loop="false"
-				pages="{pictures>images}" height="80%">
+			<Carousel id="imageCarousel" class="sapUiContentPadding" loop="false"
+				pages="{pictures>images}" height="80%" firstVisibleIndex="0">
 				<pages>
 					<!-- <l:VerticalLayout> -->
 					<!-- <Text text="{path: 'pictures>fileName'}" /> -->

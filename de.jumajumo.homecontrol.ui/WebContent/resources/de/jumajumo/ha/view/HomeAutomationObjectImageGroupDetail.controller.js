@@ -27,6 +27,12 @@ sap.ui
 
 					goBack : function()
 					{
+						var carousel = this.view.byId("imageCarousel");
+						if (carousel)
+						{
+							carousel.setActivePage(0);
+						}
+
 						this.router
 								.navTo("homeAutomationObjectImageGroupOverview");
 					},

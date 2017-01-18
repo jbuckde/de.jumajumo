@@ -2,7 +2,7 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
 {
 	cameraName : function()
 	{
-		return "back";
+		return "door";
 	},
 
 	onInit : function()

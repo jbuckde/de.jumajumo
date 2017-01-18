@@ -4,7 +4,7 @@ sap.ui.model.json.JSONModel.extend("jumajumo.ha.model.CameraPicturesModel",
 {
 	cameraName : function()
 	{
-		return "back";
+		return "door";
 	},
 
 	loadData : function()

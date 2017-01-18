@@ -5,7 +5,7 @@ sap.ui
 
 					cameraName : function()
 					{
-						return "back";
+						return "door";
 					},
 
 					onInit : function()

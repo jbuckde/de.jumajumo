@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -15,25 +14,15 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
+import org.springframework.stereotype.Service;
 
+@Service
 public class FtpClientServiceImpl implements ImageStoreClientService
 {
 
 	private final static Log LOGGER = LogFactory
 			.getLog(ImageStoreClientService.class);
 	private final static Duration GROUP_DURATION = Duration.standardMinutes(5);
-
-	private List<ImageGroup> imageCollection = Collections
-			.synchronizedList(new ArrayList<ImageGroup>());
-
-	private ECameraInformation cameraInformation;
-
-	public FtpClientServiceImpl(final ECameraInformation cameraInformation)
-	{
-		super();
-
-		this.cameraInformation = cameraInformation;
-	}
 
 	public List<ImageGroup> collectFiles()
 	{
@@ -56,9 +45,9 @@ public class FtpClientServiceImpl implements ImageStoreClientService
 					currentGroup = this.createNewGroup(ftpFile);
 				} else
 				{
-					final Duration duration = new Duration(
-							new Instant(currentGroup.getShotAt()), new Instant(
-									ftpFile.getTimestamp().getTimeInMillis()));
+					final Duration duration = new Duration(new Instant(
+							currentGroup.getShotAt()), new Instant(ftpFile
+							.getTimestamp().getTimeInMillis()));
 
 					if (duration.isLongerThan(GROUP_DURATION))
 					{
@@ -67,9 +56,8 @@ public class FtpClientServiceImpl implements ImageStoreClientService
 					}
 				}
 
-				currentGroup.addNewImage(new Image(ftpFile.getName(),
-						ftpFile.getTimestamp().getTimeInMillis(),
-						ftpFile.getSize()));
+				currentGroup.addNewImage(new Image(ftpFile.getName(), ftpFile
+						.getTimestamp().getTimeInMillis(), ftpFile.getSize()));
 			}
 
 			if (null != currentGroup)
@@ -97,8 +85,7 @@ public class FtpClientServiceImpl implements ImageStoreClientService
 		try
 		{
 			this.connectFtpClient(ftpClient);
-			ftpClient.changeWorkingDirectory(
-					this.cameraInformation.getFolderName());
+			ftpClient.changeWorkingDirectory("images");
 
 			final ByteArrayOutputStream local = new ByteArrayOutputStream();
 			ftpClient.retrieveFile(fileName, local);
@@ -129,8 +116,7 @@ public class FtpClientServiceImpl implements ImageStoreClientService
 		{
 			this.connectFtpClient(ftpClient);
 
-			final FTPFile[] listFiles = ftpClient
-					.listFiles(this.cameraInformation.getFolderName());
+			final FTPFile[] listFiles = ftpClient.listFiles("images");
 			result = Arrays.asList(listFiles);
 		} finally
 		{
@@ -150,8 +136,7 @@ public class FtpClientServiceImpl implements ImageStoreClientService
 		try
 		{
 			this.connectFtpClient(ftpClient);
-			ftpClient.changeWorkingDirectory(
-					this.cameraInformation.getFolderName());
+			ftpClient.changeWorkingDirectory("images");
 
 			for (final String fileName : fileNamesToDelete)
 			{
@@ -173,24 +158,10 @@ public class FtpClientServiceImpl implements ImageStoreClientService
 	private void connectFtpClient(final FTPClient ftpClient)
 			throws SocketException, IOException
 	{
-		final ECameraInformation ci = this.cameraInformation;
-
-		ftpClient.connect(ci.getFtpHost(), ci.getFtpPort());
-		ftpClient.login(ci.getFtpUser(), ci.getFtpPwd());
+		ftpClient.connect("81.169.145.47", 21);
+		ftpClient.login("56324323.swh.strato-hosting.eu", "SamsungGalaxy1");
 
 		ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-	}
-
-	@Override
-	public ECameraInformation getCameraInformation()
-	{
-		return this.cameraInformation;
-	}
-
-	@Override
-	public List<ImageGroup> getImageCollection()
-	{
-		return this.imageCollection;
 	}
 
 }

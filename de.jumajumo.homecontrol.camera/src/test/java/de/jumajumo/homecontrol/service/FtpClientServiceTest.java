@@ -15,7 +15,7 @@ public class FtpClientServiceTest
 	@Before
 	public void setup()
 	{
-		testee = new FtpClientServiceImpl(ECameraInformation.DOOR);
+		testee = new FtpClientServiceImpl();
 	}
 
 	@Test
@@ -26,9 +26,9 @@ public class FtpClientServiceTest
 
 		for (final ImageGroup imageGroup : groups)
 		{
-			System.out.println(DateFormat.getInstance()
-					.format(new Date(imageGroup.getShotAt())) + " / ("
-					+ imageGroup.getImages().size() + ")");
+			System.out.println(DateFormat.getInstance().format(
+					new Date(imageGroup.getShotAt()))
+					+ " / (" + imageGroup.getImages().size() + ")");
 		}
 	}
 }

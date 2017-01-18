@@ -16,16 +16,17 @@ import org.springframework.stereotype.Service;
 public class ImageCollectionServiceImpl implements ImageCollectionService
 {
 	@Autowired
-	private List<ImageStoreClientService> imageStores;
+	private ImageStoreClientService imageStore;
+
+	private List<ImageGroup> imageCollection = Collections
+			.synchronizedList(new ArrayList<ImageGroup>());
 
 	@Override
-	public void collectGarbage(final ECameraInformation cameraInformation)
-			throws SocketException, IOException
+	public void collectGarbage() throws SocketException, IOException
 	{
 		final List<String> fileNamesToDelete = new ArrayList<String>();
 
-		for (final ImageGroup imageGroup : this
-				.getImageCollection(cameraInformation))
+		for (final ImageGroup imageGroup : this.imageCollection)
 		{
 			final Days days = Days.daysBetween(
 					new DateTime(imageGroup.getShotAt()), new DateTime());
@@ -36,84 +37,55 @@ public class ImageCollectionServiceImpl implements ImageCollectionService
 			}
 		}
 
-		this.getImageStore(cameraInformation).deleteFiles(fileNamesToDelete);
+		this.imageStore.deleteFiles(fileNamesToDelete);
 	}
 
 	@Override
-	public void refreshCollection(final ECameraInformation cameraInformation)
+	public void refreshCollection()
 	{
-		this.getImageCollection(cameraInformation).clear();
-		this.getImageCollection(cameraInformation)
-				.addAll(this.getImageStore(cameraInformation).collectFiles());
+		this.imageCollection.clear();
+		this.imageCollection.addAll(this.imageStore.collectFiles());
 
-		Collections.sort(this.getImageCollection(cameraInformation),
-				new Comparator<ImageGroup>()
+		Collections.sort(this.imageCollection, new Comparator<ImageGroup>()
+		{
+			@Override
+			public int compare(ImageGroup o1, ImageGroup o2)
+			{
+				if (o1.getShotAt() > o2.getShotAt())
 				{
-					@Override
-					public int compare(ImageGroup o1, ImageGroup o2)
-					{
-						if (o1.getShotAt() > o2.getShotAt())
-						{
-							return -1;
-						} else if (o1.getShotAt() < o2.getShotAt())
-						{
-							return 1;
-						} else
-						{
-							return 0;
-						}
-					}
-				});
+					return -1;
+				} else if (o1.getShotAt() < o2.getShotAt())
+				{
+					return 1;
+				} else
+				{
+					return 0;
+				}
+			}
+		});
+	}
+
+	public List<ImageGroup> getImageCollection()
+	{
+		return imageCollection;
 	}
 
 	@Override
-	public void deleteImageGroup(final ECameraInformation cameraInformation,
-			long shotAt) throws SocketException, IOException
+	public void deleteImageGroup(long shotAt) throws SocketException,
+			IOException
 	{
-		for (final ImageGroup imageGroup : getImageCollection(
-				cameraInformation))
+		for (final ImageGroup imageGroup : imageCollection)
 		{
 			if (Long.compare(shotAt, imageGroup.getShotAt()) == 0)
 			{
 				final List<String> fileNamesToDelete = new ArrayList<String>();
 				fileNamesToDelete.addAll(imageGroup.getFileNames());
 
-				this.getImageStore(cameraInformation)
-						.deleteFiles(fileNamesToDelete);
+				this.imageStore.deleteFiles(fileNamesToDelete);
 
-				this.getImageCollection(cameraInformation).remove(imageGroup);
+				this.imageCollection.remove(imageGroup);
 				break;
 			}
 		}
 	}
-
-	@Override
-	public byte[] loadImage(final ECameraInformation cameraInformation,
-			String imageName) throws IOException
-	{
-		return this.getImageStore(cameraInformation).loadFile(imageName);
-	}
-
-	private ImageStoreClientService getImageStore(
-			final ECameraInformation cameraInformation)
-	{
-		for (ImageStoreClientService imageStore : this.imageStores)
-		{
-			if (imageStore.getCameraInformation().equals(cameraInformation))
-			{
-				return imageStore;
-			}
-		}
-
-		throw new IllegalArgumentException(
-				"no image store found for camera <" + cameraInformation + ">");
-	}
-
-	@Override
-	public List<ImageGroup> getImageCollection(
-			final ECameraInformation cameraInformation)
-	{
-		return this.getImageStore(cameraInformation).getImageCollection();
-	}
-
 }

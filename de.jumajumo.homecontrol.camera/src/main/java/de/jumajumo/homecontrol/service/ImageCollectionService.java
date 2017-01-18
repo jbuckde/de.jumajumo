@@ -6,17 +6,12 @@ import java.util.List;
 
 public interface ImageCollectionService
 {
-	void collectGarbage(final ECameraInformation cameraInformation)
-			throws SocketException, IOException;
+	void collectGarbage() throws SocketException, IOException;
 
-	void refreshCollection(final ECameraInformation cameraInformation);
+	void refreshCollection();
 
-	void deleteImageGroup(final ECameraInformation cameraInformation,
-			long shotAt) throws SocketException, IOException;
+	List<ImageGroup> getImageCollection();
 
-	byte[] loadImage(final ECameraInformation cameraInformation,
-			final String imageName) throws IOException;
+	void deleteImageGroup(long shotAt) throws SocketException, IOException;
 
-	List<ImageGroup> getImageCollection(
-			final ECameraInformation cameraInformation);
 }

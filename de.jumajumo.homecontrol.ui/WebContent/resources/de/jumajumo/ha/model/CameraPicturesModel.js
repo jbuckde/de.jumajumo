@@ -2,11 +2,6 @@ jQuery.sap.declare("jumajumo.ha.model.CameraPicturesModel");
 
 sap.ui.model.json.JSONModel.extend("jumajumo.ha.model.CameraPicturesModel",
 {
-	cameraName : function()
-	{
-		return "back";
-	},
-
 	loadData : function()
 	{
 		var that = this;
@@ -14,8 +9,7 @@ sap.ui.model.json.JSONModel.extend("jumajumo.ha.model.CameraPicturesModel",
 		// Data is fetched here
 		jQuery.ajax(
 		{
-			url : "/HomeControlCamera/dispatcher/image/" + that.cameraName()
-					+ "/collection",
+			url : "/HomeControlCamera/dispatcher/image/collection",
 			async : true,
 			dataType : "json",
 			type : "GET",
@@ -34,8 +28,7 @@ sap.ui.model.json.JSONModel.extend("jumajumo.ha.model.CameraPicturesModel",
 		// Data is fetched here
 		jQuery.ajax(
 		{
-			url : "/HomeControlCamera/dispatcher/image/" + that.cameraName()
-					+ "/group/" + shotAt,
+			url : "/HomeControlCamera/dispatcher/image/group/" + shotAt,
 			async : false,
 			type : "DELETE",
 

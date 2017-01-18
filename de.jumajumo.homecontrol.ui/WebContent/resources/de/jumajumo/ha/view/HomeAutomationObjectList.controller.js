@@ -25,12 +25,7 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectList",
 		this.router.navTo("homeAutomationObjectLightning");
 	},
 
-	navToDoorPictures : function(oEvent)
-	{
-		this.router.navTo("homeAutomationObjectImageGroupOverview");
-	},
-
-	navToBackPictures : function(oEvent)
+	navToPictures : function(oEvent)
 	{
 		this.router.navTo("homeAutomationObjectImageGroupOverview");
 	},

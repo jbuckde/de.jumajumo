@@ -11,10 +11,6 @@ public interface ImageStoreClientService
 
 	byte[] loadFile(final String fileName) throws IOException;
 
-	void deleteFiles(List<String> fileNamesToDelete)
-			throws SocketException, IOException;
-
-	ECameraInformation getCameraInformation();
-
-	List<ImageGroup> getImageCollection();
+	void deleteFiles(List<String> fileNamesToDelete) throws SocketException,
+			IOException;
 }

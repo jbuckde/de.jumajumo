@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.jumajumo.homecontrol.service.ECameraInformation;
 import de.jumajumo.homecontrol.service.ImageCollectionService;
 import de.jumajumo.homecontrol.service.ImageGroup;
-import de.jumajumo.homecontrol.service.ImageService;
 
 @RestController
 @RequestMapping("/image")
@@ -27,36 +27,44 @@ public class ImageCollectionController
 	@Autowired
 	private ImageCollectionService imageCollectionService;
 
-	@Autowired
-	private ImageService imageService;
-
-	@RequestMapping(method = RequestMethod.GET, value = "refreshcollection", headers = "Accept=application/json")
-	public void refreshImageCollection() throws SocketException, IOException
-	{
-		this.imageCollectionService.collectGarbage();
-		this.imageCollectionService.refreshCollection();
-	}
-
-	@RequestMapping(method = RequestMethod.GET, value = "collection", headers = "Accept=application/json")
-	public List<ImageGroup> loadImageCollection()
-	{
-		return this.imageCollectionService.getImageCollection();
-	}
-
-	@RequestMapping(method = RequestMethod.DELETE, value = "group/{shotat}", headers = "Accept=application/json")
-	public void deleteImageGroup(@PathVariable("shotat") long shotAt)
+	@RequestMapping(method = RequestMethod.GET, value = "{camera}/refreshcollection", headers = "Accept=application/json")
+	public void refreshImageCollection(
+			@PathVariable("camera") String cameraName)
 			throws SocketException, IOException
 	{
-		this.imageCollectionService.deleteImageGroup(shotAt);
+		this.imageCollectionService
+				.collectGarbage(ECameraInformation.fromCameraName(cameraName));
+		this.imageCollectionService.refreshCollection(
+				ECameraInformation.fromCameraName(cameraName));
 	}
 
-	@RequestMapping(value = "/image/{fileName}", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET, value = "{camera}/collection", headers = "Accept=application/json")
+	public List<ImageGroup> loadImageCollection(
+			@PathVariable("camera") String cameraName)
+	{
+		return this.imageCollectionService.getImageCollection(
+				ECameraInformation.fromCameraName(cameraName));
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE, value = "{camera}/group/{shotat}", headers = "Accept=application/json")
+	public void deleteImageGroup(@PathVariable("camera") String cameraName,
+			@PathVariable("shotat") long shotAt)
+			throws SocketException, IOException
+	{
+		this.imageCollectionService.deleteImageGroup(
+				ECameraInformation.fromCameraName(cameraName), shotAt);
+	}
+
+	@RequestMapping(value = "{camera}/image/{fileName}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<byte[]> getFile(
+			@PathVariable("camera") String cameraName,
 			@PathVariable("fileName") String fileName) throws IOException
 	{
 
-		byte[] output = this.imageService.loadImage(fileName + ".jpg");
+		byte[] output = this.imageCollectionService.loadImage(
+				ECameraInformation.fromCameraName(cameraName),
+				fileName + ".jpg");
 
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.setContentType(MediaType.valueOf("image/jpeg"));

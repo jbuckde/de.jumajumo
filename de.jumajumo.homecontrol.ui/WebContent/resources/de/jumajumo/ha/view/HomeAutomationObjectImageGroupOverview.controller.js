@@ -1,5 +1,10 @@
 sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
 {
+	cameraName : function()
+	{
+		return "back";
+	},
+
 	onInit : function()
 	{
 		this.view = this.getView();
@@ -23,7 +28,8 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
 
 		jQuery.ajax(
 		{
-			url : "/HomeControlCamera/dispatcher/image/refreshcollection",
+			url : "/HomeControlCamera/dispatcher/image/" + that.cameraName()
+					+ "/refreshcollection",
 			async : true,
 			dataType : "json",
 			type : "GET",

@@ -3,6 +3,11 @@ sap.ui
 				"de.jumajumo.ha.view.HomeAutomationObjectImageGroupDetail",
 				{
 
+					cameraName : function()
+					{
+						return "back";
+					},
+
 					onInit : function()
 					{
 						this.view = this.getView();
@@ -39,8 +44,8 @@ sap.ui
 
 					getImageUrl : function(filename)
 					{
-						return "/HomeControlCamera/dispatcher/image/image/"
-								+ filename;
+						return "/HomeControlCamera/dispatcher/image/"
+								+ this.cameraName() + "/image/" + filename;
 					},
 
 					deleteGroup : function(oEvent)

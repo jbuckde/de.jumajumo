@@ -159,7 +159,7 @@
 				<jj:actor uuid="362df13c-5b15-43f3-8ef2-32ab82f6f291" name="refreshImageCollection">
 					<jj:requestInfo>
 						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
-						<jj:path>/HomeControlCamera/dispatcher/image/refreshcollection
+						<jj:path>/HomeControlCamera/dispatcher/image/door/refreshcollection
 						</jj:path>
 					</jj:requestInfo>
 				</jj:actor>

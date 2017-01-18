@@ -24,7 +24,7 @@ import de.jumajumo.homecontrol.service.filestore.FileStorageMongoDBServiceImpl;
 @EnableScheduling
 @EnableAsync
 @EnableWebMvc
-@Import({ WebSocketConfigConfiguration.class, AMQPConfiguration.class })
+@Import({ WebSocketConfigConfiguration.class })
 @ImportResource({
 		"classpath:de/jumajumo/homecontrol/spring/scheduling-context.xml",
 		"classpath:de/jumajumo/homecontrol/spring/mbean-context.xml" })
@@ -69,13 +69,13 @@ public class ApplicationContextConfiguration extends WebMvcConfigurerAdapter
 		final TwitterServiceImpl twitterService = new TwitterServiceImpl();
 
 		twitterService.setConsumerKey("gqgY0HOfuZkjSKOsKJSI3qXbJ");
-		twitterService.setConsumerSecret(
-				"TE3u7lFfnurgRMdVCvbthZ9Zcnzmwi9c6Q5ah7V08ceQFeeTgJ");
+		twitterService
+				.setConsumerSecret("TE3u7lFfnurgRMdVCvbthZ9Zcnzmwi9c6Q5ah7V08ceQFeeTgJ");
 
-		twitterService.setAccessToken(
-				"51803797-PfBAjdV3rYttu9Dz6EKz4i9FM0ThJIajzi07TGg2E");
-		twitterService.setAccessTokenSecret(
-				"6V4e0UJpdmz0DyB9JTvJpQE7EhxTACjhnoBBeGRfEPChy");
+		twitterService
+				.setAccessToken("51803797-PfBAjdV3rYttu9Dz6EKz4i9FM0ThJIajzi07TGg2E");
+		twitterService
+				.setAccessTokenSecret("6V4e0UJpdmz0DyB9JTvJpQE7EhxTACjhnoBBeGRfEPChy");
 
 		return twitterService;
 	}

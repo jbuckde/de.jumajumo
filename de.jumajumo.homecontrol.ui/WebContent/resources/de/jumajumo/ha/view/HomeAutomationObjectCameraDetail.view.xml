@@ -17,6 +17,11 @@
 					<html:img class="imgborder" src="http://192.168.1.83/camera/garage?action=stream"
 						width="99%" border="0" />
 				</IconTabFilter>
+				<IconTabFilter text="{ui>tab.garden}" icon="sap-icon://video">
+					<html:img class="imgborder"
+						src="http://192.168.1.83/camera/garden?user=watcher&amp;pwd=watcher"
+						width="99%" border="0" />
+				</IconTabFilter>
 			</items>
 		</IconTabBar>
 	</Page>

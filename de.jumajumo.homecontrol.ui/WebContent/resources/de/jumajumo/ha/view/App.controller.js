@@ -54,7 +54,16 @@ sap.ui
 						var oCameraPicturesModel = new jumajumo.ha.model.CameraPicturesModel();
 						view.setModel(oCameraPicturesModel, "pictures");
 
-						oCameraPicturesModel.loadData();
+						oCameraPicturesModel.loadData("door");
+
+						// introduce the pictures model fro garden camera
+						jQuery.sap
+								.require("jumajumo.ha.model.CameraPicturesModel");
+						var oCameraGardenPicturesModel = new jumajumo.ha.model.CameraPicturesModel();
+						view.setModel(oCameraGardenPicturesModel,
+								"picturesGarden");
+
+						oCameraGardenPicturesModel.loadData("back");
 					},
 
 					navToHandler : function(channelId, eventId, data)

@@ -72,6 +72,24 @@ sap.ui.core.UIComponent
 											} ]
 										},
 										{
+											pattern : "hA/picturesGarden",
+											name : "hAImageGroupGardenOverview",
+											view : "HAImageGroupGardenOverview",
+											viewPath : "jumajumo.ha.view",
+											viewLevel : 2,
+											targetAggregation : "detailPages",
+											subroutes :
+											[
+											{
+												pattern : "hAImageGroupGardenDetail/{path}",
+												name : "hAImageGroupGardenDetail",
+												view : "HAImageGroupGardenDetail",
+												viewPath : "jumajumo.ha.view",
+												viewLevel : 3,
+												targetAggregation : "detailPages",
+											} ]
+										},
+										{
 											pattern : "homeControlConfiguration",
 											name : "homeControlConfiguration",
 											view : "HomeControlConfiguration",

@@ -59,7 +59,7 @@ sap.ui
 								.getData()[path].shotAt
 
 						oEvent.getSource().getModel("pictures")
-								.deleteImageGroup(shotAt);
+								.deleteImageGroup(shotAt, "door");
 
 						this.goBack();
 					}

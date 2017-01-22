@@ -1,20 +1,20 @@
-<mvc:View controllerName="de.jumajumo.ha.view.HomeAutomationObjectImageGroupDetail"
+<mvc:View controllerName="de.jumajumo.ha.view.HAImageGroupGardenDetail"
 	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
 	xmlns:l="sap.ui.layout" xmlns:html="http://www.w3.org/1999/xhtml" resourceBundleUrl="resources/de/jumajumo/ha/view/images.properties"
 	resourceBundleAlias="ui">
 
-	<Page title="{ui>page.titledoor}" showNavButton="true" navButtonPress="goBack">
+	<Page title="{ui>page.title}" showNavButton="true" navButtonPress="goBack">
 
 		<content>
 			<ObjectHeader
-				title="{path:'pictures>shotAt', formatter: 'formatter.DateFormatter.longDateFromMills'}" />
+				title="{path:'picturesGarden>shotAt', formatter: 'formatter.DateFormatter.longDateFromMills'}" />
 
-			<Carousel id="imageCarousel" class="sapUiContentPadding" loop="false"
-				pages="{pictures>images}" height="80%" firstVisibleIndex="0">
+			<Carousel id="imageGardenCarousel" class="sapUiContentPadding" loop="false"
+				pages="{picturesGarden>images}" height="80%" firstVisibleIndex="0">
 				<pages>
 					<!-- <l:VerticalLayout> -->
 					<!-- <Text text="{path: 'pictures>fileName'}" /> -->
-					<Image src="{path:'pictures>fileName', formatter:'.getImageUrl'}" />
+					<Image src="{path:'picturesGarden>fileName', formatter:'.getImageUrl'}" />
 					<!-- </l:VerticalLayout> -->
 				</pages>
 			</Carousel>

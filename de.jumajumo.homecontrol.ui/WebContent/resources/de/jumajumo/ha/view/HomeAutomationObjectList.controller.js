@@ -32,7 +32,7 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectList",
 
 	navToBackPictures : function(oEvent)
 	{
-		this.router.navTo("homeAutomationObjectImageGroupOverview");
+		this.router.navTo("hAImageGroupGardenOverview");
 	},
 
 	navToConfiguration : function(oEvent)

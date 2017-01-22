@@ -1,8 +1,8 @@
-sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
+sap.ui.controller("de.jumajumo.ha.view.HAImageGroupGardenOverview",
 {
 	cameraName : function()
 	{
-		return "door";
+		return "back";
 	},
 
 	onInit : function()
@@ -14,7 +14,7 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
 
 	_handleRouteMatched : function(oEvent)
 	{
-		this.getView().getModel("pictures").loadData("door");
+		this.getView().getModel("picturesGarden").loadData("back");
 	},
 
 	goBack : function(oEvent)
@@ -35,7 +35,7 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
 			type : "GET",
 			complete : function(data, sStatus)
 			{
-				that.getView().getModel("pictures").loadData("door");
+				that.getView().getModel("picturesGarden").loadData("back");
 			}
 
 		});
@@ -43,10 +43,10 @@ sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
 
 	selectImageGroup : function(oEvent)
 	{
-		var sBindingPath = oEvent.oSource.getBindingContext("pictures")
+		var sBindingPath = oEvent.oSource.getBindingContext("picturesGarden")
 				.getPath();
 
-		this.router.navTo("homeAutomationObjectImageGroupDetail",
+		this.router.navTo("hAImageGroupGardenDetail",
 		{
 			path : sBindingPath.substring(sBindingPath.lastIndexOf("/") + 1)
 		});

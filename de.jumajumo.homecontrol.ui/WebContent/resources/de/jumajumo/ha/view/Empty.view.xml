@@ -15,10 +15,14 @@
 						icon="sap-icon://lightbulb"
 						iconDensityAware="true"
 						press="navToLightning"></StandardTile>
-	        <StandardTile title="Pictures"
+	        <StandardTile title="Pictures Door"
 						icon="sap-icon://picture"
 						iconDensityAware="true"
-						press="navToPictures"></StandardTile>
+						press="navToDoorPictures"></StandardTile>
+	        <StandardTile title="Pictures Garden"
+						icon="sap-icon://picture"
+						iconDensityAware="true"
+						press="navToBackPictures"></StandardTile>
 	        <StandardTile title="Configuration"
 						icon="sap-icon://settings"
 						iconDensityAware="true"

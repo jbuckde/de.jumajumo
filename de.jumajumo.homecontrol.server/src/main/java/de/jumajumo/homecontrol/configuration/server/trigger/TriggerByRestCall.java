@@ -9,6 +9,7 @@ import de.jumajumo.homecontrol.type.RequestInfo;
 public class TriggerByRestCall extends Trigger
 {
 	private RequestInfo requestInfo;
+	private int blockIntervall;
 
 	public TriggerByRestCall()
 	{
@@ -38,9 +39,8 @@ public class TriggerByRestCall extends Trigger
 	{
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime
-				* result
-				+ ((getRequestInfo() == null) ? 0 : getRequestInfo().hashCode());
+		result = prime * result + ((getRequestInfo() == null) ? 0
+				: getRequestInfo().hashCode());
 		return result;
 	}
 
@@ -61,6 +61,16 @@ public class TriggerByRestCall extends Trigger
 		} else if (!getRequestInfo().equals(other.getRequestInfo()))
 			return false;
 		return true;
+	}
+
+	public int getBlockIntervall()
+	{
+		return blockIntervall;
+	}
+
+	public void setBlockIntervall(int blockIntervall)
+	{
+		this.blockIntervall = blockIntervall;
 	}
 
 }

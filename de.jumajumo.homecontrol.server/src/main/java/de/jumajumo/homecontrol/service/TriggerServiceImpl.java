@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import de.jumajumo.homecontrol.configuration.ConfigurationContextHolder;
+import de.jumajumo.homecontrol.configuration.RuntimeInformationService;
 import de.jumajumo.homecontrol.configuration.server.ActionChain;
 import de.jumajumo.homecontrol.configuration.server.trigger.Trigger;
 import de.jumajumo.homecontrol.configuration.server.trigger.TriggerByClientSensor;
@@ -26,6 +29,11 @@ public class TriggerServiceImpl implements TriggerService
 	@Autowired
 	private ActionChainService actionChainService;
 
+	@Autowired
+	private RuntimeInformationService runtimeInformationService;
+
+	private final static Log LOGGER = LogFactory.getLog(TriggerService.class);
+
 	@Override
 	public Trigger findTriggerByPath(String path)
 	{
@@ -38,17 +46,16 @@ public class TriggerServiceImpl implements TriggerService
 			{
 				TriggerByRestCall specialTrigger = (TriggerByRestCall) trigger;
 
-				if (path.equalsIgnoreCase(specialTrigger.getRequestInfo()
-						.getPath()))
+				if (path.equalsIgnoreCase(
+						specialTrigger.getRequestInfo().getPath()))
 				{
 					return trigger;
 				}
 			}
 		}
 
-		throw new IllegalArgumentException(
-				"the trigger-by-path with the path <" + path
-						+ "> is not defined in the current configuration.");
+		throw new IllegalArgumentException("the trigger-by-path with the path <"
+				+ path + "> is not defined in the current configuration.");
 	}
 
 	@Override
@@ -107,17 +114,45 @@ public class TriggerServiceImpl implements TriggerService
 	{
 		final List<ActionChainResult> results = new ArrayList<ActionChainResult>();
 
-		assert (null != trigger);
-
-		final List<ActionChain> actionChains = this.actionChainService
-				.findActionChainsByTrigger(trigger.getUuid());
-
-		for (final ActionChain actionChain : actionChains)
+		if (!this.triggerIsBlocked(trigger))
 		{
-			results.add(this.actionChainService.executeActionChain(actionChain));
+			assert (null != trigger);
+
+			final List<ActionChain> actionChains = this.actionChainService
+					.findActionChainsByTrigger(trigger.getUuid());
+
+			for (final ActionChain actionChain : actionChains)
+			{
+				results.add(this.actionChainService
+						.executeActionChain(actionChain));
+			}
+
+			this.runtimeInformationService
+					.memberTriggerExecute(trigger.getName());
+		}
+		return results;
+	}
+
+	private boolean triggerIsBlocked(Trigger trigger)
+	{
+		if (trigger instanceof TriggerByRestCall)
+		{
+			final TriggerByRestCall tbr = (TriggerByRestCall) trigger;
+			final int blockInterval = tbr.getBlockIntervall();
+
+			if (blockInterval > 0)
+			{
+				if (this.runtimeInformationService
+						.isTriggerBlocked(trigger.getName(), blockInterval))
+				{
+					LOGGER.debug("the trigger <" + trigger.getName()
+							+ "> is blocked!");
+					return true;
+				}
+			}
 		}
 
-		return results;
+		return false;
 	}
 
 }

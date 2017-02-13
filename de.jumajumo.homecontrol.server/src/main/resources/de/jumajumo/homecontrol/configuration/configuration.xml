@@ -52,6 +52,26 @@
 				</jj:actionRef>
 			</jj:actionRefs>
 		</jj:actionChain>
+		<jj:actionChain uuid="1040886f-d776-4d0e-8e97-e5d3f67038f4"
+			name="DoorCameraAlarm">
+			<jj:triggerRefs>
+				<jj:triggerRef name="RestTrigger">
+					<jj:triggerUuid>6f4ab29f-d2a3-48d4-ae09-a52f8c0161ae
+					</jj:triggerUuid>
+				</jj:triggerRef>
+			</jj:triggerRefs>
+			<jj:actionRefs>
+				<jj:actionRef name="switchOn">
+					<jj:actionUuid>9d385792-17e0-492b-a25a-06b9a804285f</jj:actionUuid>
+					<jj:conditionRefs>
+						<jj:conditionRef name="itIsDark">
+							<jj:conditionUuid>4ebd0e67-03f3-4c14-88e9-e2af50c0ae9c
+							</jj:conditionUuid>
+						</jj:conditionRef>
+					</jj:conditionRefs>
+				</jj:actionRef>
+			</jj:actionRefs>
+		</jj:actionChain>
 		<jj:actionChain uuid="e289002d-1072-471b-92b8-daadee33c996"
 			name="doorCameraMotionControlSwitch">
 			<jj:triggerRefs>
@@ -199,14 +219,15 @@
 			</jj:actors>
 		</jj:device>
 		<jj:device uuid="e920e40b-7d12-4bb4-afd8-476d187913b7" name="CentralDevice">
-			<jj:sensors>
-				<jj:sensor uuid="1542c66a-ca7b-4bec-ac73-2c2b0bb6d15f"
-					name="DoorRing" />
-			</jj:sensors>
+			<jj:protocol>http</jj:protocol>
+			<jj:hostName>192.168.1.83</jj:hostName>
+
 			<jj:actors>
-				<jj:actor uuid="dad4a7e9-6eab-4da9-a4cb-02e2629234f8" name="actor1">
+
+				<jj:actor uuid="fa358adf-73c3-4b77-80e5-d8ed9b96119b" name="ToggleRelais1">
 					<jj:requestInfo>
-						<jj:requestType>REQUEST_TYPE_WEBSOCKET</jj:requestType>
+						<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
+						<jj:path>/cgi-bin/tasterRelais1.sh</jj:path>
 					</jj:requestInfo>
 				</jj:actor>
 			</jj:actors>
@@ -227,6 +248,15 @@
 			<jj:requestInfo>
 				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 				<jj:path>doorring</jj:path>
+			</jj:requestInfo>
+		</jj:trigger>
+		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:type="jj:triggerByRestCall" uuid="6f4ab29f-d2a3-48d4-ae09-a52f8c0161ae"
+			name="DoorCameraAlarmRestTrigger">
+			<jj:blockIntervall>5</jj:blockIntervall>
+			<jj:requestInfo>
+				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
+				<jj:path>doorcameraalarm</jj:path>
 			</jj:requestInfo>
 		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -321,6 +351,11 @@
 		<jj:action uuid="c57cf1df-2c95-4ecc-a1d0-8097be284843" name="GarageDoorOpenAction">
 			<jj:actorUuids>
 				<jj:actorUuid>4661402f-4618-4309-a43d-9786eeafd099</jj:actorUuid>
+			</jj:actorUuids>
+		</jj:action>
+		<jj:action uuid="9d385792-17e0-492b-a25a-06b9a804285f" name="doorLightOn">
+			<jj:actorUuids>
+				<jj:actorUuid>fa358adf-73c3-4b77-80e5-d8ed9b96119b</jj:actorUuid>
 			</jj:actorUuids>
 		</jj:action>
 		<jj:action uuid="e36c4705-203d-49b4-87ec-1a691e3bb8c2" name="uiNavToDoorCamera">

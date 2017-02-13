@@ -276,6 +276,7 @@
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:type="jj:triggerByRestCall" uuid="6f4ab29f-d2a3-48d4-ae09-a52f8c0161ae"
 			name="DoorCameraAlarmRestTrigger">
+			<jj:blockInterval>900</jj:blockInterval>
 			<jj:requestInfo>
 				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 				<jj:path>doorcameraalarm</jj:path>

@@ -4,7 +4,7 @@
 	<jj:properties>
 		<jj:property>
 			<jj:key>amqpServer</jj:key>
-			<jj:value>localhost</jj:value>
+			<jj:value>192.168.1.82</jj:value>
 		</jj:property>
 		<jj:property>
 			<jj:key>amqpServerPort</jj:key>
@@ -12,11 +12,11 @@
 		</jj:property>
 		<jj:property>
 			<jj:key>amqpUserName</jj:key>
-			<jj:value>producer</jj:value>
+			<jj:value>guest</jj:value>
 		</jj:property>
 		<jj:property>
 			<jj:key>amqpPassword</jj:key>
-			<jj:value>producer</jj:value>
+			<jj:value>guest</jj:value>
 		</jj:property>
 	</jj:properties>
 

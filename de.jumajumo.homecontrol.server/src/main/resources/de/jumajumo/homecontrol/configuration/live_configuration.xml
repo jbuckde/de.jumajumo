@@ -128,9 +128,9 @@
 							<jj:conditionUuid>b35d9755-5d80-49a9-b7a6-634a0226e01c</jj:conditionUuid>
 						</jj:conditionRef>
 						<!-- keep camera switched on due to security situation -->
-						<jj:conditionRef name="false">
-							<jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f</jj:conditionUuid>
-						</jj:conditionRef>
+<!-- 						<jj:conditionRef name="false"> -->
+<!-- 							<jj:conditionUuid>5ebf47b9-aff9-47be-a68c-83646535d46f</jj:conditionUuid> -->
+<!-- 						</jj:conditionRef> -->
 					</jj:conditionRefs>
 				</jj:actionRef>
 			</jj:actionRefs>

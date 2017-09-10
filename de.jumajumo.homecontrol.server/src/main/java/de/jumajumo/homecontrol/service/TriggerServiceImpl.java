@@ -112,6 +112,8 @@ public class TriggerServiceImpl implements TriggerService
 	@Async
 	public List<ActionChainResult> executeTrigger(final Trigger trigger)
 	{
+		LOGGER.debug("execute trigger <" + trigger.getName() + ">");
+
 		final List<ActionChainResult> results = new ArrayList<ActionChainResult>();
 
 		if (!this.triggerIsBlocked(trigger))

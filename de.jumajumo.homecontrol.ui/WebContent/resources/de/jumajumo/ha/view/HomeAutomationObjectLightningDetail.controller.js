@@ -40,6 +40,11 @@ sap.ui
 											}
 										});
 
+					},
+
+					diningSliderChange : function(oEvent)
+					{
+
 					}
 
 				// _handleRouteMatched : function(oEvent)

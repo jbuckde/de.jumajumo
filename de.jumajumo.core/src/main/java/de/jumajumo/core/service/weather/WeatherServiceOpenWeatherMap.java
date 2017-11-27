@@ -1,7 +1,5 @@
 package de.jumajumo.core.service.weather;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,18 +78,12 @@ public class WeatherServiceOpenWeatherMap implements WeatherService
 		final RestTemplate restTemplate = new RestTemplate(converters);
 
 		CurrentWeather forObject = null;
-		try
-		{
-			// FIXME: make apikey configurable
-			String urlString = "http://api.openweathermap.org/data/2.5/weather?q="
-					+ URLEncoder.encode(location, "UTF-8")
-					+ "&appid=5ab77ad296ebeec4fda0a335ab44ed88";
-			forObject = restTemplate.getForObject(urlString,
-					CurrentWeather.class);
-		} catch (UnsupportedEncodingException e)
-		{
-			throw new IllegalArgumentException("invalid url string", e);
-		}
+
+		// FIXME: make apikey configurable
+		String urlString = "http://api.openweathermap.org/data/2.5/weather?q="
+				+ location + "&appid=5ab77ad296ebeec4fda0a335ab44ed88";
+
+		forObject = restTemplate.getForObject(urlString, CurrentWeather.class);
 
 		return forObject;
 	};

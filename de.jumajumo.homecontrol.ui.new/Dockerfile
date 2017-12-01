@@ -1,4 +1,2 @@
-FROM scratch
+FROM hypriot/rpi-nano-httpd
 ADD . /
-EXPOSE 80
-CMD ["/httpd", "80"]

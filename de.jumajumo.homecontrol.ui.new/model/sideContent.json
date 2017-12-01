@@ -1,0 +1,30 @@
+{
+	"navigation": [
+		{
+			"title": "Home",
+			"icon": "sap-icon://home",
+			"expanded": true,
+			"key": "home",
+			"items": []
+        },
+        {
+            "title": "Garage",
+            "icon": "sap-icon://car-rental",
+            "expanded": true,
+            "key": "garage",
+            "item": []
+        }
+	],
+	"fixedNavigation": [
+		{
+			"title": "Important Links",
+			"icon": "sap-icon://chain-link",
+			"key": "Important Links was pressed"
+		},
+		{
+			"title": "Legal",
+			"icon": "sap-icon://compare",
+			"key": "Legal was pressed"
+		}
+	]
+}

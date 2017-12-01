@@ -1,0 +1,72 @@
+<mvc:View 
+    controllerName="de.jumajumo.homecontrol.ui.controller.App"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="sap.m" 
+    xmlns:uxap="sap.uxap">
+    
+    <uxap:ObjectPageLayout enableLazyLoading="true">
+        <uxap:headerTitle>
+            <uxap:ObjectPageHeader
+                objectTitle="{i18n>garage.objectheader.title}">
+                <uxap:actions>
+                    <uxap:ObjectPageHeaderActionButton icon="sap-icon://system-exit" text="{i18n>garage.button.switchDoor}" press="switchDoor" type="Emphasized"/>
+                </uxap:actions>
+            </uxap:ObjectPageHeader>
+        </uxap:headerTitle>
+        <uxap:sections>
+            <uxap:ObjectPageSection title="{i18n>garage.tab.camera}">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                        <uxap:blocks>
+                            <html:img width="90%" src="http://192.168.1.83/camera/garage?action=stream" style="transform:rotate(180deg)" />
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+            <uxap:ObjectPageSection title="{i18n>garage.tab.thermometer}">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection title="{i18n>garage.tab.humidity}">
+                        <uxap:blocks>
+                            <html:iframe width="90%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/374377/charts/1?bgcolor=%23ffffff&#x26;color=%23d62020&#x26;dynamic=true&#x26;results=60&#x26;title=Garage+Humidity&#x26;type=line"/>
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                    <uxap:ObjectPageSubSection title="{i18n>garage.tab.temperature}">
+                        <uxap:blocks>
+                            <html:iframe width="90%" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/374377/charts/2?bgcolor=%23ffffff&#x26;color=%23d62020&#x26;dynamic=true&#x26;results=60&#x26;title=Garage+Temperature&#x26;type=line"/>
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+        </uxap:sections>
+    </uxap:ObjectPageLayout>
+
+    <Page
+        showHeader="false"
+        title="{i18n>garage.page.title}" 
+        navButtonPress="goBack">
+
+        <content>
+
+            <ObjectHeader title="{i18n>garage.objectheader.title}" >
+                <attributes>
+                    <ObjectAttribute text="{healthCheck>/garageDoorSwitchActive}" />
+                </attributes>
+
+            </ObjectHeader>
+
+            <VBox alignItems="Center" >
+
+                <Button
+                    press="switchDoor"
+                    text="{i18n>garage.button.switchDoor}"/>
+
+                <html:br />
+                    <html:img width="99%" src="http://192.168.1.83/camera/garage?action=stream" style="transform:rotate(180deg)">
+                    </html:img>
+            </VBox>
+        </content>
+    </Page>
+
+</mvc:View>

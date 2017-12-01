@@ -33,7 +33,8 @@
 	</build>
 	<dependencies>
 
-		<dependency>
+<!-- 
+ 		<dependency>
 			<groupId>com.sap.ui5</groupId>
 			<artifactId>mobile</artifactId>
 			<version>${sapui5.version}</version>
@@ -50,6 +51,7 @@
 			<artifactId>themelib_sap_belize</artifactId>
 			<version>${sapui5.version}</version>
 		</dependency>		
+ -->
 		
        <dependency>
               <groupId>com.sap.ui5</groupId>

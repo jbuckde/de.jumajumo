@@ -1,6 +1,6 @@
 sap.ui
 		.controller(
-				"de.jumajumo.ha.view.HomeAutomationObjectLightningDetail",
+				"jumajumo.ha.view.HomeAutomationObjectLightningDetail",
 				{
 
 					onInit : function()

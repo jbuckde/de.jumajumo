@@ -31,9 +31,9 @@
 <title>Home Control</title>
 
 
-<script id='sap-ui-bootstrap' src='resources/sap-ui-cachebuster/sap-ui-core.js'
+<script id='sap-ui-bootstrap' src='https://sapui5.hana.ondemand.com/resources/sap-ui-core.js'
 	data-sap-ui-theme='sap_belize' data-sap-ui-libs='sap.m'
-	data-sap-ui-compatVersion="1.16" data-sap-ui-xx-bindingSyntax="complex" data-sap-ui-appCacheBuster="./"></script>
+	data-sap-ui-compatVersion="edge" data-sap-ui-xx-bindingSyntax="complex" data-sap-ui-resourceroots='{"jumajumo": "./resources/de/jumajumo"}'></script>
 
 <!-- <script type="text/javascript" src="cordova.js"></script> -->
 <!-- <script type="text/javascript" src="js/index.js"></script> -->
@@ -48,11 +48,11 @@
 	
 	new sap.m.Shell("Shell",
 	{
-		title : "jumajumo.ha",
+		title : "jumajumo",
 		showLogout : false,
 		app : new sap.ui.core.ComponentContainer(
 		{
-			name : 'jumajumo.ha'
+			name : 'jumajumo'
 		})
 	}).placeAt('content');
 </script>

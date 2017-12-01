@@ -13,36 +13,36 @@
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 	
-	<context-param>
-		<param-name>com.sap.ui5.resource.MAX_AGE</param-name>
-		<param-value>604800000</param-value>one week
-	</context-param>
+<!-- 	<context-param> -->
+<!-- 		<param-name>com.sap.ui5.resource.MAX_AGE</param-name> -->
+<!-- 		<param-value>604800000</param-value>one week -->
+<!-- 	</context-param> -->
 
-	<context-param>
-		<param-name>com.sap.ui5.resource.USE_CACHE</param-name>
-		<param-value>true</param-value>
-	</context-param>
+<!-- 	<context-param> -->
+<!-- 		<param-name>com.sap.ui5.resource.USE_CACHE</param-name> -->
+<!-- 		<param-value>true</param-value> -->
+<!-- 	</context-param> -->
 
-	<context-param>
-		<param-name>com.sap.ui5.resource.USE_SERVER_CACHE</param-name>
-		<param-value>true</param-value>
-	</context-param>
+<!-- 	<context-param> -->
+<!-- 		<param-name>com.sap.ui5.resource.USE_SERVER_CACHE</param-name> -->
+<!-- 		<param-value>true</param-value> -->
+<!-- 	</context-param> -->
 
-	<context-param>
-		<param-name>com.sap.ui5.resource.DEV_MODE</param-name>
-		<param-value>false</param-value>
-	</context-param>
+<!-- 	<context-param> -->
+<!-- 		<param-name>com.sap.ui5.resource.DEV_MODE</param-name> -->
+<!-- 		<param-value>false</param-value> -->
+<!-- 	</context-param> -->
 	
-	<filter>
-		<display-name>AppCacheBusterFilter</display-name>
-		<filter-name>AppCacheBusterFilter</filter-name>
-		<filter-class>com.sap.ui5.resource.AppCacheBusterFilter</filter-class>
-	</filter>
+<!-- 	<filter> -->
+<!-- 		<display-name>AppCacheBusterFilter</display-name> -->
+<!-- 		<filter-name>AppCacheBusterFilter</filter-name> -->
+<!-- 		<filter-class>com.sap.ui5.resource.AppCacheBusterFilter</filter-class> -->
+<!-- 	</filter> -->
 	
-	<filter-mapping>
-		<filter-name>AppCacheBusterFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+<!-- 	<filter-mapping> -->
+<!-- 		<filter-name>AppCacheBusterFilter</filter-name> -->
+<!-- 		<url-pattern>/*</url-pattern> -->
+<!-- 	</filter-mapping> -->
 	
 	<servlet>
 		<display-name>ResourceServlet</display-name>

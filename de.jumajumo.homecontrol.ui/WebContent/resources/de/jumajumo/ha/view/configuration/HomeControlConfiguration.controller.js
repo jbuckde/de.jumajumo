@@ -1,4 +1,4 @@
-sap.ui.controller("de.jumajumo.ha.view.configuration.HomeControlConfiguration",
+sap.ui.controller("jumajumo.ha.view.configuration.HomeControlConfiguration",
 {
 
 	onInit : function()

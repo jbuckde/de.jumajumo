@@ -1,4 +1,4 @@
-<mvc:View controllerName="de.jumajumo.ha.view.configuration.HomeControlConfiguration"
+<mvc:View controllerName="jumajumo.ha.view.configuration.HomeControlConfiguration"
 	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
 	xmlns:html="http://www.w3.org/1999/xhtml">
 

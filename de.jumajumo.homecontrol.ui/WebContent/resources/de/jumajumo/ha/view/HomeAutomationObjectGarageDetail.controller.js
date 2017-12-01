@@ -1,6 +1,6 @@
 sap.ui
 		.controller(
-				"de.jumajumo.ha.view.HomeAutomationObjectGarageDetail",
+				"jumajumo.ha.view.HomeAutomationObjectGarageDetail",
 				{
 
 					onInit : function()

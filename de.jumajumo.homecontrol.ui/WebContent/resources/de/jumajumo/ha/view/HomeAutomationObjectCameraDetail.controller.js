@@ -1,4 +1,4 @@
-sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectCameraDetail",
+sap.ui.controller("jumajumo.ha.view.HomeAutomationObjectCameraDetail",
 {
 	onInit : function()
 	{

@@ -1,5 +1,5 @@
 sap.ui.controller(
-		"de.jumajumo.ha.view.configuration.HomeControlActionChainsOverview",
+		"jumajumo.ha.view.configuration.HomeControlActionChainsOverview",
 		{
 
 			onInit : function()

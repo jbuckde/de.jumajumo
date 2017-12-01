@@ -1,5 +1,5 @@
 sap.ui.controller(
-		"de.jumajumo.ha.view.configuration.HomeControlConditionsOverview",
+		"jumajumo.ha.view.configuration.HomeControlConditionsOverview",
 		{
 
 			onInit : function()

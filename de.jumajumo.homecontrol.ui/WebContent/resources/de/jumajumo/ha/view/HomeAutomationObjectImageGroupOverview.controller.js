@@ -1,4 +1,4 @@
-sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
+sap.ui.controller("jumajumo.ha.view.HomeAutomationObjectImageGroupOverview",
 {
 	cameraName : function()
 	{

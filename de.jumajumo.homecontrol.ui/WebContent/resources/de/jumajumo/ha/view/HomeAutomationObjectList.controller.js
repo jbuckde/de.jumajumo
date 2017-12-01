@@ -1,4 +1,4 @@
-sap.ui.controller("de.jumajumo.ha.view.HomeAutomationObjectList",
+sap.ui.controller("jumajumo.ha.view.HomeAutomationObjectList",
 {
 
 	onInit : function()

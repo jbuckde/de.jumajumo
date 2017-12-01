@@ -1,5 +1,5 @@
 <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
-	xmlns:html="http://www.w3.org/1999/xhtml" controllerName="de.jumajumo.ha.view.HAImageGroupGardenOverview"
+	xmlns:html="http://www.w3.org/1999/xhtml" controllerName="jumajumo.ha.view.HAImageGroupGardenOverview"
 	xmlns="sap.m" resourceBundleUrl="resources/de/jumajumo/ha/view/images.properties"
 	resourceBundleAlias="ui">
 

@@ -74,6 +74,21 @@
             "pattern": "garage",
             "name": "garage",
             "target": "garage"
+          },
+          {
+            "pattern": "cameras",
+            "name": "cameras",
+            "target": "cameras"
+          },
+          {
+            "pattern": "lightning",
+            "name": "lightning",
+            "target": "lightning"
+          },
+          {
+            "pattern": "doorpictures",
+            "name": "doorpictures",
+            "target": "doorpictures"
           }
         ],
         "targets": {
@@ -82,6 +97,15 @@
           },
           "garage": {
             "viewName": "Garage"
+          },
+          "cameras": {
+            "viewName": "Cameras"
+          },
+          "lightning": {
+            "viewName": "Lightning"
+          },
+          "doorpictures": {
+            "viewName": "DoorPictures"
           }
         }
       }

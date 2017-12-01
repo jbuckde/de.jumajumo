@@ -4,7 +4,7 @@
 			"title": "Home",
 			"icon": "sap-icon://home",
 			"expanded": true,
-			"key": "home",
+			"key": "home", 
 			"items": []
         },
         {
@@ -13,7 +13,28 @@
             "expanded": true,
             "key": "garage",
             "item": []
-        }
+		},
+		{
+            "title": "Cameras",
+            "icon": "sap-icon://video",
+            "expanded": true,
+            "key": "cameras",
+            "item": []
+		},
+		{
+            "title": "Lightning",
+            "icon": "sap-icon://lightbulb",
+            "expanded": true,
+            "key": "lightning",
+            "item": []
+		},
+		{
+			"title": "Door Pictures",
+			"icon": "sap-icon://picture",
+			"expanded": true,
+			"key": "doorpictures",
+			"item": []
+		}
 	],
 	"fixedNavigation": [
 		{

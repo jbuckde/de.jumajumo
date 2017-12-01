@@ -1,0 +1,32 @@
+<mvc:View 
+    controllerName="de.jumajumo.homecontrol.ui.controller.App"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="sap.m" 
+    xmlns:uxap="sap.uxap">
+    
+    <uxap:ObjectPageLayout enableLazyLoading="true">
+        <uxap:headerTitle>
+            <uxap:ObjectPageHeader
+                objectTitle="{i18n>lightning.objectheader.title}">
+                <uxap:actions>
+                    <uxap:ObjectPageHeaderActionButton icon="sap-icon://lightbulb" text="{i18n>lightning.button.switchDoorLight}" press="switchDoorLight" type="Emphasized" hideText="false"/>
+                </uxap:actions>
+            </uxap:ObjectPageHeader>
+        </uxap:headerTitle>
+        <uxap:sections>
+            <uxap:ObjectPageSection title="{i18n>lightning.tab.door}">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                        <uxap:blocks>
+                            <html:img width="450" src="http://192.168.1.83/camera/door?user=watcher&amp;pwd=watcher" />
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+        </uxap:sections>
+    </uxap:ObjectPageLayout>
+
+
+</mvc:View>

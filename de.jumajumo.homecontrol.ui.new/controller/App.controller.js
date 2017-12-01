@@ -46,7 +46,7 @@ sap.ui.define([
             var oItem = oEvent.getParameter('item');
             var sKey = oItem.getKey();
             // if you click on home, settings or statistics button, call the navTo function
-            if ((sKey === "home" || sKey === "garage")) {
+            if ((sKey === "home" || sKey === "garage" || sKey === "cameras" || sKey === "lightning" || sKey === "doorpictures")) {
                 // if the device is phone, collaps the navigation side of the app to give more space
                 if (Device.system.phone) {
                     this.onSideNavButtonPress();
@@ -63,6 +63,39 @@ sap.ui.define([
             //this._setToggleButtonTooltip(bSideExpanded);
             oToolPage.setSideExpanded(!oToolPage.getSideExpanded());
         },
+
+        switchDoor : function(oEvent)
+        {
+            var button = oEvent.getSource();
+
+            button.setEnabled(false);
+            jQuery
+                    .ajax(
+                            "http://192.168.1.83:8080/HomeControlServer/dispatcher/trigger/opengaragedoor/activate",
+                            {
+                                complete : function(oEvent)
+                                {
+                                    button.setEnabled(true);
+                                }
+                            });
+        },
+
+        switchDoorLight : function(oEvent)
+        {
+            var button = oEvent.getSource();
+
+            button.setEnabled(false);
+            jQuery
+                    .ajax(
+                            "http://192.168.1.83:8080/HomeControlServer/dispatcher/trigger/doorlightswitch/activate",
+                            {
+                                complete : function(oEvent)
+                                {
+                                    button.setEnabled(true);
+                                }
+                            });
+
+        }
     });
 
 });

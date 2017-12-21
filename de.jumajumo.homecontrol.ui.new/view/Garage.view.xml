@@ -29,12 +29,12 @@
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection title="{i18n>garage.tab.humidity}">
                         <uxap:blocks>
-                            <html:iframe width="90%" height="260" style="border: 1px solid #cccccc;max-width:450px" src="https://thingspeak.com/channels/374377/charts/1?bgcolor=%23ffffff&#x26;color=%23d62020&#x26;dynamic=true&#x26;results=60&#x26;title=Garage+Humidity&#x26;type=line"/>
+                            <html:iframe width="90%" height="260" style="border: 1px solid #cccccc;max-width:450px" src="https://thingspeak.com/channels/374377/charts/1?api_key=7UG54A908GKFEKNF&#x26;bgcolor=%23ffffff&#x26;color=%23d62020&#x26;dynamic=true&#x26;results=60&#x26;title=Garage+Humidity&#x26;type=line"/>
                         </uxap:blocks>
                     </uxap:ObjectPageSubSection>
                     <uxap:ObjectPageSubSection title="{i18n>garage.tab.temperature}">
                         <uxap:blocks>
-                            <html:iframe width="90%" height="260" style="border: 1px solid #cccccc;max-width:450px" src="https://thingspeak.com/channels/374377/charts/2?bgcolor=%23ffffff&#x26;color=%23d62020&#x26;dynamic=true&#x26;results=60&#x26;title=Garage+Temperature&#x26;type=line"/>
+                            <html:iframe width="90%" height="260" style="border: 1px solid #cccccc;max-width:450px" src="https://thingspeak.com/channels/374377/charts/2?api_key=7UG54A908GKFEKNF&#x26;bgcolor=%23ffffff&#x26;color=%23d62020&#x26;dynamic=true&#x26;results=60&#x26;title=Garage+Temperature&#x26;type=line"/>
                         </uxap:blocks>
                     </uxap:ObjectPageSubSection>
                 </uxap:subSections>

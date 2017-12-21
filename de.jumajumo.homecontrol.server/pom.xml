@@ -19,7 +19,7 @@
 		</repository>
 	</repositories>
 
-	<build> 
+	<build>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -114,5 +114,10 @@
 			<version>3.0.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.google.firebase</groupId>
+			<artifactId>firebase-admin</artifactId>
+			<version>5.6.0</version>
+		</dependency>
 	</dependencies>
 </project>

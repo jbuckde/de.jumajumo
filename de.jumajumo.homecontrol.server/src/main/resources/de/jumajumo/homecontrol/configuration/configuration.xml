@@ -26,6 +26,9 @@
 					<jj:triggerUuid>7a0b93e3-5cf4-4f64-b885-54649937e73b
 					</jj:triggerUuid>
 				</jj:triggerRef>
+				<jj:triggerRef name="FirebaseListenerTrigger">
+					<jj:triggerUuid>1f02a31b-94c4-4d31-b34a-f7e33dea6092</jj:triggerUuid>
+				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
 				<jj:actionRef name="OpenGarageDoor">
@@ -266,6 +269,12 @@
 				<jj:requestType>REQUEST_TYPE_HTTP</jj:requestType>
 				<jj:path>opengaragedoor</jj:path>
 			</jj:requestInfo>
+		</jj:trigger>
+		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:type="jj:triggerByFirebaseListener" uuid="1f02a31b-94c4-4d31-b34a-f7e33dea6092"
+			name="OpenGarageDoorFirebaseTrigger">
+				<jj:blockIntervall>60</jj:blockIntervall>
+				<jj:action>opengaragedoor</jj:action>
 		</jj:trigger>
 		<jj:trigger xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:type="jj:triggerByClientSensor" uuid="b2c13bbc-e2dd-48d5-bdc9-2ab56860abc2"

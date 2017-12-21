@@ -16,8 +16,18 @@ import de.jumajumo.homecontrol.configuration.AbstractConfigurationObject;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 @XmlTransient
 @XmlSeeAlso({ TriggerByClientSensor.class, TriggerByRestCall.class,
-		TriggerByScheduling.class })
+		TriggerByScheduling.class, TriggerByFirebaseListener.class })
 public abstract class Trigger extends AbstractConfigurationObject
 {
+	private int blockIntervall;
 
+	public int getBlockIntervall()
+	{
+		return blockIntervall;
+	}
+
+	public void setBlockIntervall(int blockIntervall)
+	{
+		this.blockIntervall = blockIntervall;
+	}
 }

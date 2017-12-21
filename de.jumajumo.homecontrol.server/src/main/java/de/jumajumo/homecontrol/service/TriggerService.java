@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import de.jumajumo.homecontrol.configuration.server.trigger.Trigger;
+import de.jumajumo.homecontrol.configuration.server.trigger.TriggerByFirebaseListener;
 import de.jumajumo.homecontrol.configuration.server.trigger.TriggerByScheduling;
 import de.jumajumo.homecontrol.service.scheduling.ESchedulingPointInTime;
 import de.jumajumo.homecontrol.type.ActionChainResult;
@@ -16,6 +17,9 @@ public interface TriggerService
 
 	List<TriggerByScheduling> findTriggersByScheduledInterval(
 			final ESchedulingPointInTime pointInTime);
+
+	List<TriggerByFirebaseListener> findTriggerByFirebaseAction(
+			final String action);
 
 	List<ActionChainResult> executeTrigger(final Trigger trigger);
 }

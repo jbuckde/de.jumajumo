@@ -9,7 +9,6 @@ import de.jumajumo.homecontrol.type.RequestInfo;
 public class TriggerByRestCall extends Trigger
 {
 	private RequestInfo requestInfo;
-	private int blockIntervall;
 
 	public TriggerByRestCall()
 	{
@@ -61,16 +60,6 @@ public class TriggerByRestCall extends Trigger
 		} else if (!getRequestInfo().equals(other.getRequestInfo()))
 			return false;
 		return true;
-	}
-
-	public int getBlockIntervall()
-	{
-		return blockIntervall;
-	}
-
-	public void setBlockIntervall(int blockIntervall)
-	{
-		this.blockIntervall = blockIntervall;
 	}
 
 }

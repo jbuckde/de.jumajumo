@@ -10,11 +10,6 @@
 		</layout>
 	</appender>
 
-	<root>
-		<priority value="WARN" />
-		<appender-ref ref="CONSOLE" />
-	</root>
-
 	<logger name="de.jumajumo.homecontrol.service.ActionService">
 		<level value="DEBUG" />
 		<appender-ref ref="CONSOLE" />
@@ -27,4 +22,9 @@
 		<level value="WARN" />
 		<appender-ref ref="CONSOLE" />
 	</logger>
+
+<!-- 	<root> -->
+<!-- 		<priority value="WARN" /> -->
+<!-- 		<appender-ref ref="CONSOLE" /> -->
+<!-- 	</root> -->
 </log4j:configuration>

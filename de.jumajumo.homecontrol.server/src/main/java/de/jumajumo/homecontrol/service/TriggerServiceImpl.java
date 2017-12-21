@@ -15,6 +15,7 @@ import de.jumajumo.homecontrol.configuration.RuntimeInformationService;
 import de.jumajumo.homecontrol.configuration.server.ActionChain;
 import de.jumajumo.homecontrol.configuration.server.trigger.Trigger;
 import de.jumajumo.homecontrol.configuration.server.trigger.TriggerByClientSensor;
+import de.jumajumo.homecontrol.configuration.server.trigger.TriggerByFirebaseListener;
 import de.jumajumo.homecontrol.configuration.server.trigger.TriggerByRestCall;
 import de.jumajumo.homecontrol.configuration.server.trigger.TriggerByScheduling;
 import de.jumajumo.homecontrol.service.scheduling.ESchedulingPointInTime;
@@ -109,6 +110,31 @@ public class TriggerServiceImpl implements TriggerService
 	}
 
 	@Override
+	public List<TriggerByFirebaseListener> findTriggerByFirebaseAction(
+			String action)
+	{
+		final List<Trigger> triggers = this.configurationContextHolder
+				.getConfiguration().getTriggers();
+
+		final List<TriggerByFirebaseListener> result = new ArrayList<TriggerByFirebaseListener>();
+
+		for (final Trigger trigger : triggers)
+		{
+			if (trigger instanceof TriggerByFirebaseListener)
+			{
+				TriggerByFirebaseListener specialTrigger = (TriggerByFirebaseListener) trigger;
+
+				if (action.equals(specialTrigger.getAction()))
+				{
+					result.add(specialTrigger);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	@Override
 	@Async
 	public List<ActionChainResult> executeTrigger(final Trigger trigger)
 	{
@@ -137,20 +163,16 @@ public class TriggerServiceImpl implements TriggerService
 
 	private boolean triggerIsBlocked(Trigger trigger)
 	{
-		if (trigger instanceof TriggerByRestCall)
-		{
-			final TriggerByRestCall tbr = (TriggerByRestCall) trigger;
-			final int blockInterval = tbr.getBlockIntervall();
+		final int blockInterval = trigger.getBlockIntervall();
 
-			if (blockInterval > 0)
+		if (blockInterval > 0)
+		{
+			if (this.runtimeInformationService
+					.isTriggerBlocked(trigger.getName(), blockInterval))
 			{
-				if (this.runtimeInformationService
-						.isTriggerBlocked(trigger.getName(), blockInterval))
-				{
-					LOGGER.debug("the trigger <" + trigger.getName()
-							+ "> is blocked!");
-					return true;
-				}
+				LOGGER.debug(
+						"the trigger <" + trigger.getName() + "> is blocked!");
+				return true;
 			}
 		}
 

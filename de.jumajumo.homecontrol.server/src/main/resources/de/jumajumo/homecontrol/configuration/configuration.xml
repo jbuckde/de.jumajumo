@@ -26,9 +26,6 @@
 					<jj:triggerUuid>7a0b93e3-5cf4-4f64-b885-54649937e73b
 					</jj:triggerUuid>
 				</jj:triggerRef>
-				<jj:triggerRef name="FirebaseListenerTrigger">
-					<jj:triggerUuid>1f02a31b-94c4-4d31-b34a-f7e33dea6092</jj:triggerUuid>
-				</jj:triggerRef>
 			</jj:triggerRefs>
 			<jj:actionRefs>
 				<jj:actionRef name="OpenGarageDoor">

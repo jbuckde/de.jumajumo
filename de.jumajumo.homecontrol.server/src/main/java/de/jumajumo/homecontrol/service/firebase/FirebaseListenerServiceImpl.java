@@ -72,8 +72,6 @@ public class FirebaseListenerServiceImpl implements FirebaseListenerService
 				@Override
 				public void onCancelled(DatabaseError error)
 				{
-					// TODO Auto-generated method stub
-
 				}
 			};
 

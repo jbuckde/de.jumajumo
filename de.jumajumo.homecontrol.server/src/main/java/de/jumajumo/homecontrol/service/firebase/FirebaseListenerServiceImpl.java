@@ -36,26 +36,23 @@ public class FirebaseListenerServiceImpl implements FirebaseListenerService
 
 	private void setupListener()
 	{
-		final DatabaseReference ref;
-		final ValueEventListener valueEventListener;
-		InputStream serviceAccount = this.getClass().getResourceAsStream(
-				"jumohome-firebase-adminsdk-7zr2h-0a7ffbc247.json");
 
 		try
 		{
-			// Initialize the app with a service account, granting admin
-			// privileges
+			final InputStream serviceAccount = this.getClass()
+					.getResourceAsStream(
+							"jumohome-firebase-adminsdk-7zr2h-0a7ffbc247.json");
+
 			FirebaseOptions options = new FirebaseOptions.Builder()
 					.setCredentials(
 							GoogleCredentials.fromStream(serviceAccount))
 					.setDatabaseUrl("https://jumohome.firebaseIO.com").build();
 			FirebaseApp.initializeApp(options);
 
-			// As an admin, the app has access to read and write all data,
-			// regardless of Security Rules
-			ref = FirebaseDatabase.getInstance()
+			final DatabaseReference ref = FirebaseDatabase.getInstance()
 					.getReference("dispatcher/trigger/action");
-			valueEventListener = new ValueEventListener()
+
+			final ValueEventListener valueEventListener = new ValueEventListener()
 			{
 				@Override
 				public void onDataChange(DataSnapshot dataSnapshot)

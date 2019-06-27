@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public enum ECameraInformation
 {
-	DOOR("door", "images", "81.169.145.47", 21,
+	DOOR("door", "camera", "81.169.145.47", 21,
 			"56324323.swh.strato-hosting.eu", "SamsungGalaxy1"), //
 	BACK("back", "backimg", "81.169.145.47", 21,
 			"56324323.swh.strato-hosting.eu", "SamsungGalaxy1");
